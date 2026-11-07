@@ -1,5 +1,5 @@
 // NEXI service worker: guarda o app para funcionar offline.
-const CACHE = 'nexi-v1';
+const CACHE = 'nexi-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
