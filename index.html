@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0b10">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEXI">
+<meta name="description" content="Câmera com efeitos em tempo real.">
 <title>NEXI</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -50,6 +57,11 @@ video{display:none}
 .grid img,.grid video{width:100%;height:100%;object-fit:cover;display:block}
 .grid a b{position:absolute;bottom:4px;right:6px;font-size:.9rem}
 .empty{grid-column:1/-1;text-align:center;color:#888;padding:40px}
+.install{display:none;border:0;border-radius:99px;padding:6px 12px;font-weight:800;font-size:.78rem;background:#c6ff3d;color:#111}
+.install.show{display:block}
+.sheet{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));background:#17171f;border:1px solid #ffffff22;border-radius:18px;padding:16px;z-index:20;display:none;font-size:.9rem;line-height:1.45}
+.sheet.open{display:block}
+.sheet b{color:#c6ff3d}
 button.pill{border:0;border-radius:99px;padding:10px 16px;font-weight:800;background:#c6ff3d;color:#111}
 @keyframes blink{50%{opacity:.2}}
 @keyframes flash{from{opacity:.85}to{opacity:0}}
@@ -58,7 +70,7 @@ button.pill{border:0;border-radius:99px;padding:10px 16px;font-weight:800;backgr
 <body>
 <div class="app">
   <section class="stage" id="stage">
-    <div class="top"><div class="brand">NEXI</div><div class="rec" id="rec">00:00</div><div class="name" id="fxName">Normal</div></div>
+    <div class="top"><div class="brand">NEXI</div><div class="rec" id="rec">00:00</div><div style="display:flex;gap:8px;align-items:center"><button class="install" id="installBtn">⬇ Instalar</button><div class="name" id="fxName">Normal</div></div></div>
     <canvas id="cv"></canvas>
     <video id="video" playsinline muted></video>
     <div class="msg" id="msg"><div><div style="font-size:3rem">📷</div><p>Toque para ligar a câmera.</p><button class="pill" id="startBtn">Ligar câmera</button></div></div>
@@ -79,6 +91,7 @@ button.pill{border:0;border-radius:99px;padding:10px 16px;font-weight:800;backgr
   <div class="ghead"><span>Galeria (sessão)</span><button class="pill" id="closeGal">Fechar</button></div>
   <div class="grid" id="grid"></div>
 </div>
+<div class="sheet" id="iosSheet"><b>Instalar o NEXI no iPhone</b><br>1. Toque em <b>Compartilhar</b> (□↑) no Safari<br>2. Escolha <b>Adicionar à Tela de Início</b><br>3. Toque em <b>Adicionar</b><div style="text-align:right;margin-top:10px"><button class="pill" id="iosClose">Entendi</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const cv=$('cv'),video=$('video');
@@ -185,6 +198,17 @@ $('mPhoto').onclick=()=>setMode('photo');$('mVideo').onclick=()=>setMode('video'
 // ---- Galeria ----
 $('thumb').onclick=e=>{e.preventDefault();$('grid').innerHTML=shots.length?shots.map(s=>`<a href="${s.url}" target="_blank">${s.type==='img'?`<img src="${s.url}">`:`<video src="${s.url}" muted playsinline></video><b>🎬</b>`}</a>`).join(''):'<div class="empty">Nenhuma captura ainda.</div>';$('gallery').classList.add('open')};
 $('closeGal').onclick=()=>$('gallery').classList.remove('open');
+
+// ---- Instalação (PWA) ----
+if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+let deferred=null;
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('installBtn').classList.add('show')});
+addEventListener('appinstalled',()=>{deferred=null;$('installBtn').classList.remove('show')});
+if(ios&&!standalone)$('installBtn').classList.add('show');
+$('installBtn').onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;$('installBtn').classList.remove('show')}else $('iosSheet').classList.add('open')};
+$('iosClose').onclick=()=>$('iosSheet').classList.remove('open');
 
 if(!navigator.mediaDevices?.getUserMedia){$('msg').querySelector('p').textContent='Seu navegador não suporta câmera (use HTTPS).'}
 else start();
