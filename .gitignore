@@ -1,0 +1,14 @@
+# Sistema
+.DS_Store
+Thumbs.db
+# Dependências e builds
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+.venv/
+# Segredos
+.env
+.env.*
+*.key
