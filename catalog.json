@@ -1,0 +1,21 @@
+{
+  "apps": [
+    {
+      "id": "nexi",
+      "name": "Nexi para Android",
+      "icon": "📱",
+      "description": "Este app central: acesse e instale todos os programas pelo celular.",
+      "type": "android",
+      "package": "com.linguabyte.nexi",
+      "apk": "https://github.com/lingua-byte/nexi/releases/download/nexi-android/nexi.apk"
+    },
+    {
+      "id": "nexi-pet",
+      "name": "NEXI Pet",
+      "icon": "🐰",
+      "description": "Bichinho virtual com minijogos.",
+      "type": "web",
+      "url": "apps/nexi-pet/"
+    }
+  ]
+}

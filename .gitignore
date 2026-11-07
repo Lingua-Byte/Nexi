@@ -12,3 +12,9 @@ __pycache__/
 .env
 .env.*
 *.key
+# Android
+.gradle/
+local.properties
+*.apk
+*.jks
+*.keystore

@@ -1,33 +1,46 @@
-# Lingua-Byte — repositório geral
+# Nexi — central dos meus programas
 
-Repositório central para todos os meus programas. Cada projeto vive na sua própria pasta, isolado dos outros.
+Nexi é ao mesmo tempo:
+
+- **uma página web** → https://lingua-byte.github.io/nexi/
+- **um app Android** → [baixar nexi.apk](https://github.com/lingua-byte/nexi/releases/download/nexi-android/nexi.apk)
+
+Pelos dois dá para abrir todos os meus web apps e baixar/instalar todos os meus apps Android.
+A lista de programas vem do arquivo [`catalog.json`](catalog.json).
 
 ## Estrutura
 
 | Pasta | Para quê |
 |---|---|
-| `apps/` | Aplicativos prontos para usar (web apps, PWAs, jogos). Tudo aqui é publicado no GitHub Pages. |
-| `tools/` | Scripts e utilitários (Python, shell, automações, bots). |
-| `experiments/` | Protótipos e testes rápidos — pode ser bagunçado. |
-| `templates/` | Modelos para começar um projeto novo copiando uma pasta. |
+| `index.html`, `catalog.json` | A página Nexi e a lista de programas. |
+| `apps/` | Web apps (publicados no GitHub Pages em `/apps/<nome>/`). |
+| `android/` | Apps Android. Cada um vira um APK automaticamente ([detalhes](android/README.md)). |
+| `tools/` | Scripts e utilitários. |
+| `experiments/` | Protótipos e testes rápidos. |
+| `templates/` | Modelos para começar um projeto novo. |
 
-## Projetos
+## Adicionar um programa
 
-| Projeto | Pasta | Descrição |
-|---|---|---|
-| NEXI | [`apps/nexi`](apps/nexi) | Bichinho virtual com minijogos (PWA). |
+**Web app**
+1. `cp -r templates/web-app apps/meu-app` e edite.
+2. Adicione no `catalog.json`:
+   ```json
+   { "id": "meu-app", "name": "Meu App", "icon": "✨", "description": "…", "type": "web", "url": "apps/meu-app/" }
+   ```
 
-## Como criar um projeto novo
+**App Android**
+1. Crie o projeto em `android/meu-app/` (pode copiar `android/nexi` como base e trocar o `applicationId`).
+2. Adicione no `catalog.json`:
+   ```json
+   { "id": "meu-app", "name": "Meu App", "icon": "🤖", "description": "…", "type": "android",
+     "package": "com.linguabyte.meuapp",
+     "apk": "https://github.com/lingua-byte/nexi/releases/download/meu-app-android/meu-app.apk" }
+   ```
 
-1. Copie um modelo: `cp -r templates/web-app apps/meu-projeto`
-2. Edite os arquivos e o `README.md` da pasta.
-3. Adicione o projeto na tabela acima e no `index.html` da raiz (a página inicial).
-4. Faça commit e push. Ao chegar na `main`, os web apps ficam disponíveis em
-   `https://<usuario>.github.io/<repositorio>/apps/meu-projeto/`.
+Faça push na `main`: a página é publicada e os APKs são compilados sozinhos.
 
 ## Regras simples
 
-- Um projeto = uma pasta. Nada de arquivos soltos na raiz.
-- Cada projeto tem seu próprio `README.md` dizendo o que é e como rodar.
-- Nomes de pasta em minúsculas, com hífen: `meu-projeto`.
-- Nunca faça commit de chaves de API ou senhas.
+- Um projeto = uma pasta, cada uma com seu `README.md`.
+- Nomes de pasta em minúsculas com hífen: `meu-app`.
+- Nunca faça commit de chaves de API, senhas ou keystores.

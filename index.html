@@ -4,32 +4,95 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#10131a">
-  <title>Meus programas</title>
+  <title>Nexi</title>
+  <link rel="manifest" href="manifest.webmanifest">
   <style>
     *{box-sizing:border-box}
     body{margin:0;min-height:100vh;font:16px system-ui,sans-serif;background:#10131a;color:#f2f4f8;display:flex;justify-content:center}
-    main{width:min(100%,640px);padding:32px 16px}
-    h1{margin:0 0 4px;font-size:1.7rem;letter-spacing:.04em}
-    p.sub{margin:0 0 24px;opacity:.65}
-    .grid{display:grid;gap:12px}
-    a.card{display:flex;gap:14px;align-items:center;padding:16px;border-radius:16px;background:#1b2030;border:1px solid #2a3145;color:inherit;text-decoration:none;transition:transform .12s,border-color .12s}
-    a.card:hover,a.card:focus-visible{border-color:#c6e36b;transform:translateY(-2px)}
-    .icon{font-size:2rem;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:#262d42;flex:none}
-    .card b{display:block}
-    .card span{font-size:.85rem;opacity:.65}
+    main{width:min(100%,640px);padding:28px 16px calc(28px + env(safe-area-inset-bottom))}
+    h1{margin:0;font-size:1.9rem;letter-spacing:.08em}
+    h1 span{color:#c6e36b}
+    p.sub{margin:4px 0 20px;opacity:.65}
+    h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin:24px 0 10px}
+    .grid{display:grid;gap:10px}
+    .card{display:flex;gap:14px;align-items:center;padding:14px;border-radius:16px;background:#1b2030;border:1px solid #2a3145}
+    .icon{font-size:1.9rem;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:#262d42;flex:none}
+    .info{flex:1;min-width:0}
+    .info b{display:block}
+    .info span{display:block;font-size:.84rem;opacity:.65}
+    .info small{display:block;font-size:.74rem;color:#c6e36b;margin-top:2px}
+    .btns{display:flex;flex-direction:column;gap:6px;flex:none}
+    .btn{border:0;border-radius:11px;padding:9px 14px;font:inherit;font-size:.85rem;font-weight:800;background:#c6e36b;color:#10131a;text-decoration:none;text-align:center;cursor:pointer}
+    .btn.alt{background:#2a3145;color:#f2f4f8}
+    .banner{display:none;margin-bottom:6px;padding:14px;border-radius:16px;background:#c6e36b;color:#10131a}
+    .banner a{color:inherit;font-weight:800}
+    .empty{opacity:.6;font-size:.9rem}
   </style>
 </head>
 <body>
   <main>
-    <h1>Meus programas</h1>
-    <p class="sub">Tudo o que eu crio, em um só lugar.</p>
-    <div class="grid">
-      <!-- Para adicionar um projeto, copie um bloco <a class="card"> abaixo. -->
-      <a class="card" href="apps/nexi/">
-        <div class="icon">🐰</div>
-        <div><b>NEXI</b><span>Bichinho virtual com minijogos</span></div>
-      </a>
-    </div>
+    <h1>NE<span>X</span>I</h1>
+    <p class="sub">Todos os meus programas em um só lugar.</p>
+    <div class="banner" id="banner">📱 No Android? <a id="bannerLink" href="#">Baixe o app Nexi</a> para instalar e abrir tudo direto do celular.</div>
+    <h2>Apps web</h2>
+    <div class="grid" id="web"></div>
+    <h2>Apps Android</h2>
+    <div class="grid" id="android"></div>
   </main>
+  <script>
+    // window.NexiAndroid só existe dentro do app Android do Nexi.
+    const native = window.NexiAndroid;
+    const isAndroidBrowser = !native && /Android/i.test(navigator.userAgent);
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let catalog = [];
+
+    function webCard(a) {
+      return `<div class="card"><div class="icon">${esc(a.icon)}</div>
+        <div class="info"><b>${esc(a.name)}</b><span>${esc(a.description)}</span></div>
+        <div class="btns"><a class="btn" href="${esc(a.url)}">Abrir</a></div></div>`;
+    }
+
+    function androidCard(a) {
+      let status = '', btns = '';
+      if (native) {
+        const v = native.installedVersion(a.package);
+        if (a.package === 'com.linguabyte.nexi') status = 'Você está neste app • v' + esc(native.version());
+        else if (v) status = 'Instalado • v' + esc(v);
+        if (v && a.package !== 'com.linguabyte.nexi') btns += `<button class="btn" data-open="${esc(a.package)}">Abrir</button>`;
+        btns += `<button class="btn ${v ? 'alt' : ''}" data-dl="${esc(a.apk)}">${v ? 'Atualizar' : 'Instalar'}</button>`;
+      } else {
+        btns = `<a class="btn" href="${esc(a.apk)}">Baixar APK</a>`;
+      }
+      return `<div class="card"><div class="icon">${esc(a.icon)}</div>
+        <div class="info"><b>${esc(a.name)}</b><span>${esc(a.description)}</span>${status ? `<small>${status}</small>` : ''}</div>
+        <div class="btns">${btns}</div></div>`;
+    }
+
+    function render() {
+      const web = catalog.filter(a => a.type === 'web');
+      const apk = catalog.filter(a => a.type === 'android');
+      document.getElementById('web').innerHTML = web.map(webCard).join('') || '<p class="empty">Nenhum ainda.</p>';
+      document.getElementById('android').innerHTML = apk.map(androidCard).join('') || '<p class="empty">Nenhum ainda.</p>';
+      const self = apk.find(a => a.id === 'nexi');
+      if (isAndroidBrowser && self) {
+        document.getElementById('banner').style.display = 'block';
+        document.getElementById('bannerLink').href = self.apk;
+      }
+    }
+
+    document.addEventListener('click', e => {
+      const open = e.target.closest('[data-open]'), dl = e.target.closest('[data-dl]');
+      if (open && !native.openApp(open.dataset.open)) alert('Não consegui abrir o app.');
+      if (dl) native.download(dl.dataset.dl);
+    });
+
+    // O app Android chama isto ao voltar do instalador, para atualizar os botões.
+    window.onNexiResume = render;
+
+    fetch('catalog.json', {cache: 'no-cache'})
+      .then(r => r.json())
+      .then(d => { catalog = d.apps || []; render(); })
+      .catch(() => { document.getElementById('web').innerHTML = '<p class="empty">Não consegui carregar o catálogo.</p>'; });
+  </script>
 </body>
 </html>

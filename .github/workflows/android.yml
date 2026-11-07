@@ -1,0 +1,52 @@
+name: Build Android apps
+# Compila cada projeto em android/<nome>/ e publica o APK em
+# https://github.com/<repo>/releases/download/<nome>-android/<nome>.apk
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Chave de assinatura (opcional)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.NEXI_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "NEXI_KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Sem NEXI_KEYSTORE_BASE64: APKs assinados com chave de debug (não atualizam por cima da versão anterior)."
+          fi
+      - name: Build e publicação
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEXI_KEYSTORE_PASSWORD: ${{ secrets.NEXI_KEYSTORE_PASSWORD }}
+          NEXI_KEY_ALIAS: ${{ secrets.NEXI_KEY_ALIAS }}
+          NEXI_KEY_PASSWORD: ${{ secrets.NEXI_KEY_PASSWORD }}
+        run: |
+          set -e
+          for dir in android/*/; do
+            name=$(basename "$dir")
+            [ -f "$dir/gradlew" ] || continue
+            echo "::group::$name"
+            (cd "$dir" && chmod +x gradlew && ./gradlew assembleRelease -PversionCode=${{ github.run_number }} --no-daemon)
+            cp "$dir/app/build/outputs/apk/release/app-release.apk" "$name.apk"
+            tag="$name-android"
+            gh release delete "$tag" --cleanup-tag -y || true
+            gh release create "$tag" "$name.apk" --target "$GITHUB_SHA" --latest=false \
+              --title "$name (Android) — build ${{ github.run_number }}" \
+              --notes "APK gerado automaticamente a partir de android/$name. Baixe: $name.apk"
+            echo "::endgroup::"
+          done

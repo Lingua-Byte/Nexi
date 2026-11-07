@@ -1,0 +1,40 @@
+plugins { id 'com.android.application' }
+
+def ks = System.getenv("NEXI_KEYSTORE_FILE")
+
+android {
+    namespace 'com.linguabyte.nexi'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.linguabyte.nexi'
+        minSdk 26
+        targetSdk 35
+        versionCode((project.findProperty('versionCode') ?: '1') as int)
+        versionName "1.0." + versionCode
+    }
+
+    signingConfigs {
+        if (ks) {
+            release {
+                storeFile file(ks)
+                storePassword System.getenv("NEXI_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("NEXI_KEY_ALIAS")
+                keyPassword System.getenv("NEXI_KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            // Sem chave configurada, assina com a chave de debug (instala, mas não atualiza por cima).
+            signingConfig ks ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
