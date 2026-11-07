@@ -1,1 +1,193 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#87964b"><title>NEXI</title><style>*{box-sizing:border-box}html,body{margin:0;min-height:100%;font:16px system-ui,sans-serif}body{display:flex;justify-content:center;background:#66783a;color:#26351f}.game{width:min(100%,520px);min-height:100vh;padding:12px 12px 108px;background:linear-gradient(#bdcb80,#95a957 43%,#6d843c);position:relative;overflow:hidden}.top{display:flex;justify-content:space-between;align-items:center}.brand{font-weight:950;letter-spacing:.16em;font-size:1.55rem}.gen{background:#fffce5dd;border-radius:99px;padding:6px 10px;font-size:.72rem;font-weight:900}.needs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.need{background:#fffde84d;border:1px solid #fff9;border-radius:11px;padding:5px 7px;font-size:.64rem}.bar{height:9px;background:#56683a55;border-radius:99px;overflow:hidden;margin-top:4px}.fill{height:100%;background:#fff4b0;border-radius:99px;transition:width .35s}.habitat{height:410px;position:relative;border-radius:30px;border:2px solid #fff8;overflow:hidden;background:linear-gradient(#dce9a555,#ffffff08);box-shadow:inset 0 -90px 0 #526b2c55;touch-action:none}.habitat:before{content:"";position:absolute;bottom:-45px;left:-10%;width:120%;height:125px;background:#4f682b99;border-radius:50% 50% 0 0}.sun{position:absolute;top:25px;left:28px;width:48px;height:48px;border-radius:50%;background:#f8df7caa;animation:sun 5s ease-in-out infinite}.cloud{position:absolute;top:55px;right:35px;font-size:46px;opacity:.42;animation:cloud 12s linear infinite}.object{position:absolute;z-index:4;user-select:none;transition:transform .25s}.plant{font-size:58px;left:7%;bottom:34px}.ball{font-size:45px;right:10%;bottom:34px}.bowl{font-size:42px;left:45%;bottom:26px}.pet{position:absolute;left:50%;top:48%;width:210px;height:210px;transform:translate(-50%,-50%);display:grid;place-items:center;z-index:10;animation:breathe 2.7s ease-in-out infinite;touch-action:none;cursor:grab;user-select:none}.pet.dragging{animation:none;cursor:grabbing;filter:drop-shadow(0 18px 8px #26351466) scale(1.06)}.pet.happy{animation:happy .55s ease}.pet.sleepy{animation:sleep .9s ease}.pet img{width:205px;height:205px;object-fit:contain;filter:drop-shadow(0 14px 7px #26351455);pointer-events:none}.fallback{font-size:125px}.bubble{position:absolute;z-index:12;top:12px;right:9px;max-width:215px;background:#fffdf0;border:2px solid #fffa;border-radius:17px 17px 4px 17px;padding:9px 11px;box-shadow:0 5px 15px #26351425;font-size:.8rem}.event{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:15;background:#26351ddd;color:#fff;border-radius:99px;padding:6px 12px;font-size:.7rem;white-space:nowrap}.memory{background:#ffffff3b;border-radius:14px;padding:9px 11px;font-size:.74rem;color:#fffde8;margin-top:8px;min-height:34px}.actions{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,520px);display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 9px calc(8px + env(safe-area-inset-bottom));background:#f6f1dff5;backdrop-filter:blur(12px);border-top:2px solid #fff;z-index:20}.actions button{border:1px solid #c9c5a9;background:#fffdf1;color:#26311f;border-radius:15px;min-height:64px;font-weight:850;font-size:.68rem;transition:transform .12s,background .12s}.actions button:active{transform:scale(.94);background:#e9e4c9}.actions button span{display:block;font-size:1.45rem}.gameover{position:fixed;inset:0;background:#1e291ddf;z-index:50;display:none;align-items:center;justify-content:center;padding:14px}.gamebox{width:min(96%,490px);background:#f8f5df;border-radius:24px;padding:15px;text-align:center;animation:pop .25s ease}.gamebox h2{margin:4px 0 2px}.score{font-size:1.8rem;font-weight:950}.record{font-size:.72rem;opacity:.65}.arena{height:280px;background:linear-gradient(#dce99f,#9db361);border-radius:18px;position:relative;overflow:hidden;touch-action:none;margin:10px 0}.arena:after{content:"";position:absolute;left:0;right:0;bottom:22px;border-top:3px dashed #61753d88}.runner{position:absolute;left:42px;bottom:25px;font-size:48px;z-index:3;line-height:1}.ob{position:absolute;bottom:25px;font-size:39px;z-index:2}.gamebox button{border:0;border-radius:12px;padding:12px 17px;font-weight:850;background:#26351f;color:#fff;margin:3px}.gamebox button.secondary{background:#dcd7b9;color:#26351f}.hint{font-size:.72rem;opacity:.65}.hide{position:absolute;z-index:4;font-size:40px;pointer-events:none}.bush{position:absolute;z-index:3;font-size:70px;line-height:1}.huntnexi{position:absolute;z-index:5;font-size:56px;line-height:1;cursor:pointer;filter:drop-shadow(0 6px 3px #26351455);animation:peek .28s ease}.heart{font-size:70px;position:absolute;cursor:pointer;user-select:none;filter:drop-shadow(0 5px 4px #26351455);animation:float 1s ease-in-out infinite}.tiny{font-size:.7rem;opacity:.7}@keyframes breathe{50%{transform:translate(-50%,-54%) scale(1.03)}}@keyframes happy{25%{transform:translate(-50%,-70%) rotate(-5deg)}50%{transform:translate(-50%,-50%) rotate(5deg)}75%{transform:translate(-50%,-65%) rotate(-3deg)}}@keyframes sleep{50%{transform:translate(-50%,-45%) scale(.96)}}@keyframes sun{50%{transform:scale(1.08);opacity:.8}}@keyframes cloud{50%{transform:translateX(-25px)}}@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}@keyframes peek{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}@keyframes float{50%{transform:translateY(-8px)}}@media(max-height:700px){.habitat{height:330px}.arena{height:240px}}@media(max-width:360px){.habitat{height:300px}.actions button{min-height:58px}}</style></head><body><main class="game"><div class="top"><div class="brand">NEXI</div><div class="gen" id="gen"></div></div><div class="needs" id="needs"></div><section class="habitat" id="habitat"><div class="sun"></div><div class="cloud">☁️</div><div class="bubble" id="bubble">Arraste-me!</div><div class="object plant" id="plant">🌿</div><div class="object ball" id="ball">🎾</div><div class="object bowl" id="bowl">🥣</div><div class="pet" id="pet"><img id="petImg" alt="NEXI"><div id="fallback" class="fallback" hidden>🐰</div></div><div class="event" id="event">Arraste NEXI pelo jardim!</div></section><div class="memory" id="memory"></div><nav class="actions" id="actions"></nav><div class="gameover" id="gameover"><div class="gamebox"><h2 id="gameTitle">Brincadeira!</h2><div id="gameText"></div><div id="score" class="score"></div><div id="record" class="record"></div><div class="arena" id="arena"></div><div class="hint" id="hint">Toque para interagir</div><div><button id="restartBtn">Jogar novamente</button><button class="secondary" id="closeBtn">Voltar para NEXI</button></div></div></div></main><script>const KEY='nexi-v11-state',REC='nexi-records';const GEN='nexi-generation';const pets=['rabbit','pig','panda','monkey','penguin','parrot'];const urls=pets.map(x=>`https://raw.githubusercontent.com/ETdoFresh/kenney.nl/master/kenney-animalpack/PNG/Round%20(outline)/${x}.png`);let generation=+(localStorage.getItem(GEN)||1);let records=JSON.parse(localStorage.getItem(REC)||'{"run":0,"catch":0,"tap":0}');let g={age:0,hunger:62,energy:70,joy:55,hygiene:68,bond:10,health:100,history:[],discoveries:[]};const A=[['feed','🍎','Comer'],['play','🎾','Brincar'],['wash','🫧','Banho'],['sleep','🌙','Dormir']];const $=id=>document.getElementById(id),clamp=x=>Math.max(0,Math.min(100,x));function load(){try{g=Object.assign(g,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}}function save(){localStorage.setItem(KEY,JSON.stringify(g))}function audio(kind='8bit'){try{if(!window.ac)window.ac=new AudioContext();const c=window.ac,o=c.createOscillator(),gain=c.createGain();o.type=kind==='tribal'?'triangle':'square';o.frequency.value=kind==='tribal'?110:523;gain.gain.setValueAtTime(.0001,c.currentTime);gain.gain.exponentialRampToValueAtTime(.045,c.currentTime+.015);gain.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.16);o.connect(gain).connect(c.destination);o.start();o.stop(c.currentTime+.18)}catch(e){}}function music(kind){try{if(window.musicTimer)clearInterval(window.musicTimer);audio(kind);window.musicTimer=setInterval(()=>audio(kind),kind==='tribal'?420:620)}catch(e){}}function stopMusic(){if(window.musicTimer)clearInterval(window.musicTimer)}function animate(k){pet.classList.remove('happy','sleepy');void pet.offsetWidth;pet.classList.add(k)}function render(){gen.textContent='Geração '+String(generation).padStart(3,'0');needs.innerHTML=[['Fome',100-g.hunger],['Energia',g.energy],['Alegria',g.joy],['Saúde',g.health],['Higiene',g.hygiene],['Vínculo',g.bond]].map(([n,v])=>`<div class="need">${n}<div class="bar"><div class="fill" style="width:${clamp(v)}%"></div></div></div>`).join('');actions.innerHTML=A.map(a=>`<button onclick="act('${a[0]}')"><span>${a[1]}</span>${a[2]}</button>`).join('');bubble.textContent=g.hunger<25?'Estou com fome!':g.energy<20?'Quero dormir!':g.joy<25?'Vamos brincar!':g.bond>60?'Gosto muito de você!':'Arraste-me pelo jardim!';memory.innerHTML='<b>Memória:</b> '+(g.history[0]||'NEXI ainda está conhecendo você.');const img=$('petImg');img.onerror=()=>{img.hidden=true;fallback.hidden=false};img.src=urls[(generation-1)%urls.length]}function act(id){audio();if(id==='play'){startGame();return}g.age++;if(id==='feed'){g.hunger=clamp(g.hunger+22);animate('happy');g.history.unshift('NEXI percebeu que você cuida dele.')}if(id==='wash'){g.hygiene=clamp(g.hygiene+28);animate('happy');g.history.unshift('NEXI ficou limpinho.')}if(id==='sleep'){g.energy=clamp(g.energy+30);animate('sleepy');g.history.unshift('NEXI descansou.')}g.joy=clamp(g.joy+2);g.bond=clamp(g.bond+1);g.history=g.history.slice(0,12);save();render()}function openGame(title,text){gameover.style.display='flex';gameTitle.textContent=title;gameText.textContent=text;score.textContent='';record.textContent='';arena.innerHTML='';hint.textContent='';audio()}function startGame(){const t=['run','catch','tap'][Math.floor(Math.random()*3)];if(t==='run')run();if(t==='catch')hunt();if(t==='tap')tap()}function finish(type,points,msg){records[type]=Math.max(records[type],points);localStorage.setItem(REC,JSON.stringify(records));g.joy=clamp(g.joy+Math.min(20,Math.ceil(points/4)));g.bond=clamp(g.bond+Math.min(6,Math.ceil(points/8)));g.history.unshift(msg);g.history=g.history.slice(0,12);save();render();animate('happy');score.textContent=String(points);record.textContent='Recorde: '+records[type];stopMusic()}function run(){openGame('🦖 NEXI RUN','Toque para pular. Começa fácil e acelera aos poucos.');hint.textContent='Um toque: pular';const r=document.createElement('div');r.className='runner';r.textContent='🐰';arena.appendChild(r);let alive=true,scoreN=0,speed=3.2,last=performance.now(),next=900,obs=[];function jump(){if(!alive)return;audio();r.classList.remove('jump');void r.offsetWidth;r.animate([{transform:'translateY(0)'},{transform:'translateY(-86px)'},{transform:'translateY(0)'}],{duration:560,easing:'ease-out'})}arena.onpointerdown=jump;function add(){if(!alive)return;const o=document.createElement('div');o.className='ob';o.textContent=Math.random()>.55?'🌵':'🌿';o.style.left=arena.clientWidth+20+'px';arena.appendChild(o);obs.push(o)}function loop(now){if(!alive)return;const dt=Math.min(40,now-last);last=now;speed=Math.min(7.5,3.2+scoreN*.035);next-=dt;if(next<=0){add();next=Math.max(520,1000-scoreN*9)}const rr=r.getBoundingClientRect();for(let i=obs.length-1;i>=0;i--){const o=obs[i],x=parseFloat(o.style.left)-speed*dt/16;o.style.left=x+'px';const or=o.getBoundingClientRect();if(or.right<0){o.remove();obs.splice(i,1);scoreN++;continue}if(or.left<rr.right-8&&or.right>rr.left+8&&or.top<rr.bottom-8&&or.bottom>rr.top+8){alive=false;obs.forEach(x=>x.remove());score.textContent=String(scoreN);record.textContent='Fim de jogo • Recorde: '+Math.max(records.run,scoreN);hint.textContent='O mundo congelou. Tudo parou.';records.run=Math.max(records.run,scoreN);localStorage.setItem(REC,JSON.stringify(records));g.joy=clamp(g.joy+Math.min(18,scoreN/2));g.history.unshift('NEXI correu '+scoreN+' metros com você.');save();render();stopMusic();return}}score.textContent=String(scoreN);requestAnimationFrame(loop)}requestAnimationFrame(loop)}function hunt(){openGame('🌿 NEXI CAÇA','Ele está escondido! Encontre NEXI atrás da vegetação.');hint.textContent='Toque quando encontrar NEXI • 8 acertos';music('tribal');let n=0;function place(){arena.innerHTML='';for(let i=0;i<5;i++){const b=document.createElement('div');b.className='bush';b.textContent=i%2?'🌿':'🌳';b.style.left=(5+Math.random()*82)+'%';b.style.top=(35+Math.random()*48)+'%';arena.appendChild(b)}const x=18+Math.random()*65,y=30+Math.random()*50;const p=document.createElement('div');p.className='huntnexi';p.textContent='🐰';p.style.left=x+'%';p.style.top=y+'%';p.style.opacity='.88';p.onclick=()=>{audio('tribal');n++;if(n>=8){finish('catch',8,'NEXI adorou brincar de esconde-esconde!');gameText.textContent='Você encontrou NEXI 8 vezes!';return}score.textContent=n+'/8';place()};arena.appendChild(p)}place()}function tap(){openGame('💚 NEXI POP','Clique no coração o máximo que conseguir em 10 segundos.');hint.textContent='Toque rápido!';music('8bit');let n=0,done=false,h=document.createElement('div');h.className='heart';h.textContent='💚';arena.appendChild(h);function move(){h.style.left=(10+Math.random()*78)+'%';h.style.top=(12+Math.random()*68)+'%'}move();h.onclick=()=>{if(done)return;n++;audio();score.textContent=n;move()};setTimeout(()=>{done=true;finish('tap',n,'NEXI adorou sua brincadeira de reflexos!');gameText.textContent='Tempo! Você fez '+n+' cliques.'},10000)}function closeGame(){stopMusic();gameover.style.display='none';arena.innerHTML=''}restartBtn.onclick=()=>{stopMusic();const t=gameTitle.textContent;if(t.includes('RUN'))run();else if(t.includes('CAÇA'))hunt();else tap()};closeBtn.onclick=closeGame;let drag=false,dx=0,dy=0;pet.addEventListener('pointerdown',e=>{drag=true;pet.classList.add('dragging');pet.setPointerCapture(e.pointerId);const r=pet.getBoundingClientRect();dx=e.clientX-(r.left+r.width/2);dy=e.clientY-(r.top+r.height/2);e.preventDefault()});pet.addEventListener('pointermove',e=>{if(!drag)return;const r=habitat.getBoundingClientRect(),half=pet.offsetWidth/2;let x=e.clientX-r.left-dx,y=e.clientY-r.top-dy;x=Math.max(half,Math.min(r.width-half,x));y=Math.max(half,Math.min(r.height-half,y));pet.style.left=x+'px';pet.style.top=y+'px';pet.style.transform='translate(-50%,-50%)'});pet.addEventListener('pointerup',e=>{drag=false;pet.classList.remove('dragging');try{pet.releasePointerCapture(e.pointerId)}catch(_){}checkObjects()});pet.addEventListener('pointercancel',()=>{drag=false;pet.classList.remove('dragging')});function checkObjects(){const p=pet.getBoundingClientRect();[['plant','NEXI encontrou uma planta!'],['ball','NEXI encontrou a bola!'],['bowl','NEXI encontrou o potinho!']].forEach(([id,msg])=>{const o=$(id),r=o.getBoundingClientRect();if(p.left<r.right&&p.right>r.left&&p.top<r.bottom&&p.bottom>r.top){if(id==='bowl')g.hunger=clamp(g.hunger+14);if(id==='ball')g.joy=clamp(g.joy+10);if(id==='plant')g.bond=clamp(g.bond+3);g.history.unshift(msg);event.textContent=msg;animate('happy');audio();save();render()}})}load();render();</script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b10">
+<link rel="manifest" href="manifest.webmanifest">
+<title>NEXI</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#0b0b10;color:#f4f4f8;font:15px system-ui,sans-serif;overflow:hidden}
+.app{position:fixed;inset:0;display:flex;flex-direction:column}
+.stage{flex:1;position:relative;display:grid;place-items:center;overflow:hidden;background:#000}
+canvas{max-width:100%;max-height:100%;display:block}
+video{display:none}
+.top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(#000a,#0000);z-index:3}
+.brand{font-weight:900;letter-spacing:.14em}
+.name{background:#ffffff22;backdrop-filter:blur(8px);padding:6px 12px;border-radius:99px;font-size:.8rem;font-weight:700}
+.rec{display:none;align-items:center;gap:6px;background:#e5243b;padding:6px 10px;border-radius:99px;font-size:.78rem;font-weight:800}
+.rec.on{display:flex}.rec:before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:blink 1s infinite}
+.msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;z-index:2}
+.msg button{margin-top:14px}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:4}
+.flash.go{animation:flash .35s ease-out}
+.panel{background:#0b0b10;padding:10px 0 calc(12px + env(safe-area-inset-bottom))}
+.fx{display:flex;gap:8px;overflow-x:auto;padding:4px 14px 12px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.fx::-webkit-scrollbar{display:none}
+.fx button{flex:0 0 auto;scroll-snap-align:center;border:2px solid #ffffff1f;background:#17171f;color:#ddd;border-radius:14px;padding:8px 12px;font-weight:700;font-size:.78rem;min-width:74px}
+.fx button span{display:block;font-size:1.35rem;margin-bottom:2px}
+.fx button.on{border-color:#c6ff3d;color:#fff;background:#22261a}
+.slider{display:flex;align-items:center;gap:10px;padding:0 18px 10px;font-size:.75rem;color:#aaa}
+.slider input{flex:1;accent-color:#c6ff3d}
+.controls{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 22px}
+.round{width:52px;height:52px;border-radius:50%;border:0;background:#1d1d26;color:#fff;font-size:1.3rem;display:grid;place-items:center}
+.round:active,.shutter:active{transform:scale(.92)}
+.left{display:flex;gap:10px}.right{display:flex;gap:10px;justify-content:flex-end}
+.shutter{width:76px;height:76px;border-radius:50%;border:5px solid #fff;background:#fff3;padding:0;transition:transform .1s}
+.shutter i{display:block;margin:auto;width:56px;height:56px;border-radius:50%;background:#fff;transition:all .2s}
+.shutter.video i{background:#e5243b}
+.shutter.video.recording i{width:28px;height:28px;border-radius:7px}
+.mode{display:flex;justify-content:center;gap:18px;padding-bottom:10px;font-size:.78rem;font-weight:800;letter-spacing:.08em}
+.mode button{background:none;border:0;color:#777;font:inherit;padding:4px}
+.mode button.on{color:#c6ff3d}
+.thumb{width:52px;height:52px;border-radius:12px;border:2px solid #fff4;background:#1d1d26 center/cover;display:block}
+.gallery{position:fixed;inset:0;background:#0b0b10f5;z-index:10;display:none;flex-direction:column}
+.gallery.open{display:flex}
+.ghead{display:flex;justify-content:space-between;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;font-weight:800}
+.grid{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px}
+.grid a{position:relative;aspect-ratio:3/4;background:#1d1d26;border-radius:6px;overflow:hidden}
+.grid img,.grid video{width:100%;height:100%;object-fit:cover;display:block}
+.grid a b{position:absolute;bottom:4px;right:6px;font-size:.9rem}
+.empty{grid-column:1/-1;text-align:center;color:#888;padding:40px}
+button.pill{border:0;border-radius:99px;padding:10px 16px;font-weight:800;background:#c6ff3d;color:#111}
+@keyframes blink{50%{opacity:.2}}
+@keyframes flash{from{opacity:.85}to{opacity:0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="stage" id="stage">
+    <div class="top"><div class="brand">NEXI</div><div class="rec" id="rec">00:00</div><div class="name" id="fxName">Normal</div></div>
+    <canvas id="cv"></canvas>
+    <video id="video" playsinline muted></video>
+    <div class="msg" id="msg"><div><div style="font-size:3rem">📷</div><p>Toque para ligar a câmera.</p><button class="pill" id="startBtn">Ligar câmera</button></div></div>
+    <div class="flash" id="flash"></div>
+  </section>
+  <section class="panel">
+    <div class="fx" id="fx"></div>
+    <div class="slider"><span>Intensidade</span><input id="amount" type="range" min="0" max="1" step="0.01" value="0.6"></div>
+    <div class="mode"><button id="mPhoto" class="on">FOTO</button><button id="mVideo">VÍDEO</button></div>
+    <div class="controls">
+      <div class="left"><a class="thumb" id="thumb" href="#" aria-label="Galeria"></a></div>
+      <button class="shutter" id="shutter" aria-label="Capturar"><i></i></button>
+      <div class="right"><button class="round" id="flip" aria-label="Trocar câmera">🔄</button></div>
+    </div>
+  </section>
+</div>
+<div class="gallery" id="gallery">
+  <div class="ghead"><span>Galeria (sessão)</span><button class="pill" id="closeGal">Fechar</button></div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const cv=$('cv'),video=$('video');
+const gl=cv.getContext('webgl',{preserveDrawingBuffer:true});
+
+// ---- Efeitos (fragment shaders) ----
+// uniforms: t (tempo), a (intensidade 0..1), res (resolução), mir (espelhar)
+const HEAD=`precision mediump float;varying vec2 uv;uniform sampler2D tex;uniform float t,a;uniform vec2 res;
+vec3 px(vec2 p){return texture2D(tex,clamp(p,0.,1.)).rgb;}
+float lum(vec3 c){return dot(c,vec3(.299,.587,.114));}
+float rnd(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+`;
+const FX=[
+ ['Normal','🙂',`void main(){gl_FragColor=vec4(px(uv),1.);}`],
+ ['P&B','⚫',`void main(){vec3 c=px(uv);float l=lum(c);l=mix(l,smoothstep(.1,.9,l),a);gl_FragColor=vec4(vec3(l),1.);}`],
+ ['Sépia','🟤',`void main(){vec3 c=px(uv);vec3 s=vec3(dot(c,vec3(.393,.769,.189)),dot(c,vec3(.349,.686,.168)),dot(c,vec3(.272,.534,.131)));float v=1.-distance(uv,vec2(.5))*.9*a;gl_FragColor=vec4(mix(c,s,.4+.6*a)*v,1.);}`],
+ ['Vintage','🎞️',`void main(){vec3 c=px(uv);c=pow(c,vec3(1.1,1.,.85));c=mix(c,vec3(lum(c)),.25);c+=vec3(.08,.04,-.02);c+=(rnd(uv*res+t)-.5)*.12*a;float v=smoothstep(.85,.25,distance(uv,vec2(.5)));gl_FragColor=vec4(c*mix(1.,v,a),1.);}`],
+ ['Neon','💡',`void main(){vec2 e=1.5/res;float gx=lum(px(uv+vec2(e.x,0)))-lum(px(uv-vec2(e.x,0)));float gy=lum(px(uv+vec2(0,e.y)))-lum(px(uv-vec2(0,e.y)));float g=length(vec2(gx,gy))*(3.+a*8.);vec3 col=.5+.5*cos(6.28*(uv.x+uv.y+t*.2)+vec3(0,2,4));gl_FragColor=vec4(col*g+px(uv)*.15*(1.-a),1.);}`],
+ ['Quadrinhos','💥',`void main(){vec3 c=px(uv);float n=3.+floor((1.-a)*5.);c=floor(c*n+.5)/n;vec2 e=1./res;float g=abs(lum(px(uv+e))-lum(px(uv-e)))*8.;vec2 d=fract(uv*res/6.)-.5;float dot_=step(length(d),.35+lum(c)*.3);c*=mix(1.,.75+.25*dot_,a);gl_FragColor=vec4(c*(1.-step(.35,g)),1.);}`],
+ ['Pixel','👾',`void main(){float s=4.+a*36.;vec2 p=(floor(uv*res/s)+.5)*s/res;vec3 c=px(p);c=floor(c*6.)/6.;gl_FragColor=vec4(c,1.);}`],
+ ['Glitch','📺',`void main(){vec2 p=uv;float line=floor(uv.y*40.);float j=step(.92-a*.1,rnd(vec2(line,floor(t*12.))));p.x+=(rnd(vec2(line,t))-.5)*.15*j*a;float o=.004+.02*a;vec3 c=vec3(px(p+vec2(o,0)).r,px(p).g,px(p-vec2(o,0)).b);c*=.9+.1*sin(uv.y*res.y*1.5);c+=(rnd(uv*res+t)-.5)*.08;gl_FragColor=vec4(c,1.);}`],
+ ['Térmica','🔥',`void main(){float l=lum(px(uv));vec3 c=mix(vec3(0,0,.4),vec3(.6,0,.8),smoothstep(0.,.3,l));c=mix(c,vec3(1,.2,0),smoothstep(.3,.6,l));c=mix(c,vec3(1,1,.3),smoothstep(.6,.9,l));gl_FragColor=vec4(mix(px(uv),c,.4+.6*a),1.);}`],
+ ['Negativo','🔁',`void main(){vec3 c=px(uv);gl_FragColor=vec4(mix(c,1.-c,a*.7+.3),1.);}`],
+ ['Espelho','🪞',`void main(){vec2 p=uv;p.x=p.x>.5?1.-p.x:p.x;if(a>.5)p.y=p.y>.5?1.-p.y:p.y;gl_FragColor=vec4(px(p),1.);}`],
+ ['Caleidoscópio','🔮',`void main(){vec2 p=uv-.5;p.x*=res.x/res.y;float r=length(p),an=atan(p.y,p.x)+t*.15;float n=3.+floor(a*9.);float s=6.2832/n;an=abs(mod(an,s)-s*.5);p=vec2(cos(an),sin(an))*r;p.x/=res.x/res.y;gl_FragColor=vec4(px(p+.5),1.);}`],
+ ['Ondas','🌊',`void main(){vec2 p=uv;p.x+=sin(uv.y*25.+t*3.)*.02*a;p.y+=cos(uv.x*20.+t*2.)*.015*a;gl_FragColor=vec4(px(p),1.);}`],
+ ['Olho de peixe','🐟',`void main(){vec2 p=uv-.5;float r=length(p);p*=1.+a*1.2*(r*r-.25);vec3 c=px(p+.5);gl_FragColor=vec4(c*smoothstep(.75,.6,r),1.);}`],
+ ['Duotone','🎨',`void main(){float l=lum(px(uv));l=smoothstep(.1,.9,l);vec3 c1=vec3(.15,.05,.45),c2=mix(vec3(1.,.45,.6),vec3(.78,1.,.24),a);gl_FragColor=vec4(mix(c1,c2,l),1.);}`],
+ ['ASCII','🔤',`float ch(float l,vec2 p){p=floor(p*5.);float i=p.x+p.y*5.;float b=l>.8?11512810.:l>.6?13195790.:l>.45?15255086.:l>.3?4357252.:l>.15?4096.:0.;return mod(floor(b/exp2(i)),2.);}void main(){float s=6.+a*10.;vec2 c=floor(uv*res/s)*s/res;vec3 col=px(c+.5*s/res);vec2 f=fract(uv*res/s);float m=ch(lum(col),f);gl_FragColor=vec4(m*mix(vec3(.3,1.,.4),col*1.4,.5),1.);}`],
+];
+
+const VS=`attribute vec2 p;varying vec2 uv;uniform float mir;void main(){uv=p*.5+.5;uv.y=1.-uv.y;if(mir>.5)uv.x=1.-uv.x;gl_Position=vec4(p,0,1);}`;
+function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.warn(gl.getShaderInfoLog(s));return s}
+const progs=FX.map(([,,fs])=>{const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,VS));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,HEAD+fs));gl.linkProgram(p);return p});
+const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+[gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE));
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+
+let cur=+(localStorage.getItem('nexi-fx')||0)%FX.length,amount=$('amount'),facing='user',stream=null,mode='photo',recorder=null,chunks=[],recStart=0,shots=[];
+amount.value=localStorage.getItem('nexi-amt')||.6;
+
+// ---- Lista de efeitos ----
+$('fx').innerHTML=FX.map(([n,e],i)=>`<button data-i="${i}"><span>${e}</span>${n}</button>`).join('');
+function pick(i){cur=i;localStorage.setItem('nexi-fx',i);$('fxName').textContent=FX[i][0];document.querySelectorAll('.fx button').forEach((b,j)=>b.classList.toggle('on',j===i));document.querySelector(`.fx button[data-i="${i}"]`).scrollIntoView({inline:'center',behavior:'smooth',block:'nearest'})}
+$('fx').onclick=e=>{const b=e.target.closest('button');if(b){pick(+b.dataset.i);navigator.vibrate?.(8)}};
+amount.oninput=()=>localStorage.setItem('nexi-amt',amount.value);
+// deslizar no visor troca o efeito
+let sx=null;$('stage').addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+$('stage').addEventListener('touchend',e=>{if(sx==null)return;const d=e.changedTouches[0].clientX-sx;if(Math.abs(d)>60)pick((cur+(d<0?1:-1)+FX.length)%FX.length);sx=null});
+pick(cur);
+
+// ---- Câmera ----
+async function start(){
+  stream?.getTracks().forEach(t=>t.stop());
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:mode==='video'});
+  }catch(err){
+    try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing}})}catch(e){$('msg').style.display='grid';$('msg').querySelector('p').textContent='Não foi possível acessar a câmera: '+(e.message||e.name);return}
+  }
+  video.srcObject=stream;await video.play();$('msg').style.display='none';
+}
+$('startBtn').onclick=start;
+$('flip').onclick=()=>{facing=facing==='user'?'environment':'user';start()};
+
+function draw(now){
+  requestAnimationFrame(draw);
+  if(video.readyState<2)return;
+  const w=video.videoWidth,h=video.videoHeight;
+  if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h;gl.viewport(0,0,w,h)}
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,video);
+  const p=progs[cur];gl.useProgram(p);
+  const loc=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  gl.uniform1f(gl.getUniformLocation(p,'t'),now/1000);
+  gl.uniform1f(gl.getUniformLocation(p,'a'),+amount.value);
+  gl.uniform2f(gl.getUniformLocation(p,'res'),w,h);
+  gl.uniform1f(gl.getUniformLocation(p,'mir'),facing==='user'?1:0);
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+}
+requestAnimationFrame(draw);
+
+// ---- Captura ----
+function addShot(url,type){shots.unshift({url,type});$('thumb').style.backgroundImage=type==='img'?`url(${url})`:'none';$('thumb').textContent='';}
+function stamp(){return new Date().toISOString().slice(0,19).replace(/[T:]/g,'-')}
+function download(url,name){const a=document.createElement('a');a.href=url;a.download=name;a.click()}
+function photo(){
+  $('flash').classList.remove('go');void $('flash').offsetWidth;$('flash').classList.add('go');navigator.vibrate?.(20);
+  cv.toBlob(b=>{const url=URL.createObjectURL(b);addShot(url,'img');download(url,`nexi-${stamp()}.jpg`)},'image/jpeg',.92);
+}
+function toggleRec(){
+  if(recorder){recorder.stop();return}
+  const s=cv.captureStream(30);stream?.getAudioTracks().forEach(t=>s.addTrack(t));
+  const mime=['video/mp4','video/webm;codecs=vp9','video/webm'].find(m=>MediaRecorder.isTypeSupported?.(m))||'';
+  recorder=new MediaRecorder(s,mime?{mimeType:mime}:{});chunks=[];
+  recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  recorder.onstop=()=>{const type=recorder.mimeType||'video/webm';const url=URL.createObjectURL(new Blob(chunks,{type}));addShot(url,'vid');$('thumb').textContent='🎬';download(url,`nexi-${stamp()}.${type.includes('mp4')?'mp4':'webm'}`);recorder=null;$('shutter').classList.remove('recording');$('rec').classList.remove('on')};
+  recorder.start();recStart=Date.now();$('shutter').classList.add('recording');$('rec').classList.add('on');
+}
+setInterval(()=>{if(!recorder)return;const s=Math.floor((Date.now()-recStart)/1000);$('rec').textContent=String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},250);
+$('shutter').onclick=()=>{if(!stream)return start();mode==='photo'?photo():toggleRec()};
+function setMode(m){if(recorder)return;mode=m;$('mPhoto').classList.toggle('on',m==='photo');$('mVideo').classList.toggle('on',m==='video');$('shutter').classList.toggle('video',m==='video');if(stream&&m==='video'&&!stream.getAudioTracks().length)start()}
+$('mPhoto').onclick=()=>setMode('photo');$('mVideo').onclick=()=>setMode('video');
+
+// ---- Galeria ----
+$('thumb').onclick=e=>{e.preventDefault();$('grid').innerHTML=shots.length?shots.map(s=>`<a href="${s.url}" target="_blank">${s.type==='img'?`<img src="${s.url}">`:`<video src="${s.url}" muted playsinline></video><b>🎬</b>`}</a>`).join(''):'<div class="empty">Nenhuma captura ainda.</div>';$('gallery').classList.add('open')};
+$('closeGal').onclick=()=>$('gallery').classList.remove('open');
+
+if(!navigator.mediaDevices?.getUserMedia){$('msg').querySelector('p').textContent='Seu navegador não suporta câmera (use HTTPS).'}
+else start();
+</script>
+</body>
+</html>
