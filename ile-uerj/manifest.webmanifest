@@ -1,0 +1,14 @@
+{
+  "name": "Painel Letras — guia não oficial do ILE/UERJ",
+  "short_name": "Painel Letras",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2ec",
+  "theme_color": "#7a1f2b",
+  "lang": "pt-BR",
+  "description": "Documentos, prazos, orientações e contatos para alunos de Letras da UERJ, num só lugar.",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

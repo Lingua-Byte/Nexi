@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7a1f2b">
+<meta name="description" content="Guia não oficial para alunos do Instituto de Letras da UERJ: documentos, prazos, orientações e contatos num só lugar.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Painel Letras</title>
+<style>
+:root{
+  --bg:#f6f2ec; --card:#fffdf9; --ink:#2a2220; --muted:#7a6d68; --line:#e6ddd3;
+  --brand:#7a1f2b; --brand-ink:#fff; --soft:#f1e4e1; --ok:#2f7a4b; --warn:#b4610d; --late:#b3261e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#17130f; --card:#221c18; --ink:#f1e9e2; --muted:#a99c94; --line:#3a312b;
+    --brand:#d9737f; --brand-ink:#1b0f10; --soft:#3a2427; --ok:#6cc58e; --warn:#f0a95a; --late:#f2857b;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17130f; --card:#221c18; --ink:#f1e9e2; --muted:#a99c94; --line:#3a312b;
+  --brand:#d9737f; --brand-ink:#1b0f10; --soft:#3a2427; --ok:#6cc58e; --warn:#f0a95a; --late:#f2857b;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+.app{max-width:640px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.logo{display:flex;align-items:center;gap:10px}
+.mark{width:38px;height:38px;border-radius:11px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:900;font-family:Georgia,serif;font-size:1.25rem}
+.logo b{display:block;font-size:1.1rem;letter-spacing:.01em}
+.logo small{display:block;color:var(--muted);font-size:.72rem}
+.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;width:40px;height:40px;font-size:1.05rem;cursor:pointer}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:1.55rem;margin:10px 0 4px}
+h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 8px}
+p{margin:0 0 8px}
+.lead{color:var(--muted);font-size:.92rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.notice{background:var(--soft);border-color:transparent;font-size:.84rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:84px}
+.quick span{font-size:1.3rem}
+.quick b{font-size:.9rem}
+.quick small{color:var(--muted);font-size:.74rem}
+.row{display:flex;align-items:center;gap:10px}
+.row .grow{flex:1;min-width:0}
+.item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0;padding-top:2px}
+.item .t{font-weight:650;font-size:.95rem;overflow-wrap:anywhere}
+.item .m{color:var(--muted);font-size:.78rem}
+.item a{color:inherit}
+.tag{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--brand);margin-right:4px}
+.badge{font-size:.72rem;font-weight:800;padding:4px 9px;border-radius:99px;white-space:nowrap;border:1px solid currentColor}
+.b-ok{color:var(--ok)} .b-warn{color:var(--warn)} .b-late{color:var(--late)} .b-done{color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+label{font-size:.78rem;color:var(--muted);display:block;margin:8px 0 4px}
+.btn{border:0;background:var(--brand);color:var(--brand-ink);font-weight:750;border-radius:10px;padding:11px 16px;cursor:pointer;font-size:.92rem}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--line)}
+.btn.small{padding:6px 10px;font-size:.78rem}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 12px;font-size:.8rem;white-space:nowrap;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:8px}
+summary{cursor:pointer;padding:14px;font-weight:650;list-style:none;display:flex;justify-content:space-between;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--muted);font-weight:400}
+details[open] summary:after{content:"–"}
+details .body{padding:0 14px 14px;font-size:.9rem}
+details .body ul{margin:4px 0 8px;padding-left:18px}
+.src{font-size:.74rem;color:var(--muted)}
+.empty{color:var(--muted);font-size:.88rem;text-align:center;padding:14px 0}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+nav.tabs button{border:0;background:none;color:var(--muted);font:inherit;font-size:.68rem;font-weight:650;padding:6px 0;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button span{font-size:1.2rem}
+nav.tabs button[aria-current="page"]{color:var(--brand);background:var(--soft)}
+section[hidden]{display:none}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:99px;font-size:.84rem;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
+.toast.show{opacity:1}
+footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
+@media (max-width:360px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="mark" aria-hidden="true">L</div>
+      <div><b>Painel Letras</b><small>Guia não oficial · alunos do ILE/UERJ</small></div>
+    </div>
+    <button class="iconbtn" id="themeBtn" aria-label="Alternar tema claro/escuro">◐</button>
+  </header>
+
+  <!-- INÍCIO -->
+  <section id="tab-inicio">
+    <h1 id="greet">Olá!</h1>
+    <p class="lead">Tudo o que costuma ficar espalhado em PDFs e e-mails, num só lugar.</p>
+
+    <h2>Seus próximos prazos</h2>
+    <div class="card" id="homeDeadlines"></div>
+
+    <h2>Atalhos</h2>
+    <div class="grid2" id="quickLinks"></div>
+
+    <h2>Documentos recentes</h2>
+    <div class="card" id="homeDocs"></div>
+
+    <div class="card notice">
+      <b>Aviso:</b> este app é um projeto de estudantes e <b>não é um canal oficial</b> da UERJ.
+      Confira sempre datas e regras no site do Instituto, no Aluno Online ou na secretaria.
+    </div>
+  </section>
+
+  <!-- DOCUMENTOS -->
+  <section id="tab-docs" hidden>
+    <h1>Documentos</h1>
+    <p class="lead">Horários, editais e listas publicados pelo Instituto, com busca e filtros.</p>
+    <input type="search" id="docSearch" placeholder="Buscar: estágio, monitoria, 2026…" aria-label="Buscar documentos">
+    <div class="chips" id="docChips" style="margin-top:10px"></div>
+    <div class="card" id="docList" style="margin-top:8px"></div>
+
+    <details>
+      <summary>Adicionar um link que você encontrou</summary>
+      <div class="body">
+        <form id="docForm">
+          <label for="dTitle">Título</label><input id="dTitle" required maxlength="140">
+          <label for="dUrl">Link</label><input id="dUrl" type="url" required placeholder="https://">
+          <label for="dCat">Categoria</label>
+          <select id="dCat"></select>
+          <label for="dSem">Semestre (opcional)</label><input id="dSem" placeholder="2026.1" maxlength="10">
+          <div style="margin-top:12px"><button class="btn" type="submit">Salvar link</button></div>
+          <p class="src" style="margin-top:8px">Fica salvo só neste aparelho.</p>
+        </form>
+      </div>
+    </details>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="tab-agenda" hidden>
+    <h1>Agenda de prazos</h1>
+    <p class="lead">Inscrições, entregas, rematrícula, provas. Com contagem regressiva.</p>
+    <form class="card" id="dlForm">
+      <label for="dlTitle">O quê?</label>
+      <input id="dlTitle" required maxlength="120" placeholder="Ex.: inscrição na monitoria de Francês">
+      <div class="grid2">
+        <div><label for="dlDate">Data</label><input id="dlDate" type="date" required></div>
+        <div><label for="dlCat">Tipo</label><select id="dlCat"></select></div>
+      </div>
+      <div style="margin-top:12px" class="row">
+        <button class="btn" type="submit">Adicionar prazo</button>
+        <button class="btn ghost" type="button" id="icsBtn">Exportar p/ calendário</button>
+      </div>
+    </form>
+    <div class="card" id="dlList"></div>
+  </section>
+
+  <!-- GUIA -->
+  <section id="tab-guia" hidden>
+    <h1>Guia do aluno</h1>
+    <p class="lead">Orientações práticas. Cada resposta diz de onde veio a informação.</p>
+    <input type="search" id="faqSearch" placeholder="Buscar no guia…" aria-label="Buscar no guia" style="margin-bottom:10px">
+    <div id="faqList"></div>
+  </section>
+
+  <!-- CONTATOS -->
+  <section id="tab-contatos" hidden>
+    <h1>Contatos e links</h1>
+    <p class="lead">Para quem escrever e onde procurar.</p>
+    <div class="card" id="contactList"></div>
+    <h2>Sugerir correção</h2>
+    <div class="card">
+      <p style="font-size:.9rem">Achou algo desatualizado ou quer incluir informação nova? Os dados ficam no início do código (<code>DATA</code>) e podem ser editados por qualquer pessoa do projeto.</p>
+    </div>
+  </section>
+
+  <footer>Painel Letras · projeto estudantil independente · sem vínculo oficial com a UERJ</footer>
+</div>
+
+<nav class="tabs" aria-label="Seções">
+  <div class="in">
+    <button data-tab="inicio" aria-current="page"><span>⌂</span>Início</button>
+    <button data-tab="docs"><span>▤</span>Docs</button>
+    <button data-tab="agenda"><span>◷</span>Prazos</button>
+    <button data-tab="guia"><span>?</span>Guia</button>
+    <button data-tab="contatos"><span>✉</span>Contatos</button>
+  </div>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   DADOS — edite aqui. Só inclua informação verificada e
+   indique a fonte. Datas no formato AAAA-MM-DD.
+   ========================================================= */
+const DATA = {
+  base: "https://www.institutodeletras.uerj.br",
+  links: [
+    { icon:"🏛️", title:"Site do Instituto", desc:"institutodeletras.uerj.br", url:"https://www.institutodeletras.uerj.br" },
+    { icon:"🎓", title:"Aluno Online", desc:"Inscrição, notas, horários", url:"https://www.alunoonline.uerj.br" },
+    { icon:"📚", title:"Pós em Letras", desc:"pgletras.uerj.br", url:"https://www.pgletras.uerj.br" },
+    { icon:"✉️", title:"E-mail do ILE", desc:"iletrasuerj@uerj.br", url:"mailto:iletrasuerj@uerj.br" }
+  ],
+  categories: ["Horários","Estágio","Monitoria","Editais","Pós-graduação","Outros"],
+  docs: [
+    { title:"Horário das disciplinas de graduação do CAp — 2026.1", cat:"Horários", sem:"2026.1", date:"2026-02",
+      url:"https://www.institutodeletras.uerj.br/wp-content/uploads/2026/02/2026_1_horario_disciplinas_CAp.pdf" },
+    { title:"Horário CAp — 2025.2", cat:"Horários", sem:"2025.2", date:"2025-07",
+      url:"https://www.institutodeletras.uerj.br/wp-content/uploads/2025/07/CAp_horario_2025_2.pdf" },
+    { title:"Turmas de estágio no CAp-UERJ — horários e dias (todas as áreas)", cat:"Estágio", sem:"2025.1", date:"2025-02",
+      url:"https://www.institutodeletras.uerj.br/wp-content/uploads/2025/02/versao-final-Para-o-ILE-relacao-turmas-de-estagio-CAp-UERJ-Horarios-e-dias-2025.1-todas-as-areas.pdf" },
+    { title:"Edital de monitoria — Espanhol I", cat:"Monitoria", sem:"2024", date:"2024-03",
+      url:"https://www.institutodeletras.uerj.br/wp-content/uploads/2024/03/Edital_e_Programa_Plano-MONITORIA-CETREINA-ESPANHOL-I-versao-final.pdf" },
+    { title:"Edital — processo seletivo de professor substituto 2025", cat:"Editais", sem:"2025", date:"2025-06",
+      url:"https://www.institutodeletras.uerj.br/wp-content/uploads/2025/06/Edital_Padrao_Processo_Seletivo_Substituto_Presencial__2025.pdf" },
+    { title:"Edital especialização — Língua Inglesa", cat:"Pós-graduação", sem:"2025", date:"2024-10",
+      url:"https://institutodeletras.uerj.br/wp-content/uploads/2024/10/EDITALLINGUAINGLESA.25.pdf" },
+    { title:"Edital especialização — Literatura Portuguesa", cat:"Pós-graduação", sem:"2025", date:"2024-10",
+      url:"https://institutodeletras.uerj.br/wp-content/uploads/2024/10/EDITAL-LIT-PORT.25.pdf" },
+    { title:"Edital de seleção do PPG Letras — 2026.1", cat:"Pós-graduação", sem:"2026.1", date:"2025",
+      url:"https://www.pgletras.uerj.br/editais/selecao/2026/Edital_de_selecao_para_2026.1__Aprovado_.pdf" }
+  ],
+  faq: [
+    { q:"Como funciona o horário do estágio no CAp?",
+      a:"<p>Segundo a lista de turmas de estágio do CAp para 2026.1, <b>os horários que aparecem no Aluno Online são das reuniões obrigatórias de orientação</b>. O estágio em campo acontece nos horários das turmas da Educação Básica do CAp, de acordo com o professor que orienta você.</p><p>O Instituto publica a lista por área: Língua Portuguesa, Francesa, Espanhola e Inglesa.</p>",
+      src:"Lista de turmas de estágio CAp-UERJ (ILE)", tags:"estágio cap licenciatura" },
+    { q:"Quais são as regras da monitoria?",
+      a:"<p>No edital de monitoria de Espanhol I (2024):</p><ul><li>a <b>média mínima para aprovação é 7</b>;</li><li><b>não é permitido acumular</b> a bolsa de monitoria com outra bolsa ou estágio;</li><li>horário, local, programa e número de vagas ficam nos formulários anexos ao edital.</li></ul><p>As regras podem mudar a cada edital. Leia sempre o edital vigente da sua disciplina.</p>",
+      src:"Edital de monitoria ILE/UERJ, 2024", tags:"monitoria bolsa cetreina" },
+    { q:"Onde vejo os horários das disciplinas?",
+      a:"<p>Os horários individuais ficam no <b>Aluno Online</b>. O Instituto também publica PDFs de horários; veja a aba <b>Docs</b> e filtre por “Horários”.</p>",
+      src:"Documentos publicados pelo ILE", tags:"horário grade disciplina" },
+    { q:"Para quem escrevo com dúvidas sobre o Instituto?",
+      a:"<p>O e-mail institucional divulgado pelo ILE nos editais é <a href=\"mailto:iletrasuerj@uerj.br\">iletrasuerj@uerj.br</a>. Para assuntos do seu curso, procure também a coordenação da sua habilitação.</p>",
+      src:"Edital de professor substituto 2025 (ILE)", tags:"contato email secretaria" },
+    { q:"Onde encontro informações da pós-graduação?",
+      a:"<p>O Programa de Pós-Graduação em Letras tem site próprio, <a href=\"https://www.pgletras.uerj.br\" target=\"_blank\" rel=\"noopener\">pgletras.uerj.br</a>, com os editais de seleção. As especializações (lato sensu) publicam editais no site do Instituto.</p>",
+      src:"Sites do ILE e do PPG Letras", tags:"pós mestrado doutorado especialização" }
+  ],
+  contacts: [
+    { title:"Instituto de Letras (ILE)", meta:"E-mail institucional", value:"iletrasuerj@uerj.br", url:"mailto:iletrasuerj@uerj.br" },
+    { title:"Site do Instituto", meta:"Notícias, editais e documentos", value:"institutodeletras.uerj.br", url:"https://www.institutodeletras.uerj.br" },
+    { title:"PPG em Letras", meta:"Mestrado e doutorado", value:"pgletras.uerj.br", url:"https://www.pgletras.uerj.br" },
+    { title:"Aluno Online", meta:"Sistema acadêmico da UERJ", value:"alunoonline.uerj.br", url:"https://www.alunoonline.uerj.br" }
+  ],
+  deadlineTypes: ["Inscrição","Entrega","Prova","Rematrícula","Evento","Outro"]
+};
+
+/* ========================================================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const K = { dl:"pl-deadlines", docs:"pl-mydocs", theme:"pl-theme", tab:"pl-tab" };
+let deadlines = store.get(K.dl, []);
+let myDocs = store.get(K.docs, []);
+let docFilter = "Todos";
+
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2200); }
+function safeUrl(u){ try{ const x=new URL(u); return ["http:","https:","mailto:"].includes(x.protocol) ? x.href : "#"; }catch(e){ return "#"; } }
+
+/* ---------- Tema ---------- */
+function applyTheme(t){ if(t) document.documentElement.dataset.theme=t; else delete document.documentElement.dataset.theme; }
+applyTheme(store.get(K.theme, null));
+$("#themeBtn").onclick = () => {
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const cur = document.documentElement.dataset.theme || (dark ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  applyTheme(next); store.set(K.theme, next);
+};
+
+/* ---------- Abas ---------- */
+function showTab(name){
+  document.querySelectorAll("section[id^=tab-]").forEach(s => s.hidden = s.id !== "tab-"+name);
+  document.querySelectorAll("nav.tabs button").forEach(b => {
+    if(b.dataset.tab===name) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current");
+  });
+  store.set(K.tab, name); scrollTo(0,0);
+}
+document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+/* ---------- Prazos ---------- */
+function daysUntil(iso){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(iso+"T00:00:00");
+  return Math.round((d - today) / 86400000);
+}
+function badge(dl){
+  if(dl.done) return '<span class="badge b-done">feito</span>';
+  const n = daysUntil(dl.date);
+  if(n < 0) return `<span class="badge b-late">atrasado ${-n}d</span>`;
+  if(n === 0) return '<span class="badge b-late">hoje</span>';
+  if(n <= 7) return `<span class="badge b-warn">${n===1?"amanhã":"em "+n+" dias"}</span>`;
+  return `<span class="badge b-ok">em ${n} dias</span>`;
+}
+const fmtDate = iso => new Date(iso+"T00:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
+function sortedDeadlines(){ return [...deadlines].sort((a,b)=> (a.done-b.done) || a.date.localeCompare(b.date)); }
+function dlItem(dl, actions){
+  return `<div class="item"><div class="grow">
+      <div class="t" style="${dl.done?'text-decoration:line-through;opacity:.6':''}">${esc(dl.title)}</div>
+      <div class="m"><span class="tag">${esc(dl.cat)}</span>${fmtDate(dl.date)}</div>
+      ${actions ? `<div class="row" style="margin-top:8px;gap:6px">
+        <button class="btn ghost small" data-done="${dl.id}">${dl.done?"Reabrir":"Concluir"}</button>
+        <button class="btn ghost small" data-del="${dl.id}">Excluir</button></div>` : ""}
+    </div>${badge(dl)}</div>`;
+}
+function renderDeadlines(){
+  const list = sortedDeadlines();
+  $("#dlList").innerHTML = list.length ? list.map(d=>dlItem(d,true)).join("") : '<div class="empty">Nenhum prazo ainda. Adicione o primeiro acima.</div>';
+  const upcoming = list.filter(d=>!d.done).slice(0,3);
+  $("#homeDeadlines").innerHTML = upcoming.length
+    ? upcoming.map(d=>dlItem(d,false)).join("")
+    : '<div class="empty">Sem prazos cadastrados.<br><button class="btn small" style="margin-top:8px" onclick="showTab(\'agenda\')">Adicionar prazo</button></div>';
+}
+$("#dlCat").innerHTML = DATA.deadlineTypes.map(t=>`<option>${esc(t)}</option>`).join("");
+$("#dlForm").onsubmit = e => {
+  e.preventDefault();
+  deadlines.push({ id: Date.now().toString(36), title: $("#dlTitle").value.trim(), date: $("#dlDate").value, cat: $("#dlCat").value, done:false });
+  store.set(K.dl, deadlines); e.target.reset(); renderDeadlines(); toast("Prazo adicionado");
+};
+$("#dlList").onclick = e => {
+  const id = e.target.dataset.done || e.target.dataset.del; if(!id) return;
+  if(e.target.dataset.del){ if(!confirm("Excluir este prazo?")) return; deadlines = deadlines.filter(d=>d.id!==id); }
+  else { const d = deadlines.find(d=>d.id===id); d.done = !d.done; }
+  store.set(K.dl, deadlines); renderDeadlines();
+};
+$("#icsBtn").onclick = () => {
+  const open = deadlines.filter(d=>!d.done);
+  if(!open.length){ toast("Nenhum prazo em aberto para exportar"); return; }
+  const icsEsc = s => s.replace(/[\\;,]/g, m=>"\\"+m).replace(/\n/g,"\\n");
+  const lines = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Painel Letras//PT-BR"];
+  open.forEach(d => {
+    const day = d.date.replace(/-/g,"");
+    const next = new Date(d.date+"T00:00:00"); next.setDate(next.getDate()+1);
+    const end = next.toISOString().slice(0,10).replace(/-/g,"");
+    lines.push("BEGIN:VEVENT",`UID:${d.id}@painel-letras`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,
+      `DTSTART;VALUE=DATE:${day}`,`DTEND;VALUE=DATE:${end}`,`SUMMARY:${icsEsc(d.cat+": "+d.title)}`,"END:VEVENT");
+  });
+  lines.push("END:VCALENDAR");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\r\n")],{type:"text/calendar"}));
+  a.download = "prazos-letras.ics"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+};
+
+/* ---------- Documentos ---------- */
+function allDocs(){ return [...myDocs.map(d=>({...d, mine:true})), ...DATA.docs].sort((a,b)=> (b.date||"").localeCompare(a.date||"")); }
+function docItem(d){
+  return `<div class="item"><div class="grow">
+    <div class="t"><a href="${safeUrl(d.url)}" target="_blank" rel="noopener">${esc(d.title)}</a></div>
+    <div class="m"><span class="tag">${esc(d.cat)}</span>${d.sem?esc(d.sem)+" · ":""}${d.mine?"adicionado por você":"PDF do Instituto"}
+    ${d.mine?` · <a href="#" data-rmdoc="${d.id}">remover</a>`:""}</div>
+  </div><span aria-hidden="true">↗</span></div>`;
+}
+function renderDocs(){
+  const q = $("#docSearch").value.trim().toLowerCase();
+  const list = allDocs().filter(d => (docFilter==="Todos" || d.cat===docFilter) && (!q || (d.title+" "+d.cat+" "+(d.sem||"")).toLowerCase().includes(q)));
+  $("#docList").innerHTML = list.length ? list.map(docItem).join("") : '<div class="empty">Nada encontrado.</div>';
+  $("#homeDocs").innerHTML = allDocs().slice(0,3).map(docItem).join("") +
+    '<div style="margin-top:8px"><button class="btn ghost small" onclick="showTab(\'docs\')">Ver todos</button></div>';
+}
+$("#docChips").innerHTML = ["Todos", ...DATA.categories].map(c=>`<button class="chip" aria-pressed="${c==='Todos'}">${esc(c)}</button>`).join("");
+$("#docChips").onclick = e => {
+  if(!e.target.classList.contains("chip")) return;
+  docFilter = e.target.textContent;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c===e.target));
+  renderDocs();
+};
+$("#docSearch").oninput = renderDocs;
+$("#dCat").innerHTML = DATA.categories.map(c=>`<option>${esc(c)}</option>`).join("");
+$("#docForm").onsubmit = e => {
+  e.preventDefault();
+  const url = $("#dUrl").value.trim();
+  if(safeUrl(url)==="#"){ toast("Link inválido"); return; }
+  myDocs.push({ id: Date.now().toString(36), title: $("#dTitle").value.trim(), url, cat: $("#dCat").value, sem: $("#dSem").value.trim(), date: new Date().toISOString().slice(0,7) });
+  store.set(K.docs, myDocs); e.target.reset(); renderDocs(); toast("Link salvo");
+};
+document.addEventListener("click", e => {
+  const id = e.target.dataset && e.target.dataset.rmdoc; if(!id) return;
+  e.preventDefault(); myDocs = myDocs.filter(d=>d.id!==id); store.set(K.docs, myDocs); renderDocs();
+});
+
+/* ---------- Guia ---------- */
+function renderFaq(){
+  const q = $("#faqSearch").value.trim().toLowerCase();
+  const list = DATA.faq.filter(f => !q || (f.q+" "+f.tags+" "+f.a.replace(/<[^>]+>/g," ")).toLowerCase().includes(q));
+  $("#faqList").innerHTML = list.length ? list.map(f=>`<details><summary>${esc(f.q)}</summary><div class="body">${f.a}<p class="src">Fonte: ${esc(f.src)}</p></div></details>`).join("")
+    : '<div class="card empty">Nada encontrado no guia.</div>';
+}
+$("#faqSearch").oninput = renderFaq;
+
+/* ---------- Início / contatos ---------- */
+function greet(){
+  const h = new Date().getHours();
+  $("#greet").textContent = h < 12 ? "Bom dia!" : h < 18 ? "Boa tarde!" : "Boa noite!";
+}
+$("#quickLinks").innerHTML = DATA.links.map(l=>`<a class="quick" href="${safeUrl(l.url)}" ${l.url.startsWith("mailto")?"":'target="_blank" rel="noopener"'}><span aria-hidden="true">${l.icon}</span><b>${esc(l.title)}</b><small>${esc(l.desc)}</small></a>`).join("");
+$("#contactList").innerHTML = DATA.contacts.map(c=>`<div class="item"><div class="grow"><div class="t">${esc(c.title)}</div><div class="m">${esc(c.meta)}</div></div><a class="btn ghost small" href="${safeUrl(c.url)}" ${c.url.startsWith("mailto")?"":'target="_blank" rel="noopener"'}>${esc(c.value)}</a></div>`).join("");
+
+greet(); renderDeadlines(); renderDocs(); renderFaq();
+showTab(store.get(K.tab, "inicio"));
+
+if("serviceWorker" in navigator && location.protocol !== "file:"){
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
