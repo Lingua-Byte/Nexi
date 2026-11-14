@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#29435a">
-<meta name="description" content="Guia não oficial para alunos do Instituto de Letras da UERJ: documentos, prazos, orientações e contatos num só lugar.">
+<meta name="description" content="Guia do aluno do Instituto de Letras da UERJ: documentos, prazos, orientações e contatos num só lugar. Este não é um canal oficial do ILE ou da UERJ.">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<title>Painel Letras</title>
+<title>ILE / UERJ</title>
 <style>
 :root{
   /* Paleta medida do perfil @ileuerj: azul institucional #29435a */
@@ -38,7 +39,8 @@ body{background:var(--bg);color:var(--ink);font:16px/1.45 Roboto,system-ui,-appl
 .app{max-width:640px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
 header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .logo{display:flex;align-items:center;gap:10px}
-.mark{width:42px;height:42px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font:800 1.15rem/1 "Roboto Condensed","Arial Narrow",sans-serif;letter-spacing:-.02em}
+.mark{width:44px;height:44px;border-radius:50%;display:block}
+.disclaimer{font-size:.72rem;color:var(--muted);text-align:center;padding:6px 0 2px;border-top:1px solid var(--line)}
 .logo b{display:block;font:700 1.05rem/1.1 "Roboto Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em}
 .logo small{display:block;color:var(--muted);font-size:.72rem}
 .iconbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;width:40px;height:40px;font-size:1.05rem;cursor:pointer}
@@ -109,11 +111,12 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
 <div class="app">
   <header>
     <div class="logo">
-      <div class="mark" aria-hidden="true">PL</div>
-      <div><b>Painel Letras</b><small>Guia não oficial · alunos do ILE/UERJ</small></div>
+      <img class="mark" src="logo-ile.png" alt="Instituto de Letras | UERJ" width="44" height="44">
+      <div><b>ILE / UERJ</b><small>Guia do aluno · Instituto de Letras</small></div>
     </div>
     <button class="iconbtn" id="themeBtn" aria-label="Alternar tema claro/escuro">◐</button>
   </header>
+  <div class="disclaimer">Este não é um canal oficial do ILE ou da UERJ.</div>
 
   <!-- INÍCIO -->
   <section id="tab-inicio">
@@ -134,10 +137,7 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
     <h2>Documentos recentes</h2>
     <div class="card" id="homeDocs"></div>
 
-    <div class="card notice">
-      <b>Aviso:</b> este app é um projeto de estudantes e <b>não é um canal oficial</b> da UERJ.
-      Confira sempre datas e regras no site do Instituto, no Aluno Online ou na secretaria.
-    </div>
+    <div class="card notice">Este não é um canal oficial do ILE ou da UERJ. Confira datas e regras nos canais oficiais do Instituto.</div>
   </section>
 
   <!-- DOCUMENTOS -->
@@ -202,7 +202,7 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
     </div>
   </section>
 
-  <footer>Painel Letras · projeto estudantil independente · sem vínculo oficial com a UERJ</footer>
+  <footer>Este não é um canal oficial do ILE ou da UERJ.</footer>
 </div>
 
 <nav class="tabs" aria-label="Seções">
@@ -391,7 +391,7 @@ $("#icsBtn").onclick = () => {
   const open = deadlines.filter(d=>!d.done);
   if(!open.length){ toast("Nenhum prazo em aberto para exportar"); return; }
   const icsEsc = s => s.replace(/[\\;,]/g, m=>"\\"+m).replace(/\n/g,"\\n");
-  const lines = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Painel Letras//PT-BR"];
+  const lines = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ILE UERJ Guia do Aluno//PT-BR"];
   open.forEach(d => {
     const day = d.date.replace(/-/g,"");
     const next = new Date(d.date+"T00:00:00"); next.setDate(next.getDate()+1);

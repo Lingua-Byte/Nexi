@@ -1,14 +1,15 @@
 {
-  "name": "Painel Letras — guia não oficial do ILE/UERJ",
-  "short_name": "Painel Letras",
+  "name": "ILE / UERJ — Guia do aluno",
+  "short_name": "ILE UERJ",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f4f6f8",
   "theme_color": "#29435a",
   "lang": "pt-BR",
-  "description": "Documentos, prazos, orientações e contatos para alunos de Letras da UERJ, num só lugar.",
+  "description": "Guia do aluno do Instituto de Letras da UERJ. Este não é um canal oficial do ILE ou da UERJ.",
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
