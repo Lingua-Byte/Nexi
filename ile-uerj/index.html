@@ -312,6 +312,15 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
   </div>
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="confirmDlg" aria-labelledby="confirmMsg">
+  <form method="dialog">
+    <p id="confirmMsg" style="font-size:1rem;margin:0 0 16px"></p>
+    <div class="row" style="gap:8px;justify-content:flex-end">
+      <button class="btn ghost" value="no">Cancelar</button>
+      <button class="btn" value="yes">Confirmar</button>
+    </div>
+  </form>
+</dialog>
 <dialog id="reportDlg" aria-labelledby="reportTitle">
   <form method="dialog">
     <h2 id="reportTitle" style="margin-top:0">Denunciar post</h2>
@@ -459,6 +468,15 @@ function showTab(name){
   if(window.onTabShown) window.onTabShown(name);
 }
 window.showTab = showTab; window.toast = toast;
+/* Confirmação própria (o confirm() do navegador é bloqueado em alguns ambientes) */
+function askConfirm(msg){
+  return new Promise(resolve => {
+    const d = $("#confirmDlg"); $("#confirmMsg").textContent = msg;
+    d.onclose = () => resolve(d.returnValue === "yes");
+    d.returnValue = ""; d.showModal();
+  });
+}
+window.askConfirm = askConfirm;
 document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 $("#infoNav").onclick = e => { const b = e.target.closest("[data-go]"); if(b) showTab(b.dataset.go); };
 
@@ -501,9 +519,9 @@ $("#dlForm").onsubmit = e => {
   deadlines.push({ id: Date.now().toString(36), title: $("#dlTitle").value.trim(), date: $("#dlDate").value, cat: $("#dlCat").value, done:false });
   store.set(K.dl, deadlines); e.target.reset(); renderDeadlines(); toast("Prazo adicionado");
 };
-$("#dlList").onclick = e => {
+$("#dlList").onclick = async e => {
   const id = e.target.dataset.done || e.target.dataset.del; if(!id) return;
-  if(e.target.dataset.del){ if(!confirm("Excluir este prazo?")) return; deadlines = deadlines.filter(d=>d.id!==id); }
+  if(e.target.dataset.del){ if(!(await askConfirm("Excluir este prazo?"))) return; deadlines = deadlines.filter(d=>d.id!==id); }
   else { const d = deadlines.find(d=>d.id===id); d.done = !d.done; }
   store.set(K.dl, deadlines); renderDeadlines();
 };

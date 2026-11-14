@@ -164,7 +164,7 @@ document.addEventListener("click", async e => {
     const m = document.querySelector(`[data-menu-for="${t.dataset.menu}"]`);
     const was = m.hidden; document.querySelectorAll(".menu").forEach(x=>x.hidden=true); m.hidden = !was;
   } else if(t.dataset.delPost){
-    if(!confirm("Apagar este post? Isso não pode ser desfeito.")) return;
+    if(!await window.askConfirm("Apagar este post? Isso não pode ser desfeito.")) return;
     await run(() => api.posts.remove(t.dataset.delPost), "Post apagado").catch(()=>{});
     document.querySelectorAll(`[data-post="${t.dataset.delPost}"]`).forEach(el=>el.remove());
     if(detailStack.length && detailStack[detailStack.length-1].view==="post") $("#detailBack").click();
@@ -283,7 +283,7 @@ async function renderProject(id, box){
     <h2>Atualizações</h2>
     <div id="projPosts"></div>`;
   const fb = box.querySelector("#pFollow"); if(fb) fb.onclick = async () => { await run(() => api.follows.toggle("project", id)).catch(()=>{}); renderProject(id, box); };
-  const lb = box.querySelector("#pLeave"); if(lb) lb.onclick = async () => { if(confirm("Sair deste projeto?")){ await run(() => api.projects.leave(id), "Você saiu do projeto").catch(()=>{}); renderProject(id, box); } };
+  const lb = box.querySelector("#pLeave"); if(lb) lb.onclick = async () => { if(await window.askConfirm("Sair deste projeto?")){ await run(() => api.projects.leave(id), "Você saiu do projeto").catch(()=>{}); renderProject(id, box); } };
   const am = box.querySelector("#addMember");
   if(am){
     let found = [];
@@ -323,7 +323,7 @@ async function renderPostPage(id, box){
   box.innerHTML = `${postCard(p)}<h2>Comentários</h2><div class="card"><div id="cmts"></div>
     ${viewer ? `<form id="cForm" class="row" style="gap:8px;margin-top:10px;align-items:flex-end"><textarea id="cInput" rows="1" maxlength="1000" placeholder="Escreva um comentário…" class="grow" aria-label="Comentário"></textarea><button class="btn small">Enviar</button></form>` : ""}</div>`;
   box.querySelector("#cmts").onclick = async e => { const b = e.target.closest("[data-del-c]"); if(!b) return;
-    if(confirm("Apagar comentário?")){ await run(() => api.comments.remove(b.dataset.delC)).catch(()=>{}); draw(); } };
+    if(await window.askConfirm("Apagar comentário?")){ await run(() => api.comments.remove(b.dataset.delC)).catch(()=>{}); draw(); } };
   const f = box.querySelector("#cForm"); if(f) f.onsubmit = async e => { e.preventDefault();
     const c = await run(() => api.comments.add(id, box.querySelector("#cInput").value)).catch(()=>null); if(c){ box.querySelector("#cInput").value = ""; draw(); } };
   draw();
@@ -369,7 +369,7 @@ async function renderMe(){
   </div>`;
   box.appendChild(menu);
   $("#logout").onclick = async () => { await api.auth.signOut(); viewer = null; refreshBadge(); renderMe(); };
-  const rd = $("#resetDemo"); if(rd) rd.onclick = async () => { if(confirm("Apagar tudo o que foi criado e voltar aos dados de exemplo?")){ await api.resetDemo(); viewer = null; refreshBadge(); toast("Demonstração reiniciada"); renderMe(); } };
+  const rd = $("#resetDemo"); if(rd) rd.onclick = async () => { if(await window.askConfirm("Apagar tudo o que foi criado e voltar aos dados de exemplo?")){ await api.resetDemo(); viewer = null; refreshBadge(); toast("Demonstração reiniciada"); renderMe(); } };
 }
 function renderEditProfile(_, box){
   if(!viewer) return authGate(box);
