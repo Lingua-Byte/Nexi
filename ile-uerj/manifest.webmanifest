@@ -4,8 +4,8 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f6f2ec",
-  "theme_color": "#7a1f2b",
+  "background_color": "#f4f6f8",
+  "theme_color": "#29435a",
   "lang": "pt-BR",
   "description": "Documentos, prazos, orientações e contatos para alunos de Letras da UERJ, num só lugar.",
   "icons": [

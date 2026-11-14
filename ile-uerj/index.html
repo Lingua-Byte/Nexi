@@ -3,41 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#7a1f2b">
+<meta name="theme-color" content="#29435a">
 <meta name="description" content="Guia não oficial para alunos do Instituto de Letras da UERJ: documentos, prazos, orientações e contatos num só lugar.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@500;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <title>Painel Letras</title>
 <style>
 :root{
-  --bg:#f6f2ec; --card:#fffdf9; --ink:#2a2220; --muted:#7a6d68; --line:#e6ddd3;
-  --brand:#7a1f2b; --brand-ink:#fff; --soft:#f1e4e1; --ok:#2f7a4b; --warn:#b4610d; --late:#b3261e;
+  /* Paleta medida do perfil @ileuerj: azul institucional #29435a */
+  --bg:#f4f6f8; --card:#ffffff; --ink:#0c1014; --muted:#5f6b76; --line:#dde3e9;
+  --brand:#29435a; --brand-ink:#ffffff; --soft:#e7edf2; --ring:#c9d3dc;
+  --ok:#2f7a4b; --warn:#b4610d; --late:#b3261e;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#17130f; --card:#221c18; --ink:#f1e9e2; --muted:#a99c94; --line:#3a312b;
-    --brand:#d9737f; --brand-ink:#1b0f10; --soft:#3a2427; --ok:#6cc58e; --warn:#f0a95a; --late:#f2857b;
+    /* Modo escuro no tom do app do Instagram: #0c1014 */
+    --bg:#0c1014; --card:#1a1f25; --ink:#f5f5f5; --muted:#9c9fa2; --line:#2b3036;
+    --brand:#29435a; --brand-ink:#ffffff; --soft:#1f2c38; --ring:#3a4652;
+    --ok:#6cc58e; --warn:#f0a95a; --late:#f2857b;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#17130f; --card:#221c18; --ink:#f1e9e2; --muted:#a99c94; --line:#3a312b;
-  --brand:#d9737f; --brand-ink:#1b0f10; --soft:#3a2427; --ok:#6cc58e; --warn:#f0a95a; --late:#f2857b;
+  /* Modo escuro no tom do app do Instagram: #0c1014 */
+  --bg:#0c1014; --card:#1a1f25; --ink:#f5f5f5; --muted:#9c9fa2; --line:#2b3036;
+  --brand:#29435a; --brand-ink:#ffffff; --soft:#1f2c38; --ring:#3a4652;
+  --ok:#6cc58e; --warn:#f0a95a; --late:#f2857b;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
 .app{max-width:640px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
 header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .logo{display:flex;align-items:center;gap:10px}
-.mark{width:38px;height:38px;border-radius:11px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:900;font-family:Georgia,serif;font-size:1.25rem}
-.logo b{display:block;font-size:1.1rem;letter-spacing:.01em}
+.mark{width:42px;height:42px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font:800 1.15rem/1 "Roboto Condensed","Arial Narrow",sans-serif;letter-spacing:-.02em}
+.logo b{display:block;font:700 1.05rem/1.1 "Roboto Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em}
 .logo small{display:block;color:var(--muted);font-size:.72rem}
 .iconbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;width:40px;height:40px;font-size:1.05rem;cursor:pointer}
-h1{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:1.55rem;margin:10px 0 4px}
-h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 8px}
+h1{font:800 1.6rem/1.1 "Roboto Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.01em;margin:10px 0 6px}
+h2{font-family:"Roboto Condensed","Arial Narrow",sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 8px}
 p{margin:0 0 8px}
 .lead{color:var(--muted);font-size:.92rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
 .notice{background:var(--soft);border-color:transparent;font-size:.84rem}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .quick{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:84px}
@@ -51,14 +60,14 @@ p{margin:0 0 8px}
 .item .t{font-weight:650;font-size:.95rem;overflow-wrap:anywhere}
 .item .m{color:var(--muted);font-size:.78rem}
 .item a{color:inherit}
-.tag{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--brand);margin-right:4px}
+.tag{display:inline-block;font:700 .68rem/1.6 "Roboto Condensed",sans-serif;text-transform:uppercase;letter-spacing:.03em;padding:1px 8px;border-radius:4px;background:var(--brand);color:#fff;margin-right:6px}
 .badge{font-size:.72rem;font-weight:800;padding:4px 9px;border-radius:99px;white-space:nowrap;border:1px solid currentColor}
 .b-ok{color:var(--ok)} .b-warn{color:var(--warn)} .b-late{color:var(--late)} .b-done{color:var(--muted)}
 input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
 input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 label{font-size:.78rem;color:var(--muted);display:block;margin:8px 0 4px}
-.btn{border:0;background:var(--brand);color:var(--brand-ink);font-weight:750;border-radius:10px;padding:11px 16px;cursor:pointer;font-size:.92rem}
-.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--line)}
+.btn{border:0;background:var(--brand);color:var(--brand-ink);font-weight:600;border-radius:8px;padding:11px 16px;cursor:pointer;font-size:.92rem}
+.btn.ghost{background:var(--soft);color:var(--ink);border:0}
 .btn.small{padding:6px 10px;font-size:.78rem}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 12px;font-size:.8rem;white-space:nowrap;cursor:pointer}
@@ -76,10 +85,22 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card
 nav.tabs .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
 nav.tabs button{border:0;background:none;color:var(--muted);font:inherit;font-size:.68rem;font-weight:650;padding:6px 0;border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav.tabs button span{font-size:1.2rem}
-nav.tabs button[aria-current="page"]{color:var(--brand);background:var(--soft)}
+nav.tabs button[aria-current="page"]{color:var(--ink);background:var(--soft)}
 section[hidden]{display:none}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:99px;font-size:.84rem;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%}
 .toast.show{opacity:1}
+.hl{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
+.hl button{flex:0 0 auto;width:76px;border:0;background:none;color:var(--ink);font:500 .74rem/1.2 Roboto,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.hl .ring{width:70px;height:70px;border-radius:50%;border:2px solid var(--ring);padding:3px}
+.hl .dot{width:100%;height:100%;border-radius:50%;background:var(--brand);display:grid;place-items:center}
+.hl svg{width:30px;height:30px;fill:#fff}
+.mural{display:grid;grid-template-columns:1fr;gap:10px}
+.post{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.post .head{background:var(--brand);color:#fff;padding:10px 14px;font:700 .95rem/1.25 "Roboto Condensed","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em}
+.post .bd{padding:10px 14px 12px;font-size:.86rem}
+.post .bd p{margin:0 0 4px}
+.post .src{margin-top:10px}
+a.btn{text-decoration:none;display:inline-block}
 footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
 @media (max-width:360px){.grid2{grid-template-columns:1fr}}
 </style>
@@ -88,7 +109,7 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
 <div class="app">
   <header>
     <div class="logo">
-      <div class="mark" aria-hidden="true">L</div>
+      <div class="mark" aria-hidden="true">PL</div>
       <div><b>Painel Letras</b><small>Guia não oficial · alunos do ILE/UERJ</small></div>
     </div>
     <button class="iconbtn" id="themeBtn" aria-label="Alternar tema claro/escuro">◐</button>
@@ -97,7 +118,12 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
   <!-- INÍCIO -->
   <section id="tab-inicio">
     <h1 id="greet">Olá!</h1>
-    <p class="lead">Tudo o que costuma ficar espalhado em PDFs e e-mails, num só lugar.</p>
+    <p class="lead">Avisos, editais, prazos e contatos do Instituto de Letras num só lugar.</p>
+
+    <div class="hl" id="highlights" aria-label="Destaques"></div>
+
+    <h2>Mural do Instituto</h2>
+    <div class="mural" id="mural"></div>
 
     <h2>Seus próximos prazos</h2>
     <div class="card" id="homeDeadlines"></div>
@@ -201,7 +227,31 @@ const DATA = {
     { icon:"🏛️", title:"Site do Instituto", desc:"institutodeletras.uerj.br", url:"https://www.institutodeletras.uerj.br" },
     { icon:"🎓", title:"Aluno Online", desc:"Inscrição, notas, horários", url:"https://www.alunoonline.uerj.br" },
     { icon:"📚", title:"Pós em Letras", desc:"pgletras.uerj.br", url:"https://www.pgletras.uerj.br" },
-    { icon:"✉️", title:"E-mail do ILE", desc:"iletrasuerj@uerj.br", url:"mailto:iletrasuerj@uerj.br" }
+    { icon:"✉️", title:"E-mail do ILE", desc:"iletrasuerj@uerj.br", url:"mailto:iletrasuerj@uerj.br" },
+    { icon:"📷", title:"Instagram", desc:"@ileuerj", url:"https://www.instagram.com/ileuerj/" },
+    { icon:"🔗", title:"Links do ILE", desc:"linktr.ee/ileuerj", url:"https://linktr.ee/ileuerj" }
+  ],
+  /* Destaques — mesmos nomes dos destaques do perfil @ileuerj */
+  highlights: [
+    { label:"Vagas & Bolsas", icon:"book",   go:{ tab:"docs", filter:"Editais" } },
+    { label:"Agenda",         icon:"pages",  go:{ tab:"agenda" } },
+    { label:"Atendimento",    icon:"phone",  go:{ tab:"contatos" } },
+    { label:"Diploma",        icon:"cap",    go:{ tab:"guia", q:"diploma" } }
+  ],
+  /* Mural — transcrito de posts do @ileuerj (nov/2026). Só o que estava legível. */
+  mural: [
+    { title:"Estudos em Literatura Infantojuvenil — Temas fraturantes",
+      lines:["16 e 17 de novembro, das 19h às 20h30.","16/11: Sônia Travassos — guerra, migração e refúgio em livros literários para as infâncias.","17/11: Liana Castro — literatura infantil, temas fraturantes e educação.","Coordenação: Sonia Travassos. Contato: nelij.uerj@gmail.com"],
+      url:"mailto:nelij.uerj@gmail.com", cta:"Escrever para o NELIJ" },
+    { title:"Lire Ensemble — projeto de extensão",
+      lines:["Leitura colaborativa de textos literários em francês.","Encontros presenciais na UERJ às segundas, das 14h às 16h.","Inscrições até 23 de novembro: bit.ly/lire_avec_nous","Contato: lireensemble.uerj@gmail.com"],
+      url:"https://bit.ly/lire_avec_nous", cta:"Inscrever-se" },
+    { title:"Eletiva Universal — Metodologias para teatro na escola",
+      lines:["Código CAP02-14529 · período 2026.2 · Profª Mariana Oliveira.","Quartas-feiras, 14h20 às 17h, UERJ Campus Maracanã.","A sala será divulgada para os inscritos."] },
+    { title:"Eletiva Universal — Artes cênicas e a formação do professor do Ensino Fundamental e Médio",
+      lines:["Código CAP02-10604 · período 2026.2 · Profª Mariana Oliveira.","Quartas-feiras, 14h20 às 17h, UERJ Campus Maracanã."] },
+    { title:"Especializações (lato sensu) — editais 2027/1",
+      lines:["Cursos de Ensino e Tradução de Língua Inglesa, Literaturas de Língua Inglesa, Alemão, Espanhol, Italiano, Latim, Língua Portuguesa e Literaturas Brasileira e Portuguesa, entre outros.","Inscrição: 19 de outubro a 12 de novembro de 2026 (encerrada)."] }
   ],
   categories: ["Horários","Estágio","Monitoria","Editais","Pós-graduação","Outros"],
   docs: [
@@ -237,12 +287,21 @@ const DATA = {
       src:"Edital de professor substituto 2025 (ILE)", tags:"contato email secretaria" },
     { q:"Onde encontro informações da pós-graduação?",
       a:"<p>O Programa de Pós-Graduação em Letras tem site próprio, <a href=\"https://www.pgletras.uerj.br\" target=\"_blank\" rel=\"noopener\">pgletras.uerj.br</a>, com os editais de seleção. As especializações (lato sensu) publicam editais no site do Instituto.</p>",
-      src:"Sites do ILE e do PPG Letras", tags:"pós mestrado doutorado especialização" }
+      src:"Sites do ILE e do PPG Letras", tags:"pós mestrado doutorado especialização" },
+    { q:"Onde encontro informações sobre diploma?",
+      a:"<p>O Instagram do Instituto (<a href=\"https://www.instagram.com/ileuerj/\" target=\"_blank\" rel=\"noopener\">@ileuerj</a>) mantém um destaque chamado <b>Diploma</b> com as orientações. Para casos específicos, use os contatos da aba <b>Contatos</b>.</p>",
+      src:"Destaques do perfil @ileuerj", tags:"diploma formatura colação" },
+    { q:"Como peço para divulgar um evento no ILE?",
+      a:"<p>Segundo a bio do perfil oficial, os pedidos formais de divulgação vão para <a href=\"mailto:divulgacaoileuerj@gmail.com\">divulgacaoileuerj@gmail.com</a>.</p>",
+      src:"Bio do perfil @ileuerj", tags:"divulgação evento projeto" }
   ],
   contacts: [
     { title:"Instituto de Letras (ILE)", meta:"E-mail institucional", value:"iletrasuerj@uerj.br", url:"mailto:iletrasuerj@uerj.br" },
     { title:"Site do Instituto", meta:"Notícias, editais e documentos", value:"institutodeletras.uerj.br", url:"https://www.institutodeletras.uerj.br" },
     { title:"PPG em Letras", meta:"Mestrado e doutorado", value:"pgletras.uerj.br", url:"https://www.pgletras.uerj.br" },
+    { title:"Divulgação no ILE", meta:"Pedidos formais de divulgação", value:"divulgacaoileuerj@gmail.com", url:"mailto:divulgacaoileuerj@gmail.com" },
+    { title:"Instagram oficial", meta:"Avisos, eventos e destaques", value:"@ileuerj", url:"https://www.instagram.com/ileuerj/" },
+    { title:"Linktree do ILE", meta:"Links reunidos pelo Instituto", value:"linktr.ee/ileuerj", url:"https://linktr.ee/ileuerj" },
     { title:"Aluno Online", meta:"Sistema acadêmico da UERJ", value:"alunoonline.uerj.br", url:"https://www.alunoonline.uerj.br" }
   ],
   deadlineTypes: ["Inscrição","Entrega","Prova","Rematrícula","Evento","Outro"]
@@ -399,6 +458,24 @@ function greet(){
 }
 $("#quickLinks").innerHTML = DATA.links.map(l=>`<a class="quick" href="${safeUrl(l.url)}" ${l.url.startsWith("mailto")?"":'target="_blank" rel="noopener"'}><span aria-hidden="true">${l.icon}</span><b>${esc(l.title)}</b><small>${esc(l.desc)}</small></a>`).join("");
 $("#contactList").innerHTML = DATA.contacts.map(c=>`<div class="item"><div class="grow"><div class="t">${esc(c.title)}</div><div class="m">${esc(c.meta)}</div></div><a class="btn ghost small" href="${safeUrl(c.url)}" ${c.url.startsWith("mailto")?"":'target="_blank" rel="noopener"'}>${esc(c.value)}</a></div>`).join("");
+
+const ICONS = {
+  book:'<path d="M3 5c3-1 6-1 9 1v14c-3-2-6-2-9-1zM21 5c-3-1-6-1-9 1v14c3-2 6-2 9-1z"/>',
+  pages:'<path d="M7 3h9l4 4v14H7zM4 6h2v16h12v-1H5V6z"/>',
+  phone:'<path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 3v13h8V5z"/>',
+  cap:'<path d="M12 3 1 8l11 5 9-4.1V15h2V8zM5 12.2V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.2z"/>'
+};
+$("#highlights").innerHTML = DATA.highlights.map((h,i)=>`<button data-hl="${i}"><span class="ring"><span class="dot"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[h.icon]}</svg></span></span>${esc(h.label)}</button>`).join("");
+$("#highlights").onclick = e => {
+  const b = e.target.closest("[data-hl]"); if(!b) return;
+  const g = DATA.highlights[b.dataset.hl].go;
+  if(g.filter){ docFilter = g.filter; document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c.textContent===g.filter)); renderDocs(); }
+  if(g.q!==undefined){ $("#faqSearch").value = g.q; renderFaq(); }
+  showTab(g.tab);
+};
+$("#mural").innerHTML = DATA.mural.map(m=>`<article class="post"><div class="head">${esc(m.title)}</div><div class="bd">${m.lines.map(l=>`<p>${esc(l)}</p>`).join("")}
+  ${m.url?`<div style="margin-top:8px"><a class="btn small" href="${safeUrl(m.url)}" ${m.url.startsWith("mailto")?"":'target="_blank" rel="noopener"'}>${esc(m.cta)}</a></div>`:""}
+  <p class="src">Fonte: Instagram @ileuerj</p></div></article>`).join("");
 
 greet(); renderDeadlines(); renderDocs(); renderFaq();
 showTab(store.get(K.tab, "inicio"));

@@ -1,5 +1,5 @@
 // Cache simples para uso offline do Painel Letras.
-const CACHE = "painel-letras-v1";
+const CACHE = "painel-letras-v2";
 const ASSETS = ["./", "index.html", "manifest.webmanifest", "icon.svg"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
