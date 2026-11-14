@@ -103,6 +103,82 @@ section[hidden]{display:none}
 .post .bd p{margin:0 0 4px}
 .post .src{margin-top:10px}
 a.btn{text-decoration:none;display:inline-block}
+/* ===== Rede social ===== */
+.av{flex:0 0 auto;border-radius:50%;background:var(--brand);color:#fff;display:inline-grid;place-items:center;font:700 1rem/1 "Roboto Condensed",sans-serif;letter-spacing:.02em}
+.role{display:inline-block;font:700 .62rem/1.5 "Roboto Condensed",sans-serif;text-transform:uppercase;letter-spacing:.04em;padding:0 6px;border-radius:4px;background:var(--soft);color:var(--muted);vertical-align:1px;margin-right:4px}
+.role.doc{background:var(--brand);color:#fff}
+.role.mod{background:#b4610d;color:#fff}
+.nm{font-weight:700;color:var(--ink);text-decoration:none}
+a.nm:hover{text-decoration:underline}
+.sp{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;position:relative}
+.sp-h{display:flex;gap:10px;align-items:center;padding:12px 12px 6px}
+.sp-h a{color:inherit}
+.sp-h .m a{color:var(--ink);font-weight:600}
+.sp-t{padding:2px 14px 10px;font-size:.95rem;overflow-wrap:anywhere}
+.sp-t a{color:var(--brand);font-weight:500}
+:root[data-theme="dark"] .sp-t a{color:#8fb3d4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sp-t a{color:#8fb3d4}}
+.pimg{display:block;width:100%;max-height:520px;object-fit:cover;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.plink{display:block;margin:0 12px 8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.82rem;color:var(--ink);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-a{display:flex;gap:4px;padding:4px 8px 8px}
+.sp-a button{border:0;background:none;color:var(--ink);font:inherit;font-size:.92rem;padding:6px 10px;border-radius:8px;cursor:pointer}
+.sp-a button:hover{background:var(--soft)}
+.sp-a button.on{color:#d1344b}
+.more{border:0;background:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:2px 8px;border-radius:8px}
+.menu{position:absolute;right:10px;top:44px;z-index:4;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px #0003;overflow:hidden;min-width:160px}
+.menu button,.menu-list button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);font:inherit;font-size:.9rem;padding:12px 14px;cursor:pointer}
+.menu button+button,.menu-list button+button{border-top:1px solid var(--line)}
+.menu button:hover,.menu-list button:hover{background:var(--soft)}
+.menu-list{padding:0;overflow:hidden}
+.menu-list .danger{color:var(--late)}
+.composer textarea{border:0;resize:vertical;padding:8px 4px;min-height:64px;background:transparent}
+.composer textarea:focus{outline:0}
+.composer-bar{gap:6px;border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+.composer-bar select{width:auto;max-width:42%;padding:7px 8px;font-size:.82rem}
+.tool{border:0;background:var(--soft);border-radius:8px;width:38px;height:36px;display:grid;place-items:center;cursor:pointer;font-size:1.05rem}
+#cLink{margin-top:8px}
+.cprev{position:relative;margin:8px 0}
+.cprev img{width:100%;max-height:260px;object-fit:cover;border-radius:10px}
+.cprev button{position:absolute;top:6px;right:6px;border:0;border-radius:50%;width:30px;height:30px;background:#000a;color:#fff;cursor:pointer}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--soft);border-radius:10px;padding:3px;gap:3px}
+.seg button{border:0;background:none;color:var(--muted);font:600 .88rem Roboto,sans-serif;padding:8px;border-radius:8px;cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px #0002}
+.auth form{margin-top:12px}
+.auth-logo{display:block;margin:0 auto 4px;border-radius:50%}
+.btn.full{width:100%;margin-top:14px;padding:13px}
+.check{display:flex;gap:8px;align-items:center;font-size:.86rem;color:var(--ink);margin:12px 0 0}
+.check input{width:auto}
+.demo-accts{display:grid;gap:8px;margin-top:8px}
+.demo{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 10px;cursor:pointer;font:inherit}
+.demo small{display:block;color:var(--muted);font-size:.74rem}
+.demo-banner{font-size:.78rem;background:#fff4e0;color:#7a4a00;border-radius:10px;padding:8px 12px;margin-bottom:10px}
+:root[data-theme="dark"] .demo-banner{background:#3a2a10;color:#f0c98a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .demo-banner{background:#3a2a10;color:#f0c98a}}
+.pcard{display:block;text-decoration:none;color:var(--ink)}
+.pname{display:block;font:700 1.08rem/1.25 "Roboto Condensed",sans-serif;text-transform:uppercase;margin:8px 0 4px}
+.pdesc{font-size:.88rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.prof .stats{display:flex;justify-content:space-around;text-align:center}
+.prof .stats b{display:block;font-size:1.1rem}
+.prof .stats small{color:var(--muted);font-size:.78rem}
+.pn{font-weight:700;font-size:1.05rem;margin-top:10px}
+.bio{margin:6px 0 0;font-size:.92rem;white-space:pre-line}
+.ctext{font-size:.92rem;overflow-wrap:anywhere;margin-top:2px}
+.linkbtn{border:0;background:none;color:var(--muted);font-size:.74rem;padding:2px 0;cursor:pointer;text-decoration:underline}
+.notif{text-decoration:none;color:var(--ink);align-items:center}
+.notif.unread{background:var(--soft);margin:0 -14px;padding-left:14px;padding-right:14px}
+.quote{margin:8px 0 10px;padding:8px 12px;border-left:3px solid var(--brand);background:var(--soft);border-radius:0 8px 8px 0;font-size:.88rem}
+.rules ol{padding-left:20px} .rules li{margin-bottom:8px}
+.subnav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none}
+.subnav[hidden]{display:none}
+.grow{flex:1;min-width:0}
+.m a{color:var(--ink);font-weight:600}
+.backbar{display:flex;align-items:center;gap:6px;margin:6px 0 10px}
+.backbar button{border:0;background:var(--soft);color:var(--ink);border-radius:8px;padding:8px 12px;font:600 .88rem Roboto,sans-serif;cursor:pointer}
+nav.tabs button{position:relative}
+.nbadge{position:absolute;top:2px;left:55%;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#d1344b;color:#fff;font-size:.62rem;font-weight:800;line-height:17px}
+dialog{border:0;border-radius:14px;padding:0;max-width:min(92vw,420px);width:100%;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:#0008}
+dialog form{padding:18px}
 footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
 @media (max-width:360px){.grid2{grid-template-columns:1fr}}
 </style>
@@ -112,11 +188,32 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
   <header>
     <div class="logo">
       <img class="mark" src="logo-ile.png" alt="Instituto de Letras | UERJ" width="44" height="44">
-      <div><b>ILE / UERJ</b><small>Guia do aluno · Instituto de Letras</small></div>
+      <div><b>ILE / UERJ</b><small>Rede e guia do Instituto de Letras</small></div>
     </div>
     <button class="iconbtn" id="themeBtn" aria-label="Alternar tema claro/escuro">◐</button>
   </header>
   <div class="disclaimer">Este não é um canal oficial do ILE ou da UERJ.</div>
+  <div class="subnav" id="infoNav" hidden>
+    <button class="chip" data-go="inicio">Início</button>
+    <button class="chip" data-go="docs">Documentos</button>
+    <button class="chip" data-go="agenda">Prazos</button>
+    <button class="chip" data-go="guia">Guia</button>
+    <button class="chip" data-go="contatos">Contatos</button>
+  </div>
+
+  <!-- REDE: FEED -->
+  <section id="tab-feed" hidden><div id="feedBody"></div></section>
+  <!-- REDE: PROJETOS -->
+  <section id="tab-projetos" hidden><h1>Projetos</h1><div id="projBody"></div></section>
+  <!-- REDE: NOTIFICAÇÕES -->
+  <section id="tab-notif" hidden><h1>Notificações</h1><div id="notifBody"></div></section>
+  <!-- REDE: PERFIL -->
+  <section id="tab-perfil" hidden><div id="meBody"></div></section>
+  <!-- REDE: TELAS DE DETALHE (projeto, perfil, post, moderação…) -->
+  <section id="tab-detail" hidden>
+    <div class="backbar"><button id="detailBack">← Voltar</button></div>
+    <div id="detailBody"></div>
+  </section>
 
   <!-- INÍCIO -->
   <section id="tab-inicio">
@@ -207,15 +304,28 @@ footer{color:var(--muted);font-size:.72rem;text-align:center;margin-top:24px}
 
 <nav class="tabs" aria-label="Seções">
   <div class="in">
-    <button data-tab="inicio" aria-current="page"><span>⌂</span>Início</button>
-    <button data-tab="docs"><span>▤</span>Docs</button>
-    <button data-tab="agenda"><span>◷</span>Prazos</button>
-    <button data-tab="guia"><span>?</span>Guia</button>
-    <button data-tab="contatos"><span>✉</span>Contatos</button>
+    <button data-tab="feed" aria-current="page"><span>⌂</span>Feed</button>
+    <button data-tab="projetos"><span>◈</span>Projetos</button>
+    <button data-tab="inicio"><span>▤</span>ILE</button>
+    <button data-tab="notif"><span>♡</span>Avisos<b class="nbadge" id="notifBadge" hidden></b></button>
+    <button data-tab="perfil"><span>◉</span>Perfil</button>
   </div>
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="reportDlg" aria-labelledby="reportTitle">
+  <form method="dialog">
+    <h2 id="reportTitle" style="margin-top:0">Denunciar post</h2>
+    <p class="lead" style="font-size:.86rem">A moderação vai analisar. Quem publicou não fica sabendo quem denunciou.</p>
+    <div id="reportReasons"></div>
+    <div class="row" style="gap:8px;margin-top:16px;justify-content:flex-end">
+      <button class="btn ghost" value="cancel" formnovalidate>Cancelar</button>
+      <button class="btn" value="send">Enviar denúncia</button>
+    </div>
+  </form>
+</dialog>
 
+<script src="js/store.js"></script>
+<script src="js/social.js"></script>
 <script>
 /* =========================================================
    DADOS — edite aqui. Só inclua informação verificada e
@@ -333,14 +443,24 @@ $("#themeBtn").onclick = () => {
 };
 
 /* ---------- Abas ---------- */
+const INFO_TABS = ["inicio","docs","agenda","guia","contatos"];
+let currentMain = "feed";
 function showTab(name){
+  if(!document.getElementById("tab-"+name)) name = "feed";
   document.querySelectorAll("section[id^=tab-]").forEach(s => s.hidden = s.id !== "tab-"+name);
+  if(name !== "detail") currentMain = INFO_TABS.includes(name) ? "inicio" : name;
   document.querySelectorAll("nav.tabs button").forEach(b => {
-    if(b.dataset.tab===name) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current");
+    if(b.dataset.tab===currentMain) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current");
   });
-  store.set(K.tab, name); scrollTo(0,0);
+  const infoNav = $("#infoNav"); infoNav.hidden = !INFO_TABS.includes(name);
+  infoNav.querySelectorAll("[data-go]").forEach(c => c.setAttribute("aria-pressed", c.dataset.go===name));
+  if(name !== "detail") store.set(K.tab, name);
+  scrollTo(0,0);
+  if(window.onTabShown) window.onTabShown(name);
 }
+window.showTab = showTab; window.toast = toast;
 document.querySelectorAll("nav.tabs button").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+$("#infoNav").onclick = e => { const b = e.target.closest("[data-go]"); if(b) showTab(b.dataset.go); };
 
 /* ---------- Prazos ---------- */
 function daysUntil(iso){
@@ -425,7 +545,7 @@ $("#docChips").innerHTML = ["Todos", ...DATA.categories].map(c=>`<button class="
 $("#docChips").onclick = e => {
   if(!e.target.classList.contains("chip")) return;
   docFilter = e.target.textContent;
-  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c===e.target));
+  document.querySelectorAll("#docChips .chip").forEach(c => c.setAttribute("aria-pressed", c===e.target));
   renderDocs();
 };
 $("#docSearch").oninput = renderDocs;
@@ -469,7 +589,7 @@ $("#highlights").innerHTML = DATA.highlights.map((h,i)=>`<button data-hl="${i}">
 $("#highlights").onclick = e => {
   const b = e.target.closest("[data-hl]"); if(!b) return;
   const g = DATA.highlights[b.dataset.hl].go;
-  if(g.filter){ docFilter = g.filter; document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c.textContent===g.filter)); renderDocs(); }
+  if(g.filter){ docFilter = g.filter; document.querySelectorAll("#docChips .chip").forEach(c=>c.setAttribute("aria-pressed", c.textContent===g.filter)); renderDocs(); }
   if(g.q!==undefined){ $("#faqSearch").value = g.q; renderFaq(); }
   showTab(g.tab);
 };
@@ -478,7 +598,8 @@ $("#mural").innerHTML = DATA.mural.map(m=>`<article class="post"><div class="hea
   <p class="src">Fonte: Instagram @ileuerj</p></div></article>`).join("");
 
 greet(); renderDeadlines(); renderDocs(); renderFaq();
-showTab(store.get(K.tab, "inicio"));
+
+window.socialReady.then(() => showTab(store.get(K.tab, "feed")));
 
 if("serviceWorker" in navigator && location.protocol !== "file:"){
   addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
