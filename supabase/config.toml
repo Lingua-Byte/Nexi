@@ -1,0 +1,14 @@
+# Configuração usada pelo Supabase CLI (`supabase link` / `supabase functions deploy`).
+project_id = "nexi-saas"
+
+[functions.radar-editais]
+verify_jwt = true
+
+[functions.radar-edital]
+verify_jwt = true
+
+[functions.radar-ia]
+verify_jwt = true
+
+[auth]
+site_url = "http://localhost:8000/sites/"

@@ -17,6 +17,7 @@
   const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
   const today = () => iso(new Date());
   const daysUntil = s => Math.round((parse(s) - parse(today())) / 86400000);
+  const daysBetween = (a, b) => Math.round((parse(b) - parse(a)) / 86400000);
   const fmtDate = s => { const d = parse(s); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`; };
   const fmtShort = s => { const d = parse(s); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`; };
   const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -123,14 +124,118 @@
     };
   }
 
-  let db;
-  function load() {
-    try { db = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { db = null; }
-    if (!db || !db.editais) { db = seed(); save(); }
+  // ---------- Camada de dados (demonstração local ou conta real no Supabase) ----------
+  const Cloud = window.Cloud || { enabled: false };
+  let db = null, mode = 'demo', meta = null, user = null, saver = null, entering = null;
+  const store = Cloud.enabled ? Cloud.docStore({ table: 'radar_contas', saveFn: 'radar_save' }) : null;
+  const live = { status: 'idle', at: 0, key: '', erros: [], msg: '' }; // busca no PNCP
+
+  function emptyProfile(m = {}) {
+    return { razao: m.razao || '', cnpj: m.cnpj || '', porte: m.porte || 'EPP', contato: m.contato || '', email: m.email || '',
+      palavras: [], ufs: m.uf ? [m.uf] : [], cats: [], valorMin: 0, valorMax: 1e12, canais: { email: true, whatsapp: false, telegram: false }, freq: 'diario' };
   }
-  function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* sem armazenamento */ } }
+  function normalizeDoc(d, m) {
+    d = d || {};
+    return { profile: Object.assign(emptyProfile(m), d.profile || {}), docs: d.docs || [], editais: d.editais || [], chats: d.chats || {},
+      vistos: d.vistos || [], buscas: d.buscas || [], history: [], plan: { nome: 'Pro', analises: 0, limite: 100 } };
+  }
+  function loadDemo() {
+    try { db = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { db = null; }
+    if (!db || !db.editais) db = seed();
+    db.vistos = db.vistos || []; db.buscas = db.buscas || []; mode = 'demo';
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* sem armazenamento */ }
+  }
+  const kept = e => !!(e.stage || e.fav || e.ai || db.chats[e.id]?.length);
+  function persistable() {
+    const editais = db.editais.filter(kept).map(e => ({ ...e, itens: (e.itens || []).slice(0, 300) }));
+    const ids = new Set(editais.map(e => e.id));
+    return { profile: db.profile, docs: db.docs, editais, chats: Object.fromEntries(Object.entries(db.chats).filter(([id]) => ids.has(id))),
+      vistos: db.vistos.slice(-800), buscas: db.buscas.slice(-10) };
+  }
+  function save() {
+    if (mode === 'cloud') { saver.schedule(); return; }
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* sem armazenamento */ }
+  }
+  const onboarded = () => db.profile.palavras.length > 0 && db.profile.ufs.length > 0;
+  const trialLeft = () => mode === 'cloud' ? Math.max(0, 7 - daysBetween(String(meta.createdAt).slice(0, 10), today())) : 5;
+
+  async function enterCloud(session) {
+    if (mode === 'cloud' && user?.id === session.user.id) return;
+    if (entering) return entering;
+    entering = (async () => {
+      user = session.user;
+      const m = user.user_metadata || {};
+      let row = await store.load(user.id);
+      if (!row) row = await store.create({ owner_id: user.id, data: normalizeDoc({}, { ...m, email: user.email }) });
+      meta = { version: row.version, createdAt: row.created_at };
+      db = normalizeDoc(row.data, { ...m, email: user.email }); mode = 'cloud';
+      if (!saver) saver = Cloud.autosaver({
+        getData: () => persistable(), getVersion: () => meta.version, setVersion: v => { meta.version = v; },
+        save: (d, v) => store.save(d, v),
+        onConflict: async () => {
+          const r = await store.load(user.id); const fresh = normalizeDoc(r.data);
+          meta.version = r.version;
+          const liveOnly = db.editais.filter(e => !fresh.editais.some(x => x.id === e.id) && !kept(e));
+          Object.assign(db, fresh, { editais: [...fresh.editais, ...liveOnly], plan: db.plan });
+          maybeRerender(); toast('Sua conta foi atualizada em outro aparelho.');
+        },
+        onError: () => toast('Sem conexão. Vamos tentar salvar de novo em instantes…'),
+      });
+      refreshUsage();
+      fetchLive();
+    })();
+    try { await entering; } finally { entering = null; }
+  }
+  function leaveCloud() { mode = 'demo'; user = null; meta = null; db = null; live.status = 'idle'; live.key = ''; }
+
+  async function refreshUsage() {
+    try {
+      const mes = today().slice(0, 7);
+      const { data } = await Cloud.from('radar_uso').select('analises').eq('owner_id', user.id).eq('mes', mes).maybeSingle();
+      db.plan.analises = data?.analises || 0;
+    } catch (e) { /* uso é informativo */ }
+  }
+
+  function defaultDocs(e) {
+    return ['contrato', 'cnd_federal', 'fgts', 'cndt', 'estadual', 'municipal', 'falencia',
+      ...(e.modalidade !== 'Dispensa Eletrônica' ? ['balanco'] : []), 'atestado', ...(e.categoria === 'Obras' ? ['crea'] : [])];
+  }
+  function prepLive(x) {
+    return { ...x, itens: [], arquivos: [], docs: defaultDocs(x), fav: false, stage: null, exclusivaME: false, criterio: '',
+      entrega: '', pagamento: '', garantia: null, amostra: false, visita: false, itensLoaded: false };
+  }
+  async function fetchLive(force = false) {
+    if (mode !== 'cloud' || !db.profile.ufs.length) return;
+    const key = db.profile.ufs.slice().sort().join(',');
+    if (live.status === 'loading' || (!force && live.key === key && live.status === 'ok' && Date.now() - live.at < 10 * 60e3)) return;
+    live.status = 'loading'; live.key = key; maybeRerender();
+    try {
+      const r = await Cloud.invoke('radar-editais', { ufs: db.profile.ufs, modalidades: [6, 8, 4, 5], paginas: 2 });
+      const saved = new Map(db.editais.filter(kept).map(e => [e.id, e]));
+      const merged = (r.editais || []).filter(x => x.abertura).map(x => {
+        const old = saved.get(x.id);
+        if (!old) return prepLive(x);
+        saved.delete(x.id);
+        return Object.assign(old, { abertura: x.abertura, horaAbertura: x.horaAbertura, valor: x.valor || old.valor, situacao: x.situacao });
+      });
+      db.editais = [...merged, ...saved.values()];
+      Object.assign(live, { status: 'ok', at: Date.now(), erros: r.erros || [], msg: '' });
+    } catch (e) {
+      Object.assign(live, { status: 'error', msg: e.code || e.message });
+    }
+    maybeRerender();
+  }
+  // Re-renderiza quando dados chegam em segundo plano, sem atrapalhar quem está digitando.
+  function maybeRerender() {
+    const a = document.activeElement;
+    if ($modal.innerHTML || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return;
+    if (location.hash.startsWith('#/app')) rerender();
+  }
+  const isViewed = e => e.viewed || db.vistos.includes(e.id);
+  function markViewed(e) { if (isViewed(e)) return; if (mode === 'cloud') db.vistos.push(e.id); else e.viewed = true; save(); }
+
   const ed = id => db.editais.find(e => e.id === id);
-  const abertas = () => db.editais.filter(e => daysUntil(e.abertura) >= 0 && !['ganha', 'perdida'].includes(e.stage));
+  const abertas = () => db.editais.filter(e => e.abertura && daysUntil(e.abertura) >= 0 && !['ganha', 'perdida'].includes(e.stage));
 
   // ---------- Documentos e compatibilidade ----------
   function docStatus(doc, ref = today()) {
@@ -144,7 +249,16 @@
   const companyDoc = key => db.docs.find(d => d.key === key);
 
   function requisitos(e) {
-    const list = e.docs.map(key => {
+    if (e.ai?.exigencias?.length) {
+      const list = e.ai.exigencias.map(x => {
+        const key = x.docKey && x.docKey !== 'outro' && DOC_TYPES[x.docKey] ? x.docKey : null;
+        const st = key ? docStatus(companyDoc(key), e.abertura) : { s: 'warn', label: 'Verificar' };
+        return { txt: x.texto, tipo: x.categoria, s: st.s, label: st.label, key };
+      });
+      if (e.exclusivaME) list.push({ txt: 'Participação exclusiva para ME/EPP (LC 123/2006)', tipo: 'Enquadramento', s: ['ME', 'EPP'].includes(db.profile.porte) ? 'ok' : 'bad', label: ['ME', 'EPP'].includes(db.profile.porte) ? `Você é ${db.profile.porte}` : 'Não elegível' });
+      return list;
+    }
+    const list = (e.docs || defaultDocs(e)).map(key => {
       const st = docStatus(companyDoc(key), e.abertura);
       return { txt: DOC_TYPES[key], tipo: key === 'balanco' ? 'Econômico-financeira' : ['atestado', 'crea'].includes(key) ? 'Técnica' : key === 'contrato' ? 'Jurídica' : 'Fiscal e trabalhista', s: st.s, label: st.label, key };
     });
@@ -180,12 +294,13 @@
 
   // ---------- Resumo "IA" ----------
   function summary(e) {
+    if (e.ai) return { rec: e.ai.recomendacao, tldr: e.ai.tldr, pontos: e.ai.pontos || [], riscos: e.ai.riscos || [] };
     const sc = score(e), reqs = requisitos(e);
     const pend = reqs.filter(x => x.s !== 'ok');
-    const big = [...e.itens].sort((a, b) => b.qtd * b.ref - a.qtd * a.ref)[0];
+    const big = [...(e.itens || [])].sort((a, b) => b.qtd * b.ref - a.qtd * a.ref)[0];
     const rec = sc.blocked ? 'Não recomendado: há um impedimento de habilitação.' : sc.total >= 75 ? 'Recomendado participar.' : sc.total >= 50 ? 'Vale avaliar: há pontos de atenção.' : 'Baixa aderência ao seu perfil.';
     return {
-      rec, tldr: `${e.orgao} (${e.uf}) busca ${e.objeto.charAt(0).toLowerCase() + e.objeto.slice(1)}, com valor estimado de ${brl(e.valor)} e disputa por ${e.criterio.toLowerCase()}. O item de maior peso é "${big.desc}" (${Math.round(big.qtd * big.ref / e.valor * 100)}% do total).`,
+      rec, tldr: `${e.orgao} (${e.uf}) busca ${e.objeto.charAt(0).toLowerCase() + e.objeto.slice(1)}, com valor estimado de ${brl(e.valor)}${e.criterio ? ` e disputa por ${e.criterio.toLowerCase()}` : ''}.${big && e.valor ? ` O item de maior peso é "${big.desc}" (${Math.round(big.qtd * big.ref / e.valor * 100)}% do total).` : ''}`,
       pontos: [
         `Sessão pública em ${fmtDate(e.abertura)} às ${e.horaAbertura}, no portal ${e.portal}.`,
         e.exclusivaME ? 'Exclusiva para ME/EPP: menos concorrentes de grande porte.' : 'Ampla participação, com cota de preferência para ME/EPP.',
@@ -226,7 +341,7 @@
   const ui = {
     billing: 'mensal', onb: 1,
     f: { q: '', uf: '', mod: '', cat: '', view: 'todas', min: 0, sort: 'score' },
-    tab: 'resumo', typing: false,
+    tab: 'resumo', typing: false, analyzing: null, busy: false, authMsg: '', authErr: false, demo: false,
   };
 
   // ---------- Modal / toast ----------
@@ -249,20 +364,20 @@
     <header class="lp-nav"><div class="container">
       <a class="logo" href="#/"><span class="logo-mark"></span>Radar Licita</a>
       <nav class="lp-links"><a href="#como" data-action="scroll">Como funciona</a><a href="#recursos" data-action="scroll">Recursos</a><a href="#precos" data-action="scroll">Preços</a><a href="#faq" data-action="scroll">Dúvidas</a></nav>
-      <div style="display:flex;gap:8px"><a class="btn btn-ghost" href="#/entrar">Entrar</a><a class="btn btn-primary" href="#/entrar">Testar grátis</a></div>
+      <div style="display:flex;gap:8px"><a class="btn btn-ghost" href="#/entrar?login">Entrar</a><a class="btn btn-primary" href="#/entrar">Testar grátis</a></div>
     </div></header>
     <section class="hero"><div class="container">
       <div>
-        <span class="pill"><i></i>Monitorando mais de 1.200 portais de compras</span>
+        <span class="pill"><i></i>Dados oficiais do PNCP, atualizados todos os dias</span>
         <h1>Venda para o governo <span>sem ler 80 páginas</span> de edital.</h1>
         <p class="lead">O Radar Licita encontra as licitações que combinam com a sua empresa, avisa no WhatsApp e usa IA para resumir o edital, checar sua documentação e responder suas dúvidas em segundos.</p>
-        <div class="hero-actions"><a class="btn btn-primary btn-lg" href="#/entrar">Começar 7 dias grátis</a><a class="btn btn-ghost btn-lg" href="#/app">Ver demonstração →</a></div>
+        <div class="hero-actions"><a class="btn btn-primary btn-lg" href="#/entrar">Começar 7 dias grátis</a><a class="btn btn-ghost btn-lg" href="#/app?demo">Ver demonstração →</a></div>
         <p class="hero-note">Sem cartão de crédito · Configure em 3 minutos com seu CNPJ</p>
       </div>
       <div class="radar-card" aria-hidden="true">
         <div class="rc-head"><span>🎯 Novas oportunidades para você</span><span>hoje</span></div>
         ${demo.map(({ e, s }) => `<div class="rc-item">${scoreRing(s)}<div><b>${esc(e.objeto.length > 52 ? e.objeto.slice(0, 50) + '…' : e.objeto)}</b><span>${esc(e.orgao)} · ${e.uf}</span></div><div class="val">${brlK(e.valor)}</div></div>`).join('')}
-        <div class="rc-ai"><b>IA:</b> ${esc(summary(demo[0].e).rec)} Sua certidão municipal está vencida; renove antes de ${fmtShort(demo[0].e.abertura)}.</div>
+        ${demo.length ? `<div class="rc-ai"><b>IA:</b> ${esc(summary(demo[0].e).rec)} Confira os documentos exigidos antes de ${fmtShort(demo[0].e.abertura)}.</div>` : ''}
       </div>
     </div>
     <div class="container logos"><span>PNCP</span><span>Compras.gov.br</span><span>BLL</span><span>Licitações-e</span><span>BNC</span><span>Portais estaduais</span><span>Diários oficiais</span></div>
@@ -320,29 +435,51 @@
     </div>`;
   }
 
-  // ---------- Onboarding ----------
-  function vAuth() {
-    const p = db.profile;
+  // ---------- Login e onboarding ----------
+  const notice = () => ui.authMsg ? `<div class="ai-box small" role="alert" style="${ui.authErr ? 'background:var(--bad-soft);color:var(--bad)' : ''}">${esc(ui.authMsg)}</div>` : '';
+  function vAuth(view) {
+    const head = `<a class="logo" href="#/"><span class="logo-mark"></span>Radar Licita</a>`;
+    if (view === 'login') {
+      return `<div class="auth"><div class="auth-card">${head}
+        <form data-form="login" style="display:grid;gap:14px"><h1>Entrar</h1>${notice()}
+          ${Cloud.enabled ? '' : '<p class="small muted">Modo demonstração: o backend ainda não foi configurado, então você entra nos dados de exemplo.</p>'}
+          <div class="field"><label>E-mail</label><input class="input" type="email" name="email" required autocomplete="email"></div>
+          <div class="field"><label>Senha</label><input class="input" type="password" name="senha" minlength="6" required autocomplete="current-password"></div>
+          ${Cloud.enabled ? '<a href="#" class="small" data-action="forgot" style="justify-self:end">Esqueci minha senha</a>' : ''}
+          <button class="btn btn-primary btn-lg" ${ui.busy ? 'disabled' : ''}>${ui.busy ? 'Aguarde…' : 'Entrar'}</button>
+          <a class="btn btn-ghost" href="#/app?demo">Ver a conta de demonstração</a>
+          <p class="small muted" style="text-align:center">Ainda não tem conta? <a href="#/entrar">Criar conta grátis</a></p>
+        </form></div></div>`;
+    }
+    if (view === 'newpass') {
+      return `<div class="auth"><div class="auth-card">${head}<form data-form="newpass" style="display:grid;gap:14px"><h1>Nova senha</h1>${notice()}
+        <div class="field"><label>Nova senha</label><input class="input" type="password" name="senha" minlength="6" required autocomplete="new-password"></div>
+        <button class="btn btn-primary btn-lg" ${ui.busy ? 'disabled' : ''}>Salvar</button></form></div></div>`;
+    }
+    const step = mode === 'cloud' ? 2 : ui.onb;
     const step1 = `<form data-form="onb1" style="display:grid;gap:14px">
-        <h1>Crie sua conta</h1><p class="muted">7 dias grátis do plano Pro. Sem cartão.</p>
-        <div class="field"><label>CNPJ da empresa</label><div style="display:flex;gap:8px"><input class="input" name="cnpj" required placeholder="00.000.000/0000-00" value="" data-input="cnpj" inputmode="numeric"><button type="button" class="btn btn-ghost" data-action="cnpj-lookup">Buscar</button></div></div>
+        <h1>Crie sua conta</h1><p class="muted">7 dias grátis do plano Pro. Sem cartão.</p>${notice()}
+        ${Cloud.enabled ? '' : '<p class="small muted">Modo demonstração: nenhuma conta é criada; os dados ficam neste navegador.</p>'}
+        <div class="field"><label>CNPJ da empresa</label><div style="display:flex;gap:8px"><input class="input" name="cnpj" required placeholder="00.000.000/0000-00" data-input="cnpj" inputmode="numeric"><button type="button" class="btn btn-ghost" data-action="cnpj-lookup">Buscar</button></div></div>
         <div class="field"><label>Razão social</label><input class="input" name="razao" required id="razao"></div>
         <div class="row"><div class="field"><label>Porte</label><select class="input" name="porte" id="porte"><option>ME</option><option selected>EPP</option><option>Demais</option></select></div>
-        <div class="field"><label>Seu e-mail</label><input class="input" type="email" name="email" required></div></div>
-        <div class="field"><label>Senha</label><input class="input" type="password" name="senha" minlength="6" required></div>
-        <button class="btn btn-primary btn-lg">Continuar</button>
-        <a class="btn btn-ghost" href="#/app">Pular e ver a conta de demonstração</a>
+        <div class="field"><label>Seu nome</label><input class="input" name="contato" required autocomplete="name"></div></div>
+        <div class="field"><label>E-mail</label><input class="input" type="email" name="email" required autocomplete="email"></div>
+        <div class="field"><label>Senha</label><input class="input" type="password" name="senha" minlength="6" required autocomplete="new-password"></div>
+        <input type="hidden" name="uf" id="uf-cnpj">
+        <button class="btn btn-primary btn-lg" ${ui.busy ? 'disabled' : ''}>${ui.busy ? 'Criando conta…' : 'Continuar'}</button>
+        <p class="small muted" style="text-align:center">Já tem conta? <a href="#/entrar?login">Entrar</a> · <a href="#/app?demo">Ver demonstração</a></p>
       </form>`;
+    const p = db?.profile || emptyProfile();
     const step2 = `<form data-form="onb2" style="display:grid;gap:14px">
-        <h1>O que você vende?</h1><p class="muted">Usamos isso para encontrar e pontuar as licitações certas.</p>
+        <h1>O que você vende?</h1><p class="muted">Usamos isso para encontrar e pontuar as licitações certas.</p>${notice()}
         <div class="field"><label>Palavras-chave (Enter para adicionar)</label>${tagsInput(p.palavras)}</div>
         <div class="field"><label>Estados onde você atende</label><div class="check-grid">${UFS.map(u => `<label><input type="checkbox" name="uf" value="${u}" ${p.ufs.includes(u) ? 'checked' : ''}>${u}</label>`).join('')}</div></div>
         <button class="btn btn-primary btn-lg">Ver minhas oportunidades →</button>
       </form>`;
-    return `<div class="auth"><div class="auth-card">
-      <a class="logo" href="#/"><span class="logo-mark"></span>Radar Licita</a>
-      <div class="steps-bar"><i class="on"></i><i class="${ui.onb >= 2 ? 'on' : ''}"></i></div>
-      ${ui.onb === 1 ? step1 : step2}
+    return `<div class="auth"><div class="auth-card">${head}
+      <div class="steps-bar"><i class="on"></i><i class="${step >= 2 ? 'on' : ''}"></i></div>
+      ${step === 1 ? step1 : step2}
     </div></div>`;
   }
   function tagsInput(list) {
@@ -352,7 +489,7 @@
   // ---------- Shell ----------
   const NAV = [['', '📊', 'Painel'], ['oportunidades', '🎯', 'Oportunidades'], ['pipeline', '🗂️', 'Pipeline'], ['alertas', '🔔', 'Alertas'], ['documentos', '📁', 'Documentos'], ['plano', '💳', 'Plano']];
   function shell(sec, title, actions, body, crumbs = '') {
-    const novas = abertas().filter(e => !e.viewed && score(e).total >= 60).length;
+    const novas = abertas().filter(e => !isViewed(e) && score(e).total >= 60).length;
     const docAlert = db.docs.filter(d => docStatus(d).s !== 'ok').length;
     const counts = { oportunidades: novas, documentos: docAlert };
     const link = (k, i, l, cls) => `<a class="${cls} ${sec === k ? 'active' : ''}" href="#/app${k ? '/' + k : ''}"><span class="ni">${i}</span>${l}${cls && counts[k] ? `<span class="count">${counts[k]}</span>` : ''}</a>`;
@@ -360,10 +497,12 @@
     return `<div class="app">
       <aside class="sidebar"><a class="logo" href="#/"><span class="logo-mark"></span>Radar Licita</a>
         ${NAV.map(([k, i, l]) => link(k, i, l, 'nav-item')).join('')}
-        <div class="side-usage"><b>Plano ${pl.nome}</b> · teste grátis<div class="meter"><i style="width:${pl.analises / pl.limite * 100}%"></i></div>${pl.analises} de ${pl.limite} análises por IA</div>
+        <div class="side-usage">${mode === 'cloud'
+          ? `<b>Plano ${pl.nome}</b> · teste grátis (${trialLeft()} dias)<div class="meter"><i style="width:${Math.min(100, pl.analises / pl.limite * 100)}%"></i></div>${pl.analises} de ${pl.limite} análises por IA este mês<br><a href="#" data-action="logout" style="color:#c3cfde">Sair da conta</a>`
+          : `<b>Modo demonstração</b><br>Dados de exemplo neste navegador.${Cloud.enabled ? '<br><a href="#/entrar" style="color:var(--brand-2)">Criar minha conta</a>' : ''}`}</div>
       </aside>
       <div style="min-width:0">
-        <header class="topbar"><div style="min-width:0">${crumbs ? `<div class="crumbs">${crumbs}</div>` : ''}<h1>${title}</h1></div><div class="topbar-right">${actions}<span class="avatar" title="${esc(db.profile.razao)}">${db.profile.razao.split(' ').slice(0, 2).map(w => w[0]).join('')}</span></div></header>
+        <header class="topbar"><div style="min-width:0">${crumbs ? `<div class="crumbs">${crumbs}</div>` : ''}<h1>${title}</h1></div><div class="topbar-right">${actions}<span class="avatar" title="${esc(db.profile.razao)}">${(db.profile.razao || user?.email || '?').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()}</span></div></header>
         <main class="page">${body}</main>
       </div>
       <nav class="bottom-nav">${NAV.filter(n => n[0] !== 'plano').map(([k, i, l]) => link(k, i, l === 'Oportunidades' ? 'Editais' : l, '')).join('')}</nav>
@@ -373,7 +512,7 @@
   // ---------- Painel ----------
   function chart(data) {
     const W = 640, H = 230, P = { t: 12, r: 8, b: 26, l: 48 };
-    const max = Math.max(...data.map(d => d.disputado)) * 1.1;
+    const max = Math.max(1000, ...data.map(d => d.disputado)) * 1.1;
     const g = (W - P.l - P.r) / data.length;
     const y = v => P.t + (H - P.t - P.b) * (1 - v / max);
     return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Valor disputado e ganho por mês">
@@ -385,23 +524,48 @@
     </svg>`;
   }
 
+  // Histórico de disputas: no modo demo vem pronto; numa conta real é calculado do pipeline.
+  function historyData() {
+    if (db.history?.length) return db.history;
+    return Array.from({ length: 6 }, (_, k) => {
+      const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - (5 - k));
+      const mk = iso(d).slice(0, 7);
+      const doMes = db.editais.filter(e => e.abertura?.startsWith(mk) && ['enviada', 'ganha', 'perdida'].includes(e.stage));
+      const ganhas = doMes.filter(e => e.stage === 'ganha');
+      return { mes: `${MONTHS[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`, disputado: doMes.reduce((s, e) => s + e.valor, 0),
+        ganho: ganhas.reduce((s, e) => s + e.valor, 0), part: doMes.filter(e => e.stage !== 'enviada').length, wins: ganhas.length };
+    });
+  }
+  function liveBar() {
+    if (mode !== 'cloud') return '';
+    const hora = live.at ? new Date(live.at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+    const msg = live.status === 'loading' ? '⏳ Buscando licitações abertas no PNCP…'
+      : live.status === 'error' ? `⚠️ Não foi possível consultar o PNCP agora (${esc(live.msg)}). Mostrando o que está salvo.`
+      : live.status === 'ok' ? `✅ Dados do PNCP atualizados às ${hora} · ${abertas().length} licitações abertas nos seus estados${live.erros.length ? ` · ${live.erros.length} consultas falharam` : ''}`
+      : 'Configure seus estados em Alertas para buscar licitações.';
+    return `<div class="card" style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="small">${msg}</span>
+      <button class="btn btn-ghost btn-sm" data-action="refresh-live" ${live.status === 'loading' ? 'disabled' : ''}>↻ Atualizar</button></div>`;
+  }
+
   function vDashboard() {
     const open = abertas().map(e => ({ e, sc: score(e) }));
     const novas = open.filter(({ e, sc }) => daysUntil(e.publicado) >= -2 && sc.total >= 60);
     const disputa = db.editais.filter(e => ['analisando', 'proposta', 'enviada'].includes(e.stage));
     const ganhas = db.editais.filter(e => e.stage === 'ganha'), perdidas = db.editais.filter(e => e.stage === 'perdida');
-    const hWins = db.history.reduce((s, h) => s + h.wins, 0), hPart = db.history.reduce((s, h) => s + h.part, 0);
+    const hist = historyData();
+    const hWins = hist.reduce((s, h) => s + h.wins, 0), hPart = hist.reduce((s, h) => s + h.part, 0);
     const winRate = (hWins + ganhas.length) / Math.max(1, hPart + ganhas.length + perdidas.length);
     const docIssues = db.docs.filter(d => docStatus(d).s !== 'ok');
     const top = open.filter(x => !x.e.stage).sort((a, b) => b.sc.total - a.sc.total).slice(0, 5);
     const prazos = [
-      ...disputa.filter(e => daysUntil(e.abertura) >= 0).map(e => ({ d: e.abertura, html: `<b>${esc(e.numero)}</b> · sessão às ${e.horaAbertura}`, sub: esc(e.orgao), href: `#/app/edital/${e.id}`, tag: stageName(e.stage) })),
+      ...disputa.filter(e => daysUntil(e.abertura) >= 0).map(e => ({ d: e.abertura, html: `<b>${esc(e.numero)}</b> · sessão às ${e.horaAbertura}`, sub: esc(e.orgao), href: `#/app/edital/${encodeURIComponent(e.id)}`, tag: stageName(e.stage) })),
       ...db.docs.filter(d => d.validade && daysUntil(d.validade) <= 30).map(d => ({ d: d.validade, html: `<b>${esc(d.nome)}</b>`, sub: daysUntil(d.validade) < 0 ? 'vencida' : 'vencimento', href: '#/app/documentos', tag: 'Certidão' })),
     ].sort((a, b) => a.d.localeCompare(b.d)).slice(0, 6);
     const bestUF = Object.entries(open.filter(x => x.sc.total >= 70).reduce((m, x) => (m[x.e.uf] = (m[x.e.uf] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1])[0];
-    const docsBlocking = open.filter(x => x.sc.total >= 60 && requisitos(x.e).some(r => r.key === 'municipal' && r.s !== 'ok')).length;
+    const docsBlocking = open.filter(x => x.sc.total >= 60 && requisitos(x.e).some(r => r.key && r.s !== 'ok')).length;
 
     const body = `
+      ${liveBar()}
       <div class="kpis">
         <div class="kpi"><small>Novas compatíveis (48h)</small><b>${novas.length}</b><span class="muted small">de ${open.length} licitações abertas</span></div>
         <div class="kpi"><small>Valor em disputa</small><b>${brlK(disputa.reduce((s, e) => s + e.valor, 0))}</b><span class="muted small">${disputa.length} processos no pipeline</span></div>
@@ -409,20 +573,20 @@
         <div class="kpi"><small>Documentos com atenção</small><b style="color:${docIssues.length ? 'var(--bad)' : 'var(--ok)'}">${docIssues.length}</b><span class="muted small">${docIssues.length ? 'renove para não ser inabilitado' : 'tudo em dia'}</span></div>
       </div>
       <div class="ai-box"><div class="ai-label">✦ Insight da semana</div>
-        ${bestUF ? `<b>${bestUF[0]}</b> concentra ${bestUF[1]} oportunidades com nota acima de 70 abertas agora.` : ''} ${docsBlocking ? `Sua certidão municipal vencida afeta <b>${docsBlocking} editais</b> com boa nota. <a href="#/app/documentos">Renovar agora →</a>` : 'Sua documentação está em dia para as principais oportunidades.'}
+        ${bestUF ? `<b>${bestUF[0]}</b> concentra ${bestUF[1]} oportunidades com nota acima de 70 abertas agora.` : ''} ${docsBlocking ? `Documentos pendentes ou vencidos afetam <b>${docsBlocking} editais</b> com boa nota. <a href="#/app/documentos">Resolver agora →</a>` : open.length ? 'Sua documentação está em dia para as principais oportunidades.' : 'Assim que houver licitações compatíveis, elas aparecem aqui.'}
       </div>
       <div class="grid-2">
         <div class="card"><div class="card-head"><h3>Melhores oportunidades para você</h3><a class="btn btn-ghost btn-sm" href="#/app/oportunidades">Ver todas</a></div>
-          <div class="opp-list">${top.map(({ e, sc }) => oppRow(e, sc, true)).join('')}</div></div>
+          <div class="opp-list">${top.map(({ e, sc }) => oppRow(e, sc, true)).join('') || `<div class="empty"><div class="big">🔭</div>${mode === 'cloud' && live.status === 'loading' ? 'Buscando…' : 'Nenhuma licitação aberta encontrada ainda.'}</div>`}</div></div>
         <div class="card"><div class="card-head"><h3>Próximos prazos</h3></div>
           <div class="timeline">${prazos.length ? prazos.map(p => `<a class="tl ${daysUntil(p.d) < 0 ? 'past' : ''}" href="${p.href}" style="text-decoration:none"><span class="dot"></span><div style="min-width:0"><div class="small" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.html}</div><span class="muted small">${p.sub} · ${p.tag}</span></div><span class="small" style="font-weight:700;color:${daysUntil(p.d) <= 3 ? 'var(--bad)' : 'inherit'}">${fmtShort(p.d)}</span></a>`).join('') : '<p class="muted">Nada nos próximos dias.</p>'}</div></div>
       </div>
-      <div class="card"><div class="card-head"><h3>Desempenho em licitações</h3><div class="legend"><span><i style="background:#b8c4d4"></i>Disputado</span><span><i style="background:var(--brand)"></i>Ganho</span></div></div>${chart(db.history)}</div>`;
+      <div class="card"><div class="card-head"><h3>Desempenho em licitações</h3><div class="legend"><span><i style="background:#b8c4d4"></i>Disputado</span><span><i style="background:var(--brand)"></i>Ganho</span></div></div>${chart(historyData())}</div>`;
     return shell('', 'Painel', `<a class="btn btn-primary" href="#/app/oportunidades">🎯 <span class="hide-sm">Ver oportunidades</span></a>`, body);
   }
 
   function oppRow(e, sc, compact) {
-    const isNew = !e.viewed && daysUntil(e.publicado) >= -2;
+    const isNew = !isViewed(e) && e.publicado && daysUntil(e.publicado) >= -2;
     return `<div class="opp" data-action="open-ed" data-id="${e.id}">
       ${scoreRing(sc.total)}
       <div style="min-width:0">
@@ -446,7 +610,7 @@
       if (f.cat && e.categoria !== f.cat) return false;
       if (sc.total < f.min) return false;
       if (f.view === 'favoritas' && !e.fav) return false;
-      if (f.view === 'novas' && !(daysUntil(e.publicado) >= -2)) return false;
+      if (f.view === 'novas' && !(e.publicado && daysUntil(e.publicado) >= -2)) return false;
       if (f.view === 'me' && !e.exclusivaME) return false;
       return true;
     });
@@ -468,6 +632,8 @@
           <label class="range"><span class="small muted" style="white-space:nowrap">Nota mínima <b id="min-v">${f.min}</b></span><input type="range" min="0" max="90" step="5" value="${f.min}" data-input="fmin" aria-label="Nota mínima"></label>
         </div>
       </div>
+      ${liveBar()}
+      ${db.buscas.length ? `<div class="chips" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span class="small muted">Buscas salvas:</span>${db.buscas.map((b, i) => `<button class="btn btn-ghost btn-sm" data-action="apply-search" data-i="${i}">${esc(b.nome)}</button>`).join('')}</div>` : ''}
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="muted"><b style="color:var(--ink)">${list.length}</b> licitações abertas · ${brlK(list.reduce((s, x) => s + x.e.valor, 0))} em valor estimado</span>
         <button class="btn btn-ghost btn-sm" data-action="save-alert">🔔 Salvar busca como alerta</button></div>
       <div class="opp-list">${list.length ? list.map(({ e, sc }) => oppRow(e, sc)).join('') : '<div class="card empty"><div class="big">🔭</div>Nenhuma licitação com esses filtros. Tente reduzir a nota mínima.</div>'}</div>`;
@@ -478,21 +644,32 @@
   function vEdital(id) {
     const e = ed(id);
     if (!e) return shell('oportunidades', 'Edital não encontrado', '', '<div class="card empty">Este edital não existe mais. <a href="#/app/oportunidades">Voltar</a></div>');
-    if (!e.viewed) { e.viewed = true; save(); }
+    markViewed(e);
+    const real = e.fonte === 'pncp';
+    if (real && !e.itensLoaded && !e.itensLoading) loadDetails(e);
     const sc = score(e), s = summary(e), reqs = requisitos(e);
     const okN = reqs.filter(r => r.s === 'ok').length;
-    const tabs = [['resumo', 'Resumo IA'], ['requisitos', `Exigências (${okN}/${reqs.length})`], ['itens', `Itens (${e.itens.length})`], ['prazos', 'Prazos'], ['chat', '💬 Pergunte ao edital']];
+    const tabs = [['resumo', 'Resumo IA'], ['requisitos', `Exigências (${okN}/${reqs.length})`], ['itens', `Itens (${e.itensLoading ? '…' : (e.itens || []).length})`], ['prazos', 'Prazos'], ['chat', '💬 Pergunte ao edital']];
+    const analyzing = ui.analyzing === e.id;
+    const aiBtn = `<button class="btn btn-primary" data-action="analyze" data-id="${e.id}" ${analyzing ? 'disabled' : ''}>${analyzing ? '⏳ Lendo o edital… (pode levar 1 minuto)' : e.ai ? '↻ Refazer análise' : '✦ Analisar edital com IA'}</button>`;
     let content = '';
-    if (ui.tab === 'resumo') content = `
-      <div class="ai-box"><div class="ai-label">✦ Resumo gerado por IA</div><p>${esc(s.tldr)}</p><p style="margin-top:8px"><b>${esc(s.rec)}</b></p></div>
+    if (ui.tab === 'resumo' && real && !e.ai) content = `
+      <div class="ai-box"><div class="ai-label">✦ Análise por IA</div><p>A IA lê o PDF do edital publicado no PNCP e os itens, resume o que importa, lista as exigências de habilitação e aponta riscos para a sua empresa.</p><div style="margin-top:12px">${aiBtn}</div></div>
+      <h4 style="margin-top:18px">Dados oficiais do PNCP</h4>
+      <dl class="kv" style="margin-top:10px"><dt>Órgão</dt><dd>${esc(e.orgao)}</dd>${e.unidade ? `<dt>Unidade</dt><dd>${esc(e.unidade)}</dd>` : ''}<dt>Local</dt><dd>${esc(e.cidade)}/${e.uf}</dd><dt>Situação</dt><dd>${esc(e.situacao || '—')}</dd><dt>Registro de preços</dt><dd>${e.srp ? 'Sim' : 'Não'}</dd><dt>Fim do envio de propostas</dt><dd>${fmtDate(e.abertura)} ${e.horaAbertura}</dd></dl>`;
+    else if (ui.tab === 'resumo') content = `
+      <div class="ai-box"><div class="ai-label">✦ ${e.ai ? 'Análise da IA' : 'Resumo gerado por IA'}${e.ai?.nivel ? ` · aderência ${esc(e.ai.nivel)}` : ''}</div><p>${esc(s.tldr)}</p><p style="margin-top:8px"><b>${esc(s.rec)}</b></p></div>
       <div class="grid-2-even" style="margin-top:16px">
         <div><h4>Pontos principais</h4><ul class="bullets">${s.pontos.map(p => `<li>${esc(p)}</li>`).join('')}</ul></div>
         <div><h4>Riscos e pendências</h4>${s.riscos.length ? `<ul class="bullets">${s.riscos.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="muted" style="margin-top:10px">Nenhum risco relevante identificado. ✅</p>'}</div>
       </div>
-      <p class="muted small" style="margin-top:16px">Resumo baseado no edital e anexos (48 páginas). Confira sempre o documento original antes de decidir.</p>`;
-    if (ui.tab === 'requisitos') content = `<p class="muted small" style="margin-bottom:8px">Cruzamos as exigências do edital com os documentos cadastrados, considerando a validade na data da sessão (${fmtDate(e.abertura)}).</p>
+      <p class="muted small" style="margin-top:16px">${real ? `Análise feita pela IA a partir do edital publicado no PNCP${e.aiLeuPdf === false ? ' (o PDF não pôde ser lido; baseada só nos dados e itens)' : ''}. Confira sempre o documento original antes de decidir.` : 'Resumo baseado no edital e anexos (48 páginas). Confira sempre o documento original antes de decidir.'}</p>
+      ${real ? `<div style="margin-top:12px">${aiBtn}</div>` : ''}`;
+    if (ui.tab === 'requisitos') content = `${real && !e.ai ? `<div class="ai-box small" style="margin-bottom:10px">Esta é a lista padrão de habilitação da Lei 14.133. Para ver as exigências específicas deste edital, use a análise por IA.<div style="margin-top:8px">${aiBtn}</div></div>` : ''}<p class="muted small" style="margin-bottom:8px">Cruzamos as exigências com os documentos cadastrados, considerando a validade na data da sessão (${fmtDate(e.abertura)}).</p>
       ${reqs.map(r => `<div class="req"><span class="ico ${r.s}">${r.s === 'ok' ? '✓' : r.s === 'warn' ? '!' : '✕'}</span><div><b>${esc(r.txt)}</b><br><span class="muted small">${esc(r.tipo)}</span></div><div style="text-align:right"><span class="badge b-${r.s === 'ok' ? 'ok' : r.s === 'warn' ? 'warn' : 'bad'}">${esc(r.label)}</span>${r.key && r.s !== 'ok' ? `<br><a class="small" href="#/app/documentos">resolver →</a>` : ''}</div></div>`).join('')}`;
-    if (ui.tab === 'itens') content = `<div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Descrição</th><th class="num">Qtd</th><th class="num">Valor ref. unit.</th><th class="num">Total</th></tr></thead>
+    if (ui.tab === 'itens' && e.itensLoading) content = '<div class="empty"><div class="big">⏳</div>Carregando itens do PNCP…</div>';
+    else if (ui.tab === 'itens' && !(e.itens || []).length) content = `<div class="empty"><div class="big">📭</div>${e.itensErro ? `Não foi possível carregar os itens (${esc(e.itensErro)}). <button class="btn btn-ghost btn-sm" data-action="retry-itens" data-id="${e.id}">Tentar de novo</button>` : 'O órgão não publicou itens para esta contratação no PNCP.'}</div>`;
+    else if (ui.tab === 'itens') content = `<div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Descrição</th><th class="num">Qtd</th><th class="num">Valor ref. unit.</th><th class="num">Total</th></tr></thead>
       <tbody>${e.itens.map(i => `<tr><td>${i.n}</td><td>${esc(i.desc)}</td><td class="num">${i.qtd.toLocaleString('pt-BR')} ${esc(i.unid)}</td><td class="num">${brl(i.ref)}</td><td class="num"><b>${brl(i.qtd * i.ref)}</b></td></tr>`).join('')}</tbody>
       <tfoot><tr><td colspan="4">Valor total estimado</td><td class="num">${brl(e.valor)}</td></tr></tfoot></table></div>`;
     if (ui.tab === 'prazos') {
@@ -504,7 +681,7 @@
       const log = db.chats[e.id] || [];
       content = `<div class="suggest">${['Vale a pena participar?', 'Quais documentos são exigidos?', 'Exige amostra?', 'Qual o prazo de entrega?', 'Quando é a sessão?', 'É exclusiva para ME/EPP?'].map(q => `<button data-action="ask" data-q="${esc(q)}">${q}</button>`).join('')}</div>
         <div class="chat"><div class="chat-log" id="chat-log">
-          <div class="msg ai">Olá! Li o edital ${esc(e.numero)} e os anexos. Pergunte o que quiser: prazos, exigências, itens, garantias…</div>
+          <div class="msg ai">${real ? `Pergunte o que quiser sobre o edital ${esc(e.numero)}. Eu leio o PDF publicado no PNCP e os itens para responder, citando o trecho.` : `Olá! Li o edital ${esc(e.numero)} e os anexos. Pergunte o que quiser: prazos, exigências, itens, garantias…`}</div>
           ${log.map(m => `<div class="msg ${m.who}">${esc(m.txt)}${m.src ? `<span class="src">📄 ${esc(m.src)}</span>` : ''}</div>`).join('')}
           ${ui.typing ? '<div class="msg ai"><span class="typing"><i></i><i></i><i></i></span></div>' : ''}
         </div><form class="chat-form" data-form="chat" data-id="${e.id}"><input class="input" name="q" placeholder="Pergunte algo sobre este edital…" autocomplete="off" aria-label="Pergunta"><button class="btn btn-primary" ${ui.typing ? 'disabled' : ''}>Enviar</button></form></div>`;
@@ -515,7 +692,7 @@
         <div style="min-width:0"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="mono muted">${esc(e.numero)}</span><span class="badge b-info">${esc(e.modalidade)}</span><span class="badge b-muted">${esc(e.categoria)}</span>${e.exclusivaME ? '<span class="badge b-ok">Exclusiva ME/EPP</span>' : ''}${prazoBadge(e)}</div>
           <h2>${esc(e.objeto)}</h2><p class="muted">🏛 ${esc(e.orgao)} · ${e.uf} &nbsp; 🌐 ${esc(e.portal)}</p></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="star ${e.fav ? 'on' : ''}" data-action="fav" data-id="${e.id}" aria-label="Favoritar" style="width:40px;height:40px">${e.fav ? '★' : '☆'}</button>
-          <button class="btn btn-ghost" data-action="download" data-id="${e.id}">⬇ Edital</button>
+          ${real ? `<a class="btn btn-ghost" href="${esc(e.link)}" target="_blank" rel="noopener">Ver no PNCP ↗</a>` : `<button class="btn btn-ghost" data-action="download" data-id="${e.id}">⬇ Edital</button>`}
           ${e.stage ? `<select class="input" data-input="stage" data-id="${e.id}" style="width:auto" aria-label="Etapa">${STAGES.map(([k, l]) => `<option value="${k}" ${e.stage === k ? 'selected' : ''}>${l}</option>`).join('')}</select>` : `<button class="btn btn-primary" data-action="to-pipe" data-id="${e.id}">+ Adicionar ao pipeline</button>`}</div>
       </div>
       <div class="ed-layout">
@@ -526,7 +703,7 @@
             <div class="breakdown">${sc.parts.map(([l, v, m]) => `<div><span><span>${l}</span><b>${v}/${m}</b></span><div class="meter"><i style="width:${v / m * 100}%;background:${scoreColor(v / m * 100)}"></i></div></div>`).join('')}</div>
             ${sc.hits.length ? `<p class="small muted">Palavras encontradas: ${sc.hits.map(h => `<span class="tag-chip" style="margin:2px">${esc(h)}</span>`).join('')}</p>` : ''}
           </div>
-          <div class="card"><dl class="kv"><dt>Valor estimado</dt><dd>${brl(e.valor)}</dd><dt>Critério</dt><dd>${esc(e.criterio)}</dd><dt>Sessão</dt><dd>${fmtDate(e.abertura)} ${e.horaAbertura}</dd><dt>Publicado</dt><dd>${fmtDate(e.publicado)}</dd><dt>Entrega</dt><dd>${esc(e.entrega)}</dd><dt>Garantia</dt><dd>${e.garantia ? esc(e.garantia) : 'Não'}</dd></dl></div>
+          <div class="card"><dl class="kv"><dt>Valor estimado</dt><dd>${brl(e.valor)}</dd><dt>Critério</dt><dd>${esc(e.criterio || '—')}</dd><dt>Sessão</dt><dd>${fmtDate(e.abertura)} ${e.horaAbertura}</dd><dt>Publicado</dt><dd>${e.publicado ? fmtDate(e.publicado) : '—'}</dd><dt>Entrega</dt><dd>${esc(e.entrega || '—')}</dd><dt>Garantia</dt><dd>${e.garantia ? esc(e.garantia) : real && !e.ai ? '—' : 'Não'}</dd></dl></div>
           <button class="btn btn-dark btn-lg" data-action="proposal" data-id="${e.id}">📝 Gerar proposta comercial</button>
         </div>
       </div>`;
@@ -545,7 +722,7 @@ Objeto: ${e.objeto}
 
 ${p.razao}
 CNPJ: ${p.cnpj} · Porte: ${p.porte}
-Contato: ${p.contato} · ${p.email}
+Contato: ${p.contato || '—'} · ${p.email || '—'}
 
 ITENS
 ${itens.map(i => `${String(i.n).padStart(2, '0')}. ${i.desc}
@@ -555,8 +732,8 @@ VALOR GLOBAL DA PROPOSTA: ${brl(total)}
 
 CONDIÇÕES
 • Validade da proposta: 60 (sessenta) dias.
-• Prazo de entrega: ${e.entrega}.
-• Pagamento: ${e.pagamento}.
+• Prazo de entrega: ${e.entrega || 'conforme o edital'}.
+• Pagamento: ${e.pagamento || 'conforme o edital'}.
 • Garantia dos produtos: 12 meses on-site, salvo disposição diversa no Termo de Referência.
 
 DECLARAÇÕES
@@ -569,7 +746,9 @@ ${p.contato}
 Representante legal` };
   }
   function proposalModal(id, desc = 8) {
-    const e = ed(id), pr = proposalText(e, desc);
+    const e = ed(id);
+    if (!(e.itens || []).length) { toast(e.itensLoading ? 'Aguarde: carregando os itens do edital…' : 'Este edital não tem itens publicados no PNCP para montar a proposta.'); return; }
+    const pr = proposalText(e, desc);
     openModal(`${mHead('Proposta comercial', `${esc(e.numero)} · gerada a partir dos itens do edital`)}
       <div class="modal-body">
         <label class="field"><span class="small muted">Desconto sobre o valor de referência: <b>${desc}%</b> → total ${brl(pr.total)} (estimado ${brl(e.valor)})</span><input type="range" min="0" max="30" value="${desc}" data-input="desc" data-id="${id}" aria-label="Desconto"></label>
@@ -624,6 +803,7 @@ Representante legal` };
           <div class="field"><label>Estados de atuação</label><div class="check-grid">${UFS.map(u => `<label><input type="checkbox" name="uf" value="${u}" ${p.ufs.includes(u) ? 'checked' : ''}>${u}</label>`).join('')}</div></div>
           <div class="field"><label>Canais</label><div style="display:flex;gap:6px;flex-wrap:wrap">${[['email', '✉️ E-mail'], ['whatsapp', '📲 WhatsApp'], ['telegram', '✈️ Telegram']].map(([k, l]) => `<label class="check-pill" style="padding:7px 12px"><input type="checkbox" name="canal" value="${k}" ${p.canais[k] ? 'checked' : ''}>${l}</label>`).join('')}</div></div>
           <div class="field"><label>Frequência</label><select class="input" name="freq">${[['real', 'Tempo real (assim que publicar)'], ['diario', 'Resumo diário às 7h'], ['semanal', 'Resumo semanal (segunda)']].map(([v, l]) => `<option value="${v}" ${p.freq === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+          ${mode === 'cloud' ? '<p class="small muted">As preferências de canal ficam salvas. O envio automático de alertas por e-mail/WhatsApp ainda está sendo ativado; por enquanto, as novidades aparecem no painel sempre que você entra.</p>' : ''}
           <button class="btn btn-primary btn-lg">Salvar e recalcular notas</button>
         </div>
       </form>`;
@@ -646,7 +826,7 @@ Representante legal` };
         <div class="table-wrap"><table class="table"><thead><tr><th>Documento</th><th>Validade</th><th>Status</th><th></th></tr></thead><tbody>
         ${rows.map(({ key, doc }) => { const st = docStatus(doc); return `<tr class="doc-row"><td><span class="doc-ic">📄</span><div><b>${esc(DOC_TYPES[key])}</b><br><span class="muted small">${doc ? `${esc(doc.arquivo)} · enviado em ${fmtShort(doc.enviadoEm)}` : 'nenhum arquivo'}</span></div></td>
           <td>${doc?.validade ? fmtDate(doc.validade) : '—'}</td><td><span class="badge b-${st.s === 'ok' ? 'ok' : st.s === 'warn' ? 'warn' : 'bad'}">${esc(st.label)}</span></td>
-          <td style="text-align:right;white-space:nowrap"><button class="btn btn-${st.s === 'ok' ? 'ghost' : 'primary'} btn-sm" data-action="upload" data-k="${key}">${doc ? (st.s === 'ok' ? 'Atualizar' : 'Renovar') : 'Enviar'}</button></td></tr>`; }).join('')}
+          <td style="text-align:right;white-space:nowrap">${doc?.path ? `<button class="btn btn-ghost btn-sm" data-action="view-doc" data-k="${key}">Ver</button> ` : ''}<button class="btn btn-${st.s === 'ok' ? 'ghost' : 'primary'} btn-sm" data-action="upload" data-k="${key}">${doc ? (st.s === 'ok' ? 'Atualizar' : 'Renovar') : 'Enviar'}</button></td></tr>`; }).join('')}
         </tbody></table></div></div>`;
     return shell('documentos', 'Documentos', '', body);
   }
@@ -657,7 +837,7 @@ Representante legal` };
       <form data-form="upload" data-k="${key}"><div class="modal-body">
         <div class="field"><label>Arquivo (PDF)</label><input class="input" type="file" name="file" accept="application/pdf,image/*" ${doc ? '' : 'required'}></div>
         ${needsValidity ? `<div class="field"><label>Válido até</label><input class="input" type="date" name="validade" required value="${addDays(today(), key === 'fgts' ? 30 : 180)}"></div>` : ''}
-        ${key.startsWith('cnd') || ['fgts', 'cndt'].includes(key) ? '<div class="ai-box small">💡 No plano Pro, emitimos esta certidão automaticamente nos sites oficiais e renovamos antes de vencer.</div>' : ''}
+        ${mode === 'cloud' ? '<p class="muted small">PDF ou imagem de até 10 MB. O arquivo fica num cofre privado que só a sua conta acessa.</p>' : ''}
       </div><div class="modal-foot"><button type="button" class="btn btn-ghost" data-action="close">Cancelar</button><button class="btn btn-primary">Salvar</button></div></form>`);
   }
 
@@ -666,12 +846,12 @@ Representante legal` };
     const pl = db.plan;
     const body = `
       <div class="grid-2-even">
-        <div class="card" style="display:grid;gap:14px"><div class="card-head" style="margin:0"><h3>Plano atual: ${pl.nome}</h3><span class="badge b-violet">Teste grátis · 5 dias restantes</span></div>
-          <div><div style="display:flex;justify-content:space-between" class="small"><span>Análises por IA</span><b>${pl.analises}/${pl.limite}</b></div><div class="meter"><i style="width:${pl.analises / pl.limite * 100}%"></i></div></div>
-          <div><div style="display:flex;justify-content:space-between" class="small"><span>Perfis de busca</span><b>1/10</b></div><div class="meter"><i style="width:10%"></i></div></div>
-          <div><div style="display:flex;justify-content:space-between" class="small"><span>Usuários</span><b>1/3</b></div><div class="meter"><i style="width:33%"></i></div></div>
+        <div class="card" style="display:grid;gap:14px"><div class="card-head" style="margin:0"><h3>Plano atual: ${pl.nome}</h3><span class="badge b-violet">Teste grátis · ${trialLeft()} dias restantes</span></div>
+          <div><div style="display:flex;justify-content:space-between" class="small"><span>Análises por IA este mês</span><b>${pl.analises}/${pl.limite}</b></div><div class="meter"><i style="width:${Math.min(100, pl.analises / pl.limite * 100)}%"></i></div></div>
+          <div><div style="display:flex;justify-content:space-between" class="small"><span>Buscas salvas</span><b>${db.buscas.length}/10</b></div><div class="meter"><i style="width:${db.buscas.length * 10}%"></i></div></div>
           <p class="muted small">Após o teste: R$ 397/mês. Cobrança via Pix, boleto ou cartão.</p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" data-action="subscribe">Assinar agora</button><button class="btn btn-ghost" data-action="reset">Restaurar dados de exemplo</button></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" data-action="subscribe">Assinar agora</button>${mode === 'cloud' ? `<button class="btn btn-ghost" data-action="export-json">⬇ Baixar meus dados</button><button class="btn btn-danger" data-action="logout">Sair</button>` : '<button class="btn btn-ghost" data-action="reset">Restaurar dados de exemplo</button>'}</div>
+          ${mode === 'cloud' ? `<p class="muted small">Conectado como ${esc(user?.email || '')}.</p>` : ''}
         </div>
         <div class="card"><div class="card-head"><h3>Faturas</h3></div><div class="empty"><div class="big">🧾</div>Nenhuma fatura ainda. Sua primeira cobrança acontece ao fim do teste.</div></div>
       </div>
@@ -683,16 +863,32 @@ Representante legal` };
   // ---------- Roteador ----------
   let lastPath = '';
   function route() {
-    const path = (location.hash.slice(1) || '/').split('?')[0];
+    const raw = location.hash;
+    if (/^#(access_token|error|type=)/.test(raw)) {
+      const hp = new URLSearchParams(raw.slice(1));
+      if (hp.get('error_description')) { ui.authMsg = hp.get('error_description').replace(/\+/g, ' '); ui.authErr = true; history.replaceState(null, '', '#/entrar?login'); }
+      else { $root.innerHTML = '<div class="auth"><div class="auth-card"><div class="empty"><div class="big">⏳</div>Validando seu acesso…</div></div></div>'; return; }
+    }
+    const [path, qs] = (location.hash.slice(1) || '/').split('?');
+    const params = new URLSearchParams(qs || '');
     closeModal();
     if (path !== lastPath && path.startsWith('/app/edital/')) { ui.tab = 'resumo'; ui.typing = false; }
     const changed = path !== lastPath; lastPath = path;
     let html;
-    if (path === '/' || path === '') html = vLanding();
-    else if (path === '/entrar') html = vAuth();
-    else if (path.startsWith('/app')) {
+    if (path === '/' || path === '') { if (!db) loadDemo(); html = vLanding(); }
+    else if (path === '/nova-senha') html = vAuth('newpass');
+    else if (path === '/entrar') {
+      if (mode === 'cloud' && onboarded() && !params.has('login')) { location.replace('#/app'); return; }
+      if (mode !== 'cloud' && !Cloud.enabled && !db) loadDemo();
+      html = vAuth(params.has('login') && mode !== 'cloud' ? 'login' : 'onboarding');
+    } else if (path.startsWith('/app')) {
+      if (params.has('demo')) { ui.demo = true; history.replaceState(null, '', '#' + path); }
+      if (mode !== 'cloud') {
+        if (Cloud.enabled && !ui.demo) { location.replace('#/entrar?login'); return; }
+        if (!db) loadDemo();
+      } else if (!onboarded()) { location.replace('#/entrar'); return; }
       const [, , sec, id] = path.split('/');
-      html = sec === 'edital' ? vEdital(id) : ({ '': vDashboard, oportunidades: vOportunidades, pipeline: vPipeline, alertas: vAlertas, documentos: vDocumentos, plano: vPlano }[sec || ''] || vDashboard)();
+      html = sec === 'edital' ? vEdital(decodeURIComponent(id || '')) : ({ '': vDashboard, oportunidades: vOportunidades, pipeline: vPipeline, alertas: vAlertas, documentos: vDocumentos, plano: vPlano }[sec || ''] || vDashboard)();
     } else html = vLanding();
     $root.innerHTML = html;
     document.title = path.startsWith('/app') ? 'Radar Licita · Painel' : 'Radar Licita | Licitações com inteligência artificial';
@@ -708,22 +904,84 @@ Representante legal` };
     if (s === 'ganha') toast('🏆 Parabéns pelo contrato!');
   }
 
-  function ask(id, q) {
+  const AI_ERR = {
+    ia_nao_configurada: 'A IA ainda não foi ativada no servidor (falta configurar a chave da Anthropic).',
+    limite_mensal_atingido: 'Você atingiu o limite de análises por IA deste mês.',
+    ia_ocupada_tente_novamente: 'A IA está ocupada. Tente de novo em alguns segundos.',
+    chave_da_ia_invalida: 'A chave da IA configurada no servidor é inválida.',
+    nao_autenticado: 'Sua sessão expirou. Entre de novo.',
+    ia_recusou: 'A IA não conseguiu responder a este pedido.',
+  };
+  const aiErrMsg = e => AI_ERR[e.code] || `A IA não respondeu agora (${e.code || e.message}). Tente de novo em instantes.`;
+  const slimEdital = e => ({ id: e.id, numero: e.numero, orgao: e.orgao, uf: e.uf, cidade: e.cidade, modalidade: e.modalidade, objeto: e.objeto,
+    valor: e.valor, abertura: e.abertura, horaAbertura: e.horaAbertura, portal: e.portal, criterio: e.criterio, cnpj: e.cnpj, ano: e.ano, seq: e.seq,
+    itens: (e.itens || []).slice(0, 200).map(({ n, desc, qtd, unid, ref }) => ({ n, desc, qtd, unid, ref })) });
+  const aiContext = () => ({ perfil: { razao: db.profile.razao, porte: db.profile.porte, palavras: db.profile.palavras, ufs: db.profile.ufs },
+    docs: Object.keys(DOC_TYPES).map(k => ({ nome: DOC_TYPES[k], status: docStatus(companyDoc(k)).label })) });
+
+  async function ask(id, q) {
     if (!q.trim() || ui.typing) return;
     const e = ed(id);
     db.chats[id] = db.chats[id] || [];
+    const historico = db.chats[id].slice(-10);
     db.chats[id].push({ who: 'user', txt: q.trim() });
     ui.typing = true; save(); rerender();
-    setTimeout(() => {
-      let a;
+    let a;
+    if (mode === 'cloud' && e.fonte === 'pncp') {
+      try {
+        const r = await Cloud.invoke('radar-ia', { action: 'chat', edital: slimEdital(e), pergunta: q.trim(), historico, ...aiContext() });
+        a = { txt: r.resposta, src: 'Claude · edital no PNCP' };
+        db.plan.analises = r.usado ?? db.plan.analises;
+      } catch (err) { a = { txt: `⚠️ ${aiErrMsg(err)}`, src: '' }; }
+    } else {
+      await new Promise(res => setTimeout(res, 700 + Math.random() * 700));
       if (/esclarecimento/.test(norm(q))) {
         a = { txt: `Sugestão de pedido de esclarecimento:\n\n"Prezado(a) Pregoeiro(a), em relação ao ${e.modalidade} nº ${e.numero.split(' ')[1]}, solicitamos esclarecer [descreva a dúvida], considerando o disposto no Termo de Referência. Atenciosamente, ${db.profile.razao}."\n\nEnvie pelo ${e.portal} até ${fmtDate(addDays(e.abertura, -3))}.`, src: 'Modelo Radar Licita' };
       } else a = answer(e, q);
-      db.chats[id].push({ who: 'ai', txt: a.txt, src: a.src });
       db.plan.analises = Math.min(db.plan.limite, db.plan.analises + 1);
-      ui.typing = false; save();
-      if (location.hash.endsWith(id)) rerender();
-    }, 700 + Math.random() * 700);
+    }
+    db.chats[id].push({ who: 'ai', txt: a.txt, src: a.src });
+    ui.typing = false; save();
+    if (location.hash.endsWith(encodeURIComponent(id)) || location.hash.endsWith(id)) rerender();
+  }
+
+  async function analyze(id) {
+    const e = ed(id);
+    if (mode !== 'cloud' || e.fonte !== 'pncp') { toast('Na demonstração, o resumo por IA já vem simulado.'); return; }
+    ui.analyzing = id; rerender();
+    try {
+      const r = await Cloud.invoke('radar-ia', { action: 'summary', edital: slimEdital(e), ...aiContext() });
+      const a = r.resumo;
+      e.ai = a; e.aiLeuPdf = r.leuPdf; e.aiEm = new Date().toISOString();
+      e.amostra = !!a.flags?.amostra; e.visita = !!a.flags?.visitaTecnica; e.garantia = a.flags?.garantia || null;
+      if (a.flags?.exclusivaME) e.exclusivaME = true;
+      if (a.prazos?.entrega) e.entrega = a.prazos.entrega;
+      if (a.prazos?.pagamento) e.pagamento = a.prazos.pagamento;
+      db.plan.analises = r.usado ?? db.plan.analises;
+      save(); toast('Análise concluída');
+    } catch (err) { toast(aiErrMsg(err)); }
+    ui.analyzing = null;
+    if (location.hash.includes('/edital/')) rerender();
+  }
+
+  async function loadDetails(e) {
+    e.itensLoading = true; e.itensErro = '';
+    try {
+      const r = await Cloud.invoke('radar-edital', { cnpj: e.cnpj, ano: e.ano, seq: e.seq });
+      e.itens = (r.itens || []).slice(0, 300); e.arquivos = r.arquivos || [];
+      if (r.exclusivaME) e.exclusivaME = true;
+      if (r.criterio) e.criterio = r.criterio;
+      e.itensLoaded = true;
+      if (kept(e)) save();
+    } catch (err) { e.itensErro = err.code || err.message; }
+    e.itensLoading = false;
+    if (location.hash.includes('/edital/')) maybeRerender();
+  }
+
+  async function logout() {
+    if (saver && !(await saver.flush()) && !confirm('Há alterações que ainda não foram salvas. Sair mesmo assim?')) return;
+    try { await Cloud.signOut(); } catch (e) { /* já saiu */ }
+    leaveCloud(); ui.demo = false; location.hash = '#/'; toast('Você saiu da conta');
   }
 
   function download(name, text, type = 'text/plain') {
@@ -742,13 +1000,38 @@ Representante legal` };
       case 'overlay': case 'close': closeModal(); break;
       case 'scroll': e.preventDefault(); document.querySelector(el.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' }); break;
       case 'billing': ui.billing = el.dataset.v; rerender(); break;
-      case 'open-ed': if (e.target.closest('button,select')) return; location.hash = `#/app/edital/${id}`; break;
+      case 'open-ed': if (e.target.closest('button,select')) return; location.hash = `#/app/edital/${encodeURIComponent(id)}`; break;
       case 'fav': { const x = ed(id); x.fav = !x.fav; save(); rerender(); toast(x.fav ? 'Adicionado aos favoritos' : 'Removido dos favoritos'); break; }
       case 'to-pipe': setStage(id, 'analisando'); break;
       case 'view': ui.f.view = el.dataset.v; rerender(); break;
-      case 'save-alert': toast('Busca salva: você será avisado de novos editais'); break;
+      case 'save-alert': {
+        const f = ui.f, nome = [f.q, f.uf === 'meus' ? 'meus estados' : f.uf, f.mod, f.cat, f.min ? `nota ${f.min}+` : ''].filter(Boolean).join(' · ') || 'Todas';
+        db.buscas = [...db.buscas.filter(b => b.nome !== nome), { nome, f: { ...f } }].slice(-10); save(); rerender(); toast('Busca salva');
+        break;
+      }
+      case 'apply-search': { const b = db.buscas[+el.dataset.i]; if (b) { ui.f = { ...ui.f, ...b.f }; rerender(); } break; }
+      case 'refresh-live': fetchLive(true); break;
+      case 'analyze': analyze(id); break;
+      case 'retry-itens': { const x = ed(id); if (x) { x.itensErro = ''; loadDetails(x); rerender(); } break; }
+      case 'logout': e.preventDefault(); logout(); break;
+      case 'forgot': {
+        e.preventDefault();
+        const email = el.closest('form')?.elements.email?.value.trim();
+        if (!email) { ui.authMsg = 'Digite seu e-mail e clique de novo em "Esqueci minha senha".'; ui.authErr = true; rerender(); break; }
+        Cloud.resetPassword(email).then(() => { ui.authMsg = `Se existir uma conta com ${email}, enviamos um link para criar uma nova senha.`; ui.authErr = false; },
+          err => { ui.authMsg = Cloud.authError(err); ui.authErr = true; }).finally(() => { rerender(); const i = document.querySelector('[name=email]'); if (i) i.value = email; });
+        break;
+      }
+      case 'view-doc': {
+        const d = companyDoc(el.dataset.k);
+        if (!d?.path) break;
+        Cloud.storage('radar-docs').createSignedUrl(d.path, 120).then(({ data, error }) => { if (error) throw error; window.open(data.signedUrl, '_blank', 'noopener'); })
+          .catch(() => toast('Não foi possível abrir o arquivo.'));
+        break;
+      }
+      case 'export-json': download(`radar-licita-${today()}.json`, JSON.stringify(persistable(), null, 2), 'application/json'); break;
       case 'tab': ui.tab = el.dataset.t; rerender(); if (ui.tab === 'chat') document.querySelector('.chat-form input')?.focus(); break;
-      case 'ask': ask(location.hash.split('/').pop(), el.dataset.q); break;
+      case 'ask': ask(decodeURIComponent(location.hash.split('/').pop()), el.dataset.q); break;
       case 'proposal': proposalModal(id); break;
       case 'copy-prop': navigator.clipboard?.writeText(document.getElementById('prop-text').textContent).then(() => toast('Proposta copiada'), () => toast('Não foi possível copiar')); break;
       case 'dl-prop': download(`proposta-${ed(id).numero.replace(/\W+/g, '-')}.txt`, proposalText(ed(id), +el.dataset.desc).text); toast('Proposta baixada'); break;
@@ -756,14 +1039,33 @@ Representante legal` };
       case 'ics': { const x = ed(id); const dt = x.abertura.replace(/-/g, '') + 'T' + x.horaAbertura.replace(':', '') + '00';
         download(`sessao-${x.id}.ics`, `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Radar Licita//PT\nBEGIN:VEVENT\nUID:${x.id}@radarlicita\nDTSTAMP:${dt}\nDTSTART:${dt}\nSUMMARY:Sessão ${x.numero} - ${x.orgao}\nDESCRIPTION:${x.objeto}\nEND:VEVENT\nEND:VCALENDAR`, 'text/calendar'); break; }
       case 'upload': uploadModal(el.dataset.k); break;
-      case 'subscribe': toast('Checkout de pagamento entra aqui (Pix, boleto ou cartão)'); break;
+      case 'subscribe': toast('O pagamento online ainda não foi ativado. Seu teste continua liberado.'); break;
       case 'reset': if (confirm('Restaurar os dados de exemplo? Suas alterações serão perdidas.')) { db = seed(); save(); rerender(); toast('Dados restaurados'); } break;
-      case 'cnpj-lookup': { const c = document.querySelector('[name=cnpj]'); if (c.value.replace(/\D/g, '').length !== 14) { toast('Digite um CNPJ com 14 dígitos'); break; }
-        document.getElementById('razao').value = 'Minha Empresa Comércio e Serviços Ltda'; toast('Dados preenchidos (exemplo; em produção vem da Receita)'); break; }
+      case 'cnpj-lookup': lookupCnpj(); break;
       case 'rm-tag': e.stopPropagation(); db.profile.palavras.splice(+el.dataset.i, 1); save(); rerenderKeepForm(); break;
       case 'focus-tags': el.querySelector('input')?.focus(); break;
     }
   });
+
+  // Consulta pública de CNPJ (BrasilAPI, dados da Receita Federal).
+  async function lookupCnpj() {
+    const c = document.querySelector('[name=cnpj]'), digitos = c.value.replace(/\D/g, '');
+    if (digitos.length !== 14) { toast('Digite um CNPJ com 14 dígitos'); return; }
+    const btn = document.querySelector('[data-action="cnpj-lookup"]'); btn.disabled = true; btn.textContent = '…';
+    try {
+      const r = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${digitos}`, { signal: AbortSignal.timeout(12000) });
+      if (r.status === 404) throw new Error('CNPJ não encontrado na Receita');
+      if (!r.ok) throw new Error('consulta indisponível');
+      const j = await r.json();
+      document.getElementById('razao').value = j.razao_social || '';
+      const porte = String(j.porte || j.descricao_porte || '').toUpperCase();
+      document.getElementById('porte').value = /MICRO/.test(porte) ? 'ME' : /PEQUENO/.test(porte) ? 'EPP' : 'Demais';
+      document.getElementById('uf-cnpj').value = j.uf || '';
+      if (j.descricao_situacao_cadastral && !/ATIVA/i.test(j.descricao_situacao_cadastral)) toast(`Atenção: situação cadastral ${j.descricao_situacao_cadastral}`);
+      else toast('Dados preenchidos com a Receita Federal');
+    } catch (e) { toast(`Não foi possível buscar o CNPJ (${e.message}). Preencha manualmente.`); }
+    btn.disabled = false; btn.textContent = 'Buscar';
+  }
 
   // Re-renderiza preservando o que o usuário já marcou num formulário aberto.
   function rerenderKeepForm() {
@@ -804,30 +1106,76 @@ Representante legal` };
     if (k === 'stage') setStage(el.dataset.id, el.value);
   });
 
-  document.addEventListener('submit', e => {
+  function keepValues(form, fn) {
+    const vals = [...form.elements].filter(x => x.name && x.type !== 'password' && x.type !== 'hidden').map(x => [x.name, x.value]);
+    fn();
+    const nf = document.querySelector(`form[data-form="${form.dataset.form}"]`);
+    if (nf) vals.forEach(([n, v]) => { const el = nf.elements[n]; if (el && !(el instanceof RadioNodeList)) el.value = v; });
+  }
+
+  document.addEventListener('submit', async e => {
     const f = e.target, kind = f.dataset.form; if (!kind) return;
     e.preventDefault();
     const fd = new FormData(f);
-    if (kind === 'onb1') { Object.assign(db.profile, { cnpj: fd.get('cnpj'), razao: fd.get('razao'), porte: fd.get('porte'), email: fd.get('email') }); save(); ui.onb = 2; rerender(); }
+    if (kind === 'login') {
+      if (!Cloud.enabled) { ui.demo = true; location.hash = '#/app'; return; }
+      ui.busy = true; ui.authMsg = ''; keepValues(f, rerender);
+      try { await enterCloud(await Cloud.signIn(fd.get('email').trim(), fd.get('senha'))); ui.busy = false; location.hash = onboarded() ? '#/app' : '#/entrar'; return; }
+      catch (err) { ui.authMsg = Cloud.authError(err); ui.authErr = true; }
+      ui.busy = false; keepValues(f, rerender); return;
+    }
+    if (kind === 'newpass') {
+      try { await Cloud.updatePassword(fd.get('senha')); ui.authMsg = ''; toast('Senha atualizada'); location.hash = '#/app'; }
+      catch (err) { ui.authMsg = Cloud.authError(err); ui.authErr = true; rerender(); }
+      return;
+    }
+    if (kind === 'onb1') {
+      const perfil = { cnpj: fd.get('cnpj'), razao: fd.get('razao').trim(), porte: fd.get('porte'), contato: fd.get('contato').trim(), email: fd.get('email').trim(), uf: fd.get('uf') || '' };
+      if (!Cloud.enabled) { if (!db) loadDemo(); Object.assign(db.profile, perfil); save(); ui.onb = 2; rerender(); return; }
+      ui.busy = true; ui.authMsg = ''; keepValues(f, rerender);
+      try {
+        const r = await Cloud.signUp(perfil.email, fd.get('senha'), perfil, '#/entrar');
+        if (r.user && Array.isArray(r.user.identities) && r.user.identities.length === 0) throw new Error('User already registered');
+        if (r.session) { await enterCloud(r.session); ui.busy = false; ui.authMsg = ''; rerender(); return; }
+        ui.authMsg = `Enviamos um link de confirmação para ${perfil.email}. Abra o e-mail para ativar sua conta e continuar.`; ui.authErr = false;
+      } catch (err) { ui.authMsg = Cloud.authError(err); ui.authErr = true; }
+      ui.busy = false; keepValues(f, rerender); return;
+    }
     if (kind === 'onb2') {
       const ufs = fd.getAll('uf'); if (!ufs.length) { toast('Escolha ao menos um estado'); return; }
       if (!db.profile.palavras.length) { toast('Adicione ao menos uma palavra-chave'); return; }
-      db.profile.ufs = ufs; save(); ui.onb = 1; location.hash = '#/app/oportunidades'; toast('Pronto! Estas são suas oportunidades 🎯');
+      db.profile.ufs = ufs; save(); ui.onb = 1; ui.authMsg = '';
+      if (mode === 'cloud') fetchLive(true);
+      location.hash = '#/app/oportunidades'; toast('Pronto! Estas são suas oportunidades 🎯');
     }
     if (kind === 'alerts') {
       const ufs = fd.getAll('uf'); if (!ufs.length) { toast('Escolha ao menos um estado'); return; }
       const min = +fd.get('valorMin'), max = +fd.get('valorMax'); if (max && max < min) { toast('O valor máximo deve ser maior que o mínimo'); return; }
       const canais = { email: false, whatsapp: false, telegram: false }; fd.getAll('canal').forEach(c => { canais[c] = true; });
+      const ufsMudaram = ufs.slice().sort().join() !== db.profile.ufs.slice().sort().join();
       Object.assign(db.profile, { ufs, cats: fd.getAll('cat'), valorMin: min, valorMax: max || Infinity, porte: fd.get('porte'), canais, freq: fd.get('freq') });
       if (!isFinite(db.profile.valorMax)) db.profile.valorMax = 1e12;
       save(); rerender(); toast('Perfil salvo e notas recalculadas');
+      if (ufsMudaram && mode === 'cloud') fetchLive(true);
     }
     if (kind === 'chat') { const q = fd.get('q'); ask(f.dataset.id, q); }
     if (kind === 'upload') {
       const key = f.dataset.k, file = fd.get('file');
+      const hasFile = file && file.name && file.size > 0;
+      let path = null;
+      if (hasFile && mode === 'cloud') {
+        if (file.size > 10 * 1024 * 1024) { toast('Arquivo maior que 10 MB'); return; }
+        const btn = f.querySelector('.btn-primary'); btn.disabled = true; btn.textContent = 'Enviando…';
+        const ext = (file.name.split('.').pop() || 'pdf').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5);
+        path = `${user.id}/${key}-${Date.now()}.${ext}`;
+        const { error } = await Cloud.storage('radar-docs').upload(path, file, { contentType: file.type || 'application/pdf', upsert: false });
+        if (error) { toast(`Não foi possível enviar o arquivo (${error.message}).`); btn.disabled = false; btn.textContent = 'Salvar'; return; }
+      }
       let doc = companyDoc(key);
       if (!doc) { doc = { id: uid(), key, nome: DOC_TYPES[key] }; db.docs.push(doc); }
-      Object.assign(doc, { validade: fd.get('validade') || null, arquivo: file && file.name ? file.name : doc.arquivo || `${key}.pdf`, enviadoEm: today() });
+      const oldPath = doc.path;
+      Object.assign(doc, { validade: fd.get('validade') || null, arquivo: hasFile ? file.name : doc.arquivo || `${key}.pdf`, enviadoEm: today() });
+      if (path) { doc.path = path; if (oldPath) Cloud.storage('radar-docs').remove([oldPath]).catch(() => {}); }
       save(); closeModal(); rerender(); toast('Documento salvo');
     }
   });
@@ -838,7 +1186,26 @@ Representante legal` };
   document.addEventListener('dragover', e => { const col = e.target.closest?.('[data-drop]'); if (!col) return; e.preventDefault(); document.querySelectorAll('.col.over').forEach(c => c !== col && c.classList.remove('over')); col.classList.add('over'); });
   document.addEventListener('drop', e => { const col = e.target.closest?.('[data-drop]'); if (!col) return; e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); if (id && ed(id)?.stage !== col.dataset.drop) setStage(id, col.dataset.drop); });
 
-  load();
   window.addEventListener('hashchange', route);
-  route();
+  async function boot() {
+    if (!Cloud.enabled) { route(); return; }
+    const rawHash = location.hash;
+    const fromEmail = /^#(access_token|type=)/.test(rawHash), isRecovery = /type=recovery/.test(rawHash);
+    $root.innerHTML = '<div class="auth"><div class="auth-card"><div class="empty"><div class="big">⏳</div>Carregando…</div></div></div>';
+    Cloud.onAuth(event => {
+      if (event === 'PASSWORD_RECOVERY') { history.replaceState(null, '', '#/nova-senha'); route(); }
+      else if (event === 'SIGNED_OUT' && mode === 'cloud') { leaveCloud(); location.hash = '#/'; }
+    });
+    try {
+      const session = await Cloud.session();
+      if (session) await enterCloud(session);
+      if (isRecovery && session) history.replaceState(null, '', '#/nova-senha');
+      else if (fromEmail) history.replaceState(null, '', session ? (onboarded() ? '#/app' : '#/entrar') : '#/entrar?login');
+    } catch (e) {
+      console.error(e);
+      ui.authMsg = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.'; ui.authErr = true;
+    }
+    route();
+  }
+  boot();
 })();

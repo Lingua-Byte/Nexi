@@ -36,6 +36,32 @@
     return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
   }
 
+  const DEFAULT_MSG = 'Olá, {nome}! 💜 Passando para lembrar do seu horário de {servico} em {data} às {hora} com {profissional}.\n\nResponda 1 para confirmar ou 2 para remarcar.';
+  const Cloud = window.Cloud || { enabled: false };
+
+  // Estrutura inicial de um negócio novo (conta real).
+  function starter(nome = 'Meu negócio', pessoa = 'Profissional') {
+    return {
+      profs: [{ id: 'p1', nome: pessoa, cor: '#a8437f', cats: ['Geral'], cargo: 'Profissional' }],
+      servicos: [{ id: 's1', nome: 'Atendimento padrão (edite em Serviços)', duracao: 60, preco: 100, categoria: 'Geral' }],
+      clientes: [], ags: [], despesas: [],
+      config: {
+        nome, slug: '', tel: '', endereco: '', abre: '09:00', fecha: '18:00', diasFechados: [0], msg: DEFAULT_MSG,
+        lembrete24h: true, lembrete2h: false, confirmAuto: true, aniversario: true, reativacao: true, plano: 'Teste grátis',
+      },
+    };
+  }
+  function normalize(d) {
+    const base = starter();
+    const out = Object.assign(base, d || {});
+    out.config = Object.assign(starter().config, (d && d.config) || {});
+    ['profs', 'servicos', 'clientes', 'ags', 'despesas'].forEach(k => { if (!Array.isArray(out[k])) out[k] = []; });
+    out.profs.forEach(p => { if (!Array.isArray(p.cats)) p.cats = []; });
+    return out;
+  }
+  const slugify = s => (norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'negocio').padEnd(3, '0');
+  const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
   // ---------- Dados de demonstração ----------
   function seed() {
     const r = rng(42);
@@ -109,20 +135,105 @@
       profs, servicos, clientes, ags, despesas,
       config: {
         nome: 'Studio Bella Pele', slug: 'studio-bella-pele', tel: '(11) 98888-1234', endereco: 'Rua das Flores, 120, Vila Mariana, São Paulo/SP',
-        abre: '08:00', fecha: '19:00',
-        msg: 'Olá, {nome}! 💜 Passando para lembrar do seu horário de {servico} em {data} às {hora} com {profissional}.\n\nResponda 1 para confirmar ou 2 para remarcar.',
+        abre: '08:00', fecha: '19:00', diasFechados: [0],
+        msg: DEFAULT_MSG,
         lembrete24h: true, lembrete2h: false, confirmAuto: true, aniversario: true, reativacao: true, plano: 'Pro',
       },
     };
   }
 
   // ---------- Camada de dados ----------
-  let db;
-  function load() {
+  // mode: 'demo' (dados de exemplo no navegador) ou 'cloud' (conta real no Supabase)
+  let db = null, mode = 'demo', meta = null, user = null, saver = null, entering = null;
+  const store = Cloud.enabled ? Cloud.docStore({ table: 'agendae_negocios', saveFn: 'agendae_save' }) : null;
+
+  function loadDemo() {
     try { db = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { db = null; }
-    if (!db || !db.ags) { db = seed(); save(); }
+    if (!db || !db.ags) { db = seed(); }
+    db = normalize(db); mode = 'demo';
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* modo privado */ }
   }
-  function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* modo privado */ } }
+  function save() {
+    if (mode === 'cloud') { saver.schedule(); return; }
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(db)); } catch (e) { /* modo privado */ }
+  }
+
+  async function enterCloud(session) {
+    if (mode === 'cloud' && user?.id === session.user.id) return;
+    if (entering) return entering;
+    entering = (async () => {
+      user = session.user;
+      let row = await store.load(user.id);
+      if (!row) {
+        const m = user.user_metadata || {};
+        const nome = String(m.negocio || 'Meu negócio').trim().slice(0, 80);
+        const data = starter(nome, String(m.nome || 'Profissional').trim().slice(0, 60));
+        for (let i = 0; i < 5 && !row; i++) {
+          const slug = `${slugify(nome)}-${Math.random().toString(36).slice(2, 6)}`;
+          data.config.slug = slug;
+          try { row = await store.create({ owner_id: user.id, slug, data }); }
+          catch (e) { if (!/duplicate|unique/i.test(e.message || '')) throw e; }
+        }
+        if (!row) throw new Error('Não foi possível criar o negócio');
+      }
+      meta = { id: row.id, slug: row.slug, version: row.version, createdAt: row.created_at };
+      db = normalize(row.data); db.config.slug = row.slug; mode = 'cloud';
+      if (!saver) saver = Cloud.autosaver({
+        getData: () => db, getVersion: () => meta.version, setVersion: v => { meta.version = v; },
+        save: (d, v) => store.save(d, v),
+        onConflict: async () => {
+          const r = await store.load(user.id);
+          meta.version = r.version; db = normalize(r.data); db.config.slug = r.slug;
+          if (!$modal.innerHTML) rerender();
+          toast('Seus dados foram atualizados em outro aparelho. Confira a última alteração.');
+        },
+        onError: () => toast('Sem conexão. Vamos tentar salvar de novo em instantes…'),
+      });
+      startReservaSync();
+    })();
+    try { await entering; } finally { entering = null; }
+  }
+
+  function leaveCloud() {
+    mode = 'demo'; user = null; meta = null; db = null;
+    clearInterval(syncTimer); syncTimer = null;
+  }
+
+  // Reservas feitas na página pública entram no app do dono por aqui.
+  let syncTimer = null, syncing = false;
+  function startReservaSync() {
+    if (syncTimer) return;
+    syncReservas();
+    syncTimer = setInterval(syncReservas, 20000);
+  }
+  window.addEventListener('focus', () => { if (mode === 'cloud') syncReservas(); });
+  async function syncReservas() {
+    if (mode !== 'cloud' || syncing) return;
+    syncing = true;
+    try {
+      const { data: rows, error } = await Cloud.from('agendae_reservas').select('*').eq('negocio_id', meta.id);
+      if (error) throw error;
+      if (!rows?.length) return;
+      const novas = rows.filter(r => !db.ags.some(a => a.id === r.id));
+      novas.forEach(r => {
+        let c = db.clientes.find(x => digits(x.tel) && digits(x.tel) === digits(r.tel));
+        if (!c) { c = { id: uid(), nome: r.nome, tel: r.tel, email: '', nascimento: '', obs: '', criadoEm: today() }; db.clientes.push(c); }
+        db.ags.push({ id: r.id, clienteId: c.id, servicoId: r.servico_id, profId: r.prof_id, data: r.data, hora: r.hora, status: r.status, pago: false, forma: '', preco: Number(r.preco) || 0, origem: 'online' });
+      });
+      if (novas.length) saver.schedule(0);
+      if (await saver.flush()) await Cloud.from('agendae_reservas').delete().in('id', rows.map(r => r.id));
+      if (novas.length) {
+        if (!$modal.innerHTML && location.hash.startsWith('#/app')) rerender();
+        toast(novas.length === 1 ? '📅 Novo agendamento online!' : `📅 ${novas.length} novos agendamentos online!`);
+      }
+    } catch (e) { console.warn('Falha ao sincronizar reservas', e); }
+    finally { syncing = false; }
+  }
+
+  const bookUrl = () => `${location.href.split('#')[0]}#/agendar${mode === 'cloud' ? `?n=${meta.slug}` : ''}`;
+  const closedDays = () => (Array.isArray(db.config.diasFechados) ? db.config.diasFechados : [0]).map(Number);
+  const isClosedDay = d => closedDays().includes(parse(d).getDay());
+  const trialLeft = () => mode === 'cloud' ? Math.max(0, 14 - daysBetween(String(meta.createdAt).slice(0, 10), today())) : 11;
   const byId = (list, id) => db[list].find(x => x.id === id);
   const cli = id => byId('clientes', id) || { nome: 'Cliente removido', tel: '' };
   const svc = id => byId('servicos', id) || { nome: 'Serviço removido', duracao: 30, preco: 0, categoria: '' };
@@ -155,7 +266,9 @@
   const ui = {
     billing: 'mensal', agendaDate: today(), cliFilter: 'todos', cliSearch: '', finMonth: monthKey(today()),
     book: { step: 1, servicoId: null, profId: null, data: null, hora: null, done: null },
+    demo: false, authMsg: '', authErr: false, sent: {}, busy: false,
   };
+  let pub = null, pubSlug = null; // dados públicos da página de agendamento (modo nuvem)
 
   // ---------- Toast e modal ----------
   function toast(msg) {
@@ -278,25 +391,36 @@
   }
 
   // ---------- Auth ----------
-  function vAuth(signup) {
+  function vNewPassword() {
+    return `<form data-form="newpass">
+      <a class="logo" href="#/"><span class="logo-mark">✦</span>Agendaê</a>
+      <h1>Crie uma nova senha</h1>${authNotice()}
+      <div class="field"><label>Nova senha</label><input class="input" type="password" name="senha" required minlength="6" autocomplete="new-password"></div>
+      <button class="btn btn-primary btn-lg" ${ui.busy ? 'disabled' : ''}>Salvar nova senha</button></form>`;
+  }
+  const authNotice = () => ui.authMsg ? `<div class="summary small" style="background:${ui.authErr ? 'var(--bad-soft)' : 'var(--ok-soft)'};color:${ui.authErr ? 'var(--bad)' : 'var(--ok)'}" role="alert">${esc(ui.authMsg)}</div>` : '';
+  function vAuth(signup, recovery = false) {
     return `<div class="auth">
       <aside class="auth-side">
         <a class="logo" href="#/" style="color:#fff"><span class="logo-mark">✦</span>Agendaê</a>
         <div><h2>Mais clientes atendidos, menos tempo no celular.</h2><ul style="margin-top:20px"><li>Agenda online 24h</li><li>Lembretes automáticos no WhatsApp</li><li>Financeiro e relatórios</li></ul></div>
         <p style="color:#f2dce9" class="small">14 dias grátis · sem cartão · cancele quando quiser</p>
       </aside>
-      <div class="auth-form"><form data-form="auth" data-signup="${signup ? 1 : ''}">
+      <div class="auth-form">${recovery ? vNewPassword() : `<form data-form="auth" data-signup="${signup ? 1 : ''}">
         <a class="logo" href="#/"><span class="logo-mark">✦</span>Agendaê</a>
         <h1>${signup ? 'Crie sua conta grátis' : 'Bem-vinda(o) de volta'}</h1>
         <p class="muted">${signup ? 'Leva menos de um minuto.' : 'Entre para acessar seu painel.'}</p>
+        ${authNotice()}
+        ${Cloud.enabled ? '' : '<p class="small muted" style="background:var(--warn-soft);padding:8px 12px;border-radius:10px">Modo demonstração: o backend ainda não foi configurado, então nenhuma conta é criada e você entra direto nos dados de exemplo.</p>'}
         ${signup ? `<div class="field"><label>Nome do negócio</label><input class="input" name="negocio" required placeholder="Ex.: Studio Bella Pele"></div>
           <div class="field"><label>Seu nome</label><input class="input" name="nome" required></div>` : ''}
         <div class="field"><label>E-mail</label><input class="input" type="email" name="email" required placeholder="voce@email.com"></div>
-        <div class="field"><label>Senha</label><input class="input" type="password" name="senha" required minlength="6" placeholder="mínimo 6 caracteres"></div>
-        <button class="btn btn-primary btn-lg" type="submit">${signup ? 'Criar conta e começar' : 'Entrar'}</button>
-        <a class="btn btn-ghost" href="#/app">Entrar na conta de demonstração</a>
+        <div class="field"><label>Senha</label><input class="input" type="password" name="senha" required minlength="6" placeholder="mínimo 6 caracteres" autocomplete="${signup ? 'new-password' : 'current-password'}"></div>
+        ${!signup && Cloud.enabled ? '<a href="#" class="small" data-action="forgot" style="justify-self:end">Esqueci minha senha</a>' : ''}
+        <button class="btn btn-primary btn-lg" type="submit" ${ui.busy ? 'disabled' : ''}>${ui.busy ? 'Aguarde…' : signup ? 'Criar conta e começar' : 'Entrar'}</button>
+        <a class="btn btn-ghost" href="#/app?demo">Ver a conta de demonstração</a>
         <p class="muted small" style="text-align:center">${signup ? 'Já tem conta? <a href="#/entrar">Entrar</a>' : 'Novo por aqui? <a href="#/entrar?cadastro">Criar conta grátis</a>'}</p>
-      </form></div></div>`;
+      </form>`}</div></div>`;
   }
 
   // ---------- App shell ----------
@@ -309,8 +433,10 @@
       <aside class="sidebar">
         <a class="logo" href="#/"><span class="logo-mark">✦</span>Agendaê</a>
         ${NAV.map(([k, i, l]) => link(k, i, l, 'nav-item')).join('')}
-        <a class="nav-item" href="#/agendar" target="_blank" rel="noopener"><span class="ni">🔗</span>Página de agendamento</a>
-        <div class="sidebar-foot"><b>Plano ${esc(db.config.plano)}</b><span class="muted">Teste grátis: 11 dias restantes</span></div>
+        <a class="nav-item" href="${esc(bookUrl())}" target="_blank" rel="noopener"><span class="ni">🔗</span>Página de agendamento</a>
+        <div class="sidebar-foot">${mode === 'cloud'
+          ? `<b>${esc(db.config.plano)}</b><span class="muted">${trialLeft()} dias restantes</span><br><a href="#" data-action="logout" class="small">Sair da conta</a>`
+          : `<b>Modo demonstração</b><span class="muted">Dados de exemplo neste navegador.</span>${Cloud.enabled ? '<br><a href="#/entrar?cadastro" class="small">Criar minha conta</a>' : ''}`}</div>
       </aside>
       <div class="main">
         <header class="topbar"><h1>${title}</h1><div class="topbar-right">${actions}<span class="avatar" title="${esc(db.config.nome)}">${initials(db.config.nome)}</span></div></header>
@@ -348,6 +474,25 @@
     </svg>`;
   }
 
+  function nextOpenDay(from) {
+    let d = addDays(from, 1);
+    for (let i = 0; i < 7 && isClosedDay(d); i++) d = addDays(d, 1);
+    return d;
+  }
+  function lembretesModal() {
+    const t = today(), dia = nextOpenDay(t);
+    const list = db.ags.filter(a => a.data === dia && ['pendente', 'confirmado'].includes(a.status)).sort((a, b) => a.hora.localeCompare(b.hora));
+    openModal(`${modalHead('Lembretes pelo WhatsApp', `${fmtLong(dia)} · ${list.length} atendimentos`)}
+      <div class="modal-body">
+        <p class="muted small">Cada botão abre o WhatsApp com a mensagem pronta (modelo em Configurações). Depois, marque quem confirmou.</p>
+        <div class="list">${list.length ? list.map(a => { const c = cli(a.clienteId); return `<div class="list-item" style="cursor:default"><time>${a.hora}</time>
+          <div class="grow"><b>${esc(c.nome)}</b><span>${esc(svc(a.servicoId).nome)} · ${esc(prof(a.profId).nome.split(' ')[0])}</span></div>
+          ${c.tel ? `<a class="btn btn-sm ${ui.sent[a.id] ? 'btn-soft' : 'btn-ghost'}" target="_blank" rel="noopener" data-action="wa-sent" data-id="${a.id}" href="${waLink(c.tel, fillMsg(db.config.msg, a))}">${ui.sent[a.id] ? 'Enviado ✓' : '💬 Enviar'}</a>` : '<span class="muted small">sem telefone</span>'}
+          ${a.status === 'pendente' ? `<button class="btn btn-ok btn-sm" data-action="confirm-from-list" data-id="${a.id}">Confirmou</button>` : badge(a.status)}</div>`; }).join('')
+          : '<div class="empty">Nenhum atendimento agendado.</div>'}</div>
+      </div>`);
+  }
+
   function vDashboard() {
     const t = today(), d = parse(t);
     const mStart = iso(new Date(d.getFullYear(), d.getMonth(), 1));
@@ -370,9 +515,9 @@
 
     const sumidos = db.clientes.filter(c => { const s = clientStats(c.id); return s.ultima && daysBetween(s.ultima, t) >= 60 && !s.proxima; });
     const aReceber = db.ags.filter(a => a.status === 'concluido' && !a.pago);
-    let amanha = addDays(t, 1);
-    if (parse(amanha).getDay() === 0) amanha = addDays(amanha, 1); // domingo fechado
+    const amanha = nextOpenDay(t);
     const pendAmanha = db.ags.filter(a => a.data === amanha && a.status === 'pendente');
+    const lembrar = db.ags.filter(a => a.data === amanha && ['pendente', 'confirmado'].includes(a.status));
 
     const body = `
       <div class="kpis">
@@ -393,7 +538,7 @@
         <div class="card"><div class="card-head"><h3>Oportunidades de receita</h3></div><div class="list">
           <div class="list-item" data-action="goto" data-to="#/app/clientes?f=sumidos"><span style="font-size:22px">🔁</span><div class="grow"><b>${sumidos.length} clientes sumidos há 60+ dias</b><span>Envie uma campanha de reativação no WhatsApp</span></div><span class="btn btn-soft btn-sm">Ver</span></div>
           <div class="list-item" data-action="goto" data-to="#/app/financeiro"><span style="font-size:22px">💳</span><div class="grow"><b>${brl0(aReceber.reduce((s, a) => s + valor(a), 0))} a receber</b><span>${aReceber.length} atendimentos concluídos sem pagamento registrado</span></div><span class="btn btn-soft btn-sm">Ver</span></div>
-          <div class="list-item" data-action="goto" data-to="#/app/agenda?d=${amanha}"><span style="font-size:22px">⏳</span><div class="grow"><b>${pendAmanha.length} confirmações pendentes ${amanha === addDays(t, 1) ? 'amanhã' : 'em ' + fmtShort(amanha)}</b><span>Lembretes automáticos serão enviados às 09:00</span></div><span class="btn btn-soft btn-sm">Ver</span></div>
+          <div class="list-item" data-action="lembretes"><span style="font-size:22px">💬</span><div class="grow"><b>${lembrar.length} lembretes para ${amanha === addDays(t, 1) ? 'amanhã' : fmtShort(amanha)}</b><span>${pendAmanha.length} ainda sem confirmação · envie pelo WhatsApp em 1 clique</span></div><span class="btn btn-soft btn-sm">Enviar</span></div>
         </div></div>
         <div class="card"><div class="card-head"><h3>Serviços que mais faturam no mês</h3></div><div class="rank">
           ${top.length ? top.map(([id, v]) => `<div class="rank-row"><div><span>${esc(svc(id).nome)}</span><b>${brl0(v)}</b></div><div class="meter"><i style="width:${(v / topMax) * 100}%"></i></div></div>`).join('') : '<p class="muted">Sem atendimentos ainda.</p>'}
@@ -423,7 +568,7 @@
     }).join('');
     const nm = nowMin();
     const nowLine = date === today() && nm >= start && nm <= end ? `<div class="now-line" style="top:${(nm - start) / 30 * SLOT_H}px"></div>` : '';
-    const isClosed = parse(date).getDay() === 0;
+    const isClosed = isClosedDay(date);
 
     const body = `
       <div class="agenda-head">
@@ -439,7 +584,7 @@
         <div class="kpi"><small>Ocupação</small><b>${pct(capacity ? used / capacity : 0)}</b><div class="meter"><i style="width:${Math.min(100, used / capacity * 100)}%"></i></div></div>
         <div class="kpi"><small>Faltas / cancelamentos</small><b>${list.filter(a => ['faltou', 'cancelado'].includes(a.status)).length}</b></div>
       </div>
-      ${isClosed ? '<div class="card empty"><div class="big">🔒</div>Fechado aos domingos. Você ainda pode encaixar um horário manualmente.</div>' : ''}
+      ${isClosed ? '<div class="card empty"><div class="big">🔒</div>Dia marcado como fechado em Configurações. Você ainda pode encaixar um horário manualmente.</div>' : ''}
       <div class="agenda-scroll"><div class="agenda" style="grid-template-columns:56px repeat(${db.profs.length}, minmax(150px,1fr))">
         <div class="ag-col-head" style="border-left:0"></div>
         ${db.profs.map(p => `<div class="ag-col-head"><span class="avatar" style="background:${p.cor};width:30px;height:30px;font-size:11px">${initials(p.nome)}</span><div><b>${esc(p.nome)}</b><span>${esc(p.cargo)}</span></div></div>`).join('')}
@@ -537,7 +682,7 @@
   function cliDrawer(id) {
     const c = byId('clientes', id); if (!c) return;
     const s = clientStats(id);
-    const lastMsg = `Olá, ${c.nome.split(' ')[0]}! Sentimos sua falta no ${db.config.nome} 💜 Que tal agendar seu próximo horário? Use nosso link: ${location.href.split('#')[0]}#/agendar`;
+    const lastMsg = `Olá, ${c.nome.split(' ')[0]}! Sentimos sua falta no ${db.config.nome} 💜 Que tal agendar seu próximo horário? Use nosso link: ${bookUrl()}`;
     openModal(`<div class="modal-head"><div class="person"><span class="avatar" style="width:52px;height:52px;font-size:18px">${initials(c.nome)}</span><div><h3>${esc(c.nome)}</h3><p class="muted small">Cliente desde ${fmtShort(c.criadoEm)}</p></div></div><button class="x" data-action="close" aria-label="Fechar">×</button></div>
       <div class="modal-body">
         <div class="stat-row"><div><small>Visitas</small><b>${s.visitas}</b></div><div><small>Total gasto</small><b>${brl0(s.gasto)}</b></div><div><small>Ticket médio</small><b>${brl0(s.visitas ? s.gasto / s.visitas : 0)}</b></div></div>
@@ -567,7 +712,7 @@
     const list = db.clientes.filter(c => { const s = clientStats(c.id); return s.ultima && daysBetween(s.ultima, t) >= 60 && !s.proxima; });
     openModal(`${modalHead('Campanha de reativação', `${list.length} clientes selecionadas`)}
       <div class="modal-body">
-        <div class="field"><label>Mensagem</label><textarea class="input" id="camp-msg">Oi, {nome}! Faz um tempinho que você não vem ao ${esc(db.config.nome)} 💜 Preparamos 15% de desconto no seu próximo horário até o fim do mês. Agende pelo link: ${location.href.split('#')[0]}#/agendar</textarea></div>
+        <div class="field"><label>Mensagem</label><textarea class="input" id="camp-msg">Oi, {nome}! Faz um tempinho que você não vem ao ${esc(db.config.nome)} 💜 Preparamos 15% de desconto no seu próximo horário até o fim do mês. Agende pelo link: ${bookUrl()}</textarea></div>
         <div class="field"><label>Enviar via</label><select class="input"><option>WhatsApp (automático · plano Pro)</option><option>SMS</option><option>E-mail</option></select></div>
         <div class="summary small">Estimativa: <b>${Math.round(list.length * .2)} retornos</b> ≈ <b>${brl0(list.length * .2 * 160)}</b> em receita recuperada.</div>
       </div>
@@ -637,24 +782,34 @@
   // ---------- Configurações ----------
   function vConfig() {
     const c = db.config;
-    const sample = db.ags.find(a => a.data >= today() && a.status !== 'cancelado') || db.ags[0];
-    const url = `${location.href.split('#')[0]}#/agendar`;
+    const sample = db.ags.find(a => a.data >= today() && a.status !== 'cancelado') || db.ags[0] ||
+      { clienteId: '', servicoId: db.servicos[0]?.id, profId: db.profs[0]?.id, data: today(), hora: '10:00' };
+    const url = bookUrl();
     const sw = (k, t, d) => `<label class="switch"><div><b>${t}</b><br><span class="muted small">${d}</span></div><input type="checkbox" data-input="cfg-toggle" data-k="${k}" ${c[k] ? 'checked' : ''}></label>`;
+    const fechados = closedDays();
     const body = `
       <div class="grid-2-even">
         <form class="card" data-form="cfg" style="display:grid;gap:14px"><div class="card-head" style="margin:0"><h3>Dados do negócio</h3></div>
-          <div class="field"><label>Nome</label><input class="input" name="nome" value="${esc(c.nome)}" required></div>
-          <div class="row"><div class="field"><label>WhatsApp</label><input class="input" name="tel" value="${esc(c.tel)}"></div>
-          <div class="row"><div class="field"><label>Abre</label><input class="input" type="time" name="abre" step="1800" value="${c.abre}"></div><div class="field"><label>Fecha</label><input class="input" type="time" name="fecha" step="1800" value="${c.fecha}"></div></div></div>
+          <div class="field"><label>Nome</label><input class="input" name="nome" value="${esc(c.nome)}" required maxlength="80"></div>
+          <div class="row"><div class="field"><label>WhatsApp</label><input class="input" name="tel" value="${esc(c.tel)}" inputmode="tel"></div>
+          <div class="row"><div class="field"><label>Abre</label><input class="input" type="time" name="abre" step="1800" value="${c.abre}" required></div><div class="field"><label>Fecha</label><input class="input" type="time" name="fecha" step="1800" value="${c.fecha}" required></div></div></div>
           <div class="field"><label>Endereço</label><input class="input" name="endereco" value="${esc(c.endereco)}"></div>
+          <div class="field"><label>Dias fechados</label><div class="chips">${WD.map((w, i) => `<label class="chip ${fechados.includes(i) ? 'on' : ''}" style="cursor:pointer"><input type="checkbox" name="fechado" value="${i}" ${fechados.includes(i) ? 'checked' : ''} style="display:none" data-input="chip-toggle">${w}</label>`).join('')}</div></div>
           <div><button class="btn btn-primary">Salvar dados</button></div>
         </form>
         <div class="card" style="display:grid;gap:14px;align-content:start"><div class="card-head" style="margin:0"><h3>Seu link de agendamento</h3></div>
-          <p class="muted small">Coloque na bio do Instagram, no WhatsApp Business e no Google Meu Negócio.</p>
+          <p class="muted small">Coloque na bio do Instagram, no WhatsApp Business e no Google Meu Negócio. Os pedidos aparecem na sua agenda automaticamente.</p>
           <div class="copy-box"><input class="input" readonly value="${esc(url)}" id="book-url" aria-label="Link de agendamento"><button class="btn btn-ghost" data-action="copy">Copiar</button></div>
-          <a class="btn btn-soft" href="#/agendar" target="_blank" rel="noopener">Abrir página de agendamento ↗</a>
-          <div class="summary small"><b>Plano ${esc(c.plano)}</b> · teste grátis termina em 11 dias.<br><span class="muted">Depois, ${brl0(149)}/mês. Cancele quando quiser.</span></div>
+          <a class="btn btn-soft" href="${esc(url)}" target="_blank" rel="noopener">Abrir página de agendamento ↗</a>
+          <div class="summary small">${mode === 'cloud'
+            ? `<b>${esc(c.plano)}</b> · ${trialLeft()} dias restantes.<br><span class="muted">Depois, ${brl0(149)}/mês no plano Pro.</span>`
+            : '<b>Modo demonstração</b><br><span class="muted">Os dados ficam só neste navegador.</span>'}</div>
         </div>
+      </div>
+      <div class="card"><div class="card-head"><h3>Equipe</h3><button class="btn btn-soft btn-sm" data-action="new-prof">+ Profissional</button></div>
+        <div class="list">${db.profs.map(p => `<div class="list-item" data-action="edit-prof" data-id="${p.id}"><span class="avatar" style="background:${esc(p.cor)}">${initials(p.nome)}</span>
+          <div class="grow"><b>${esc(p.nome)}</b><span>${esc(p.cargo || '')} · atende: ${esc((p.cats || []).join(', ') || 'nenhuma categoria')}</span></div><span class="btn btn-ghost btn-sm">Editar</span></div>`).join('') || '<div class="empty">Cadastre ao menos um profissional.</div>'}</div>
+        <p class="muted small" style="margin-top:10px">Cada profissional atende as categorias de serviço marcadas. É isso que define quem aparece na página de agendamento.</p>
       </div>
       <div class="grid-2-even">
         <div class="card" style="display:grid;gap:14px;align-content:start"><div class="card-head" style="margin:0"><h3>Mensagem de lembrete (WhatsApp)</h3></div>
@@ -662,88 +817,141 @@
           <textarea class="input" data-input="cfg-msg" rows="6" aria-label="Modelo de mensagem">${esc(c.msg)}</textarea>
           <div class="wa-preview"><div class="wa-bubble" id="wa-preview">${esc(fillMsg(c.msg, sample))}</div></div>
         </div>
-        <div class="card"><div class="card-head"><h3>Automações</h3></div>
-          ${sw('lembrete24h', 'Lembrete 24h antes', 'Mensagem com confirmação em 1 toque')}
-          ${sw('lembrete2h', 'Lembrete 2h antes', 'Reforço no dia do atendimento')}
-          ${sw('confirmAuto', 'Confirmar agendamentos online automaticamente', 'Se desligado, você aprova cada pedido')}
-          ${sw('aniversario', 'Mensagem de aniversário', 'Com cupom de desconto opcional')}
-          ${sw('reativacao', 'Reativação automática', 'Mensagem para clientes sem visita há 60 dias')}
+        <div class="card"><div class="card-head"><h3>Preferências</h3></div>
+          ${sw('confirmAuto', 'Confirmar agendamentos online automaticamente', 'Se desligado, pedidos chegam como "pendente" para você aprovar')}
+          ${sw('lembrete24h', 'Lembrar de enviar lembretes', 'Mostra no painel os lembretes do próximo dia para enviar pelo WhatsApp')}
+          ${sw('reativacao', 'Destacar clientes sumidos', 'Mostra no painel quem não volta há 60 dias')}
+          <p class="muted small" style="margin-top:10px">O envio 100% automático (sem clicar) depende da integração com a API oficial do WhatsApp Business.</p>
         </div>
       </div>
-      <div class="card"><div class="card-head"><h3>Dados de demonstração</h3></div><p class="muted small" style="margin-bottom:12px">Todos os dados deste protótipo ficam salvos apenas neste navegador.</p><button class="btn btn-danger" data-action="reset">Restaurar dados de exemplo</button></div>`;
+      ${mode === 'cloud'
+        ? `<div class="card"><div class="card-head"><h3>Sua conta</h3></div><p class="muted small" style="margin-bottom:12px">Conectado como ${esc(user?.email || '')}. Seus dados ficam salvos na nuvem e sincronizam entre aparelhos.</p>
+            <div class="toolbar"><button class="btn btn-ghost" data-action="export-json">⬇ Baixar todos os meus dados</button><button class="btn btn-danger" data-action="logout">Sair</button></div></div>`
+        : `<div class="card"><div class="card-head"><h3>Dados de demonstração</h3></div><p class="muted small" style="margin-bottom:12px">Todos os dados deste modo ficam salvos apenas neste navegador.</p><button class="btn btn-danger" data-action="reset">Restaurar dados de exemplo</button></div>`}`;
     return shell('config', 'Configurações', '', body);
+  }
+  function profForm(p = {}) {
+    const cats = [...new Set(db.servicos.map(x => x.categoria))];
+    openModal(`${modalHead(p.id ? 'Editar profissional' : 'Novo profissional')}
+      <form data-form="prof" data-id="${p.id || ''}"><div class="modal-body">
+        <div class="row"><div class="field"><label>Nome</label><input class="input" name="nome" required maxlength="60" value="${esc(p.nome)}"></div>
+        <div class="field"><label>Cargo</label><input class="input" name="cargo" maxlength="40" value="${esc(p.cargo)}" placeholder="Ex.: Cabeleireira"></div></div>
+        <div class="field"><label>Cor na agenda</label><input class="input" type="color" name="cor" value="${esc(p.cor || '#2f6db5')}" style="height:44px;padding:4px"></div>
+        <div class="field"><label>Categorias que atende</label><div class="chips">${cats.map(c => `<label class="chip ${(p.cats || []).includes(c) ? 'on' : ''}" style="cursor:pointer"><input type="checkbox" name="cats" value="${esc(c)}" ${(p.cats || []).includes(c) ? 'checked' : ''} style="display:none" data-input="chip-toggle">${esc(c)}</label>`).join('') || '<span class="muted small">Cadastre serviços primeiro.</span>'}</div></div>
+      </div><div class="modal-foot">${p.id ? `<button type="button" class="btn btn-danger" data-action="del-prof" data-id="${p.id}">Excluir</button>` : ''}<button type="button" class="btn btn-ghost" data-action="close">Cancelar</button><button class="btn btn-primary">Salvar</button></div></form>`);
   }
 
   // ---------- Agendamento público ----------
-  function bookTimes(data, servicoId, profId) {
-    const s = svc(servicoId);
-    const start = toMin(db.config.abre), end = toMin(db.config.fecha);
-    const isToday = data === today(), nm = nowMin();
-    const profs = profId ? [profId] : db.profs.filter(p => p.cats.includes(s.categoria)).map(p => p.id);
+  // Fonte dos dados: no modo nuvem vem de agendae_public_info (sem dados de clientes);
+  // no modo demonstração, do próprio navegador.
+  function bookSrc() {
+    if (Cloud.enabled && pub && pub !== 'loading' && pub !== 'notfound') return pub;
+    return { config: db.config, servicos: db.servicos, profs: db.profs, local: true };
+  }
+  const srcSvc = (src, id) => src.servicos.find(x => x.id === id) || { nome: '—', duracao: 30, preco: 0, categoria: '' };
+  const srcProf = (src, id) => src.profs.find(x => x.id === id) || { nome: '—' };
+
+  function bookTimes(src, data, servicoId, profId) {
+    const s = srcSvc(src, servicoId);
+    const start = toMin(src.config.abre), end = toMin(src.config.fecha);
+    const hoje = src.local ? today() : src.hoje, nm = src.local ? nowMin() : src.agoraMin;
+    const profs = profId ? [profId] : src.profs.filter(p => (p.cats || []).includes(s.categoria)).map(p => p.id);
+    const free = (p, m) => src.local ? isFree(p, data, fromMin(m), s.duracao)
+      : !src.busy.some(b => b.profId === p && b.data === data && b.ini < m + s.duracao && b.fim > m);
     const out = [];
-    for (let m = start; m + s.duracao <= end; m += 30) {
-      const h = fromMin(m);
-      const free = !(isToday && m <= nm + 30) && profs.some(p => isFree(p, data, h, s.duracao));
-      out.push({ h, free });
-    }
+    for (let m = start; m + s.duracao <= end; m += 30) out.push({ h: fromMin(m), free: !(data === hoje && m <= nm + 30) && profs.some(p => free(p, m)) });
     return out;
   }
 
   function vBook() {
-    const b = ui.book, c = db.config;
+    if (pub === 'loading') return `<div class="book"><div class="book-card"><div class="empty"><div class="big">⏳</div>Carregando horários…</div></div></div>`;
+    if (pub === 'notfound') return `<div class="book"><div class="book-card"><div class="empty"><div class="big">🔎</div><b>Link de agendamento não encontrado.</b><br>Confira o endereço com o estabelecimento.</div></div></div>`;
+    const src = bookSrc(), b = ui.book, c = src.config;
+    const closed = (Array.isArray(c.diasFechados) ? c.diasFechados : [0]).map(Number);
     const steps = `<div class="stepper">${[1, 2, 3, 4].map(i => `<i class="${b.step >= i ? 'on' : ''}"></i>`).join('')}</div>`;
     const back = b.step > 1 && !b.done ? `<button class="btn btn-ghost btn-sm" data-action="book-back">← Voltar</button>` : '';
     let content = '';
     if (b.done) {
-      const a = byId('ags', b.done);
-      content = a ? `<div class="success"><div class="check">✓</div><h2>Horário reservado!</h2><p class="muted" style="margin:8px 0 20px">Você receberá a confirmação no WhatsApp.</p>
-        <div class="summary" style="text-align:left"><dl class="kv"><dt>Serviço</dt><dd>${esc(svc(a.servicoId).nome)}</dd><dt>Profissional</dt><dd>${esc(prof(a.profId).nome)}</dd><dt>Data</dt><dd>${fmtLong(a.data)}</dd><dt>Horário</dt><dd>${a.hora}</dd><dt>Valor</dt><dd>${brl(valor(a))}</dd></dl></div>
-        <button class="btn btn-primary" style="margin-top:20px" data-action="book-reset">Fazer outro agendamento</button></div>` : '';
+      const d = b.done;
+      content = `<div class="success"><div class="check">✓</div><h2>${d.status === 'pendente' ? 'Pedido enviado!' : 'Horário reservado!'}</h2>
+        <p class="muted" style="margin:8px 0 20px">${d.status === 'pendente' ? 'O estabelecimento vai confirmar seu horário pelo WhatsApp.' : 'Seu horário está confirmado. Até lá!'}</p>
+        <div class="summary" style="text-align:left"><dl class="kv"><dt>Serviço</dt><dd>${esc(d.servico)}</dd><dt>Profissional</dt><dd>${esc(d.profNome)}</dd><dt>Data</dt><dd>${fmtLong(d.data)}</dd><dt>Horário</dt><dd>${d.hora}</dd><dt>Valor</dt><dd>${brl(Number(d.preco) || 0)}</dd></dl></div>
+        ${c.tel ? `<a class="btn btn-ghost" style="margin-top:16px" target="_blank" rel="noopener" href="${waLink(c.tel, `Olá! Acabei de agendar ${d.servico} em ${fmtShort(d.data)} às ${d.hora}.`)}">💬 Falar com o estabelecimento</a>` : ''}
+        <button class="btn btn-primary" style="margin-top:12px" data-action="book-reset">Fazer outro agendamento</button></div>`;
+    } else if (!src.servicos.length || !src.profs.length) {
+      content = '<div class="empty"><div class="big">🛠️</div>Este estabelecimento ainda está configurando a agenda online.</div>';
     } else if (b.step === 1) {
-      const cats = [...new Set(db.servicos.map(s => s.categoria))];
-      content = `<h2>Escolha o serviço</h2>${cats.map(cat => `<p class="muted small" style="font-weight:700;margin-top:6px">${esc(cat)}</p>${db.servicos.filter(s => s.categoria === cat).map(s => `<button class="opt" data-action="book-svc" data-id="${s.id}"><div><b>${esc(s.nome)}</b><br><span class="muted small">${s.duracao} min</span></div><b>${brl0(s.preco)}</b></button>`).join('')}`).join('')}`;
+      const cats = [...new Set(src.servicos.map(s => s.categoria))];
+      content = `<h2>Escolha o serviço</h2>${cats.map(cat => `<p class="muted small" style="font-weight:700;margin-top:6px">${esc(cat)}</p>${src.servicos.filter(s => s.categoria === cat).map(s => `<button class="opt" data-action="book-svc" data-id="${esc(s.id)}"><div><b>${esc(s.nome)}</b><br><span class="muted small">${s.duracao} min</span></div><b>${brl0(Number(s.preco) || 0)}</b></button>`).join('')}`).join('')}`;
     } else if (b.step === 2) {
-      const s = svc(b.servicoId);
-      const ps = db.profs.filter(p => p.cats.includes(s.categoria));
+      const s = srcSvc(src, b.servicoId);
+      const ps = src.profs.filter(p => (p.cats || []).includes(s.categoria));
       content = `<h2>Com quem?</h2>
-        <button class="opt" data-action="book-prof" data-id=""><div><b>Sem preferência</b><br><span class="muted small">Primeiro horário disponível</span></div><span>→</span></button>
-        ${ps.map(p => `<button class="opt" data-action="book-prof" data-id="${p.id}"><div class="person"><span class="avatar" style="background:${p.cor}">${initials(p.nome)}</span><div><b>${esc(p.nome)}</b><br><span class="muted small">${esc(p.cargo)}</span></div></div><span>→</span></button>`).join('')}`;
+        ${ps.length ? `<button class="opt" data-action="book-prof" data-id=""><div><b>Sem preferência</b><br><span class="muted small">Primeiro horário disponível</span></div><span>→</span></button>
+        ${ps.map(p => `<button class="opt" data-action="book-prof" data-id="${esc(p.id)}"><div class="person"><span class="avatar" style="background:${esc(p.cor || '#7a2e5c')}">${initials(p.nome)}</span><div><b>${esc(p.nome)}</b><br><span class="muted small">${esc(p.cargo || '')}</span></div></div><span>→</span></button>`).join('')}`
+        : '<div class="empty">Nenhum profissional atende este serviço no momento.</div>'}`;
     } else if (b.step === 3) {
-      const days = []; let d = today();
-      while (days.length < 14) { if (parse(d).getDay() !== 0) days.push(d); d = addDays(d, 1); }
-      if (!b.data) b.data = days.find(x => bookTimes(x, b.servicoId, b.profId).some(t => t.free)) || days[0];
-      const times = bookTimes(b.data, b.servicoId, b.profId);
+      const days = []; let d = src.local ? today() : src.hoje;
+      for (let i = 0; days.length < 14 && i < 60; i++) { if (!closed.includes(parse(d).getDay())) days.push(d); d = addDays(d, 1); }
+      if (!b.data) b.data = days.find(x => bookTimes(src, x, b.servicoId, b.profId).some(t => t.free)) || days[0];
+      const times = bookTimes(src, b.data, b.servicoId, b.profId);
       content = `<h2>Escolha data e horário</h2>
         <div class="days">${days.map(x => { const dt = parse(x); return `<button class="day ${x === b.data ? 'on' : ''}" data-action="book-day" data-d="${x}"><small>${WD[dt.getDay()]}</small><b>${dt.getDate()}</b></button>`; }).join('')}</div>
         ${times.some(t => t.free) ? `<div class="times">${times.map(t => `<button class="time" ${t.free ? '' : 'disabled'} data-action="book-time" data-h="${t.h}">${t.h}</button>`).join('')}</div>` : '<div class="empty">Sem horários livres neste dia. Tente outra data.</div>'}`;
     } else if (b.step === 4) {
-      const s = svc(b.servicoId);
+      const s = srcSvc(src, b.servicoId);
       content = `<h2>Seus dados</h2>
-        <div class="summary"><dl class="kv"><dt>Serviço</dt><dd>${esc(s.nome)}</dd><dt>Profissional</dt><dd>${b.profId ? esc(prof(b.profId).nome) : 'Sem preferência'}</dd><dt>Quando</dt><dd>${fmtShort(b.data)} às ${b.hora}</dd><dt>Valor</dt><dd>${brl(s.preco)}</dd></dl></div>
+        <div class="summary"><dl class="kv"><dt>Serviço</dt><dd>${esc(s.nome)}</dd><dt>Profissional</dt><dd>${b.profId ? esc(srcProf(src, b.profId).nome) : 'Sem preferência'}</dd><dt>Quando</dt><dd>${fmtShort(b.data)} às ${b.hora}</dd><dt>Valor</dt><dd>${brl(Number(s.preco) || 0)}</dd></dl></div>
         <form data-form="book" style="display:grid;gap:12px">
-          <div class="field"><label>Nome completo</label><input class="input" name="nome" required autocomplete="name"></div>
+          <div class="field"><label>Nome completo</label><input class="input" name="nome" required minlength="2" maxlength="120" autocomplete="name"></div>
           <div class="field"><label>WhatsApp</label><input class="input" name="tel" required inputmode="tel" autocomplete="tel" placeholder="(11) 99999-0000"></div>
-          <button class="btn btn-primary btn-lg">Confirmar agendamento</button>
-          <p class="muted small" style="text-align:center">Pagamento no local · cancelamento gratuito até 24h antes</p>
+          <button class="btn btn-primary btn-lg" ${ui.busy ? 'disabled' : ''}>${ui.busy ? 'Reservando…' : 'Confirmar agendamento'}</button>
+          <p class="muted small" style="text-align:center">Pagamento no local · ao confirmar, você concorda em ser contatado(a) pelo WhatsApp sobre este horário</p>
         </form>`;
     }
     return `<div class="book"><div class="book-card">
-      <div class="book-top"><div class="logo-mark">✦</div><h1>${esc(c.nome)}</h1><p class="muted small">${esc(c.endereco)}</p></div>
+      <div class="book-top"><div class="logo-mark">✦</div><h1>${esc(c.nome)}</h1><p class="muted small">${esc(c.endereco || '')}</p></div>
       ${b.done ? '' : steps}
       <div class="book-body">${back}${content}</div>
     </div><p class="muted small" style="text-align:center;margin-top:20px">Agendamento online por <a href="#/">Agendaê</a></p></div>`;
   }
 
+  async function loadPub(slug) {
+    pub = 'loading'; rerender();
+    try {
+      const info = await Cloud.rpc('agendae_public_info', { p_slug: slug });
+      pub = info ? { ...info, slug } : 'notfound';
+    } catch (e) { pub = 'notfound'; console.warn(e); }
+    if (location.hash.startsWith('#/agendar')) rerender();
+  }
+
   // ---------- Roteador ----------
   function route() {
+    const raw = location.hash;
+    // Retorno dos links de e-mail do Supabase (confirmação, recuperação de senha).
+    if (/^#(access_token|error|type=)/.test(raw)) {
+      const hp = new URLSearchParams(raw.slice(1));
+      if (hp.get('error_description')) { ui.authMsg = hp.get('error_description').replace(/\+/g, ' '); ui.authErr = true; history.replaceState(null, '', '#/entrar'); }
+      else { $root.innerHTML = '<div class="auth"><div class="auth-form"><div class="empty"><div class="big">⏳</div>Validando seu acesso…</div></div></div>'; return; }
+    }
     const [path, qs] = (location.hash.slice(1) || '/').split('?');
     const params = new URLSearchParams(qs || '');
     closeModal();
     let html;
     if (path === '/' || path === '') html = vLanding();
     else if (path === '/entrar') html = vAuth(params.has('cadastro'));
-    else if (path === '/agendar') html = vBook();
-    else if (path.startsWith('/app')) {
+    else if (path === '/nova-senha') html = vAuth(false, true);
+    else if (path === '/agendar') {
+      const slug = Cloud.enabled ? (params.get('n') || (mode === 'cloud' ? meta.slug : null)) : null;
+      if (slug && pubSlug !== slug) { pubSlug = slug; loadPub(slug); return; }
+      if (!slug) { pub = null; pubSlug = null; if (!db) loadDemo(); }
+      html = vBook();
+    } else if (path.startsWith('/app')) {
+      if (params.has('demo')) ui.demo = true;
+      if (mode !== 'cloud') {
+        if (Cloud.enabled && !ui.demo) { location.replace('#/entrar'); return; }
+        if (!db) loadDemo();
+      }
       const sec = path.split('/')[2] || '';
       // Parâmetros de link profundo valem uma vez; depois limpamos a URL.
       if (sec === 'agenda' && params.get('d')) ui.agendaDate = params.get('d');
@@ -752,7 +960,8 @@
       html = ({ '': vDashboard, agenda: vAgenda, clientes: vClientes, servicos: vServicos, financeiro: vFinanceiro, config: vConfig }[sec] || vDashboard)();
     } else html = vLanding();
     $root.innerHTML = html;
-    document.title = path.startsWith('/app') ? `${db.config.nome} · Agendaê` : path === '/agendar' ? `Agendar · ${db.config.nome}` : 'Agendaê | Gestão para clínicas e salões';
+    const nome = path === '/agendar' ? (pub && typeof pub === 'object' ? pub.config.nome : db?.config.nome) || 'Agendaê' : db?.config.nome;
+    document.title = path.startsWith('/app') ? `${nome} · Agendaê` : path === '/agendar' ? `Agendar · ${nome}` : 'Agendaê | Gestão para clínicas e salões';
     if (!params.has('keep')) window.scrollTo(0, 0);
     afterRender(path);
   }
@@ -797,7 +1006,26 @@
       case 'del-cli': if (confirm('Excluir cliente e todo o histórico?')) { db.clientes = db.clientes.filter(c => c.id !== id); db.ags = db.ags.filter(a => a.clienteId !== id); save(); closeModal(); rerender(); toast('Cliente excluída'); } break;
       case 'cli-filter': ui.cliFilter = el.dataset.f; rerender(); break;
       case 'campaign': campaign(); break;
-      case 'send-campaign': closeModal(); toast('Campanha agendada para envio'); break;
+      case 'send-campaign': campaignList(document.getElementById('camp-msg').value); break;
+      case 'lembretes': lembretesModal(); break;
+      case 'wa-sent': ui.sent[id] = true; setTimeout(() => { el.textContent = 'Enviado ✓'; el.classList.replace('btn-ghost', 'btn-soft'); }, 0); break;
+      case 'confirm-from-list': { const a = byId('ags', id); if (a) { a.status = 'confirmado'; save(); toast('Confirmado'); lembretesModal(); } break; }
+      case 'logout': e.preventDefault(); logout(); break;
+      case 'forgot': e.preventDefault(); forgot(el.closest('form')); break;
+      case 'new-prof': profForm(); break;
+      case 'edit-prof': profForm(byId('profs', id)); break;
+      case 'del-prof': {
+        if (db.profs.length <= 1) { toast('O negócio precisa de ao menos um profissional'); break; }
+        if (db.ags.some(a => a.profId === id && a.data >= today() && ['pendente', 'confirmado'].includes(a.status))) { toast('Este profissional tem agendamentos futuros. Remaneje-os antes.'); break; }
+        if (confirm('Excluir este profissional? O histórico de atendimentos é mantido.')) { db.profs = db.profs.filter(p => p.id !== id); save(); closeModal(); rerender(); toast('Profissional removido'); }
+        break;
+      }
+      case 'export-json': {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' }));
+        a.download = `agendae-${db.config.slug || 'dados'}-${today()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 500);
+        break;
+      }
       case 'new-svc': svcForm(); break;
       case 'edit-svc': svcForm(byId('servicos', id)); break;
       case 'del-svc': if (db.ags.some(a => a.servicoId === id && a.data >= today() && ['pendente', 'confirmado'].includes(a.status))) { toast('Há agendamentos futuros com este serviço'); break; }
@@ -817,7 +1045,7 @@
       case 'book-day': ui.book.data = el.dataset.d; rerender(); break;
       case 'book-time': ui.book.hora = el.dataset.h; ui.book.step = 4; rerender(); break;
       case 'book-back': ui.book.step--; rerender(); break;
-      case 'book-reset': ui.book = { step: 1 }; rerender(); break;
+      case 'book-reset': ui.book = { step: 1 }; pubSlug = null; rerender(); break;
     }
   });
 
@@ -837,16 +1065,49 @@
     const el = e.target, k = el.dataset.input; if (!k) return;
     if (k === 'ag-date' && el.value) { ui.agendaDate = el.value; rerender(); }
     if (k === 'fin-month') { ui.finMonth = el.value; rerender(); }
+    if (k === 'chip-toggle') el.parentElement.classList.toggle('on', el.checked);
     if (k === 'cfg-toggle') { db.config[el.dataset.k] = el.checked; save(); toast(el.checked ? 'Automação ativada' : 'Automação desativada'); }
   });
 
-  document.addEventListener('submit', e => {
+  document.addEventListener('submit', async e => {
     const f = e.target, kind = f.dataset.form; if (!kind) return;
     e.preventDefault();
-    const v = Object.fromEntries(new FormData(f));
+    const fd = new FormData(f);
+    const v = Object.fromEntries(fd);
     if (kind === 'auth') {
-      if (f.dataset.signup && v.negocio) { db.config.nome = v.negocio.trim(); save(); }
-      location.hash = '#/app'; toast(f.dataset.signup ? 'Conta criada! Bem-vinda(o) 🎉' : 'Login realizado');
+      if (!Cloud.enabled) {
+        if (!db) loadDemo();
+        if (f.dataset.signup && v.negocio) { db.config.nome = v.negocio.trim(); save(); }
+        location.hash = '#/app'; toast('Modo demonstração: entrando nos dados de exemplo');
+        return;
+      }
+      ui.busy = true; ui.authMsg = ''; ui.authErr = false; rerenderKeep(f);
+      try {
+        if (f.dataset.signup) {
+          const r = await Cloud.signUp(v.email.trim(), v.senha, { negocio: v.negocio.trim(), nome: v.nome.trim() });
+          if (r.user && Array.isArray(r.user.identities) && r.user.identities.length === 0) throw new Error('User already registered');
+          if (r.session) { await enterCloud(r.session); ui.busy = false; location.hash = '#/app'; toast('Conta criada! Bem-vinda(o) 🎉'); return; }
+          ui.authMsg = `Enviamos um link de confirmação para ${v.email.trim()}. Abra o e-mail para ativar sua conta.`;
+        } else {
+          const session = await Cloud.signIn(v.email.trim(), v.senha);
+          await enterCloud(session); ui.busy = false; location.hash = '#/app'; return;
+        }
+      } catch (err) { ui.authMsg = Cloud.authError(err); ui.authErr = true; }
+      ui.busy = false; rerenderKeep(f);
+      return;
+    }
+    if (kind === 'newpass') {
+      ui.busy = true; rerender();
+      try { await Cloud.updatePassword(v.senha); ui.busy = false; ui.authMsg = ''; toast('Senha atualizada'); location.hash = '#/app'; }
+      catch (err) { ui.busy = false; ui.authMsg = Cloud.authError(err); ui.authErr = true; rerender(); }
+      return;
+    }
+    if (kind === 'prof') {
+      const data = { nome: v.nome.trim(), cargo: (v.cargo || '').trim(), cor: v.cor || '#2f6db5', cats: fd.getAll('cats') };
+      if (f.dataset.id) Object.assign(byId('profs', f.dataset.id), data);
+      else db.profs.push({ id: uid(), ...data });
+      save(); closeModal(); rerender(); toast('Profissional salvo');
+      return;
     }
     if (kind === 'ag') {
       const name = v.cliente.trim();
@@ -873,25 +1134,80 @@
       const data = { nome: v.nome, preco: +v.preco, duracao: +v.duracao, categoria: v.categoria };
       if (f.dataset.id) Object.assign(byId('servicos', f.dataset.id), data); else db.servicos.push({ id: uid(), ...data });
       // Garante que alguém atenda categorias novas.
-      if (!db.profs.some(p => p.cats.includes(data.categoria))) db.profs[0].cats.push(data.categoria);
+      if (db.profs.length && !db.profs.some(p => p.cats.includes(data.categoria))) db.profs[0].cats.push(data.categoria);
       save(); closeModal(); rerender(); toast('Serviço salvo');
     }
     if (kind === 'desp') { db.despesas.push({ id: uid(), desc: v.desc, valor: +v.valor, data: v.data, categoria: v.categoria }); save(); closeModal(); rerender(); toast('Despesa adicionada'); }
     if (kind === 'cfg') {
       if (toMin(v.fecha) <= toMin(v.abre)) { toast('O horário de fechamento deve ser depois da abertura'); return; }
-      Object.assign(db.config, v); save(); rerender(); toast('Dados salvos');
+      const fechados = fd.getAll('fechado').map(Number);
+      if (fechados.length === 7) { toast('Deixe ao menos um dia aberto'); return; }
+      delete v.fechado;
+      Object.assign(db.config, v, { diasFechados: fechados }); save(); rerender(); toast('Dados salvos');
     }
     if (kind === 'book') {
-      const b = ui.book, s = svc(b.servicoId);
-      let profId = b.profId;
-      if (!profId) profId = db.profs.find(p => p.cats.includes(s.categoria) && isFree(p.id, b.data, b.hora, s.duracao))?.id;
-      if (!profId || !isFree(profId, b.data, b.hora, s.duracao)) { toast('Esse horário acabou de ser ocupado. Escolha outro.'); b.step = 3; rerender(); return; }
-      let c = db.clientes.find(x => digits(x.tel) && digits(x.tel) === digits(v.tel));
-      if (!c) { c = { id: uid(), nome: v.nome.trim(), tel: v.tel, email: '', nascimento: '2000-01-01', obs: '', criadoEm: today() }; db.clientes.push(c); }
-      const a = { id: uid(), clienteId: c.id, servicoId: s.id, profId, data: b.data, hora: b.hora, status: db.config.confirmAuto ? 'confirmado' : 'pendente', pago: false, forma: '', preco: s.preco };
-      db.ags.push(a); save(); b.done = a.id; rerender();
+      const b = ui.book;
+      if (digits(v.tel).length < 10 || digits(v.tel).length > 11) { toast('Informe um WhatsApp com DDD, ex.: (11) 99999-0000'); return; }
+      if (bookSrc().local) {
+        const s = svc(b.servicoId);
+        let profId = b.profId;
+        if (!profId) profId = db.profs.find(p => p.cats.includes(s.categoria) && isFree(p.id, b.data, b.hora, s.duracao))?.id;
+        if (!profId || !isFree(profId, b.data, b.hora, s.duracao)) { toast('Esse horário acabou de ser ocupado. Escolha outro.'); b.step = 3; rerender(); return; }
+        let c = db.clientes.find(x => digits(x.tel) && digits(x.tel) === digits(v.tel));
+        if (!c) { c = { id: uid(), nome: v.nome.trim(), tel: v.tel, email: '', nascimento: '', obs: '', criadoEm: today() }; db.clientes.push(c); }
+        const st = db.config.confirmAuto ? 'confirmado' : 'pendente';
+        db.ags.push({ id: uid(), clienteId: c.id, servicoId: s.id, profId, data: b.data, hora: b.hora, status: st, pago: false, forma: '', preco: s.preco, origem: 'online' });
+        save();
+        b.done = { status: st, servico: s.nome, profNome: prof(profId).nome, data: b.data, hora: b.hora, preco: s.preco };
+        rerender(); return;
+      }
+      ui.busy = true; rerender();
+      try {
+        b.done = await Cloud.rpc('agendae_book', { p_slug: pub.slug, p_servico_id: b.servicoId, p_prof_id: b.profId || null, p_data: b.data, p_hora: b.hora, p_nome: v.nome.trim(), p_tel: v.tel.trim() });
+      } catch (err) {
+        const code = (err.message || '').match(/[a-z_]{6,}/)?.[0] || '';
+        const msg = {
+          horario_indisponivel: 'Esse horário acabou de ser ocupado. Escolha outro.', horario_passado: 'Esse horário já passou. Escolha outro.',
+          limite_de_reservas: 'Você já fez várias reservas hoje. Fale com o estabelecimento pelo WhatsApp.', telefone_invalido: 'WhatsApp inválido.',
+          nome_invalido: 'Informe seu nome.', dia_fechado: 'O estabelecimento não abre neste dia.', fora_do_expediente: 'Horário fora do expediente.',
+        }[code] || 'Não foi possível concluir. Tente novamente em instantes.';
+        toast(msg);
+        if (['horario_indisponivel', 'horario_passado', 'dia_fechado', 'fora_do_expediente'].includes(code)) { b.step = 3; b.data = null; ui.busy = false; pubSlug = null; rerender(); return; }
+      }
+      ui.busy = false; rerender();
     }
   });
+
+  // Re-renderiza mantendo o que foi digitado no formulário atual.
+  function rerenderKeep(form) {
+    const vals = form ? [...form.elements].filter(x => x.name).map(x => [x.name, x.value]) : [];
+    rerender();
+    const nf = document.querySelector(`form[data-form="${form?.dataset.form}"]`);
+    if (nf) vals.forEach(([n, val]) => { const el = nf.elements[n]; if (el && el.type !== 'password') el.value = val; });
+  }
+
+  async function logout() {
+    if (saver && !(await saver.flush()) && !confirm('Há alterações que ainda não foram salvas. Sair mesmo assim?')) return;
+    try { await Cloud.signOut(); } catch (e) { /* já desconectado */ }
+    leaveCloud(); ui.demo = false; location.hash = '#/'; toast('Você saiu da conta');
+  }
+  async function forgot(form) {
+    const email = form?.elements.email?.value.trim();
+    if (!email) { ui.authMsg = 'Digite seu e-mail no campo acima e clique de novo em "Esqueci minha senha".'; ui.authErr = true; rerenderKeep(form); return; }
+    try { await Cloud.resetPassword(email); ui.authMsg = `Se existir uma conta com ${email}, enviamos um link para criar uma nova senha.`; ui.authErr = false; }
+    catch (err) { ui.authMsg = Cloud.authError(err); ui.authErr = true; }
+    rerenderKeep(form);
+  }
+
+  function campaignList(tpl) {
+    const t = today();
+    const list = db.clientes.filter(c => { const st = clientStats(c.id); return st.ultima && daysBetween(st.ultima, t) >= 60 && !st.proxima && c.tel; });
+    openModal(`${modalHead('Enviar campanha', `${list.length} clientes com WhatsApp`)}
+      <div class="modal-body"><p class="muted small">Clique em cada cliente para abrir o WhatsApp com a mensagem personalizada.</p>
+        <div class="list">${list.map(c => `<div class="list-item" style="cursor:default"><div class="grow"><b>${esc(c.nome)}</b><span>${esc(c.tel)}</span></div>
+          <a class="btn btn-sm ${ui.sent['c' + c.id] ? 'btn-soft' : 'btn-ghost'}" target="_blank" rel="noopener" data-action="wa-sent" data-id="c${c.id}" href="${waLink(c.tel, tpl.replace(/{nome}/g, c.nome.split(' ')[0]))}">${ui.sent['c' + c.id] ? 'Enviado ✓' : '💬 Enviar'}</a></div>`).join('') || '<div class="empty">Nenhum cliente com telefone neste filtro.</div>'}</div>
+      </div><div class="modal-foot"><button class="btn btn-primary" data-action="close">Concluir</button></div>`);
+  }
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
@@ -908,7 +1224,26 @@
   }
 
   // ---------- Início ----------
-  load();
   window.addEventListener('hashchange', route);
-  route();
+  async function boot() {
+    if (!Cloud.enabled) { route(); return; }
+    const rawHash = location.hash;
+    const fromEmail = /^#(access_token|type=)/.test(rawHash), isRecovery = /type=recovery/.test(rawHash);
+    $root.innerHTML = '<div class="auth"><div class="auth-form"><div class="empty"><div class="big">⏳</div>Carregando…</div></div></div>';
+    Cloud.onAuth((event) => {
+      if (event === 'PASSWORD_RECOVERY') { history.replaceState(null, '', '#/nova-senha'); route(); }
+      else if (event === 'SIGNED_OUT' && mode === 'cloud') { leaveCloud(); location.hash = '#/'; }
+    });
+    try {
+      const session = await Cloud.session();
+      if (session) await enterCloud(session);
+      if (isRecovery && session) history.replaceState(null, '', '#/nova-senha');
+      else if (fromEmail) history.replaceState(null, '', session ? '#/app' : '#/entrar');
+    } catch (e) {
+      console.error(e);
+      ui.authMsg = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.'; ui.authErr = true;
+    }
+    route();
+  }
+  boot();
 })();
