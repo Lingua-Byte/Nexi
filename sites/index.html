@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Protótipos de SaaS</title>
+  <style>
+    :root { --bg: #f5f5f7; --card: #fff; --ink: #16181d; --muted: #5f6672; --line: #e3e5ea; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --card: #181b21; --ink: #eef0f3; --muted: #9aa3b0; --line: #2a2f38; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; background: var(--bg); color: var(--ink); }
+    main { width: min(900px, 100% - 32px); margin: 0 auto; padding: 56px 0; }
+    h1 { font-size: 30px; margin: 0 0 8px; letter-spacing: -.02em; }
+    p { color: var(--muted); margin: 0 0 32px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    a.card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; text-decoration: none; color: inherit; transition: transform .15s, border-color .15s; }
+    a.card:hover { transform: translateY(-2px); border-color: var(--muted); }
+    .mark { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 20px; margin-bottom: 14px; }
+    h2 { margin: 0 0 6px; font-size: 20px; }
+    ul { color: var(--muted); padding-left: 18px; margin: 12px 0 0; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Protótipos de SaaS</h1>
+    <p>Dois front-ends navegáveis, com dados de exemplo salvos no seu navegador.</p>
+    <div class="grid">
+      <a class="card" href="agendae/index.html">
+        <div class="mark" style="background:linear-gradient(135deg,#7a2e5c,#f0a868)">✦</div>
+        <h2>Agendaê</h2>
+        <span>Gestão para clínicas de estética, salões e barbearias</span>
+        <ul><li>Landing com preços e cadastro</li><li>Agenda por profissional, clientes, serviços</li><li>Financeiro, lembretes de WhatsApp</li><li>Página pública de agendamento</li></ul>
+      </a>
+      <a class="card" href="radar-licita/index.html">
+        <div class="mark" style="background:linear-gradient(135deg,#0d9488,#2563eb)">◎</div>
+        <h2>Radar Licita</h2>
+        <span>Licitações compatíveis com sua empresa, analisadas por IA</span>
+        <ul><li>Landing, preços e onboarding por CNPJ</li><li>Busca com nota de compatibilidade</li><li>Resumo do edital, exigências e "pergunte ao edital"</li><li>Pipeline kanban, certidões e gerador de proposta</li></ul>
+      </a>
+    </div>
+  </main>
+</body>
+</html>
