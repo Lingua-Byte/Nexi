@@ -12,6 +12,8 @@ const C = api.constants;
 let viewer = null;            // usuário logado
 let feedScope = "all";        // "all" | "following"
 let projKind = "";
+let projInst = "";
+let projArea = "";
 let detailStack = [];         // pilha de telas de detalhe
 let lastMainTab = "feed";
 let composerImage = null;
@@ -36,7 +38,8 @@ function avatar(u, size=40){
   return `<span class="av" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.38)}px" aria-hidden="true">${esc(initials(u?.name))}</span>`;
 }
 const roleLabel = r => r === "professor" ? "Docente" : "Estudante";
-function roleBadge(u){ return `<span class="role ${u.role==="professor"?"doc":""}">${roleLabel(u.role)}</span>${u.is_mod?'<span class="role mod">Moderação</span>':""}`; }
+function instBadge(i){ return i ? `<span class="inst" title="${esc(i.name)}">${esc(i.short)}</span>` : ""; }
+function roleBadge(u){ return `${instBadge(u.institution)}<span class="role ${u.role==="professor"?"doc":""}">${roleLabel(u.role)}</span>${u.is_mod?'<span class="role mod">Moderação</span>':""}`; }
 async function run(fn, okMsg){
   try{ const r = await fn(); if(okMsg) toast(okMsg); return r; }
   catch(e){ toast(e.message || "Algo deu errado."); throw e; }
@@ -80,7 +83,8 @@ function authGate(box, reason){
     <div class="card auth">
       <img src="logo-ile.png" alt="" width="64" height="64" class="auth-logo">
       <h1 style="text-align:center">Rede do ILE</h1>
-      <p class="lead" style="text-align:center">${esc(reason || "Projetos, conversas e novidades de estudantes e docentes do Instituto de Letras.")}</p>
+      <p class="lead" style="text-align:center">${esc(reason || "Portal de projetos de estudantes e docentes de Letras de várias universidades.")}</p>
+      <div class="inst-row">${C.INSTITUTIONS.map(i=>instBadge(i)).join("")}</div>
       <div class="seg" role="tablist">
         <button role="tab" aria-selected="true" data-auth="in">Entrar</button>
         <button role="tab" aria-selected="false" data-auth="up">Criar conta</button>
@@ -93,6 +97,7 @@ function authGate(box, reason){
       <form data-form="up" hidden>
         <label>Nome completo</label><input name="name" required maxlength="80" autocomplete="name">
         <label>E-mail institucional</label><input name="email" type="email" required placeholder="seu.nome@graduacao.uerj.br" autocomplete="email">
+        <p class="src" data-inst-hint style="margin-top:6px">A universidade é reconhecida pelo e-mail.</p>
         <div class="grid2">
           <div><label>Vínculo</label><select name="role"><option value="aluno">Estudante</option><option value="professor">Docente</option></select></div>
           <div><label>Curso / habilitação</label><select name="course">${C.COURSES.map(c=>`<option>${esc(c)}</option>`).join("")}</select></div>
@@ -100,7 +105,7 @@ function authGate(box, reason){
         <label class="check"><input type="checkbox" name="rules" required> Li e aceito as <a href="#" data-open="rules">regras de convivência</a></label>
         <button class="btn full" type="submit">Criar conta</button>
       </form>
-      <p class="src" style="text-align:center;margin-top:10px">Só e-mails terminados em <b>uerj.br</b>. Na versão conectada ao servidor, você recebe um link de confirmação no e-mail.</p>
+      <p class="src" style="text-align:center;margin-top:10px">Só e-mails institucionais das universidades participantes (${C.INSTITUTIONS.map(i=>esc(i.short)).join(", ")}). Na versão conectada ao servidor, você recebe um link de confirmação no e-mail.</p>
     </div>
     ${api.isDemo ? `<div class="card"><b style="font-size:.9rem">Modo demonstração</b>
       <p class="src">Experimente com uma conta de exemplo (pessoas fictícias):</p><div id="demoAccts" class="demo-accts"></div></div>` : ""}`;
@@ -109,6 +114,12 @@ function authGate(box, reason){
     box.querySelector('[data-form="in"]').hidden = b.dataset.auth !== "in";
     box.querySelector('[data-form="up"]').hidden = b.dataset.auth !== "up";
   });
+  const upEmail = box.querySelector('[data-form="up"] [name=email]'), hint = box.querySelector("[data-inst-hint]");
+  upEmail.oninput = () => {
+    const v = upEmail.value.trim(); if(!v.includes("@")){ hint.textContent = "A universidade é reconhecida pelo e-mail."; return; }
+    const i = api.institutionForEmail(v);
+    hint.innerHTML = i ? `Universidade: <b>${esc(i.short)}</b> · ${esc(i.unit)}` : "Domínio não reconhecido. Use o e-mail de uma universidade participante.";
+  };
   box.querySelector('[data-form="in"]').onsubmit = async e => {
     e.preventDefault(); const f = e.target;
     await run(() => api.auth.signIn(f.email.value)).then(afterLogin).catch(()=>{});
@@ -119,7 +130,7 @@ function authGate(box, reason){
   };
   if(api.isDemo) api.auth.demoAccounts().then(list => {
     const el = box.querySelector("#demoAccts"); if(!el) return;
-    el.innerHTML = list.map(u => `<button class="demo" data-demo="${u.id}">${avatar(u,34)}<span><b>${esc(u.name)}</b><small>${roleLabel(u.role)}${u.is_mod?" · moderação":""}</small></span></button>`).join("");
+    el.innerHTML = list.map(u => `<button class="demo" data-demo="${u.id}">${avatar(u,34)}<span><b>${esc(u.name)}</b><small>${esc(u.institution?.short||"")} · ${roleLabel(u.role)}${u.is_mod?" · moderação":""}</small></span></button>`).join("");
     el.onclick = ev => { const b = ev.target.closest("[data-demo]"); if(b) api.auth.signInAs(b.dataset.demo).then(afterLogin); };
   });
 }
@@ -211,7 +222,8 @@ async function renderFeed(){
       </div>
     </form>
     <div class="seg" style="margin:4px 0 10px">
-      <button data-scope="all" aria-selected="${feedScope==="all"}">Todos</button>
+      <button data-scope="all" aria-selected="${feedScope==="all"}">Todas</button>
+      <button data-scope="institution" aria-selected="${feedScope==="institution"}">${esc(viewer.institution?.short || "Minha")}</button>
       <button data-scope="following" aria-selected="${feedScope==="following"}">Seguindo</button>
     </div>
     <div id="feedList"></div>`;
@@ -231,16 +243,16 @@ async function renderFeed(){
     if(p) renderFeed();
   };
   box.querySelectorAll("[data-scope]").forEach(b => b.onclick = () => { feedScope = b.dataset.scope; renderFeed(); });
-  await postList($("#feedList"), { scope: feedScope }, feedScope==="following" ? "Siga pessoas e projetos para ver as novidades deles aqui." : "Nenhum post ainda. Seja a primeira pessoa a publicar!");
+  await postList($("#feedList"), { scope: feedScope }, feedScope==="following" ? "Siga pessoas e projetos para ver as novidades deles aqui." : feedScope==="institution" ? "Ninguém da sua universidade publicou ainda. Que tal começar?" : "Nenhum post ainda. Seja a primeira pessoa a publicar!");
 }
 
 /* ---------- PROJETOS ---------- */
 function projectCard(p){
   return `<a href="#" class="card pcard" data-open="project" data-id="${p.id}">
-    <div class="row"><span class="tag">${esc(p.kind)}</span><span class="grow"></span>${p.is_member?'<span class="src">você participa</span>':p.followed?'<span class="src">acompanhando</span>':""}</div>
+    <div class="row" style="gap:4px;flex-wrap:wrap">${instBadge(p.institution)}<span class="tag">${esc(p.kind)}</span>${p.area?`<span class="tag light">${esc(p.area)}</span>`:""}<span class="grow"></span>${p.is_member?'<span class="src">você participa</span>':p.followed?'<span class="src">acompanhando</span>':""}</div>
     <b class="pname">${esc(p.name)}</b>
     <p class="pdesc">${esc(p.description)}</p>
-    <div class="m">${p.member_count} ${p.member_count===1?"membro":"membros"} · ${p.follower_count} ${p.follower_count===1?"acompanha":"acompanham"}</div>
+    <div class="m">${p.member_count} ${p.member_count===1?"membro":"membros"}${p.institutions.length>1?` de ${p.institutions.length} universidades`:""} · ${p.follower_count} ${p.follower_count===1?"acompanha":"acompanham"}</div>
   </a>`;
 }
 async function renderProjects(){
@@ -251,13 +263,19 @@ async function renderProjects(){
       <input type="search" id="projQ" placeholder="Buscar projetos…" aria-label="Buscar projetos" class="grow">
       <button class="btn" data-open="newProject">+ Novo</button>
     </div>
+    <div class="grid2" style="margin-bottom:8px">
+      <select id="projInst" aria-label="Universidade"><option value="">Universidades</option>${C.INSTITUTIONS.map(i=>`<option value="${i.id}" ${i.id===projInst?"selected":""}>${esc(i.short)}</option>`).join("")}</select>
+      <select id="projArea" aria-label="Área"><option value="">Áreas</option>${C.AREAS.map(a=>`<option ${a===projArea?"selected":""}>${esc(a)}</option>`).join("")}</select>
+    </div>
     <div class="chips" id="projChips">${["", ...C.PROJECT_KINDS].map(k=>`<button class="chip" data-kind="${esc(k)}" aria-pressed="${k===projKind}">${k?esc(k):"Todos"}</button>`).join("")}</div>
     <div id="projList" style="margin-top:10px"></div>`;
   const draw = async () => {
-    const list = await api.projects.list({ q: $("#projQ").value, kind: projKind });
+    const list = await api.projects.list({ q: $("#projQ").value, kind: projKind, area: projArea, institution_id: projInst });
     $("#projList").innerHTML = list.length ? list.map(projectCard).join("") : '<div class="card empty">Nenhum projeto encontrado.</div>';
   };
   $("#projQ").oninput = draw;
+  $("#projInst").onchange = e => { projInst = e.target.value; draw(); };
+  $("#projArea").onchange = e => { projArea = e.target.value; draw(); };
   $("#projChips").onclick = e => { const b = e.target.closest("[data-kind]"); if(!b) return; projKind = b.dataset.kind;
     box.querySelectorAll("#projChips .chip").forEach(c=>c.setAttribute("aria-pressed", c===b)); draw(); };
   draw();
@@ -267,22 +285,47 @@ async function renderProject(id, box){
   if(!p) return;
   box.innerHTML = `
     <div class="card">
-      <span class="tag">${esc(p.kind)}</span>
+      <div class="row" style="gap:4px;flex-wrap:wrap">${instBadge(p.institution)}<span class="tag">${esc(p.kind)}</span>${p.area?`<span class="tag light">${esc(p.area)}</span>`:""}</div>
       <h1 style="margin-top:8px">${esc(p.name)}</h1>
+      <div class="m" style="margin-bottom:6px">${esc(p.institution?.unit || "")} · ${esc(p.institution?.name || "")}</div>
       <p style="white-space:pre-line">${esc(p.description)}</p>
       <div class="m" style="margin:8px 0 12px">Coordenação: <a href="#" data-open="profile" data-id="${p.owner.id}">${esc(p.owner.name)}</a> · ${p.follower_count} ${p.follower_count===1?"acompanha":"acompanham"}</div>
       <div class="row" style="gap:8px;flex-wrap:wrap">
         ${viewer ? `<button class="btn ${p.followed?"ghost":""}" id="pFollow">${p.followed?"✓ Acompanhando":"Acompanhar"}</button>` : ""}
+        ${viewer && !p.is_member ? (p.my_request==="pendente" ? '<span class="pill">Pedido de colaboração enviado</span>' : '<button class="btn" id="pCollab">Quero colaborar</button>') : ""}
         ${p.is_member && !p.is_owner ? '<button class="btn ghost" id="pLeave">Sair do projeto</button>' : ""}
       </div>
+      <form id="collabForm" hidden style="margin-top:12px">
+        <label for="collabMsg">Como você quer contribuir?</label>
+        <textarea id="collabMsg" rows="3" maxlength="600" placeholder="Conte sua formação, interesse e disponibilidade. A coordenação recebe seu pedido."></textarea>
+        <div class="row" style="gap:8px;margin-top:8px"><button class="btn small">Enviar pedido</button><button type="button" class="btn ghost small" id="collabCancel">Cancelar</button></div>
+      </form>
     </div>
+    ${p.is_owner && p.pending_requests ? `<h2>Pedidos de colaboração (${p.pending_requests})</h2><div class="card" id="reqList"></div>` : ""}
     <h2>Participantes</h2>
-    <div class="card">${p.members.map(m=>`<div class="item"><a href="#" data-open="profile" data-id="${m.id}">${avatar(m,36)}</a><div class="grow"><a href="#" class="nm" data-open="profile" data-id="${m.id}">${esc(m.name)}</a><div class="m">${esc(m.member_role)} · ${roleLabel(m.role)}</div></div></div>`).join("")}
+    <div class="card">${p.members.map(m=>`<div class="item"><a href="#" data-open="profile" data-id="${m.id}">${avatar(m,36)}</a><div class="grow"><a href="#" class="nm" data-open="profile" data-id="${m.id}">${esc(m.name)}</a> ${instBadge(m.institution)}<div class="m">${esc(m.member_role)} · ${roleLabel(m.role)}</div></div></div>`).join("")}
       ${p.is_owner ? `<form id="addMember" class="row" style="gap:8px;margin-top:10px"><input id="memberQ" placeholder="Adicionar pessoa pelo nome…" class="grow" list="memberOpts" aria-label="Nome da pessoa"><datalist id="memberOpts"></datalist><button class="btn small">Adicionar</button></form>` : ""}
     </div>
     <h2>Atualizações</h2>
     <div id="projPosts"></div>`;
   const fb = box.querySelector("#pFollow"); if(fb) fb.onclick = async () => { await run(() => api.follows.toggle("project", id)).catch(()=>{}); renderProject(id, box); };
+  const cb = box.querySelector("#pCollab"), cf = box.querySelector("#collabForm");
+  if(cb){ cb.onclick = () => { cf.hidden = false; cb.hidden = true; box.querySelector("#collabMsg").focus(); };
+    box.querySelector("#collabCancel").onclick = () => { cf.hidden = true; cb.hidden = false; };
+    cf.onsubmit = async e => { e.preventDefault();
+      const ok = await run(() => api.collab.request(id, box.querySelector("#collabMsg").value), "Pedido enviado à coordenação").catch(()=>null);
+      if(ok) renderProject(id, box); }; }
+  const rl = box.querySelector("#reqList");
+  if(rl){
+    const reqs = await api.collab.listForProject(id);
+    rl.innerHTML = reqs.map(r=>`<div class="item"><a href="#" data-open="profile" data-id="${r.user.id}">${avatar(r.user,36)}</a><div class="grow">
+      <a href="#" class="nm" data-open="profile" data-id="${r.user.id}">${esc(r.user.name)}</a> ${instBadge(r.user.institution)} <span class="m">· ${ago(r.created_at)}</span>
+      <div class="ctext">${esc(r.message)}</div>
+      <div class="row" style="gap:6px;margin-top:8px"><button class="btn small" data-accept="${r.id}">Aceitar</button><button class="btn ghost small" data-decline="${r.id}">Recusar</button></div></div></div>`).join("");
+    rl.onclick = async e => { const b = e.target.closest("[data-accept],[data-decline]"); if(!b) return;
+      await run(() => api.collab.respond(b.dataset.accept || b.dataset.decline, !!b.dataset.accept), b.dataset.accept ? "Colaboração aceita" : "Pedido recusado").catch(()=>{});
+      renderProject(id, box); };
+  }
   const lb = box.querySelector("#pLeave"); if(lb) lb.onclick = async () => { if(await window.askConfirm("Sair deste projeto?")){ await run(() => api.projects.leave(id), "Você saiu do projeto").catch(()=>{}); renderProject(id, box); } };
   const am = box.querySelector("#addMember");
   if(am){
@@ -301,11 +344,12 @@ function renderNewProject(_, box){
     <h1>Novo projeto</h1>
     <p class="lead">Pesquisa, extensão, IC, grupo de estudo… Você fica como coordenação e pode adicionar participantes.</p>
     <label>Nome</label><input name="name" required maxlength="100">
-    <label>Tipo</label><select name="kind">${C.PROJECT_KINDS.map(k=>`<option>${esc(k)}</option>`).join("")}</select>
+    <div class="grid2"><div><label>Tipo</label><select name="kind">${C.PROJECT_KINDS.map(k=>`<option>${esc(k)}</option>`).join("")}</select></div>
+    <div><label>Área</label><select name="area">${C.AREAS.map(a=>`<option>${esc(a)}</option>`).join("")}</select></div></div>
     <label>Descrição</label><textarea name="description" rows="5" required maxlength="1500" placeholder="Objetivo, quem pode participar, horários, como entrar em contato…"></textarea>
     <button class="btn full" style="margin-top:12px">Criar projeto</button></form>`;
   box.querySelector("#npForm").onsubmit = async e => { e.preventDefault(); const f = e.target;
-    const p = await run(() => api.projects.create({ name:f.name.value, kind:f.kind.value, description:f.description.value }), "Projeto criado").catch(()=>null);
+    const p = await run(() => api.projects.create({ name:f.name.value, kind:f.kind.value, area:f.area.value, description:f.description.value }), "Projeto criado").catch(()=>null);
     if(p){ detailStack.pop(); openDetail("project", p.id); } };
 }
 
@@ -344,6 +388,7 @@ async function renderProfile(id, box){
       </div>
       <div class="pn">${esc(u.name)}</div>
       <div class="m">${roleBadge(u)} ${esc(u.course)}</div>
+      ${u.institution ? `<div class="m" style="margin-top:2px">${esc(u.institution.unit)} · ${esc(u.institution.name)}</div>` : ""}
       ${u.bio ? `<p class="bio">${esc(u.bio)}</p>` : ""}
       <div class="row" style="gap:8px;margin-top:10px">
         ${u.is_me ? '<button class="btn ghost grow" data-open="editProfile">Editar perfil</button>'
@@ -391,7 +436,10 @@ const NOTIF_TEXT = {
   project_post: n => `publicou em ${esc(n.project?.name || "um projeto")}`,
   project_follow: n => `passou a acompanhar ${esc(n.project?.name || "seu projeto")}`,
   member_added: n => `adicionou você ao projeto ${esc(n.project?.name || "")}`,
-  post_hidden: n => `(moderação) ocultou um post seu por violar as regras`
+  post_hidden: n => `(moderação) ocultou um post seu por violar as regras`,
+  collab_request: n => `pediu para colaborar em ${esc(n.project?.name || "seu projeto")}`,
+  collab_accepted: n => `aceitou você como colaborador(a) em ${esc(n.project?.name || "um projeto")}`,
+  collab_declined: n => `não aceitou seu pedido em ${esc(n.project?.name || "um projeto")} desta vez`
 };
 async function renderNotifs(){
   const box = $("#notifBody");
@@ -413,7 +461,7 @@ async function refreshBadge(){
 async function renderModeration(_, box){
   const q = await api.moderation.queue().catch(e => { box.innerHTML = `<div class="card empty">${esc(e.message)}</div>`; });
   if(!q) return;
-  box.innerHTML = `<h1>Moderação</h1><p class="lead">Denúncias abertas. Ocultar remove o post do feed de todos e avisa quem publicou.</p>
+  box.innerHTML = `<h1>Moderação</h1><p class="lead">Denúncias abertas sobre posts da sua universidade (${esc(viewer.institution?.short || "")}). Ocultar remove o post do feed de todos e avisa quem publicou.</p>
     ${q.length ? q.map(r => `<div class="card">
       <div class="m"><b>${esc(r.reason)}</b> · denunciado por ${esc(r.reporter?.name)} · ${ago(r.created_at)}</div>
       ${r.post ? `<blockquote class="quote"><b>${esc(r.post.author?.name)}:</b> ${richText(r.post.text || "(imagem)")}</blockquote>` : '<p class="m">Post já removido.</p>'}
@@ -427,14 +475,15 @@ async function renderModeration(_, box){
 }
 function renderRules(_, box){
   box.innerHTML = `<div class="card rules"><h1>Regras de convivência</h1>
-    <p>A Rede do ILE é um espaço para estudantes e docentes do Instituto de Letras compartilharem projetos, leituras e oportunidades.</p>
+    <p>A rede é um espaço para estudantes e docentes de Letras das universidades participantes compartilharem projetos, leituras e oportunidades, e encontrarem parceiros em outras instituições.</p>
     <ol>
       <li><b>Respeito acima de tudo.</b> Nada de assédio, ofensas, discriminação ou discurso de ódio.</li>
       <li><b>Seja você.</b> Contas são pessoais e vinculadas ao e-mail institucional.</li>
       <li><b>Cuide das informações.</b> Não divulgue dados pessoais de outras pessoas nem informações falsas.</li>
       <li><b>Sem spam.</b> Divulgação comercial repetitiva ou fora do contexto acadêmico pode ser removida.</li>
       <li><b>Créditos e autoria.</b> Cite fontes e respeite direitos autorais ao compartilhar textos e imagens.</li>
-      <li><b>Denuncie.</b> Use “⋯ → Denunciar” em posts que violem estas regras. A moderação analisa cada caso.</li>
+      <li><b>Colabore com cuidado.</b> Ao entrar num projeto de outra universidade, siga as regras e prazos de quem coordena.</li>
+      <li><b>Denuncie.</b> Use “⋯ → Denunciar” em posts que violem estas regras. A moderação da universidade de quem publicou analisa cada caso.</li>
     </ol>
     <p class="src">Este não é um canal oficial do ILE ou da UERJ.</p></div>`;
 }
