@@ -1,0 +1,9 @@
+{
+  "name": "nexi-drive",
+  "version": "1.0.0",
+  "description": "Transfira arquivos entre celular e computador usando um código.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
