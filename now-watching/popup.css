@@ -102,6 +102,18 @@ li .t { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overf
 li .ago { color: var(--muted); font-size: 11px; flex: none; }
 .empty { color: var(--muted); font-size: 12px; padding: 6px; }
 
+/* Phones: the popup opens as a full-width sheet, so fill it and use bigger touch targets. */
+html.mobile body { width: auto; font-size: 15px; }
+html.mobile header { padding: 14px 16px; }
+html.mobile main { padding: 14px 16px 20px; gap: 10px; }
+html.mobile h1 { font-size: 16px; }
+html.mobile button { padding: 12px; }
+html.mobile button.primary { font-size: 16px; padding: 16px; }
+html.mobile .url { font-size: 13px; }
+html.mobile li button { padding: 10px 6px; }
+html.mobile ul { max-height: none; }
+html.mobile .hint-desktop { display: none; }
+
 .toast {
   position: fixed; left: 50%; bottom: 12px; transform: translate(-50%, 20px);
   background: var(--text); color: var(--bg); border-radius: 8px; padding: 7px 12px;

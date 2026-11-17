@@ -29,6 +29,18 @@ Everything stays in your browser (`chrome.storage.local`). Nothing is sent anywh
 
    Firefox removes temporary add-ons when it restarts. To keep it installed, it needs to be signed through addons.mozilla.org.
 
+## Android (Firefox for Android 128+)
+
+Chrome for Android doesn't support extensions, so on Android this runs in **Firefox**.
+Tap **⋮ → Extensions → Now Watching** to open it. On phones, **Share…** opens Android's share menu.
+
+Firefox for Android only installs **signed** add-ons, so testing needs one of these:
+
+- **Sign it (free, a few minutes):** zip the *contents* of this folder (so `manifest.json` sits at the top of the zip). Upload it at addons.mozilla.org → Developer Hub → *Submit a New Add-on* → **On your own** (unlisted). Download the signed `.xpi` to your phone. In Firefox go to **Settings → About Firefox**, tap the logo 5 times, then go back to **Settings → Install add-on from file** and pick the `.xpi`.
+- **From a computer over USB:** install Mozilla's `web-ext` tool and turn on USB debugging on the phone. Then run `web-ext run -t firefox-android --android-device <id>` in this folder.
+
+It only sees pages open **in Firefox**. Android doesn't let apps read what's playing in other apps (such as the YouTube app).
+
 ## Shortcuts
 
 | Shortcut | Action |
@@ -43,4 +55,5 @@ To change them: `chrome://extensions/shortcuts` in Chrome. In Firefox, go to Add
 - `background.js`: watches tab switches and page changes, and handles the copy shortcut.
 - `popup.html / .css / .js`: the window you see when you click the icon.
 - `shared.js`: link cleaning, YouTube timestamps and settings.
+- `mobile.js`: switches the popup to the phone layout.
 - `offscreen.html / .js`: hidden page Chrome needs to copy to the clipboard from the shortcut.

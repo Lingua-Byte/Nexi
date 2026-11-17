@@ -2,6 +2,8 @@
 import { getSettings, isShareable, buildShareLink } from './shared.js';
 
 const HISTORY_MAX = 15;
+// Firefox for Android has a single window and no windows/commands APIs.
+const HAS_WINDOWS = !!chrome.windows;
 
 async function remember(tab) {
   if (!tab || !tab.active || !isShareable(tab.url)) return;
@@ -25,25 +27,35 @@ async function remember(tab) {
 
 async function rememberActive() {
   try {
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const query = HAS_WINDOWS ? { active: true, lastFocusedWindow: true } : { active: true };
+    const [tab] = await chrome.tabs.query(query);
     await remember(tab);
   } catch { /* window closing etc. */ }
 }
 
 chrome.tabs.onActivated.addListener(rememberActive);
-chrome.windows.onFocusChanged.addListener((winId) => {
-  if (winId !== chrome.windows.WINDOW_ID_NONE) rememberActive();
-});
+if (HAS_WINDOWS) {
+  chrome.windows.onFocusChanged.addListener((winId) => {
+    if (winId !== chrome.windows.WINDOW_ID_NONE) rememberActive();
+  });
+}
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   if (!('url' in info || 'title' in info || 'favIconUrl' in info)) return;
+  if (!HAS_WINDOWS) return remember(tab); // remember() ignores background tabs
   const win = await chrome.windows.get(tab.windowId).catch(() => null);
   if (win?.focused) remember(tab);
 });
 
+async function setBadge(text, color) {
+  try {
+    await chrome.action.setBadgeBackgroundColor({ color });
+    await chrome.action.setBadgeText({ text });
+  } catch { /* badges aren't shown on mobile */ }
+}
+
 async function refreshBadge() {
   const { online } = await getSettings();
-  await chrome.action.setBadgeBackgroundColor({ color: '#6b7280' });
-  await chrome.action.setBadgeText({ text: online ? '' : 'OFF' });
+  await setBadge(online ? '' : 'OFF', '#6b7280');
 }
 
 chrome.runtime.onInstalled.addListener(() => { refreshBadge(); rememberActive(); });
@@ -73,12 +85,11 @@ async function writeClipboard(text) {
 }
 
 async function flash(text, color) {
-  await chrome.action.setBadgeBackgroundColor({ color });
-  await chrome.action.setBadgeText({ text });
+  await setBadge(text, color);
   setTimeout(refreshBadge, 1500);
 }
 
-chrome.commands.onCommand.addListener(async (command) => {
+chrome.commands?.onCommand.addListener(async (command) => {
   if (command !== 'copy-current-link') return;
   try {
     const settings = await getSettings();
