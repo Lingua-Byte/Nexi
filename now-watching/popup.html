@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Now Watching</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="dot" id="dot"></span>
+      <h1>Now Watching</h1>
+    </div>
+    <label class="switch" title="Online: keep track of the page you're on">
+      <input type="checkbox" id="online">
+      <span class="track"><span class="thumb"></span></span>
+      <span class="switch-label" id="onlineLabel">Online</span>
+    </label>
+  </header>
+
+  <main>
+    <section class="card" id="card">
+      <img class="fav" id="fav" alt="">
+      <div class="meta">
+        <div class="title" id="title">Nothing yet</div>
+        <div class="url" id="url">Open a page and it will show up here.</div>
+      </div>
+      <span class="stamp" id="stamp" hidden></span>
+    </section>
+
+    <button class="primary" id="copy">Copy link</button>
+    <div class="row">
+      <button id="copyTitle">Copy title + link</button>
+      <button id="share" hidden>Share…</button>
+    </div>
+
+    <details class="settings">
+      <summary>Settings</summary>
+      <label><input type="checkbox" id="timestamps"> Add the current video time (YouTube)</label>
+      <label><input type="checkbox" id="cleanLinks"> Remove tracking junk from links</label>
+      <p class="hint">Shortcut: <kbd id="kbd">Alt+Shift+L</kbd> copies the link without opening this window.
+        <a href="#" id="shortcuts">Change shortcut</a></p>
+    </details>
+
+    <section class="recent">
+      <div class="recent-head">
+        <h2>Recent</h2>
+        <button class="link" id="clear">Clear</button>
+      </div>
+      <ul id="history"></ul>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

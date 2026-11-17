@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Now Watching",
+  "version": "1.0.0",
+  "description": "Always keeps the link of the page you're on, so you can send it in one click or one shortcut.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Now Watching",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "scripts": [
+      "background.js"
+    ],
+    "type": "module"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab",
+    "scripting",
+    "clipboardWrite",
+    "offscreen"
+  ],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+W"
+      },
+      "description": "Open Now Watching"
+    },
+    "copy-current-link": {
+      "suggested_key": {
+        "default": "Alt+Shift+L"
+      },
+      "description": "Copy the link of what you're watching right now"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "now-watching@nexi.local",
+      "strict_min_version": "121.0"
+    }
+  }
+}
