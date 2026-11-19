@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f120d">
+<title>NEXI SFX Studio</title>
+<style>
+:root{--bg:#0f120d;--panel:#171c14;--panel2:#1f261b;--panel3:#283121;--line:#313d28;--text:#e8efd9;--muted:#93a184;
+  --accent:#c4d585;--accent2:#f2cf62;--hot:#ef7d5a;--wave:#c9dc86;--wave2:#8fb8d9;--grid:#252e1f}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,select,input{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+.app{max-width:1500px;margin:0 auto;padding:10px 16px 30px}
+header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.brand{font-weight:950;letter-spacing:.14em;font-size:1.2rem;margin-right:8px;white-space:nowrap}
+.brand span{color:var(--accent)}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:7px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .12s;white-space:nowrap}
+.btn:hover{background:var(--panel3)} .btn:active{transform:scale(.97)}
+.btn.pri{background:var(--accent);color:#1a2210;border-color:var(--accent);font-weight:800}
+.btn.pri:hover{background:#d3e396}
+.btn.sm{padding:4px 8px;font-size:.78rem}
+.btn.on{border-color:var(--accent);color:var(--accent)}
+.btn.rec{border-color:var(--hot);color:var(--hot)}
+.chk{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:.8rem;cursor:pointer;user-select:none}
+.status{color:var(--muted);font-size:.78rem;min-width:110px}
+.sp{flex:1}
+.vol{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.78rem}
+.vol input{width:80px}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;gap:10px;align-items:start}
+@media (max-width:1180px){.layout{grid-template-columns:230px minmax(0,1fr)}.right{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:10px}.right .card+.card{margin-top:0}}
+@media (max-width:760px){.layout{grid-template-columns:1fr}.right{grid-template-columns:1fr}.lib .list{max-height:240px}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:10px}
+.card+.card{margin-top:10px}
+.card h2{margin:0 0 8px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.tabs{display:flex;gap:4px;margin-bottom:8px}
+.tabs button{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px;cursor:pointer;font-size:.78rem}
+.tabs button.on{border-color:var(--accent);color:var(--accent)}
+input[type=text],input[type=search],input[type=number],select{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 8px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.chips button{background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:3px 9px;font-size:.74rem;cursor:pointer}
+.chips button.on{background:var(--accent);color:#1a2210;border-color:var(--accent);font-weight:700}
+.list{display:flex;flex-direction:column;gap:3px;max-height:calc(100vh - 260px);min-height:120px;overflow:auto}
+.item{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid transparent;border-radius:8px;padding:5px 8px;cursor:pointer;font-size:.8rem}
+.item:hover{border-color:var(--line)} .item.cur{border-color:var(--accent)}
+.item .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .cat{font-size:.65rem;color:var(--muted)}
+.item button{background:none;border:0;color:var(--muted);cursor:pointer;padding:1px 4px}
+.item button:hover{color:var(--text)}
+.empty{color:var(--muted);font-size:.78rem;padding:6px 2px}
+.viz{position:relative;background:#0a0c09;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+canvas{display:block;width:100%}
+#cvWave{height:190px;cursor:pointer}
+#cvSpec{height:190px;display:none;cursor:pointer}
+.meters{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:8px}
+@media (max-width:560px){.meters{grid-template-columns:repeat(3,1fr)}}
+.meter{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 7px}
+.meter b{display:block;font-size:.95rem;font-variant-numeric:tabular-nums}
+.meter span{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.meter.warn b{color:var(--hot)}
+.strip{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.lyr{display:flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:4px 6px 4px 4px;cursor:pointer;font-size:.78rem;max-width:200px}
+.lyr.cur{border-color:var(--accent);background:var(--panel3)}
+.lyr.off{opacity:.45}
+.lyr .tag{font-size:.6rem;font-weight:800;background:var(--line);border-radius:5px;padding:1px 4px;color:var(--accent)}
+.lyr .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lyr button{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 2px;font-size:.72rem}
+.lyr button.solo.on{color:var(--accent2);font-weight:800}
+.lhead{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.lhead input[type=text]{flex:1;min-width:120px}
+.sections{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px}
+.sec{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.sec h3{margin:0 0 4px;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;justify-content:space-between;align-items:center}
+.sec h3 button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:.64rem}
+.ctl{display:grid;grid-template-columns:104px minmax(0,1fr) 62px;align-items:center;gap:6px;padding:1.5px 0}
+.ctl label{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctl .v{font-size:.7rem;text-align:right;font-variant-numeric:tabular-nums;cursor:text;border-radius:4px}
+.ctl .v:hover{background:var(--panel3)}
+.ctl .v.off{color:var(--muted)}
+.ctl select{width:100%;padding:3px 6px;font-size:.76rem;grid-column:2/4}
+.ctl.boolc input{justify-self:start}
+input[type=range]{width:100%;accent-color:var(--accent);height:16px;margin:0}
+.smpbar{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 6px}
+.kb{margin-top:10px}
+.kbwrap{position:relative;height:96px;display:flex;user-select:none;touch-action:none;overflow:hidden;border-radius:8px}
+.wk{flex:1;background:linear-gradient(#f4f6ee,#d9ddd0);border:1px solid #6d7563;border-top:0;border-radius:0 0 6px 6px;position:relative;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;font-size:.6rem;color:#555;padding-bottom:4px}
+.wk.dn{background:linear-gradient(#cfe08a,#a8bd5c)}
+.bk{position:absolute;top:0;height:60%;background:linear-gradient(#2a2f25,#11140f);border:1px solid #000;border-radius:0 0 5px 5px;z-index:2;cursor:pointer}
+.bk.dn{background:linear-gradient(#a8bd5c,#6e8236)}
+.kbbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.hint{color:var(--muted);font-size:.72rem;margin-top:6px}
+kbd{background:var(--panel2);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;font-size:.68rem}
+.lbl{font-size:.72rem;color:var(--muted);display:block;margin:6px 0 2px}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.row>.grow{flex:1}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,40px);background:var(--accent);color:#1a2210;padding:8px 16px;border-radius:99px;font-weight:800;opacity:0;transition:.25s;pointer-events:none;z-index:9}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+details.mg{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 9px;margin-bottom:6px}
+details.mg summary{cursor:pointer;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;padding:2px 0}
+details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-transform:none;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">NEXI <span>SFX</span> STUDIO</div>
+  <button class="btn pri" id="bPlay" title="Tocar (Espaço)">▶ Tocar</button>
+  <button class="btn" id="bStop" title="Parar">■</button>
+  <label class="chk"><input type="checkbox" id="cLoop"> Loop</label>
+  <label class="chk"><input type="checkbox" id="cAuto" checked> Tocar ao editar</label>
+  <button class="btn" id="bVary" title="Gerar variação (V)">🎲 Variar</button>
+  <button class="btn sm" id="bUndo" title="Desfazer (Ctrl+Z)">↶</button>
+  <button class="btn sm" id="bRedo" title="Refazer (Ctrl+Shift+Z)">↷</button>
+  <button class="btn sm" id="bNew" title="Projeto vazio">Novo</button>
+  <span class="status" id="status">—</span>
+  <span class="sp"></span>
+  <span class="vol">Monitor <input type="range" id="monVol" min="0" max="1" step="0.01" value="0.8"></span>
+  <a class="btn sm" href="./">← NEXI</a>
+</header>
+
+<div class="layout">
+  <aside class="lib">
+    <div class="card">
+      <div class="tabs"><button id="tLib" class="on">Biblioteca</button><button id="tMine">Meus sons</button></div>
+      <div id="paneLib">
+        <input type="search" id="search" placeholder="Buscar preset…" style="width:100%">
+        <div class="chips" id="cats"></div>
+        <div class="list" id="presetList"></div>
+      </div>
+      <div id="paneMine" style="display:none">
+        <div class="row"><input type="text" id="saveName" placeholder="Nome do som" class="grow"><button class="btn sm" id="bSave">⭐ Salvar</button></div>
+        <div class="list" id="bankList" style="margin-top:8px"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn sm grow" id="bBankExp">Exportar banco</button>
+          <button class="btn sm grow" id="bBankImp">Importar</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="card">
+      <h2><span id="sndTitle">—</span>
+        <span class="tabs" style="margin:0;width:170px"><button id="vWave" class="on">Onda</button><button id="vSpec">Espectro</button></span></h2>
+      <div class="viz"><canvas id="cvWave"></canvas><canvas id="cvSpec"></canvas></div>
+      <div class="meters" id="meters"></div>
+    </div>
+    <div class="card">
+      <h2>Camadas <span class="row">
+        <select id="addLayer"><option value="">+ Adicionar camada…</option></select>
+      </span></h2>
+      <div class="strip" id="strip"></div>
+      <div id="editor"></div>
+    </div>
+    <div class="card kb">
+      <div class="kbbar">
+        <h2 style="margin:0">Teclado</h2>
+        <button class="btn sm" id="octDn">Oitava −</button><span id="octLbl" class="status" style="min-width:0">C4</span><button class="btn sm" id="octUp">Oitava +</button>
+        <button class="btn sm" id="bMidi">🎹 Conectar MIDI</button>
+        <span class="hint" style="margin:0">Teclas <kbd>A</kbd>–<kbd>K</kbd> tocam notas · <kbd>Z</kbd>/<kbd>X</kbd> mudam a oitava · Dó central = altura original</span>
+      </div>
+      <div class="kbwrap" id="kbd"></div>
+    </div>
+  </main>
+
+  <aside class="right">
+    <div class="card">
+      <h2>Master</h2>
+      <div id="master"></div>
+    </div>
+    <div class="card">
+      <h2>Exportar</h2>
+      <div class="row">
+        <select id="exRate" class="grow"><option>44100</option><option selected>48000</option><option>88200</option><option>96000</option></select>
+        <select id="exBits" class="grow"><option value="16">16 bits</option><option value="24" selected>24 bits</option><option value="32">32 bits float</option></select>
+        <select id="exCh" class="grow"><option value="2">Estéreo</option><option value="1">Mono</option></select>
+      </div>
+      <label class="lbl" for="exName">Nome do arquivo</label>
+      <input type="text" id="exName" value="sfx" style="width:100%">
+      <div class="row" style="margin-top:8px"><button class="btn pri grow" id="bWav">⬇ Baixar WAV</button></div>
+      <label class="lbl">Variações (round-robin para jogos)</label>
+      <div class="row">
+        <input type="number" id="varN" min="2" max="64" value="8" style="width:64px">
+        <input type="range" id="varAmt" min="0.05" max="1" step="0.01" value="0.5" class="grow" title="Intensidade da variação">
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn sm grow" id="bVarZip">⬇ Variações (ZIP)</button>
+        <button class="btn sm grow" id="bStems">⬇ Stems (ZIP)</button>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn sm grow" id="bProjExp">Salvar projeto</button>
+        <button class="btn sm grow" id="bProjImp">Abrir projeto</button>
+      </div>
+      <div class="hint" id="exInfo"></div>
+    </div>
+    <div class="hint">Atalhos: <kbd>Espaço</kbd> tocar · <kbd>V</kbd> variar · <kbd>Ctrl+Z</kbd> desfazer · duplo clique num controle volta ao padrão · clique no valor para digitar</div>
+  </aside>
+</div>
+</div>
+<input type="file" id="fileAudio" accept="audio/*" hidden>
+<input type="file" id="fileJson" accept=".json,application/json" hidden>
+<div class="toast" id="toast"></div>
+<!--SCRIPTS-->
+</body>
+</html>
