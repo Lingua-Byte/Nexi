@@ -8,12 +8,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{
-  --bg:#14121c;--panel:#1e1b29;--panel2:#262236;--line:#36304a;--text:#f2eefb;--muted:#a59fb8;
-  --accent:#f0b35a;--accent2:#e98a5c;--ok:#7fd1a8;--bad:#ff7d7d;--hl:#f0b35a33;--radius:18px;
+  --bg:#f6f2ea;--panel:#fffdf8;--panel2:#f1ebdf;--line:#e2d9c8;--text:#2a2433;--muted:#7b7287;--accent:#c97a1c;--accent2:#c9562a;--hl:#f0b35a55;
+  --ok:#2f9e6a;--bad:#d64545;--radius:18px;color-scheme:light;
 }
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){--bg:#f6f2ea;--panel:#fffdf8;--panel2:#f1ebdf;--line:#e2d9c8;--text:#2a2433;--muted:#7b7287;--accent:#c97a1c;--accent2:#c9562a;--hl:#f0b35a55}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#14121c;--panel:#1e1b29;--panel2:#262236;--line:#36304a;--text:#f2eefb;--muted:#a59fb8;--accent:#f0b35a;--accent2:#e98a5c;--hl:#f0b35a33;--ok:#7fd1a8;--bad:#ff7d7d;color-scheme:dark}
 }
+:root[data-theme="dark"]{--bg:#14121c;--panel:#1e1b29;--panel2:#262236;--line:#36304a;--text:#f2eefb;--muted:#a59fb8;--accent:#f0b35a;--accent2:#e98a5c;--hl:#f0b35a33;--ok:#7fd1a8;--bad:#ff7d7d;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 button,select,input,textarea{font:inherit;color:inherit}
@@ -90,6 +91,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <header>
     <div class="logo"><div class="mic">🎙️</div><div>Narrador<small>Leitura com entonação e contexto</small></div></div>
     <div class="seg" id="engineSeg" role="tablist" aria-label="Motor de voz">
+      <button data-engine="claude" class="hidden">Vozes Claude</button>
       <button data-engine="device" class="on">Vozes do aparelho</button>
       <button data-engine="neural">Vozes neurais IA</button>
     </div>
@@ -119,6 +121,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <div class="row"><select id="dvoice"></select><button class="btn" id="testDVoice" title="Ouvir amostra">▶</button></div>
         <label class="row f" style="gap:6px;cursor:pointer"><input type="checkbox" id="allLangs"> Mostrar vozes de todos os idiomas</label>
         <div class="note" id="deviceTip"></div>
+      </div>
+      <div id="claudeVoice" class="hidden">
+        <div class="voices" id="cvoices"></div>
+        <label class="f" for="cdvoice">Voz dos diálogos</label>
+        <select id="cdvoice"></select>
+        <div class="note">Vozes naturais do Claude, sem chave nem configuração. O narrador entrega cada fala com o <b>ritmo ajustado pelo contexto</b> (clima da cena, perguntas, exclamações, suspense) e pode usar outra voz para os personagens.</div>
       </div>
       <div id="neuralVoice" class="hidden">
         <div class="voices" id="nvoices"></div>
@@ -396,8 +404,10 @@ const STYLES={
    ========================================================= */
 const $=id=>document.getElementById(id);
 const LS='narrador-v1';
-const st=Object.assign({engine:'device',style:'historia',voice:'',dvoice:'',nvoice:'marin',ndvoice:'',rate:1,pitch:1,expr:1,pause:1,text:'',allLangs:false,key:''},(()=>{try{return JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){return{}}})());
+const st=Object.assign({engine:'device',style:'historia',voice:'',dvoice:'',nvoice:'marin',ndvoice:'',cvoice:'buttery',cdvoice:'',engineChosen:false,rate:1,pitch:1,expr:1,pause:1,text:'',allLangs:false,key:''},(()=>{try{return JSON.parse(localStorage.getItem(LS)||'{}')}catch(e){return{}}})());
+const SAVED_ENGINE=st.engine;
 function save(){try{localStorage.setItem(LS,JSON.stringify(st))}catch(e){}}
+const INSIDE_ARTIFACT=!!(window.claude&&window.claude.use);
 let data={segs:[],view:[]},dataText=null,idx=0,playing=false,paused=false,session=0;
 const synth=window.speechSynthesis;
 const SAMPLE=`Capítulo I — A casa no fim da rua
@@ -544,7 +554,7 @@ async function gerar(i){
   if(!st.key)throw new Error('Informe sua chave da API OpenAI no painel de voz.');
   const p=fetch('https://api.openai.com/v1/audio/speech',{method:'POST',headers:{'Authorization':'Bearer '+st.key,'Content-Type':'application/json'},
     body:JSON.stringify({model:'gpt-4o-mini-tts',voice:c.voice,input:c.text,instructions:direcao(c),response_format:'mp3'})})
-    .then(async r=>{if(!r.ok){let m=r.status+'';try{m=(await r.json()).error.message}catch(e){}throw new Error('OpenAI: '+m)}return r.blob()});
+    .catch(()=>{throw new Error(INSIDE_ARTIFACT?'Este ambiente bloqueia a conexão com a OpenAI. Use as Vozes Claude.':'Não foi possível conectar à OpenAI.')}).then(async r=>{if(!r.ok){let m=r.status+'';try{m=(await r.json()).error.message}catch(e){}throw new Error('OpenAI: '+m)}return r.blob()});
   cache.set(key,p);p.catch(()=>cache.delete(key));
   return p;
 }
@@ -574,6 +584,65 @@ async function baixar(){
     const a=document.createElement('a');a.href=url;a.download='narracao.mp3';a.click();status('Áudio pronto: narracao.mp3')}
   catch(e){status(e.message,true)}
   $('dlBtn').disabled=st.engine!=='neural';
+}
+
+/* =========================================================
+   6b. VOZES CLAUDE (capacidade tts do artefato)
+   ========================================================= */
+const CVOICES=[['buttery','Buttery','quente · aveludada'],['airy','Airy','leve · arejada'],['glassy','Glassy','clara · cristalina'],['rounded','Rounded','encorpada · redonda']];
+let tts=null,clines=[],cLine=-1;
+function ptBR(t){const w=(t.toLowerCase().match(/(^|\s)(que|não|de|da|do|uma|com|para|ele|ela|você|está|mas|então)(?=\s|[,.!?]|$)/g)||[]).length;return w>=Math.max(2,t.split(/\s+/).length*.06)}
+function montarLinhas(){
+  // uma linha por parágrafo/turno de fala (como pede a plataforma), com ritmo do contexto
+  clines=[];let cur=null;
+  data.segs.forEach(s=>{
+    const voice=s.kind==='dialogue'&&st.cdvoice?st.cdvoice:st.cvoice;
+    const key=s.para+'|'+(s.kind==='dialogue');
+    if(!cur||cur.key!==key||cur.text.length+s.speak.length>1800){cur={key,voice,segs:[],text:'',id:'L'+clines.length};clines.push(cur)}
+    cur.segs.push(s);cur.text+=(cur.text?' ':'')+s.speak;
+  });
+  const lang=ptBR(dataText||'')?'pt-BR':undefined;
+  clines.forEach(l=>{
+    const rs=l.segs.map(x=>prosodia(x).rate),avg=rs.reduce((a,b)=>a+b,0)/rs.length;
+    l.rate=Math.max(.7,Math.min(1.5,avg));l.lang=lang;
+  });
+}
+function lineOfSeg(i){return clines.findIndex(l=>l.segs.some(s=>s.id===i))}
+function falarClaude(from,my){
+  montarLinhas();
+  let li=lineOfSeg(from);if(li<0)li=0;
+  const send=(start,first)=>{
+    const batch=clines.slice(start,start+40).map(l=>({text:l.text,voice:l.voice,rate:l.rate,id:l.id,...(l.lang?{language:l.lang}:{})}));
+    if(!batch.length)return;
+    const call=first?tts.speak(batch):tts.add(batch);
+    call.then(()=>{if(my!==session)return;if(start+40<clines.length)send(start+40,false);else fim()})
+      .catch(e=>{if(my!==session)return;
+        const code=e&&e.code;
+        if(code==='stopped'&&!['viewer_stopped','hidden','time_limit'].includes(e.reason))return;
+        const msg={no_gesture:'Toque em ▶ para começar.',busy:'Aguarde: o microfone ou outra pergunta está em uso.',rate_limited:'Muitas leituras seguidas — tente de novo em instantes.',not_granted:'Leitura em voz alta desativada para este artefato.',unavailable:'Vozes Claude indisponíveis agora.',upstream_error:'Falha no serviço de voz.',stopped:'Leitura interrompida'}[code];
+        status(msg||'Erro: '+(e&&e.message||e),code!=='stopped');
+        parar(false);
+      });
+  };
+  send(li,true);
+}
+function ligarClaude(t){
+  tts=t;
+  t.onLine(({id})=>{const n=clines.findIndex(l=>l.id===id);if(n<0)return;cLine=n;idx=clines[n].segs[0].id;setCurrent(idx)});
+  if(t.onPosition)t.onPosition(({ms})=>{const l=clines[cLine];if(!l||l.segs.length<2)return;
+    const est=ms/1000*14*l.rate;let a=0;for(const s of l.segs){a+=s.speak.length;if(est<=a){if(idx!==s.id){idx=s.id;setCurrent(idx)}break}}});
+  t.onState(({state,reason})=>{if(st.engine!=='claude')return;
+    if(state==='paused'){paused=true;updateUI()}
+    if(state==='speaking'&&playing){paused=false;updateUI();status('')}
+    if(state==='idle'&&reason==='viewer_stopped'&&playing){playing=false;paused=false;updateUI();status('Leitura interrompida')}});
+  if(t.setRate)t.setRate(1);
+  document.querySelector('[data-engine=claude]').classList.remove('hidden');
+  if(!st.engineChosen||SAVED_ENGINE==='claude')setEngine('claude',true);
+}
+function renderClaude(){
+  $('cvoices').innerHTML=CVOICES.map(([id,n,d])=>`<div class="vcard${id===st.cvoice?' on':''}" data-v="${id}" role="button" tabindex="0"><b>${n}${id==='buttery'?'<span class="tag">PADRÃO</span>':''}</b><small>${d}</small><button class="play" data-sample="${id}" title="Ouvir amostra">▶</button></div>`).join('');
+  $('cdvoice').innerHTML='<option value="">Mesma voz</option>'+CVOICES.map(([id,n,d])=>`<option value="${id}">${n} — ${d}</option>`).join('');
+  $('cdvoice').value=st.cdvoice;
 }
 
 /* =========================================================
@@ -609,16 +678,20 @@ function iniciar(from){
   session++;const my=session;
   idx=Math.max(0,Math.min(from??idx,data.segs.length-1));
   playing=true;paused=false;showReader(true);updateUI();status('');
-  if(st.engine==='device')setTimeout(()=>falarDevice(idx,my),60);
+  if(st.engine==='claude'){if(!tts){status('Vozes Claude indisponíveis aqui.',true);playing=false;updateUI();return}falarClaude(idx,my)}
+  else if(st.engine==='device')setTimeout(()=>falarDevice(idx,my),60);
   else{montarChunks();const ci=chunkOf(idx);falarNeural(ci<0?0:ci,my)}
 }
-function stopAudio(){if(synth)synth.cancel();audio.pause();audio.ontimeupdate=audio.onended=null}
+function stopAudio(){if(synth)synth.cancel();audio.pause();audio.ontimeupdate=audio.onended=null;if(tts&&tts.active())tts.stop().catch(()=>{})}
 function pausar(){
-  paused=true;session++;
+  paused=true;
+  if(st.engine==='claude'){tts.pause().catch(()=>{});updateUI();status('Pausado');return}
+  session++;
   if(st.engine==='device'){synth.cancel()}else audio.pause();
   updateUI();status('Pausado');
 }
 function retomar(){
+  if(st.engine==='claude'&&tts&&tts.active()){paused=false;tts.resume().catch(()=>iniciar(idx));updateUI();status('');return}
   if(st.engine==='neural'&&audio.src&&audio.currentTime>0&&!audio.ended){
     paused=false;session++;const my=session;const ci=chunkOf(idx);
     // reata os eventos ao novo id de sessão
@@ -636,7 +709,8 @@ function fim(){playing=false;paused=false;idx=0;$('bar').style.width='100%';$('r
 function pular(d){
   prepare();if(!data.segs.length)return;
   let n;
-  if(st.engine==='neural'){montarChunks();const ci=Math.max(0,Math.min(chunks.length-1,chunkOf(idx)+d));n=chunks[ci].segs[0].id}
+  if(st.engine==='claude'){montarLinhas();const li=Math.max(0,Math.min(clines.length-1,lineOfSeg(idx)+d));n=clines[li].segs[0].id}
+  else if(st.engine==='neural'){montarChunks();const ci=Math.max(0,Math.min(chunks.length-1,chunkOf(idx)+d));n=chunks[ci].segs[0].id}
   else n=Math.max(0,Math.min(data.segs.length-1,idx+d));
   idx=n;
   if(playing&&!paused)iniciar(n);else{showReader(true);setCurrent(n)}
@@ -645,6 +719,7 @@ function updateUI(){
   const on=playing&&!paused;
   $('playBtn').textContent=on?'⏸':'▶';$('playBtn').title=on?'Pausar (espaço)':'Narrar (espaço)';
   $('dlBtn').disabled=st.engine!=='neural';
+  $('dlBtn').classList.toggle('hidden',INSIDE_ARTIFACT);
 }
 function status(m,err){$('status').textContent=m||'';$('status').classList.toggle('err',!!err)}
 
@@ -660,13 +735,13 @@ function renderNeural(){
   $('ndvoice').innerHTML='<option value="">Mesma voz (interpreta as falas)</option>'+NVOICES.map(([id,n,d])=>`<option value="${id}">${n} — ${d}</option>`).join('');
   $('ndvoice').value=st.ndvoice;
 }
-function setEngine(e){
+function setEngine(e,auto){
   if(playing)parar(false);
-  st.engine=e;save();
+  st.engine=e;if(!auto)st.engineChosen=true;save();
   document.querySelectorAll('#engineSeg button').forEach(b=>b.classList.toggle('on',b.dataset.engine===e));
-  $('deviceVoice').classList.toggle('hidden',e!=='device');$('neuralVoice').classList.toggle('hidden',e!=='neural');
+  $('deviceVoice').classList.toggle('hidden',e!=='device');$('claudeVoice').classList.toggle('hidden',e!=='claude');$('neuralVoice').classList.toggle('hidden',e!=='neural');
   $('pitchRow').classList.toggle('hidden',e!=='device');$('pauseRow').classList.toggle('hidden',e!=='device');
-  $('voiceCount').textContent=e==='neural'?NVOICES.length+' vozes':'';if(e==='device')loadVoices();
+  $('voiceCount').textContent=e==='neural'?NVOICES.length+' vozes':e==='claude'?CVOICES.length+' vozes':'';if(e==='device')loadVoices();
   dataText=null;updateUI();
 }
 function meta(){
@@ -679,13 +754,15 @@ function sliders(){
     const el=$(k);el.value=st[k];
     const out=()=>{$(k+'O').textContent=k==='expr'?Math.round(st[k]*100)+'%':(+st[k]).toFixed(2).replace(/0$/,'')+u};out();
     el.oninput=()=>{st[k]=+el.value;out();save();meta();if(k==='rate'&&st.engine==='neural')audio.playbackRate=st.rate};
-    el.onchange=()=>{if(playing&&!paused&&st.engine==='device')iniciar(idx)};
+    el.onchange=()=>{if(playing&&!paused&&(st.engine==='device'||st.engine==='claude'))iniciar(idx)};
   });
 }
 function amostra(engine,voice){
   const txt='Olá! Eu sou a sua voz de narração. Posso contar histórias, ler notícias e até sussurrar segredos… Vamos começar?';
   parar(false);
-  if(engine==='device'){
+  if(engine==='claude'){
+    if(!tts)return;const l=analisar(txt).segs;tts.speak(l.map(x=>({text:x.speak,voice,rate:Math.max(.7,Math.min(1.5,prosodia(x).rate)),language:'pt-BR'}))).catch(e=>{if(e&&e.code!=='stopped')status('Amostra indisponível: '+e.code,true)});
+  }else if(engine==='device'){
     const v=findVoice(voice);const s=analisar(txt).segs;let i=0;session++;const my=session;
     const go=()=>{if(i>=s.length||my!==session)return;const pr=prosodia(s[i]);const u=new SpeechSynthesisUtterance(s[i].speak);if(v){u.voice=v;u.lang=v.lang}u.rate=pr.rate;u.pitch=pr.pitch;u.onend=()=>setTimeout(go,pr.pause*.8);window.__u=u;i++;synth.speak(u)};
     synth.cancel();go();
@@ -719,13 +796,17 @@ $('testDVoice').onclick=()=>amostra('device',$('dvoice').value||$('voice').value
 $('allLangs').checked=st.allLangs;$('allLangs').onchange=()=>{st.allLangs=$('allLangs').checked;save();loadVoices()};
 $('nvoices').onclick=e=>{const p=e.target.closest('[data-sample]');if(p){e.stopPropagation();amostra('neural',p.dataset.sample);return}
   const c=e.target.closest('.vcard');if(!c)return;st.nvoice=c.dataset.v;save();renderNeural();dataText=null;if(playing&&!paused)iniciar(idx)};
+$('cvoices').onclick=e=>{const p=e.target.closest('[data-sample]');if(p){e.stopPropagation();amostra('claude',p.dataset.sample);return}
+  const c=e.target.closest('.vcard');if(!c)return;st.cvoice=c.dataset.v;save();renderClaude();if(playing&&!paused)iniciar(idx)};
+$('cdvoice').onchange=()=>{st.cdvoice=$('cdvoice').value;save();if(playing&&!paused)iniciar(idx)};
 $('ndvoice').onchange=()=>{st.ndvoice=$('ndvoice').value;save();dataText=null};
 $('apikey').value=st.key?'••••••••':'';
 $('saveKey').onclick=()=>{const v=$('apikey').value.trim();if(v&&!/^•+$/.test(v)){st.key=v;save();$('apikey').value='••••••••';status('Chave salva neste navegador ✓')}else if(!v){st.key='';save();status('Chave removida')}};
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!/TEXTAREA|INPUT|SELECT|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();$('playBtn').click()}});
 window.addEventListener('beforeunload',()=>synth&&synth.cancel());
 
-renderStyles();renderNeural();sliders();setEngine(st.engine);meta();
+renderStyles();renderNeural();renderClaude();sliders();setEngine(st.engine==='claude'?'device':st.engine,true);meta();
+if(window.claude&&window.claude.use){window.claude.use('tts').then(t=>{if(t)ligarClaude(t)}).catch(()=>{})}
 </script>
 </body>
 </html>
