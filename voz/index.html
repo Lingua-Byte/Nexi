@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transformador de Timbre</title>
+<meta name="description" content="Aproxima o tom, as formantes e o timbre da sua voz aos de uma voz alvo, direto no navegador.">
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#1b1e2b; --muted:#5d6377; --line:#dfe2ec;
+  --accent:#5b4bdb; --accent-ink:#ffffff; --you:#2f8f6b; --target:#d2533c; --result:#5b4bdb;
+  --rec:#d43c3c; --soft:#eef0f8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12141c; --card:#1b1e29; --ink:#e9ebf3; --muted:#9aa0b5; --line:#2c3040;
+    --accent:#8f84ff; --accent-ink:#12141c; --you:#4cc79a; --target:#ff8a72; --result:#8f84ff;
+    --rec:#ff6464; --soft:#232736;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12141c; --card:#1b1e29; --ink:#e9ebf3; --muted:#9aa0b5; --line:#2c3040;
+  --accent:#8f84ff; --accent-ink:#12141c; --you:#4cc79a; --target:#ff8a72; --result:#8f84ff;
+  --rec:#ff6464; --soft:#232736;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:1.6rem;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 16px}
+.card h2{font-size:1.05rem;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.file{appearance:none;border:1px solid var(--line);background:var(--soft);color:var(--ink);
+  border-radius:10px;padding:9px 14px;font:inherit;font-size:.95rem;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+button.rec.on{background:var(--rec);border-color:var(--rec);color:#fff}
+.file input{display:none}
+audio{width:100%;margin-top:10px}
+.status{color:var(--muted);font-size:.9rem;margin-top:6px;min-height:1.2em}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+.stat{background:var(--soft);border-radius:10px;padding:8px 10px}
+.stat b{display:block;font-size:1.1rem}
+.stat span{color:var(--muted);font-size:.82rem}
+.ctl{margin:12px 0}
+.ctl label{display:flex;justify-content:space-between;font-size:.92rem}
+.ctl label output{color:var(--muted);font-variant-numeric:tabular-nums}
+.ctl small{color:var(--muted);display:block;font-size:.8rem}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;margin-top:8px}
+canvas{width:100%;height:220px;display:block;margin-top:12px;background:var(--soft);border-radius:10px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-top:6px}
+.note{font-size:.85rem;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Transformador de Timbre</h1>
+  <p class="lead">Grave a sua voz e uma amostra da voz alvo. O app mede o tom, as formantes e a coloração das duas e aproxima a sua da outra. Tudo acontece no seu aparelho, nada é enviado para servidor nenhum.</p>
+
+  <section class="card" id="slot-src">
+    <h2><span class="dot" style="background:var(--you)"></span>1. Sua voz</h2>
+    <div class="row">
+      <button class="rec">● Gravar</button>
+      <label class="file">Enviar arquivo<input type="file" accept="audio/*"></label>
+    </div>
+    <div class="status"></div>
+    <audio controls hidden></audio>
+  </section>
+
+  <section class="card" id="slot-tgt">
+    <h2><span class="dot" style="background:var(--target)"></span>2. Voz alvo</h2>
+    <div class="row">
+      <button class="rec">● Gravar</button>
+      <label class="file">Enviar arquivo<input type="file" accept="audio/*"></label>
+    </div>
+    <div class="status"></div>
+    <audio controls hidden></audio>
+    <p class="note">Use de 5 a 30 segundos de fala limpa, sem música nem ruído de fundo. Só use a voz de alguém com a permissão dessa pessoa.</p>
+  </section>
+
+  <section class="card">
+    <h2>3. Analisar e ajustar</h2>
+    <button class="primary" id="analyze" disabled>Analisar as duas vozes</button>
+    <div class="stats" id="stats" hidden>
+      <div class="stat"><b id="st-f0s">–</b><span>tom médio (você)</span></div>
+      <div class="stat"><b id="st-f0t">–</b><span>tom médio (alvo)</span></div>
+      <div class="stat"><b id="st-alpha">–</b><span>escala das formantes</span></div>
+    </div>
+
+    <div class="ctl">
+      <label>Mistura com o alvo <output id="o-mix">100%</output></label>
+      <input type="range" id="mix" min="0" max="100" value="100">
+    </div>
+    <div class="ctl">
+      <label>Tom <output id="o-semi">0,0 st</output></label>
+      <input type="range" id="semi" min="-15" max="15" step="0.1" value="0">
+      <small>Em semitons. A análise preenche este valor sozinha.</small>
+    </div>
+    <div class="ctl">
+      <label>Formantes <output id="o-alpha">×1,00</output></label>
+      <input type="range" id="alpha" min="0.7" max="1.45" step="0.01" value="1">
+      <small>Acima de 1 soa como um trato vocal menor (mais "fino"), abaixo de 1 soa como um maior (mais "encorpado").</small>
+    </div>
+    <div class="ctl">
+      <label>Timbre (equalização espectral) <output id="o-eq">80%</output></label>
+      <input type="range" id="eq" min="0" max="100" value="80">
+    </div>
+    <label class="check"><input type="checkbox" id="prog"> <span>Transformação progressiva: começa com a sua voz e chega à voz alvo no fim do áudio.</span></label>
+  </section>
+
+  <section class="card">
+    <h2><span class="dot" style="background:var(--result)"></span>4. Resultado</h2>
+    <div class="row">
+      <button class="primary" id="run" disabled>Transformar minha voz</button>
+      <button id="dl" disabled>Baixar WAV</button>
+    </div>
+    <div class="status" id="run-status"></div>
+    <audio controls hidden id="out-audio"></audio>
+    <canvas id="chart" width="1400" height="440" hidden></canvas>
+    <div class="legend" id="legend" hidden>
+      <span><span class="dot" style="background:var(--you)"></span> você</span>
+      <span><span class="dot" style="background:var(--target)"></span> alvo</span>
+      <span><span class="dot" style="background:var(--result)"></span> resultado</span>
+      <span>envelope espectral médio (dB) × frequência</span>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+'use strict';
+// ---------- Constantes de DSP ----------
+const FS = 32000, N = 2048, HALF = N / 2, HOP = N / 4, DF = FS / N;
+
+// ---------- FFT radix-2 ----------
+const FFT = (() => {
+  const bits = Math.log2(N), rev = new Uint32Array(N);
+  for (let i = 0; i < N; i++) { let r = 0; for (let b = 0; b < bits; b++) r |= ((i >> b) & 1) << (bits - 1 - b); rev[i] = r; }
+  const cs = new Float64Array(HALF), sn = new Float64Array(HALF);
+  for (let i = 0; i < HALF; i++) { cs[i] = Math.cos(2 * Math.PI * i / N); sn[i] = Math.sin(2 * Math.PI * i / N); }
+  return (re, im, inv) => {
+    for (let i = 0; i < N; i++) { const j = rev[i]; if (j > i) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+    const sg = inv ? 1 : -1;
+    for (let size = 2; size <= N; size <<= 1) {
+      const h = size >> 1, step = N / size;
+      for (let i = 0; i < N; i += size) {
+        for (let j = i, k = 0; j < i + h; j++, k += step) {
+          const c = cs[k], s = sg * sn[k], xr = re[j + h], xi = im[j + h];
+          const tr = xr * c - xi * s, ti = xr * s + xi * c;
+          re[j + h] = re[j] - tr; im[j + h] = im[j] - ti; re[j] += tr; im[j] += ti;
+        }
+      }
+    }
+    if (inv) for (let i = 0; i < N; i++) { re[i] /= N; im[i] /= N; }
+  };
+})();
+
+const WIN = new Float64Array(N);
+for (let i = 0; i < N; i++) WIN[i] = Math.sqrt(0.5 - 0.5 * Math.cos(2 * Math.PI * i / N));
+
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const at = (arr, x) => { x = clamp(x, 0, arr.length - 1); const i = Math.floor(x), f = x - i; return i + 1 < arr.length ? arr[i] * (1 - f) + arr[i + 1] * f : arr[i]; };
+const median = a => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); return s[s.length >> 1]; };
+
+// Suavização cepstral do log-espectro (envelope espectral)
+const cre = new Float64Array(N), cim = new Float64Array(N);
+function cepSmooth(logmag, L, out) {
+  for (let k = 0; k <= HALF; k++) cre[k] = logmag[k];
+  for (let k = 1; k < HALF; k++) cre[N - k] = logmag[k];
+  cim.fill(0); FFT(cre, cim, true);
+  for (let n = L; n <= N - L; n++) cre[n] = 0;
+  cim.fill(0); FFT(cre, cim, false);
+  for (let k = 0; k <= HALF; k++) out[k] = cre[k];
+  return out;
+}
+
+// ---------- Análise de tom (YIN, a 16 kHz) ----------
+function pitchTrack(x) {
+  const n2 = x.length >> 1, y = new Float32Array(n2);
+  for (let i = 0; i < n2; i++) y[i] = 0.5 * (x[2 * i] + x[2 * i + 1]);
+  const W = 512, hop = 256, tMin = Math.floor(16000 / 500), tMax = Math.ceil(16000 / 60);
+  const d = new Float64Array(tMax + 2), rms = [], f0 = [];
+  for (let off = 0; off + W + tMax + 2 < n2; off += hop) {
+    let e = 0; for (let i = 0; i < W; i++) e += y[off + i] * y[off + i];
+    rms.push(Math.sqrt(e / W));
+    let run = 0, best = -1; d[0] = 1;
+    for (let tau = 1; tau <= tMax + 1; tau++) {
+      let s = 0; for (let i = 0; i < W; i++) { const v = y[off + i] - y[off + i + tau]; s += v * v; }
+      run += s; d[tau] = run > 0 ? s * tau / run : 1;
+    }
+    for (let tau = tMin; tau <= tMax; tau++) {
+      if (d[tau] < 0.15) { while (tau + 1 <= tMax && d[tau + 1] < d[tau]) tau++; best = tau; break; }
+    }
+    if (best > 0) {
+      const a = d[best - 1], b = d[best], c = d[best + 1], den = a - 2 * b + c;
+      const t = den !== 0 ? best + 0.5 * (a - c) / den : best;
+      f0.push(16000 / t);
+    } else f0.push(0);
+  }
+  const sorted = [...rms].sort((a, b) => a - b), p95 = sorted[Math.floor(sorted.length * 0.95)] || 0;
+  const voiced = f0.filter((f, i) => f > 0 && rms[i] > 0.12 * p95);
+  return median(voiced);
+}
+
+// ---------- Envelope espectral médio ----------
+function frameRMS(x) {
+  const out = [];
+  for (let t = 0; t * HOP + N <= x.length; t++) { let e = 0; for (let i = 0; i < N; i++) { const v = x[t * HOP + i]; e += v * v; } out.push(Math.sqrt(e / N)); }
+  return out;
+}
+function avgEnvelope(x, L) {
+  const rms = frameRMS(x), s = [...rms].sort((a, b) => a - b), thr = 0.2 * (s[Math.floor(s.length * 0.95)] || 0);
+  const acc = new Float64Array(HALF + 1), lm = new Float64Array(HALF + 1), env = new Float64Array(HALF + 1);
+  const re = new Float64Array(N), im = new Float64Array(N); let cnt = 0;
+  for (let t = 0; t < rms.length; t++) {
+    if (rms[t] <= thr) continue;
+    for (let i = 0; i < N; i++) { re[i] = x[t * HOP + i] * WIN[i]; im[i] = 0; }
+    FFT(re, im, false);
+    for (let k = 0; k <= HALF; k++) lm[k] = Math.log(Math.hypot(re[k], im[k]) + 1e-7);
+    cepSmooth(lm, L, env);
+    for (let k = 0; k <= HALF; k++) acc[k] += env[k];
+    cnt++;
+  }
+  if (cnt) for (let k = 0; k <= HALF; k++) acc[k] /= cnt;
+  return acc;
+}
+const lifterFor = f0 => clamp(Math.round(0.45 * FS / (f0 || 150)), 20, 160);
+
+// Fator de escala das formantes: alinha envelope(você, f/α) ao envelope(alvo, f)
+function estimateAlpha(Es, Et) {
+  const k0 = Math.ceil(150 / DF), k1 = Math.floor(4500 / DF);
+  let best = 1, bestErr = Infinity;
+  for (let a = 0.7; a <= 1.4501; a += 0.005) {
+    let m = 0; const d = [];
+    for (let k = k0; k <= k1; k++) { const v = Et[k] - at(Es, k / a); d.push(v); m += v; }
+    m /= d.length; let err = 0; for (const v of d) err += (v - m) * (v - m);
+    if (err < bestErr) { bestErr = err; best = a; }
+  }
+  return best;
+}
+// Curva de equalização (log natural) que leva o envelope deformado de você ao do alvo
+function eqCurve(Es, Et, alpha) {
+  const g = new Float64Array(HALF + 1), k0 = Math.ceil(100 / DF), k1 = Math.floor(7000 / DF);
+  for (let k = 0; k <= HALF; k++) g[k] = Et[k] - at(Es, k / alpha);
+  let m = 0; for (let k = k0; k <= k1; k++) m += g[k]; m /= (k1 - k0 + 1);
+  const lim = Math.log(10 ** (15 / 20));
+  for (let k = 0; k <= HALF; k++) g[k] = clamp(g[k] - m, -lim, lim);
+  const sm = new Float64Array(HALF + 1), R = 6;
+  for (let k = 0; k <= HALF; k++) { let s = 0, c = 0; for (let j = k - R; j <= k + R; j++) if (j >= 0 && j <= HALF) { s += g[j]; c++; } sm[k] = s / c; }
+  return sm;
+}
+
+function compare(src, tgt) {
+  const f0s = pitchTrack(src), f0t = pitchTrack(tgt);
+  const L = Math.min(lifterFor(f0s), lifterFor(f0t));
+  const Es = avgEnvelope(src, L), Et = avgEnvelope(tgt, L);
+  const alpha = estimateAlpha(Es, Et);
+  const semi = f0s && f0t ? 12 * Math.log2(f0t / f0s) : 0;
+  return { f0s, f0t, L, Es, Et, alpha, semi, eq: eqCurve(Es, Et, alpha) };
+}
+
+// ---------- Transformação ----------
+// Separa fonte e filtro: divide pelo envelope do quadro, desloca as regiões de pico
+// harmônico (pitch shift de Laroche–Dolson com fase coerente) e reaplica o
+// envelope deformado pelas formantes do alvo + equalização de timbre.
+function transform(x, p) {
+  const pad = N, len = x.length + 2 * pad, inp = new Float32Array(len); inp.set(x, pad);
+  const out = new Float64Array(len), wsum = new Float64Array(len);
+  const re = new Float64Array(N), im = new Float64Array(N), zr = new Float64Array(N), zi = new Float64Array(N);
+  const mag = new Float64Array(HALF + 1), ph = new Float64Array(HALF + 1), lm = new Float64Array(HALF + 1), env = new Float64Array(HALF + 1);
+  const frames = Math.floor((len - N) / HOP) + 1, Lsrc = lifterFor(p.f0s);
+  const peaks = [];
+  for (let t = 0; t < frames; t++) {
+    const off = t * HOP;
+    let m = p.mix;
+    if (p.progressive) { const u = clamp((t / Math.max(1, frames - 1)) / 0.85, 0, 1); m *= u * u * (3 - 2 * u); }
+    const r = 2 ** (p.semi * m / 12), alpha = p.alpha ** m, eqAmt = m * p.eqAmt;
+    for (let i = 0; i < N; i++) { re[i] = inp[off + i] * WIN[i]; im[i] = 0; }
+    FFT(re, im, false);
+    let mx = 0;
+    for (let k = 0; k <= HALF; k++) { mag[k] = Math.hypot(re[k], im[k]); ph[k] = Math.atan2(im[k], re[k]); lm[k] = Math.log(mag[k] + 1e-7); if (mag[k] > mx) mx = mag[k]; }
+    cepSmooth(lm, Lsrc, env);
+    // picos
+    peaks.length = 0; const floor = mx * 1e-4;
+    for (let k = 2; k <= HALF - 2; k++) if (mag[k] > floor && mag[k] > mag[k - 1] && mag[k] >= mag[k + 1] && mag[k] > mag[k - 2] && mag[k] >= mag[k + 2]) peaks.push(k);
+    zr.fill(0); zi.fill(0);
+    if (mx > 0) {
+      if (!peaks.length) peaks.push(0);
+      for (let i = 0; i < peaks.length; i++) {
+        const a = i === 0 ? 0 : Math.floor((peaks[i - 1] + peaks[i]) / 2) + 1;
+        const b = i === peaks.length - 1 ? HALF : Math.floor((peaks[i] + peaks[i + 1]) / 2);
+        const s = Math.round(peaks[i] * (r - 1));
+        const theta = ((((s * t) % 4) + 4) % 4) * Math.PI / 2; // 2π·s·HOP·t/N com HOP = N/4
+        for (let j = a; j <= b; j++) {
+          const k = j + s; if (k < 0 || k > HALF) continue;
+          const gain = Math.exp(at(env, k / alpha) - env[j] + eqAmt * p.eq[k]);
+          const A = mag[j] * gain, P = ph[j] + theta;
+          zr[k] += A * Math.cos(P); zi[k] += A * Math.sin(P);
+        }
+      }
+    }
+    zi[0] = 0; zi[HALF] = 0;
+    for (let k = 1; k < HALF; k++) { zr[N - k] = zr[k]; zi[N - k] = -zi[k]; }
+    FFT(zr, zi, true);
+    for (let i = 0; i < N; i++) { out[off + i] += zr[i] * WIN[i]; wsum[off + i] += WIN[i] * WIN[i]; }
+  }
+  const y = new Float32Array(x.length);
+  let ex = 0, ey = 0;
+  for (let i = 0; i < x.length; i++) { const w = wsum[i + pad]; y[i] = w > 1e-3 ? out[i + pad] / w : 0; ex += x[i] * x[i]; ey += y[i] * y[i]; }
+  let g = ey > 0 ? Math.sqrt(ex / ey) : 1, pk = 0;
+  for (let i = 0; i < y.length; i++) pk = Math.max(pk, Math.abs(y[i] * g));
+  if (pk > 0.98) g *= 0.98 / pk;
+  for (let i = 0; i < y.length; i++) y[i] *= g;
+  return y;
+}
+
+// ---------- Áudio ----------
+async function toMono32k(arrayBuf) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const buf = await ctx.decodeAudioData(arrayBuf);
+  ctx.close();
+  const off = new OfflineAudioContext(1, Math.ceil(buf.duration * FS), FS);
+  const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+  const r = await off.startRendering();
+  return r.getChannelData(0).slice();
+}
+function wavBlob(x) {
+  const b = new ArrayBuffer(44 + x.length * 2), v = new DataView(b);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + x.length * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, FS, true);
+  v.setUint32(28, FS * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, x.length * 2, true);
+  for (let i = 0; i < x.length; i++) v.setInt16(44 + i * 2, clamp(x[i], -1, 1) * 32767, true);
+  return new Blob([b], { type: 'audio/wav' });
+}
+
+window.VC = { FS, toMono32k, compare, transform, pitchTrack, avgEnvelope, estimateAlpha, wavBlob };
+if (!document.getElementById('slot-src')) return;
+
+// ---------- Interface ----------
+const state = { src: null, tgt: null, cmp: null, out: null };
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 1) => v.toFixed(d).replace('.', ',');
+
+function setupSlot(rootId, key) {
+  const root = $(rootId), recBtn = root.querySelector('.rec'), file = root.querySelector('input[type=file]');
+  const status = root.querySelector('.status'), audio = root.querySelector('audio');
+  let rec = null, chunks = [];
+  async function load(arrayBuf, blob) {
+    status.textContent = 'Lendo áudio…';
+    try {
+      state[key] = await toMono32k(arrayBuf);
+      state.cmp = null;
+      audio.src = URL.createObjectURL(blob); audio.hidden = false;
+      status.textContent = `${fmt(state[key].length / FS)} s carregados.`;
+    } catch (e) { status.textContent = 'Não consegui ler esse áudio. Tente outro formato (WAV, MP3, M4A, OGG).'; }
+    refresh();
+  }
+  file.addEventListener('change', async () => { const f = file.files[0]; if (f) load(await f.arrayBuffer(), f); file.value = ''; });
+  recBtn.addEventListener('click', async () => {
+    if (rec) { rec.stop(); return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      rec = new MediaRecorder(stream); chunks = [];
+      rec.ondataavailable = e => chunks.push(e.data);
+      rec.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        recBtn.classList.remove('on'); recBtn.textContent = '● Gravar'; rec = null;
+        const blob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
+        load(await blob.arrayBuffer(), blob);
+      };
+      rec.start(); recBtn.classList.add('on'); recBtn.textContent = '■ Parar';
+      status.textContent = 'Gravando… fale naturalmente.';
+    } catch (e) { status.textContent = 'Sem acesso ao microfone. Permita o acesso ou envie um arquivo.'; }
+  });
+}
+setupSlot('slot-src', 'src');
+setupSlot('slot-tgt', 'tgt');
+
+const sliders = {
+  mix: v => `${v}%`, semi: v => `${v > 0 ? '+' : ''}${fmt(+v)} st`, alpha: v => `×${fmt(+v, 2)}`, eq: v => `${v}%`
+};
+for (const [id, f] of Object.entries(sliders)) { const el = $(id), o = $('o-' + id); const u = () => o.textContent = f(el.value); el.addEventListener('input', u); u(); }
+
+function refresh() {
+  $('analyze').disabled = !(state.src && state.tgt);
+  $('run').disabled = !state.src;
+}
+const nextFrame = () => new Promise(r => setTimeout(r, 30));
+
+$('analyze').addEventListener('click', async () => {
+  $('analyze').disabled = true; $('analyze').textContent = 'Analisando…'; await nextFrame();
+  const c = state.cmp = compare(state.src, state.tgt);
+  $('stats').hidden = false;
+  $('st-f0s').textContent = c.f0s ? `${Math.round(c.f0s)} Hz` : 'não detectado';
+  $('st-f0t').textContent = c.f0t ? `${Math.round(c.f0t)} Hz` : 'não detectado';
+  $('st-alpha').textContent = `×${fmt(c.alpha, 2)}`;
+  $('semi').value = clamp(c.semi, -15, 15).toFixed(1); $('alpha').value = c.alpha.toFixed(2);
+  ['semi', 'alpha'].forEach(id => $(id).dispatchEvent(new Event('input')));
+  $('analyze').textContent = 'Analisar de novo'; refresh();
+});
+
+$('run').addEventListener('click', async () => {
+  $('run').disabled = true; $('run-status').textContent = 'Processando…'; await nextFrame();
+  const t0 = performance.now(), c = state.cmp;
+  const f0s = c ? c.f0s : pitchTrack(state.src);
+  const params = {
+    f0s, mix: $('mix').value / 100, semi: +$('semi').value, alpha: +$('alpha').value,
+    eqAmt: c ? $('eq').value / 100 : 0, eq: c ? c.eq : new Float64Array(HALF + 1), progressive: $('prog').checked
+  };
+  state.out = transform(state.src, params);
+  const blob = wavBlob(state.out);
+  $('out-audio').src = URL.createObjectURL(blob); $('out-audio').hidden = false; $('dl').disabled = false;
+  $('dl').onclick = () => { const a = document.createElement('a'); a.href = $('out-audio').src; a.download = 'voz-transformada.wav'; a.click(); };
+  let msg = `Pronto em ${fmt((performance.now() - t0) / 1000)} s.`;
+  if (!c) msg += ' Dica: analise a voz alvo antes para ajustar formantes e timbre automaticamente.';
+  $('run-status').textContent = msg;
+  if (c) drawChart(c, avgEnvelope(state.out, c.L));
+  $('out-audio').play().catch(() => {});
+  refresh();
+});
+
+function drawChart(c, Er) {
+  const cv = $('chart'), g = cv.getContext('2d'), W = cv.width, H = cv.height, css = getComputedStyle(document.documentElement);
+  cv.hidden = false; $('legend').hidden = false;
+  g.clearRect(0, 0, W, H);
+  const fMin = 80, fMax = 8000, x = f => 40 + (W - 60) * Math.log(f / fMin) / Math.log(fMax / fMin);
+  const toDb = v => 20 * v / Math.LN10, curves = [[c.Es, '--you'], [c.Et, '--target'], [Er, '--result']];
+  let hi = -Infinity;
+  for (const [E] of curves) for (let k = Math.ceil(fMin / DF); k <= fMax / DF; k++) hi = Math.max(hi, toDb(E[k]));
+  const lo = hi - 60, y = d => 20 + (H - 50) * (1 - (d - lo) / (hi - lo));
+  g.strokeStyle = css.getPropertyValue('--line'); g.fillStyle = css.getPropertyValue('--muted'); g.font = '22px system-ui'; g.lineWidth = 1;
+  for (const f of [100, 250, 500, 1000, 2000, 4000, 8000]) { g.beginPath(); g.moveTo(x(f), 20); g.lineTo(x(f), H - 30); g.stroke(); g.fillText(f >= 1000 ? f / 1000 + 'k' : f, x(f) - 14, H - 6); }
+  for (const [E, col] of curves) {
+    g.strokeStyle = css.getPropertyValue(col); g.lineWidth = 3.5; g.beginPath();
+    for (let k = Math.ceil(fMin / DF); k <= fMax / DF; k++) { const px = x(k * DF), py = y(Math.max(lo, toDb(E[k]))); k === Math.ceil(fMin / DF) ? g.moveTo(px, py) : g.lineTo(px, py); }
+    g.stroke();
+  }
+}
+})();
+</script>
+</body>
+</html>
