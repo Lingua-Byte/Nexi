@@ -151,7 +151,7 @@ function renderEditor(){
 
   const secs = el('div', 'sections');
   let top = null;
-  if (l.type === 'sampler') top = samplerBar(l);
+  if (l.type === 'sampler') top = samplerBar(l); else if (l.type === 'resynth') top = modelBar(l);
   secs.appendChild(section('Fonte · ' + ENGINES[l.type].name, ENGINES[l.type].params, l.p, {top}));
   secs.appendChild(section('Mixagem', MIX_DEFS, l));
   secs.appendChild(section('Envelope de amplitude', ENV_DEFS, l.env));

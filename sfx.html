@@ -99,13 +99,52 @@ kbd{background:var(--panel2);border:1px solid var(--line);border-bottom-width:2p
 details.mg{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 9px;margin-bottom:6px}
 details.mg summary{cursor:pointer;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;padding:2px 0}
 details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-transform:none;margin-left:6px}
+
+nav#nav{display:flex;gap:4px;flex-wrap:wrap}
+nav#nav button{background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;font-weight:700;font-size:.82rem}
+nav#nav button.on{background:var(--accent);color:#1a2210;border-color:var(--accent)}
+.sfxbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+section[hidden]{display:none!important}
+.vgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+.vgrid>div>.card+.card{margin-top:10px}
+@media (max-width:900px){.vgrid{grid-template-columns:1fr}}
+textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;color:var(--text);font:inherit;resize:vertical}
+input[type=password]{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:100%}
+.badge{font-size:.6rem;letter-spacing:.06em;background:var(--panel3);color:var(--accent2);border-radius:99px;padding:2px 7px;text-transform:none}
+[data-need].locked{position:relative;opacity:.55}
+.card[data-need].locked{opacity:1}
+.card[data-need].locked h2::after{content:'requer chave de API (Configurações)';color:var(--hot);font-size:.62rem;letter-spacing:0;text-transform:none;margin-left:auto}
+.dropzone{border:2px dashed var(--line);border-radius:12px;padding:22px 12px;text-align:center;color:var(--muted)}
+.dropzone.on{border-color:var(--accent);color:var(--accent)}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mxlayout{display:grid;grid-template-columns:240px minmax(0,1fr) 300px;gap:10px;align-items:start}
+@media (max-width:1180px){.mxlayout{grid-template-columns:minmax(0,1fr)}}
+#mxTlWrap{overflow-x:auto;background:#0a0c09;border:1px solid var(--line);border-radius:10px}
+#mxTl{display:block}
+.mxstrips{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}
+.strip-ch{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.strip-ch.cur{border-color:var(--accent)}
+.strip-ch .row input[type=text]{min-width:60px}
+#mxSpec{height:120px}
+.settings{max-width:720px}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
   <div class="brand">NEXI <span>SFX</span> STUDIO</div>
-  <button class="btn pri" id="bPlay" title="Tocar (Espaço)">▶ Tocar</button>
+  <nav id="nav">
+    <button data-go="sfx" class="on">🎛 SFX</button><button data-go="mix">🎚 Mixer &amp; Master</button><button data-go="voice">🗣 Voz</button>
+    <button data-go="video">🎬 Vídeo</button><button data-go="music">🎼 Música</button><button data-go="inst">🎹 Instrumentos</button><button data-go="settings">⚙ Configurações</button>
+  </nav>
+  <span class="status" id="status">—</span>
+  <span class="sp"></span>
+  <span class="vol">Monitor <input type="range" id="monVol" min="0" max="1" step="0.01" value="0.8"></span>
+  <a class="btn sm" href="./">← NEXI</a>
+</header>
+
+<section data-mod="sfx">
+<div class="sfxbar"><button class="btn pri" id="bPlay" title="Tocar (Espaço)">▶ Tocar</button>
   <button class="btn" id="bStop" title="Parar">■</button>
   <label class="chk"><input type="checkbox" id="cLoop"> Loop</label>
   <label class="chk"><input type="checkbox" id="cAuto" checked> Tocar ao editar</label>
@@ -113,12 +152,7 @@ details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-
   <button class="btn sm" id="bUndo" title="Desfazer (Ctrl+Z)">↶</button>
   <button class="btn sm" id="bRedo" title="Refazer (Ctrl+Shift+Z)">↷</button>
   <button class="btn sm" id="bNew" title="Projeto vazio">Novo</button>
-  <span class="status" id="status">—</span>
-  <span class="sp"></span>
-  <span class="vol">Monitor <input type="range" id="monVol" min="0" max="1" step="0.01" value="0.8"></span>
-  <a class="btn sm" href="./">← NEXI</a>
-</header>
-
+  </div>
 <div class="layout">
   <aside class="lib">
     <div class="card">
@@ -178,7 +212,7 @@ details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-
       </div>
       <label class="lbl" for="exName">Nome do arquivo</label>
       <input type="text" id="exName" value="sfx" style="width:100%">
-      <div class="row" style="margin-top:8px"><button class="btn pri grow" id="bWav">⬇ Baixar WAV</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn pri grow" id="bWav">⬇ Baixar WAV</button><button class="btn grow" id="bToMix">→ Mixer</button></div>
       <label class="lbl">Variações (round-robin para jogos)</label>
       <div class="row">
         <input type="number" id="varN" min="2" max="64" value="8" style="width:64px">
@@ -197,6 +231,54 @@ details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-
     <div class="hint">Atalhos: <kbd>Espaço</kbd> tocar · <kbd>V</kbd> variar · <kbd>Ctrl+Z</kbd> desfazer · duplo clique num controle volta ao padrão · clique no valor para digitar</div>
   </aside>
 </div>
+</section>
+
+<section data-mod="mix" hidden>
+  <div class="mxlayout">
+    <aside><div class="card"><h2>Banco de clipes <button class="btn sm" id="mxImport">📂 Importar</button></h2><div class="list" id="mxBin" style="max-height:60vh"></div></div></aside>
+    <main>
+      <div class="card">
+        <div class="row" style="margin-bottom:8px"><button class="btn pri" id="mxPlay">▶ Tocar</button><button class="btn" id="mxStop">■</button><button class="btn sm" id="mxHome">⏮</button>
+          <button class="btn sm" id="mxAddTrack">+ Faixa</button><span class="vol">Zoom <input type="range" id="mxZoom" min="5" max="300" value="60"></span>
+          <span class="sp"></span><button class="btn sm" id="mxAutoMix">🤖 Assistente de mixagem</button></div>
+        <div id="mxTlWrap"><canvas id="mxTl"></canvas></div>
+        <div id="mxClip" style="margin-top:6px"></div>
+        <div class="mxstrips" id="mxStrips"></div>
+      </div>
+    </main>
+    <aside>
+      <div class="card"><h2>Masterização</h2>
+        <label class="chk"><input type="checkbox" id="mxMasterOn" checked> Master ligado</label>
+        <div class="row" style="margin:6px 0"><button class="btn pri grow" id="mxAutoMaster">✨ Assistente de master</button></div>
+        <div class="row"><button class="btn sm grow on" id="mxAB">Ouvindo: MASTER</button><label class="chk"><input type="checkbox" id="mxMatch" checked> Igualar loudness no A/B</label></div>
+        <canvas id="mxSpec" style="margin-top:8px"></canvas>
+        <div class="hint" id="mxReport">O assistente analisa o espectro e a dinâmica da mixagem, corrige o equilíbrio tonal para o perfil escolhido, comprime por bandas, ajusta a imagem estéreo e entrega no loudness do destino.</div>
+        <div id="mxMaster" style="margin-top:8px"></div>
+      </div>
+      <div class="card"><h2>Exportar mix</h2>
+        <div class="row"><button class="btn pri grow" id="mxExport">⬇ WAV master</button></div>
+        <div class="row" style="margin-top:6px"><button class="btn sm grow" id="mxStems">⬇ Stems (ZIP)</button><button class="btn sm grow" id="mxToClip">→ Banco de clipes</button></div>
+        <div class="hint">Formato segue as opções de exportação da aba SFX (taxa e bits).</div>
+      </div>
+    </aside>
+  </div>
+  <input type="file" id="mxFiles" accept="audio/*,video/*" multiple hidden>
+</section>
+<section data-mod="voice" hidden><div id="voiceRoot"></div></section>
+<section data-mod="video" hidden><div id="videoRoot"></div></section>
+<section data-mod="music" hidden><div id="musicRoot"></div></section>
+<section data-mod="inst" hidden><div id="instRoot"></div></section>
+<section data-mod="settings" hidden>
+  <div class="card settings"><h2>Chaves de API (opcionais)</h2>
+    <p class="hint" style="font-size:.8rem">Quase tudo no NEXI SFX roda no seu navegador, sem internet. Duas integrações opcionais ampliam o que dá para fazer com IA generativa. As chaves ficam salvas só neste navegador e vão direto para cada serviço.</p>
+    <label class="lbl" for="keyAnthropic">Anthropic (Claude): entender vídeos, criar personas, escrever roteiros e narrações, traduzir dublagens</label>
+    <input type="password" id="keyAnthropic" placeholder="sk-ant-…" autocomplete="off">
+    <label class="lbl" for="keyEleven">ElevenLabs: vozes neurais, clonagem, criação de vozes, troca de voz, isolamento, transcrição, efeitos e música com IA</label>
+    <input type="password" id="keyEleven" placeholder="chave xi-api-key" autocomplete="off">
+    <div class="row" style="margin-top:10px"><button class="btn pri" id="bSaveKeys">Salvar</button><button class="btn" id="bTestKeys">Testar conexão</button><button class="btn" id="bClearKeys">Apagar chaves</button></div>
+    <div class="hint" id="keyStatus"></div>
+  </div>
+</section>
 </div>
 <input type="file" id="fileAudio" accept="audio/*" hidden>
 <input type="file" id="fileJson" accept=".json,application/json" hidden>
@@ -1368,7 +1450,7 @@ function renderEditor(){
 
   const secs = el('div', 'sections');
   let top = null;
-  if (l.type === 'sampler') top = samplerBar(l);
+  if (l.type === 'sampler') top = samplerBar(l); else if (l.type === 'resynth') top = modelBar(l);
   secs.appendChild(section('Fonte · ' + ENGINES[l.type].name, ENGINES[l.type].params, l.p, {top}));
   secs.appendChild(section('Mixagem', MIX_DEFS, l));
   secs.appendChild(section('Envelope de amplitude', ENV_DEFS, l.env));
@@ -1747,6 +1829,7 @@ $('bStems').onclick = () => busy('Exportando stems…', async () => {
   if (!files.length) throw new Error('nenhuma camada ativa');
   download(makeZip(files), base + '_stems.zip'); toast('Stems exportados (sem normalização)');
 });
+$('bToMix').onclick = () => busy('Renderizando…', async () => { const r = await renderSound(S, 48000); const id = addClip(S.name, r, 'sfx'); addClipToMix(id, undefined, 'SFX'); toast('Enviado ao mixer'); });
 $('bProjExp').onclick = () => { download(new Blob([JSON.stringify({app:'nexi-sfx-studio', version:2, sound:S}, null, 1)], {type:'application/json'}), slug(S.name) + '.nexisfx.json'); };
 let jsonTarget = 'project';
 $('bProjImp').onclick = () => { jsonTarget = 'project'; $('fileJson').click(); };
@@ -1791,26 +1874,1598 @@ Object.entries(ENGINES).forEach(([k, e]) => { const o = el('option', null, esc(e
 addSel.onchange = () => { if (addSel.value) addLayer(addSel.value); addSel.value = ''; };
 const held = new Set();
 document.addEventListener('keydown', e => {
-  if (e.target.matches('input[type=text], input[type=search], input[type=number], textarea, select')) return;
+  if (e.target.matches('input[type=text], input[type=search], input[type=number], input[type=password], textarea, select')) return;
+  if (curModule !== 'sfx' && curModule !== 'inst') return;
   const k = e.key.toLowerCase();
   if ((e.ctrlKey || e.metaKey) && k === 'z'){ e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
   if ((e.ctrlKey || e.metaKey) && k === 'y'){ e.preventDefault(); redo(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.code === 'Space'){ e.preventDefault(); mainSrc ? stopMain() : playMain(); return; }
+  if (e.code === 'Space'){ if (curModule !== 'sfx') return; e.preventDefault(); mainSrc ? stopMain() : playMain(); return; }
   if (k in KEYMAP){ if (!held.has(k)){ held.add(k); noteOn(KEYMAP[k] + octave*12); } e.preventDefault(); return; }
   if (k === 'z'){ octave = Math.max(-3, octave-1); buildKeyboard(); }
   else if (k === 'x'){ octave = Math.min(3, octave+1); buildKeyboard(); }
-  else if (k === 'v') $('bVary').click();
+  else if (k === 'v' && curModule === 'sfx') $('bVary').click();
 });
 document.addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (held.has(k)){ held.delete(k); noteOff(KEYMAP[k] + octave*12); } });
 let rsT = 0; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(drawAll, 100); });
 
-(async function init(){
+function initSfx(){
   renderLibrary(); buildKeyboard(); renderBank();
-  await idbLoadAll();
   curPreset = PRESET_DEFS[0][1]; renderLibrary();
   S = buildPreset(PRESET_DEFS[0]); commit(); afterLoad(false);
   wantPlay = false;
+}
+
+"use strict";
+/* ======================================================================
+   Infraestrutura comum: abas, banco de clipes, DSP utilitário, APIs
+   ====================================================================== */
+let curModule = 'sfx';
+function showModule(m){
+  curModule = m;
+  document.querySelectorAll('[data-mod]').forEach(s => s.hidden = s.dataset.mod !== m);
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.go === m));
+  const fn = MODULE_SHOW[m]; if (fn) fn();
+  try { localStorage.setItem('nexi-sfx-tab', m); } catch(e){}
+}
+const MODULE_SHOW = {};
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => showModule(b.dataset.go));
+
+/* ---------------- Banco de clipes (qualquer áudio do app) ---------------- */
+// clip: {id, name, sr, L, R, kind}
+const CLIPS = new Map();
+const clipListeners = [];
+function addClip(name, r, kind = 'áudio'){
+  const id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  CLIPS.set(id, {id, name: String(name).slice(0,80), sr: r.sr, L: r.L, R: r.R || r.L, kind});
+  clipListeners.forEach(f => f());
+  return id;
+}
+function clipDur(c){ return c.L.length/c.sr; }
+async function decodeToClip(name, arrayBuffer, kind){
+  const buf = await ensureAC().decodeAudioData(arrayBuffer);
+  const L = buf.getChannelData(0).slice(), R = (buf.numberOfChannels > 1 ? buf.getChannelData(1) : buf.getChannelData(0)).slice();
+  return addClip(name, {sr: buf.sampleRate, L, R}, kind);
+}
+let previewSrc = null;
+function previewPCM(L, R, sr){
+  const c = ensureAC(); if (previewSrc){ try { previewSrc.stop(); } catch(e){} }
+  const b = c.createBuffer(2, L.length, sr); b.copyToChannel(L, 0); b.copyToChannel(R || L, 1);
+  const s = c.createBufferSource(); s.buffer = b; s.connect(monGain); s.start(); previewSrc = s; return s;
+}
+function stopPreview(){ if (previewSrc){ try { previewSrc.stop(); } catch(e){} previewSrc = null; } }
+
+/* ---------------- DSP utilitário ---------------- */
+function resampleTo(x, fromSr, toSr){
+  if (fromSr === toSr) return x;
+  const ratio = fromSr/toSr, n = Math.floor(x.length/ratio), y = new Float32Array(n);
+  for (let i=0; i<n; i++) y[i] = hermite(x, i*ratio);
+  return y;
+}
+function stretchResample(x, factor){ // muda duração e altura juntas (fator >1 = mais agudo e curto)
+  const n = Math.floor(x.length/factor), y = new Float32Array(n);
+  for (let i=0; i<n; i++) y[i] = hermite(x, i*factor);
+  return y;
+}
+// WSOLA: muda a duração sem mudar a altura
+function wsola(x, rate, sr){
+  if (Math.abs(rate - 1) < 1e-3) return x.slice();
+  const W = Math.round(0.04*sr), H = W >> 1, tol = Math.round(0.012*sr);
+  const outN = Math.floor(x.length/rate) + W, y = new Float32Array(outN), norm = new Float32Array(outN);
+  const win = new Float32Array(W); for (let i=0; i<W; i++) win[i] = 0.5 - 0.5*Math.cos(TAU*i/W);
+  let prev = 0;
+  for (let o=0; o + W < outN; o += H){
+    const ideal = Math.round(o*rate);
+    let best = ideal;
+    if (o > 0){
+      let bc = -Infinity; const nat = prev + H;
+      for (let d=-tol; d<=tol; d+=2){
+        const p = ideal + d; if (p < 0 || p + W >= x.length) continue;
+        let c = 0; for (let i=0; i<W; i+=4) c += x[p+i]*x[nat+i] || 0;
+        if (c > bc){ bc = c; best = p; }
+      }
+    }
+    if (best + W >= x.length) break;
+    for (let i=0; i<W; i++){ y[o+i] += x[best+i]*win[i]; norm[o+i] += win[i]; }
+    prev = best;
+  }
+  for (let i=0; i<outN; i++) if (norm[i] > 1e-3) y[i] /= norm[i];
+  let end = outN; while (end > 0 && norm[end-1] <= 1e-3) end--;
+  return y.subarray(0, end).slice();
+}
+function pitchShift(x, semis, sr){
+  if (!semis) return x.slice();
+  const f = Math.pow(2, semis/12), st = wsola(x, 1/f, sr);
+  const y = stretchResample(st, f), out = new Float32Array(x.length);
+  out.set(y.subarray(0, Math.min(y.length, x.length))); return out;
+}
+// Processamento espectral: STFT -> fn(mag, phase, frameIndex) -> ISTFT
+function stftProcess(x, n, hop, fn){
+  const N = x.length, win = new Float32Array(n); for (let i=0; i<n; i++) win[i] = Math.sqrt(0.5 - 0.5*Math.cos(TAU*i/n));
+  const y = new Float32Array(N + n), wsum = new Float32Array(N + n), re = new Float32Array(n), im = new Float32Array(n);
+  const mag = new Float32Array(n/2+1), ph = new Float32Array(n/2+1); let f = 0;
+  for (let s=-n; s<N; s+=hop, f++){
+    for (let i=0; i<n; i++){ const j = s+i; re[i] = j >= 0 && j < N ? x[j]*win[i] : 0; im[i] = 0; }
+    fft(re, im);
+    for (let k=0; k<=n/2; k++){ mag[k] = Math.hypot(re[k], im[k]); ph[k] = Math.atan2(im[k], re[k]); }
+    fn(mag, ph, f);
+    for (let k=0; k<=n/2; k++){ re[k] = mag[k]*Math.cos(ph[k]); im[k] = mag[k]*Math.sin(ph[k]); if (k > 0 && k < n/2){ re[n-k] = re[k]; im[n-k] = -im[k]; } }
+    for (let i=0; i<n; i++) im[i] = -im[i];
+    fft(re, im);
+    for (let i=0; i<n; i++){ const j = s+i; if (j >= 0 && j < N + n){ y[j] += re[i]/n*win[i]; wsum[j] += win[i]*win[i]; } }
+  }
+  const out = new Float32Array(N); for (let i=0; i<N; i++) out[i] = wsum[i] > 1e-6 ? y[i]/wsum[i] : 0;
+  return out;
+}
+function spectralEnvelope(mag, width){
+  const n = mag.length, lg = new Float32Array(n), env = new Float32Array(n);
+  for (let k=0; k<n; k++) lg[k] = Math.log(mag[k] + 1e-9);
+  // suavização em domínio log (média móvel dupla)
+  const tmp = new Float32Array(n);
+  for (let pass=0; pass<2; pass++){
+    const src = pass ? tmp : lg, dst = pass ? env : tmp; let acc = 0, cnt = 0;
+    for (let k=0; k<n + width; k++){
+      if (k < n){ acc += src[k]; cnt++; }
+      if (k - 2*width - 1 >= 0){ acc -= src[k-2*width-1]; cnt--; }
+      const c = k - width; if (c >= 0 && c < n) dst[c] = acc/cnt;
+    }
+  }
+  for (let k=0; k<n; k++) env[k] = Math.exp(env[k]);
+  return env;
+}
+function formantShift(x, factor, sr){
+  if (Math.abs(factor - 1) < 1e-3) return x.slice();
+  const n = 2048, w = Math.max(3, Math.round(n/2*300/sr*2/8));
+  return stftProcess(x, n, n/4, mag => {
+    const env = spectralEnvelope(mag, w), m = mag.length;
+    for (let k=1; k<m; k++){
+      const src = k/factor, k0 = Math.floor(src), fr = src - k0;
+      const e2 = k0 + 1 < m ? env[k0]*(1-fr) + env[k0+1]*fr : env[m-1]*0.1;
+      mag[k] = mag[k]/env[k]*e2;
+    }
+  });
+}
+function robotize(x, sr, hz){
+  const hop = Math.max(64, Math.round(sr/hz)), n = 1024;
+  return stftProcess(x, n, Math.min(hop, n/2), (mag, ph) => { for (let k=0; k<ph.length; k++) ph[k] = 0; });
+}
+function whisperize(x){
+  const r = mulberry32(5);
+  return stftProcess(x, 512, 128, (mag, ph) => { for (let k=0; k<ph.length; k++) ph[k] = r()*TAU; });
+}
+function denoise(x, sr, amount){
+  const n = 1024, hop = 256, frames = [];
+  // perfil de ruído: 10% dos quadros mais silenciosos
+  stftProcess(x, n, hop, mag => { let e = 0; for (let k=0; k<mag.length; k++) e += mag[k]; frames.push({e, m: mag.slice()}); });
+  frames.sort((a, b) => a.e - b.e);
+  const q = frames.slice(0, Math.max(1, Math.floor(frames.length*0.1))), prof = new Float32Array(n/2+1);
+  q.forEach(f => { for (let k=0; k<prof.length; k++) prof[k] += f.m[k]/q.length; });
+  const over = 1 + amount*2.5, floor = 0.06;
+  return stftProcess(x, n, hop, mag => { for (let k=0; k<mag.length; k++){ const g = Math.max(floor, 1 - over*prof[k]/(mag[k] + 1e-9)); mag[k] *= g; } });
+}
+function yinPitch(x, sr, start = 0, len = 4096){
+  const W = Math.min(len, x.length - start) >> 1; if (W < 256) return 0;
+  const tauMax = Math.min(W, Math.floor(sr/40)), d = new Float32Array(tauMax);
+  for (let tau=1; tau<tauMax; tau++){ let s = 0; for (let i=0; i<W; i++){ const v = x[start+i] - x[start+i+tau]; s += v*v; } d[tau] = s; }
+  let run = 0;
+  for (let tau=1; tau<tauMax; tau++){ run += d[tau]; d[tau] = d[tau]*tau/(run || 1); }
+  const minTau = Math.floor(sr/2000);
+  for (let tau=minTau; tau<tauMax-1; tau++){
+    if (d[tau] < 0.15){ while (tau+1 < tauMax && d[tau+1] < d[tau]) tau++;
+      const a = d[tau-1], b = d[tau], c = d[tau+1], p = tau + (a - c)/(2*(a - 2*b + c) || 1); return sr/p; }
+  }
+  return 0;
+}
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const hzToMidi = f => 69 + 12*Math.log2(f/440);
+const midiName = m => NOTE_NAMES[((Math.round(m) % 12) + 12) % 12] + (Math.floor(Math.round(m)/12) - 1);
+
+/* Cadeia de efeitos genérica (reaproveita o master do SFX) */
+async function fxChain(L, R, sr, settings, opts = {}){
+  const m = Object.assign(defaultMaster(), settings);
+  let total = L.length; const tail = (m.revMix > 0 ? m.revPre + m.revDecay*1.1 : 0) + (m.dlyMix > 0 ? m.dlyTime*6 : 0);
+  if (tail && opts.tail !== false){ total += Math.ceil(tail*sr); const l2 = new Float32Array(total), r2 = new Float32Array(total); l2.set(L); r2.set(R); L = l2; R = r2; }
+  let [l, r] = await masterChain(L, R, sr, m); l = l.slice(); r = r.slice();
+  if (m.width !== 1) for (let i=0; i<l.length; i++){ const md = (l[i]+r[i])/2, sd = (l[i]-r[i])/2*m.width; l[i] = md+sd; r[i] = md-sd; }
+  return {L: l, R: r, sr};
+}
+async function reverbWet(L, R, sr, m){
+  const N = L.length, ctx = new OfflineAudioContext(2, N, sr), b = ctx.createBuffer(2, N, sr); b.copyToChannel(L, 0); b.copyToChannel(R, 1);
+  const s = ctx.createBufferSource(); s.buffer = b; const ir = irData(sr, m), ib = ctx.createBuffer(2, ir[0].length, sr); ib.copyToChannel(ir[0], 0); ib.copyToChannel(ir[1], 1);
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 150; const pre = ctx.createDelay(1); pre.delayTime.value = m.revPre;
+  const cv = ctx.createConvolver(); cv.buffer = ib; s.connect(hp); hp.connect(pre); pre.connect(cv); cv.connect(ctx.destination); s.start();
+  const r = await ctx.startRendering(); return [r.getChannelData(0), r.getChannelData(1)];
+}
+function normalizeLUFS(r, target, ceilDb = -1){
+  const lu = measureLUFS(r.L, r.R, r.sr);
+  if (isFinite(lu)){ const g = dbToGain(target - lu); for (let i=0; i<r.L.length; i++){ r.L[i] *= g; r.R[i] *= g; } }
+  limiter(r.L, r.R, r.sr, dbToGain(ceilDb)); return r;
+}
+
+/* ---------------- Configurações / APIs ---------------- */
+const KEYS_LS = 'nexi-sfx-keys';
+const apiKeys = Object.assign({anthropic:'', eleven:''}, LS.get(KEYS_LS, {}));
+function saveKeys(){ LS.set(KEYS_LS, apiKeys); refreshApiBadges(); }
+function refreshApiBadges(){
+  document.querySelectorAll('[data-need]').forEach(e => {
+    const ok = !!apiKeys[e.dataset.need]; e.classList.toggle('locked', !ok);
+    e.title = ok ? '' : 'Configure a chave em Configurações';
+  });
+}
+let anthropicClient = null, anthropicKeyUsed = '';
+async function getClaude(){
+  if (!apiKeys.anthropic) throw new Error('Configure a chave da Anthropic em Configurações');
+  if (!anthropicClient || anthropicKeyUsed !== apiKeys.anthropic){
+    const mod = await import('https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.6.0/+esm');
+    const Anthropic = mod.default || mod.Anthropic;
+    // A chave é do próprio usuário e fica só neste navegador.
+    anthropicClient = new Anthropic({apiKey: apiKeys.anthropic, dangerouslyAllowBrowser: true});
+    anthropicKeyUsed = apiKeys.anthropic;
+  }
+  return anthropicClient;
+}
+// Pedido com saída JSON validada por esquema
+async function claudeJSON(content, schema, system){
+  const client = await getClaude();
+  const stream = client.beta.messages.stream({
+    model: 'claude-opus-5-5', max_tokens: 32000,
+    betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default',
+    thinking: {type: 'adaptive'}, output_config: {effort: 'medium', format: {type: 'json_schema', schema}},
+    system, messages: [{role: 'user', content}],
+  });
+  const msg = await stream.finalMessage();
+  if (msg.stop_reason === 'refusal') throw new Error('O modelo recusou este pedido');
+  if (msg.stop_reason === 'max_tokens') throw new Error('Resposta incompleta (limite de tokens)');
+  const txt = msg.content.filter(b => b.type === 'text').map(b => b.text).join('');
+  return JSON.parse(txt);
+}
+async function claudeText(prompt, system){
+  const client = await getClaude();
+  const stream = client.beta.messages.stream({
+    model: 'claude-opus-5-5', max_tokens: 32000,
+    betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default',
+    thinking: {type: 'adaptive'}, output_config: {effort: 'medium'},
+    system, messages: [{role: 'user', content: prompt}],
+  });
+  const msg = await stream.finalMessage();
+  if (msg.stop_reason === 'refusal') throw new Error('O modelo recusou este pedido');
+  return msg.content.filter(b => b.type === 'text').map(b => b.text).join('');
+}
+/* ElevenLabs (REST) */
+const XI = 'https://api.elevenlabs.io';
+async function xi(path, opts = {}){
+  if (!apiKeys.eleven) throw new Error('Configure a chave da ElevenLabs em Configurações');
+  const headers = Object.assign({'xi-api-key': apiKeys.eleven}, opts.json ? {'Content-Type':'application/json'} : {}, opts.headers || {});
+  const res = await fetch(XI + path, {method: opts.method || (opts.json || opts.form ? 'POST' : 'GET'), headers, body: opts.json ? JSON.stringify(opts.json) : opts.form});
+  if (!res.ok){ let t = ''; try { t = (await res.text()).slice(0, 300); } catch(e){} throw new Error(`ElevenLabs ${res.status}: ${t}`); }
+  return res;
+}
+async function xiAudio(path, opts, name, kind){ const res = await xi(path, opts); return decodeToClip(name, await res.arrayBuffer(), kind); }
+function clipToWavBlob(c){ return new Blob([encodeWav({L: c.L, R: c.R, sr: c.sr}, 16, false)], {type:'audio/wav'}); }
+
+/* ---------------- Configurações (UI) ---------------- */
+function initSettings(){
+  $('keyAnthropic').value = apiKeys.anthropic; $('keyEleven').value = apiKeys.eleven;
+  $('bSaveKeys').onclick = () => { apiKeys.anthropic = $('keyAnthropic').value.trim(); apiKeys.eleven = $('keyEleven').value.trim(); anthropicClient = null; saveKeys(); toast('Chaves salvas neste navegador'); };
+  $('bClearKeys').onclick = () => { apiKeys.anthropic = apiKeys.eleven = ''; $('keyAnthropic').value = $('keyEleven').value = ''; anthropicClient = null; saveKeys(); toast('Chaves apagadas'); };
+  $('bTestKeys').onclick = async () => {
+    const out = [];
+    if (apiKeys.eleven){ try { const r = await (await xi('/v1/voices')).json(); out.push(`ElevenLabs OK (${r.voices?.length ?? 0} vozes)`); } catch(e){ out.push('ElevenLabs: ' + e.message); } }
+    if (apiKeys.anthropic){ try { const t = await claudeText('Responda só: ok'); out.push('Anthropic OK: ' + t.trim().slice(0, 20)); } catch(e){ out.push('Anthropic: ' + e.message); } }
+    $('keyStatus').textContent = out.join(' · ') || 'Nenhuma chave configurada.';
+  };
+  refreshApiBadges();
+}
+
+"use strict";
+/* ======================================================================
+   Mixer multipista + Assistente de mixagem + Masterização automática
+   ====================================================================== */
+const MIX_SR = 48000;
+const MIX = {tracks: [], selTrack: 0, selClip: null, pps: 60, playhead: 0, revType: 'Hall',
+  master: null, masterOn: true};
+const DESTINATIONS = {
+  'Spotify / streaming (−14 LUFS)': {lufs:-14, tp:-1}, 'YouTube (−14 LUFS)': {lufs:-14, tp:-1}, 'Apple Music (−16 LUFS)': {lufs:-16, tp:-1},
+  'Podcast (−16 LUFS)': {lufs:-16, tp:-1}, 'TV / EBU R128 (−23 LUFS)': {lufs:-23, tp:-1}, 'Cinema / trailer (−24 LUFS)': {lufs:-24, tp:-2},
+  'Jogos (−18 LUFS)': {lufs:-18, tp:-1}, 'Clube / máximo (−9 LUFS)': {lufs:-9, tp:-0.3},
+};
+const BANDS = [31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+const PROFILES = {
+  'Equilibrado':        [ 1, 2, 2, 1, 0, 0, -1, -2, -4, -8],
+  'Cinema / trailer':   [ 4, 4, 3, 1, 0, 0, -1, -2, -3, -6],
+  'Voz / podcast':      [-8,-4, 0, 1, 1, 1,  1,  0, -3, -8],
+  'Pop / EDM':          [ 3, 4, 3, 0,-1, 0,  0,  0, -2, -5],
+  'Lo-fi quente':       [ 1, 3, 3, 2, 1, 0, -2, -4, -7,-12],
+  'Trilha de jogo':     [ 1, 2, 2, 1, 0, 0,  0, -1, -3, -6],
+  'Acústico / orquestra':[0, 1, 1, 1, 0, 0, -1, -2, -4, -8],
+};
+function defaultMastering(){
+  return {dest: 'Spotify / streaming (−14 LUFS)', profile: 'Equilibrado', strength: 0.6,
+    eqOn: true, eq: BANDS.map(() => 0),
+    mbOn: true, mb: [{thr:-20, ratio:2}, {thr:-18, ratio:1.8}, {thr:-16, ratio:2}], xo: [200, 3000],
+    excite: 0.15, widthLow: 0, widthHigh: 1.15, lufs: -14, ceiling: -1};
+}
+MIX.master = defaultMastering();
+function newTrack(name, role = 'sfx'){
+  return {id: 't' + Math.random().toString(36).slice(2,8), name, role, vol: 0, pan: 0, mute: false, solo: false, duck: role === 'música' || role === 'ambiente',
+    hp: role === 'voz' ? 80 : 30, low: 0, mid: 0, midF: 1500, high: 0, comp: role === 'voz', thr: -20, ratio: 3, send: role === 'voz' ? 0.08 : 0.12, clips: []};
+}
+const ROLES = ['voz', 'música', 'sfx', 'ambiente'];
+
+/* ---------------- Render ---------------- */
+function clipData(c, sr){
+  if (c.sr === sr) return c;
+  if (!c._rs || c._rs.sr !== sr) c._rs = {sr, L: resampleTo(c.L, c.sr, sr), R: resampleTo(c.R, c.sr, sr)};
+  return c._rs;
+}
+function mixLength(){
+  let end = 1;
+  MIX.tracks.forEach(t => t.clips.forEach(k => { const c = CLIPS.get(k.clipId); if (c) end = Math.max(end, k.start + clipDur(c)); }));
+  return end;
+}
+function trackDry(t, sr, N){
+  const L = new Float32Array(N), R = new Float32Array(N);
+  t.clips.forEach(k => {
+    const c0 = CLIPS.get(k.clipId); if (!c0) return; const c = clipData(c0, sr);
+    const off = Math.round(k.start*sr), g = dbToGain(k.gain || 0), n = c.L.length;
+    const fi = Math.round((k.fadeIn || 0)*sr), fo = Math.round((k.fadeOut || 0)*sr);
+    for (let i=0; i<n && off+i<N; i++){
+      if (off + i < 0) continue;
+      let a = g; if (fi && i < fi) a *= i/fi; if (fo && i > n - fo) a *= (n - i)/fo;
+      L[off+i] += c.L[i]*a; R[off+i] += c.R[i]*a;
+    }
+  });
+  return {L, R};
+}
+async function trackFX(d, sr, t){
+  const N = d.L.length, ctx = new OfflineAudioContext(2, N, sr), b = ctx.createBuffer(2, N, sr);
+  b.copyToChannel(d.L, 0); b.copyToChannel(d.R, 1);
+  const s = ctx.createBufferSource(); s.buffer = b; let node = s;
+  const bq = (type, f, q, g) => { const x = ctx.createBiquadFilter(); x.type = type; x.frequency.value = f; if (q != null) x.Q.value = q; if (g != null) x.gain.value = g; node.connect(x); node = x; };
+  bq('highpass', t.hp, 0.707);
+  if (t.low) bq('lowshelf', 120, null, t.low);
+  if (t.mid) bq('peaking', t.midF, 1, t.mid);
+  if (t.high) bq('highshelf', 8000, null, t.high);
+  if (t.comp){ const c = ctx.createDynamicsCompressor(); c.threshold.value = t.thr; c.ratio.value = t.ratio; c.attack.value = 0.008; c.release.value = 0.15; c.knee.value = 6; node.connect(c); node = c; }
+  const g = ctx.createGain(); g.gain.value = dbToGain(t.vol); node.connect(g);
+  const p = ctx.createStereoPanner(); p.pan.value = t.pan; g.connect(p); p.connect(ctx.destination);
+  s.start(); const r = await ctx.startRendering();
+  return {L: r.getChannelData(0).slice(), R: r.getChannelData(1).slice()};
+}
+function envelopeFollow(L, R, sr, att = 0.01, rel = 0.3){
+  const N = L.length, e = new Float32Array(N), aA = Math.exp(-1/(att*sr)), aR = Math.exp(-1/(rel*sr)); let v = 0;
+  for (let i=0; i<N; i++){ const x = Math.max(Math.abs(L[i]), Math.abs(R[i])); v = x > v ? aA*v + (1-aA)*x : aR*v + (1-aR)*x; e[i] = v; }
+  return e;
+}
+async function renderMix(opts = {}){
+  const sr = MIX_SR, N = Math.ceil((mixLength() + 2.5)*sr), anySolo = MIX.tracks.some(t => t.solo);
+  const outs = [];
+  for (const t of MIX.tracks){
+    if (t.mute || (anySolo && !t.solo) || !t.clips.length){ outs.push(null); continue; }
+    if (opts.only != null && opts.only !== t) { outs.push(null); continue; }
+    outs.push(await trackFX(trackDry(t, sr, N), sr, t));
+  }
+  // ducking: faixas marcadas abaixam sob a voz
+  const voices = outs.map((o, i) => o && MIX.tracks[i].role === 'voz' ? o : null).filter(Boolean);
+  if (voices.length && !opts.noDuck){
+    const vL = new Float32Array(N), vR = new Float32Array(N); voices.forEach(o => { for (let i=0; i<N; i++){ vL[i] += o.L[i]; vR[i] += o.R[i]; } });
+    const env = envelopeFollow(vL, vR, sr, 0.02, 0.45);
+    outs.forEach((o, i) => { if (!o || !MIX.tracks[i].duck) return; for (let j=0; j<N; j++){ const red = Math.min(1, env[j]*8); const g = 1 - red*0.6; o.L[j] *= g; o.R[j] *= g; } });
+  }
+  const L = new Float32Array(N), R = new Float32Array(N), sL = new Float32Array(N), sR = new Float32Array(N); let anySend = false;
+  outs.forEach((o, i) => { if (!o) return; const sd = MIX.tracks[i].send;
+    for (let j=0; j<N; j++){ L[j] += o.L[j]; R[j] += o.R[j]; if (sd){ sL[j] += o.L[j]*sd; sR[j] += o.R[j]*sd; } } if (sd) anySend = true; });
+  if (anySend){
+    const rv = await reverbWet(sL, sR, sr, {...defaultMaster(), ...REV_TYPES[MIX.revType]});
+    for (let j=0; j<N; j++){ L[j] += rv[0][j]; R[j] += rv[1][j]; }
+  }
+  return {L, R, sr};
+}
+
+/* ---------------- Análise espectral e masterização ---------------- */
+function bandLevels(r){
+  const n = 4096, win = new Float32Array(n); for (let i=0; i<n; i++) win[i] = 0.5 - 0.5*Math.cos(TAU*i/n);
+  const pow = new Float64Array(n/2), re = new Float32Array(n), im = new Float32Array(n), N = r.L.length;
+  const hop = Math.max(n, Math.floor(N/200)); let frames = 0;
+  for (let s=0; s+n<=N; s+=hop){
+    for (let i=0; i<n; i++){ re[i] = (r.L[s+i] + r.R[s+i])*0.5*win[i]; im[i] = 0; }
+    fft(re, im); for (let k=0; k<n/2; k++) pow[k] += re[k]*re[k] + im[k]*im[k]; frames++;
+  }
+  return BANDS.map(fc => {
+    const lo = fc/Math.SQRT2, hi = fc*Math.SQRT2; let e = 0;
+    for (let k=Math.max(1, Math.floor(lo/r.sr*n)); k<=Math.min(n/2-1, Math.ceil(hi/r.sr*n)); k++) e += pow[k];
+    return 10*Math.log10(e/Math.max(1, frames) + 1e-20);
+  });
+}
+function relLevels(lv){ const ref = (lv[4] + lv[5] + lv[6])/3; return lv.map(v => v - ref); }
+function masterAssistant(r){
+  const m = MIX.master, lv = relLevels(bandLevels(r)), tgt = PROFILES[m.profile], d = DESTINATIONS[m.dest];
+  m.eq = lv.map((v, i) => clamp(Math.round((tgt[i] - v)*m.strength*2)/2, -6, 6));
+  m.eq[0] = Math.min(m.eq[0], 3); // nunca empurrar demais o sub-grave
+  const st = analyze(r), crest = st.peak - st.lufs;
+  const dens = clamp((crest - 8)/10, 0, 1);
+  m.mb = [{thr: st.lufs - 4 - 6*(1-dens), ratio: 1.5 + dens*1.5}, {thr: st.lufs - 2 - 6*(1-dens), ratio: 1.4 + dens*1.2}, {thr: st.lufs - 4 - 6*(1-dens), ratio: 1.5 + dens*1.3}];
+  m.lufs = d.lufs; m.ceiling = d.tp;
+  m.widthHigh = st.corr > 0.9 ? 1.25 : st.corr < 0.3 ? 0.9 : 1.1; m.widthLow = 0;
+  m.excite = m.profile === 'Lo-fi quente' ? 0.05 : 0.15;
+  return {before: st, levels: lv};
+}
+async function applyMastering(r){
+  const m = MIX.master, sr = r.sr, N = r.L.length;
+  const ctx = new OfflineAudioContext(2, N, sr), b = ctx.createBuffer(2, N, sr); b.copyToChannel(r.L, 0); b.copyToChannel(r.R, 1);
+  const s = ctx.createBufferSource(); s.buffer = b; let node = s;
+  const bq = (type, f, q, g) => { const x = ctx.createBiquadFilter(); x.type = type; x.frequency.value = Math.min(f, sr*0.45); if (q != null) x.Q.value = q; if (g != null) x.gain.value = g; return x; };
+  const hp = bq('highpass', 22, 0.707); node.connect(hp); node = hp;
+  if (m.eqOn) BANDS.forEach((f, i) => { if (!m.eq[i]) return; const x = i === 0 ? bq('lowshelf', 45, null, m.eq[i]) : i === BANDS.length-1 ? bq('highshelf', 12000, null, m.eq[i]) : bq('peaking', f, 1.2, m.eq[i]); node.connect(x); node = x; });
+  if (m.mbOn){
+    const sum = ctx.createGain();
+    const lr4 = (type, f) => { const a = bq(type, f, 0.707), c = bq(type, f, 0.707); a.connect(c); return [a, c]; };
+    const [l1a, l1b] = lr4('lowpass', m.xo[0]), [h1a, h1b] = lr4('highpass', m.xo[0]);
+    const [l2a, l2b] = lr4('lowpass', m.xo[1]), [h2a, h2b] = lr4('highpass', m.xo[1]);
+    node.connect(l1a); node.connect(h1a); h1b.connect(l2a); h1b.connect(h2a);
+    [l1b, l2b, h2b].forEach((band, i) => {
+      const c = ctx.createDynamicsCompressor(); c.threshold.value = m.mb[i].thr; c.ratio.value = m.mb[i].ratio; c.knee.value = 8;
+      c.attack.value = [0.02, 0.01, 0.004][i]; c.release.value = [0.25, 0.15, 0.1][i];
+      band.connect(c);
+      if (i === 2 && m.excite > 0){ const ws = ctx.createWaveShaper(); ws.curve = satCurve('Fita', m.excite); ws.oversample = '4x'; c.connect(ws); ws.connect(sum); }
+      else c.connect(sum);
+    });
+    node = sum;
+  }
+  node.connect(ctx.destination); s.start();
+  const out = await ctx.startRendering(); let L = out.getChannelData(0).slice(), R = out.getChannelData(1).slice();
+  // imagem estéreo por banda (graves mono, agudos mais largos)
+  const a = Math.exp(-TAU*150/sr); let lp = 0;
+  for (let i=0; i<N; i++){ const md = (L[i]+R[i])*0.5, sd = (L[i]-R[i])*0.5; lp = (1-a)*sd + a*lp; const s2 = lp*m.widthLow + (sd - lp)*m.widthHigh; L[i] = md + s2; R[i] = md - s2; }
+  const res = {L, R, sr};
+  normalizeLUFS(res, m.lufs, m.ceiling);
+  const tp = truePeak(res.L, res.R), c = dbToGain(m.ceiling); if (tp > c){ const g = c/tp; for (let i=0; i<N; i++){ res.L[i] *= g; res.R[i] *= g; } }
+  // corta silêncio final
+  let last = N-1; while (last > 0 && Math.abs(res.L[last]) < 1e-4 && Math.abs(res.R[last]) < 1e-4) last--;
+  res.L = res.L.subarray(0, last + Math.ceil(0.05*sr)); res.R = res.R.subarray(0, res.L.length);
+  return res;
+}
+
+/* ---------------- Assistente de mixagem ---------------- */
+async function mixAssistant(){
+  const targets = {'voz': -18, 'sfx': -21, 'música': -25, 'ambiente': -30};
+  const panSlots = [-0.35, 0.35, -0.6, 0.6, -0.2, 0.2]; let ps = 0; const report = [];
+  for (const t of MIX.tracks){
+    if (!t.clips.length) continue;
+    const N = Math.ceil((mixLength() + 0.5)*MIX_SR), d = trackDry(t, MIX_SR, N), lu = measureLUFS(d.L, d.R, MIX_SR);
+    if (!isFinite(lu)) continue;
+    t.vol = clamp(Math.round((targets[t.role] - lu)*2)/2, -36, 12);
+    t.hp = {'voz': 85, 'música': 30, 'sfx': 40, 'ambiente': 60}[t.role];
+    if (t.role === 'voz'){ t.pan = 0; t.comp = true; t.thr = -22; t.ratio = 3; t.mid = 1.5; t.midF = 3000; t.send = 0.06; }
+    else if (t.role === 'música'){ t.pan = 0; t.duck = true; t.mid = MIX.tracks.some(x => x.role === 'voz') ? -2 : 0; t.midF = 2500; t.send = 0.05; }
+    else if (t.role === 'ambiente'){ t.pan = 0; t.duck = true; t.send = 0.15; }
+    else { t.pan = panSlots[ps++ % panSlots.length]*0.6; t.send = 0.12; }
+    report.push(`${t.name}: ${lu.toFixed(1)} → ${targets[t.role]} LUFS`);
+  }
+  return report;
+}
+
+/* ---------------- UI ---------------- */
+let mixRendered = null, mixMastered = null, mixAB = 'master', mixSrc = null, mixT0 = 0, mixRaf = 0, mixPlayFrom = 0, lastReport = null;
+function mixDirty(){ mixRendered = mixMastered = null; }
+function renderMixerUI(){ renderBin(); renderStrips(); drawTimeline(); renderMasterPanel(); }
+function renderBin(){
+  const box = $('mxBin'); box.innerHTML = '';
+  if (!CLIPS.size){ box.innerHTML = '<div class="empty">Sem clipes ainda. Importe áudio ou envie sons do SFX, Voz, Música ou Vídeo.</div>'; return; }
+  [...CLIPS.values()].reverse().forEach(c => {
+    const it = el('div', 'item', `<span class="nm" title="${esc(c.name)}">${esc(c.name)}</span><span class="cat">${esc(c.kind)} · ${clipDur(c).toFixed(1)}s</span><button title="Ouvir">▶</button><button title="Adicionar à faixa selecionada no cursor">＋</button><button title="Baixar WAV">⬇</button><button title="Remover">✕</button>`);
+    const [bp, ba, bd, bx] = it.querySelectorAll('button');
+    bp.onclick = e => { e.stopPropagation(); previewPCM(c.L, c.R, c.sr); };
+    ba.onclick = e => { e.stopPropagation(); addClipToMix(c.id); };
+    bd.onclick = e => { e.stopPropagation(); download(clipToWavBlob(c), slug(c.name) + '.wav'); };
+    bx.onclick = e => { e.stopPropagation(); CLIPS.delete(c.id); MIX.tracks.forEach(t => t.clips = t.clips.filter(k => k.clipId !== c.id)); mixDirty(); renderMixerUI(); };
+    it.onclick = () => addClipToMix(c.id);
+    box.appendChild(it);
+  });
+}
+function roleFromKind(kind){ return /voz|fala|narra/i.test(kind) ? 'voz' : /m[uú]sica|stem/i.test(kind) ? 'música' : /ambi/i.test(kind) ? 'ambiente' : 'sfx'; }
+function addClipToMix(id, start, trackName){
+  const c = CLIPS.get(id); if (!c) return;
+  let t;
+  if (trackName){ t = MIX.tracks.find(x => x.name === trackName); if (!t){ t = newTrack(trackName, roleFromKind(c.kind)); MIX.tracks.push(t); } }
+  else { t = MIX.tracks[MIX.selTrack]; if (!t){ t = newTrack(c.name.slice(0, 24), roleFromKind(c.kind)); MIX.tracks.push(t); MIX.selTrack = MIX.tracks.length-1; } }
+  t.clips.push({clipId: id, start: start ?? MIX.playhead, gain: 0, fadeIn: 0, fadeOut: 0.01});
+  mixDirty(); if (curModule === 'mix') renderMixerUI();
+}
+function renderStrips(){
+  const box = $('mxStrips'); box.innerHTML = '';
+  MIX.tracks.forEach((t, i) => {
+    const s = el('div', 'strip-ch' + (i === MIX.selTrack ? ' cur' : ''));
+    const head = el('div', 'row');
+    const nm = el('input'); nm.type = 'text'; nm.value = t.name; nm.className = 'grow'; nm.onchange = () => { t.name = nm.value.slice(0,30); drawTimeline(); };
+    const role = el('select'); ROLES.forEach(r => { const o = el('option', null, r); o.value = r; role.appendChild(o); }); role.value = t.role; role.onchange = () => { t.role = role.value; mixDirty(); };
+    const mb = el('button', 'btn sm' + (t.mute ? ' on' : ''), 'M'), sb = el('button', 'btn sm' + (t.solo ? ' on' : ''), 'S'), xb = el('button', 'btn sm', '✕');
+    mb.onclick = e => { e.stopPropagation(); t.mute = !t.mute; mixDirty(); renderStrips(); };
+    sb.onclick = e => { e.stopPropagation(); t.solo = !t.solo; mixDirty(); renderStrips(); };
+    xb.onclick = e => { e.stopPropagation(); if (confirm(`Excluir a faixa "${t.name}"?`)){ MIX.tracks.splice(i, 1); MIX.selTrack = 0; mixDirty(); renderMixerUI(); } };
+    head.append(nm, role, mb, sb, xb); s.appendChild(head);
+    const defs = [P('vol','Volume',-48,12,0,'lin','dB'), P('pan','Pan',-1,1,0,'lin','pan'), P('hp','Passa-alta',20,500,30,'log','Hz'),
+      P('low','Graves',-12,12,0,'lin','dB'), P('mid','Médios',-12,12,0,'lin','dB'), P('midF','Freq. médios',200,8000,1500,'log','Hz'),
+      P('high','Agudos',-12,12,0,'lin','dB'), P('thr','Comp. limiar',-50,0,-20,'lin','dB'), P('ratio','Comp. razão',1,10,3,'lin','ratio'), P('send','Envio reverb',0,1,0.1,'lin','%')];
+    defs.forEach(d => s.appendChild(control(d, t, () => mixDirty(), () => { mixDirty(); })));
+    const opts = el('div', 'row');
+    const cc = el('label', 'chk', `<input type="checkbox" ${t.comp ? 'checked' : ''}> Compressor`); cc.querySelector('input').onchange = e => { t.comp = e.target.checked; mixDirty(); };
+    const dk = el('label', 'chk', `<input type="checkbox" ${t.duck ? 'checked' : ''}> Abaixar sob a voz`); dk.querySelector('input').onchange = e => { t.duck = e.target.checked; mixDirty(); };
+    opts.append(cc, dk); s.appendChild(opts);
+    s.onclick = () => { if (MIX.selTrack !== i){ MIX.selTrack = i; renderStrips(); drawTimeline(); } };
+    box.appendChild(s);
+  });
+  if (!MIX.tracks.length) box.innerHTML = '<div class="empty">Nenhuma faixa. Clique num clipe do banco para criar uma.</div>';
+}
+const ROW_H = 54, HEAD_W = 0;
+function drawTimeline(){
+  const cv = $('mxTl'), wrap = $('mxTlWrap'), dur = Math.max(10, mixLength() + 4);
+  const w = Math.max(wrap.clientWidth, Math.ceil(dur*MIX.pps)), h = Math.max(ROW_H*2, MIX.tracks.length*ROW_H + 20);
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  const {ctx, dpr} = fit(cv); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+  ctx.font = '10px system-ui'; ctx.fillStyle = cssv('--muted'); ctx.strokeStyle = cssv('--grid');
+  const step = MIX.pps > 120 ? 0.5 : MIX.pps > 40 ? 1 : MIX.pps > 15 ? 5 : 10;
+  for (let t=0; t<dur; t+=step){ const x = t*MIX.pps; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); ctx.fillText(t.toFixed(step < 1 ? 1 : 0) + 's', x+2, 10); }
+  MIX.tracks.forEach((t, i) => {
+    const y = 16 + i*ROW_H;
+    ctx.fillStyle = i === MIX.selTrack ? 'rgba(196,213,133,.08)' : 'rgba(255,255,255,.02)'; ctx.fillRect(0, y, w, ROW_H-4);
+    t.clips.forEach(k => {
+      const c = CLIPS.get(k.clipId); if (!c) return;
+      const x = k.start*MIX.pps, cw = Math.max(3, clipDur(c)*MIX.pps), sel = MIX.selClip === k;
+      ctx.fillStyle = {'voz':'#3d5a6e','música':'#5b4a72','sfx':'#4b5e2f','ambiente':'#365a50'}[t.role] || '#4b5e2f';
+      ctx.fillRect(x, y+2, cw, ROW_H-8);
+      if (sel){ ctx.strokeStyle = cssv('--accent2'); ctx.lineWidth = 2; ctx.strokeRect(x+1, y+3, cw-2, ROW_H-10); ctx.lineWidth = 1; ctx.strokeStyle = cssv('--grid'); }
+      ctx.fillStyle = 'rgba(232,239,217,.8)'; const mid = y + ROW_H/2 - 2, n = c.L.length, spp = n/cw;
+      for (let px=0; px<cw; px+=1){ let pk = 0; const a = Math.floor(px*spp), b2 = Math.min(n, a + Math.ceil(spp)); for (let j=a; j<b2; j+=Math.max(1, (spp/32)|0)) pk = Math.max(pk, Math.abs(c.L[j])); ctx.fillRect(x+px, mid - pk*18, 1, pk*36 + 0.5); }
+      ctx.fillStyle = '#fff'; ctx.fillText(c.name.slice(0, Math.max(0, Math.floor(cw/6))), x+4, y+13);
+    });
+    ctx.fillStyle = cssv('--muted'); ctx.fillText(t.name, 4, y + ROW_H - 8);
+  });
+  const px = MIX.playhead*MIX.pps; ctx.fillStyle = cssv('--accent2'); ctx.fillRect(px-1, 0, 2, h);
+}
+let drag = null;
+function tlHit(e){
+  const r = $('mxTl').getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, ti = Math.floor((y - 16)/ROW_H), t = MIX.tracks[ti];
+  let clip = null;
+  if (t) for (const k of t.clips){ const c = CLIPS.get(k.clipId); if (c && x >= k.start*MIX.pps && x <= (k.start + clipDur(c))*MIX.pps) clip = k; }
+  return {x, ti, t, clip};
+}
+$('mxTl').addEventListener('pointerdown', e => {
+  const h = tlHit(e); if (h.t) MIX.selTrack = h.ti;
+  if (h.clip){ MIX.selClip = h.clip; drag = {k: h.clip, dx: h.x - h.clip.start*MIX.pps, ti: h.ti}; $('mxTl').setPointerCapture(e.pointerId); }
+  else { MIX.selClip = null; MIX.playhead = Math.max(0, h.x/MIX.pps); }
+  renderStrips(); drawTimeline(); renderClipPanel();
+});
+$('mxTl').addEventListener('pointermove', e => {
+  if (!drag) return; const h = tlHit(e);
+  drag.k.start = Math.max(0, Math.round((h.x - drag.dx)/MIX.pps*100)/100);
+  if (h.t && h.ti !== drag.ti){ MIX.tracks[drag.ti].clips = MIX.tracks[drag.ti].clips.filter(k => k !== drag.k); h.t.clips.push(drag.k); drag.ti = h.ti; MIX.selTrack = h.ti; }
+  mixDirty(); drawTimeline();
+});
+$('mxTl').addEventListener('pointerup', () => { if (drag){ drag = null; renderStrips(); renderClipPanel(); } });
+function renderClipPanel(){
+  const box = $('mxClip'); box.innerHTML = ''; const k = MIX.selClip; if (!k) return;
+  const c = CLIPS.get(k.clipId); if (!c) return;
+  box.appendChild(el('div', 'hint', `Clipe selecionado: <b>${esc(c.name)}</b>`));
+  [P('start','Início',0,600,0,'sq','s'), P('gain','Ganho',-36,12,0,'lin','dB'), P('fadeIn','Fade in',0,10,0,'sq','s'), P('fadeOut','Fade out',0,10,0,'sq','s')]
+    .forEach(d => box.appendChild(control(d, k, () => { mixDirty(); drawTimeline(); }, () => { mixDirty(); drawTimeline(); })));
+  const del = el('button', 'btn sm', 'Remover clipe da faixa'); del.onclick = () => { MIX.tracks.forEach(t => t.clips = t.clips.filter(x => x !== k)); MIX.selClip = null; mixDirty(); renderMixerUI(); renderClipPanel(); };
+  box.appendChild(del);
+}
+function renderMasterPanel(){
+  const m = MIX.master, box = $('mxMaster'); box.innerHTML = '';
+  const sel = (label, obj, key, opts, onc) => { const row = el('div', 'ctl'); row.appendChild(el('label', null, label)); const s = el('select'); opts.forEach(o => { const op = el('option', null, esc(o)); op.value = o; s.appendChild(op); }); s.value = obj[key]; s.onchange = () => { obj[key] = s.value; if (onc) onc(); mixDirty(); }; row.appendChild(s); return row; };
+  box.appendChild(sel('Destino', m, 'dest', Object.keys(DESTINATIONS), () => { const d = DESTINATIONS[m.dest]; m.lufs = d.lufs; m.ceiling = d.tp; renderMasterPanel(); }));
+  box.appendChild(sel('Perfil tonal', m, 'profile', Object.keys(PROFILES)));
+  box.appendChild(sel('Reverb das faixas', MIX, 'revType', Object.keys(REV_TYPES)));
+  const live = () => { mixMastered = null; }, cm = () => { mixMastered = null; };
+  [P('strength','Intensidade da correção',0,1,0.6,'lin','%'), P('lufs','Loudness alvo',-30,-6,-14,'lin','LUFS'), P('ceiling','Teto true peak',-3,0,-1,'lin','dB'),
+   P('excite','Excitador de agudos',0,1,0.15,'lin','%'), P('widthLow','Largura graves',0,1.5,0,'lin','%'), P('widthHigh','Largura agudos',0,2,1.15,'lin','%')]
+    .forEach(d => box.appendChild(control(d, m, live, cm)));
+  const eqBox = el('details', 'mg'); eqBox.innerHTML = `<summary>EQ de equilíbrio tonal <span class="st">${m.eqOn ? 'ligado' : 'desligado'}</span></summary>`;
+  const eqOn = el('label', 'chk', `<input type="checkbox" ${m.eqOn ? 'checked' : ''}> Ligado`); eqOn.querySelector('input').onchange = e => { m.eqOn = e.target.checked; cm(); }; eqBox.appendChild(eqOn);
+  BANDS.forEach((f, i) => { const o = {v: m.eq[i]}; eqBox.appendChild(control(P('v', fmtHz(f), -12, 12, 0, 'lin', 'dB'), o, () => { m.eq[i] = o.v; live(); }, cm)); });
+  box.appendChild(eqBox);
+  const mbBox = el('details', 'mg'); mbBox.innerHTML = `<summary>Compressor multibanda <span class="st">${m.mbOn ? 'ligado' : 'desligado'}</span></summary>`;
+  const mbOn = el('label', 'chk', `<input type="checkbox" ${m.mbOn ? 'checked' : ''}> Ligado`); mbOn.querySelector('input').onchange = e => { m.mbOn = e.target.checked; cm(); }; mbBox.appendChild(mbOn);
+  ['Graves', 'Médios', 'Agudos'].forEach((n, i) => {
+    mbBox.appendChild(control(P('thr', n + ': limiar', -50, 0, -20, 'lin', 'dB'), m.mb[i], live, cm));
+    mbBox.appendChild(control(P('ratio', n + ': razão', 1, 8, 2, 'lin', 'ratio'), m.mb[i], live, cm));
+  });
+  box.appendChild(mbBox);
+}
+function drawSpectrumCompare(before, after){
+  const {ctx, w, h, dpr} = fit($('mxSpec')); ctx.clearRect(0, 0, w, h);
+  const tgt = PROFILES[MIX.master.profile], all = [...(before || []), ...(after || []), ...tgt], lo = Math.min(...all) - 3, hi = Math.max(...all) + 3;
+  const X = i => (i + 0.5)/BANDS.length*w, Y = v => h - (v - lo)/(hi - lo)*(h - 14*dpr) - 4*dpr;
+  ctx.font = `${9*dpr}px system-ui`; ctx.fillStyle = cssv('--muted');
+  BANDS.forEach((f, i) => ctx.fillText(f >= 1000 ? (f/1000) + 'k' : String(f), X(i) - 8*dpr, h - 2*dpr));
+  const line = (arr, col, dash) => { if (!arr) return; ctx.strokeStyle = col; ctx.lineWidth = 2*dpr; ctx.setLineDash(dash ? [4*dpr, 4*dpr] : []); ctx.beginPath(); arr.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.stroke(); ctx.setLineDash([]); };
+  line(tgt, cssv('--muted'), true); line(before, cssv('--hot')); line(after, cssv('--accent'));
+}
+async function ensureMixRendered(){
+  if (!mixRendered){ setStatus('Mixando…'); mixRendered = await renderMix(); }
+  if (MIX.masterOn && !mixMastered){ setStatus('Masterizando…'); mixMastered = await applyMastering(mixRendered); }
+  setStatus('Pronto');
+}
+function loudMatched(r, target){ const c = {L: r.L.slice(), R: r.R.slice(), sr: r.sr}; const lu = measureLUFS(c.L, c.R, c.sr); if (isFinite(lu)){ const g = dbToGain(target - lu); for (let i=0; i<c.L.length; i++){ c.L[i] *= g; c.R[i] *= g; } } return c; }
+async function mixPlay(){
+  if (!MIX.tracks.some(t => t.clips.length)){ toast('Adicione clipes às faixas'); return; }
+  await ensureMixRendered(); mixStop();
+  let r = MIX.masterOn && mixAB === 'master' ? mixMastered : mixRendered;
+  if (MIX.masterOn && mixAB === 'mix' && $('mxMatch').checked) r = loudMatched(mixRendered, MIX.master.lufs);
+  const c = ensureAC(), b = c.createBuffer(2, r.L.length, r.sr); b.copyToChannel(r.L, 0); b.copyToChannel(r.R, 1);
+  const s = c.createBufferSource(); s.buffer = b; s.connect(monGain);
+  const off = Math.min(MIX.playhead, b.duration - 0.01); s.start(0, Math.max(0, off)); mixSrc = s; mixT0 = c.currentTime; mixPlayFrom = off;
+  s.onended = () => { if (mixSrc === s) mixSrc = null; };
+  const tick = () => { if (!mixSrc) return; MIX.playhead = mixPlayFrom + (ac.currentTime - mixT0); drawTimeline(); mixRaf = requestAnimationFrame(tick); }; tick();
+  if (typeof onMixPlay === 'function') onMixPlay(off);
+}
+function mixStop(){ if (mixSrc){ const s = mixSrc; mixSrc = null; try { s.stop(); } catch(e){} } cancelAnimationFrame(mixRaf); if (typeof onMixStop === 'function') onMixStop(); }
+
+$('mxPlay').onclick = mixPlay;
+$('mxStop').onclick = () => { mixStop(); drawTimeline(); };
+$('mxHome').onclick = () => { MIX.playhead = 0; drawTimeline(); };
+$('mxZoom').oninput = () => { MIX.pps = +$('mxZoom').value; drawTimeline(); };
+$('mxAddTrack').onclick = () => { MIX.tracks.push(newTrack('Faixa ' + (MIX.tracks.length+1))); MIX.selTrack = MIX.tracks.length-1; renderMixerUI(); };
+$('mxImport').onclick = () => $('mxFiles').click();
+$('mxFiles').onchange = async e => {
+  const fs = [...e.target.files]; e.target.value = '';
+  for (const f of fs){ try { const id = await decodeToClip(f.name.replace(/\.[^.]+$/, ''), await f.arrayBuffer(), 'importado'); addClipToMix(id, MIX.playhead, f.name.replace(/\.[^.]+$/, '').slice(0, 24)); } catch(err){ toast('Não consegui ler ' + f.name); } }
+  renderMixerUI();
+};
+$('mxAB').onclick = () => { mixAB = mixAB === 'master' ? 'mix' : 'master'; $('mxAB').textContent = mixAB === 'master' ? 'Ouvindo: MASTER' : 'Ouvindo: MIX ORIGINAL'; $('mxAB').classList.toggle('on', mixAB === 'master'); if (mixSrc) mixPlay(); };
+$('mxMasterOn').onchange = () => { MIX.masterOn = $('mxMasterOn').checked; };
+$('mxAutoMix').onclick = () => busy('Assistente de mixagem…', async () => { const rep = await mixAssistant(); mixDirty(); renderStrips(); $('mxReport').innerHTML = rep.length ? '<b>Mixagem ajustada:</b><br>' + rep.map(esc).join('<br>') : 'Nada para ajustar.'; toast('Mixagem balanceada'); });
+$('mxAutoMaster').onclick = () => busy('Assistente de master…', async () => {
+  mixRendered = await renderMix(); const {before, levels} = masterAssistant(mixRendered);
+  mixMastered = await applyMastering(mixRendered); const after = analyze(mixMastered), lvA = relLevels(bandLevels(mixMastered));
+  renderMasterPanel(); drawSpectrumCompare(levels, lvA);
+  lastReport = {before, after};
+  const f = v => isFinite(v) ? v.toFixed(1) : '−∞';
+  $('mxReport').innerHTML = `<b>Master pronto</b> (${esc(MIX.master.dest)})<br>Loudness: ${f(before.lufs)} → <b>${f(after.lufs)} LUFS</b><br>True peak: ${f(before.tp)} → <b>${f(after.tp)} dBTP</b><br>Correlação: ${before.corr.toFixed(2)} → ${after.corr.toFixed(2)}<br>EQ aplicada: ${MIX.master.eq.map((g, i) => g ? `${BANDS[i] >= 1000 ? BANDS[i]/1000 + 'k' : BANDS[i]} ${g > 0 ? '+' : ''}${g}` : '').filter(Boolean).join(', ') || 'nenhuma'}`;
+  toast('Masterização aplicada');
+});
+$('mxExport').onclick = () => busy('Exportando mix…', async () => { await ensureMixRendered(); const r = MIX.masterOn ? mixMastered : mixRendered; download(new Blob([encodeWav(r, +$('exBits').value, false)], {type:'audio/wav'}), 'nexi-mix.wav'); });
+$('mxStems').onclick = () => busy('Exportando stems…', async () => {
+  const files = []; for (const t of MIX.tracks){ if (!t.clips.length) continue; const r = await renderMix({only: t, noDuck: true}); files.push({name: slug(t.name) + '.wav', data: encodeWav(r, 24, false)}); }
+  download(makeZip(files), 'nexi-mix-stems.zip');
+});
+$('mxToClip').onclick = () => busy('Renderizando…', async () => { await ensureMixRendered(); const r = MIX.masterOn ? mixMastered : mixRendered; addClip('Mixdown ' + new Date().toLocaleTimeString('pt-BR'), r, 'mixdown'); renderBin(); toast('Mixdown adicionado ao banco'); });
+document.addEventListener('keydown', e => {
+  if (curModule !== 'mix' || e.target.matches('input, textarea, select')) return;
+  if (e.code === 'Space'){ e.preventDefault(); mixSrc ? mixStop() : mixPlay(); }
+  if ((e.key === 'Delete' || e.key === 'Backspace') && MIX.selClip){ MIX.tracks.forEach(t => t.clips = t.clips.filter(x => x !== MIX.selClip)); MIX.selClip = null; mixDirty(); renderMixerUI(); renderClipPanel(); }
+});
+clipListeners.push(() => { if (curModule === 'mix') renderBin(); });
+MODULE_SHOW.mix = () => { renderMixerUI(); renderClipPanel(); };
+window.addEventListener('resize', () => { if (curModule === 'mix') drawTimeline(); });
+
+"use strict";
+/* ======================================================================
+   Laboratório de voz: TTS, gravação, troca de voz, efeitos, personas,
+   leitor de roteiro, ferramentas ElevenLabs (clonar, criar, STS, isolar,
+   transcrever, dublar)
+   ====================================================================== */
+const VOICE_EFFECTS = {
+  'Nenhum': {}, 'Robô': {dsp:'robot', fx:{hp:120, ratio:3}}, 'Sussurro': {dsp:'whisper', fx:{hp:200, high:3}},
+  'Telefone': {fx:{hp:320, lp:3400, mid:4, midF:1600, drive:0.35}}, 'Rádio AM': {dsp:'noise', fx:{hp:500, lp:4200, drive:0.55, mid:5, midF:1800}},
+  'Megafone': {fx:{hp:650, lp:3600, drive:0.8, mid:6, midF:2000, revType:'Exterior', revMix:0.15}},
+  'Alienígena': {dsp:'ring', fx:{revType:'Placa', revMix:0.15}}, 'Coral / dobra': {dsp:'double', fx:{revType:'Sala', revMix:0.12}},
+  'Fantasma': {dsp:'ghost', fx:{revType:'Catedral', revMix:0.25}}, 'Caverna': {fx:{revType:'Caverna', revMix:0.45}},
+  'Estádio': {fx:{revType:'Hall', revMix:0.35, dlyMix:0.15, dlyTime:0.32, dlyFb:0.25}}, 'Rádio comunicador': {dsp:'noise', fx:{hp:700, lp:2800, drive:0.9, ratio:6, thr:-30}},
+};
+const VOICE_EQ = {
+  'Natural': {}, 'Podcast': {hp:80, low:1.5, mid:2, midF:3000, high:2, ratio:3, thr:-20},
+  'Rádio FM': {hp:90, low:3, mid:2, midF:2500, high:3, ratio:4, thr:-24, drive:0.15}, 'Audiolivro': {hp:75, mid:1, midF:2500, high:1, ratio:2.5, thr:-22},
+  'Trailer de cinema': {hp:60, low:4, high:3, ratio:4, thr:-24, drive:0.25}, 'Locução comercial': {hp:85, low:2, mid:3, midF:3500, high:2.5, ratio:5, thr:-26},
+};
+const VOICE_REV = ['Nenhum', ...Object.keys(REV_TYPES)];
+const VOICE_PRESETS = {
+  'Natural': {pitch:0, formant:1}, 'Criança': {pitch:4, formant:1.18}, 'Gigante': {pitch:-7, formant:0.78}, 'Monstro': {pitch:-10, formant:0.72, effect:'Nenhum', drive:0.4},
+  'Esquilo': {pitch:9, formant:1.3}, 'Voz grave de trailer': {pitch:-3, formant:0.92, eq:'Trailer de cinema'}, 'Feminina ↔ masculina': {pitch:-4, formant:0.88}, 'Masculina ↔ feminina': {pitch:4, formant:1.12},
+};
+function defaultVoiceProc(){ return {pitch:0, formant:1, speed:1, effect:'Nenhum', eq:'Natural', reverb:'Nenhum', reverbMix:0.15, denoise:0, drive:0, lufs:-16, pauseMs:350}; }
+const VS = {src: null, out: null, proc: defaultVoiceProc(), tts: {voiceId:'', model:'eleven_multilingual_v2', stability:0.5, similarity:0.75, style:0.15, speed:1}, voices: [], personas: LS.get('nexi-sfx-personas', [])};
+
+async function processVoice(clip, s){
+  const sr = clip.sr; let x = new Float32Array(clip.L.length); for (let i=0; i<x.length; i++) x[i] = (clip.L[i] + clip.R[i])*0.5;
+  if (s.denoise > 0) x = denoise(x, sr, s.denoise);
+  if (Math.abs(s.speed - 1) > 0.005) x = wsola(x, s.speed, sr);
+  if (s.pitch) x = pitchShift(x, s.pitch, sr);
+  const fComp = s.formant/Math.pow(2, s.pitch/12);
+  if (Math.abs(fComp - 1) > 0.01) x = formantShift(x, fComp, sr);
+  const ef = VOICE_EFFECTS[s.effect] || {};
+  let L = x, R = x.slice();
+  switch (ef.dsp){
+    case 'robot': L = robotize(x, sr, 95); R = L.slice(); break;
+    case 'whisper': L = whisperize(x); R = L.slice(); break;
+    case 'ring': { L = new Float32Array(x.length); for (let i=0; i<x.length; i++) L[i] = x[i]*(0.4 + 0.6*Math.sin(TAU*70*i/sr)); L = pitchShift(L, 2, sr); R = L.slice(); break; }
+    case 'noise': { const r = mulberry32(3); for (let i=0; i<x.length; i++){ const n = (r()*2-1)*0.015; L[i] += n; R[i] += n; } break; }
+    case 'double': { const d1 = Math.round(0.017*sr), d2 = Math.round(0.029*sr), a = pitchShift(x, 0.12, sr), b = pitchShift(x, -0.12, sr);
+      L = new Float32Array(x.length); R = new Float32Array(x.length);
+      for (let i=0; i<x.length; i++){ L[i] = x[i]*0.7 + (i >= d1 ? a[i-d1]*0.55 : 0); R[i] = x[i]*0.7 + (i >= d2 ? b[i-d2]*0.55 : 0); } break; }
+    case 'ghost': { const rev = x.slice().reverse(), w = await fxChain(rev, rev.slice(), sr, {revType:'Catedral', ...REV_TYPES['Catedral'], revMix:1}); const wl = w.L.slice().reverse(); const pad = wl.length - x.length;
+      L = new Float32Array(wl.length); R = new Float32Array(wl.length); for (let i=0; i<wl.length; i++){ const dry = i >= pad ? x[i-pad] : 0; L[i] = dry + wl[i]*0.5; R[i] = dry + w.R[w.R.length-1-i]*0.5; } break; }
+  }
+  const fx = Object.assign({}, VOICE_EQ[s.eq] || {}, ef.fx || {});
+  if (s.drive) fx.drive = Math.max(fx.drive || 0, s.drive);
+  if (s.reverb !== 'Nenhum'){ Object.assign(fx, REV_TYPES[s.reverb], {revType: s.reverb, revMix: s.reverbMix}); }
+  const out = await fxChain(L, R, sr, fx);
+  return normalizeLUFS(out, s.lufs, -1);
+}
+
+/* ---------------- ElevenLabs ---------------- */
+async function loadVoices(){
+  try { const r = await (await xi('/v1/voices')).json(); VS.voices = (r.voices || []).map(v => ({id: v.voice_id, name: v.name, labels: v.labels || {}}));
+    if (!VS.tts.voiceId && VS.voices[0]) VS.tts.voiceId = VS.voices[0].id; renderVoiceSelects(); toast(`${VS.voices.length} vozes carregadas`);
+  } catch(e){ toast(e.message); }
+}
+async function ttsEleven(text, tts, name){
+  const body = {text, model_id: tts.model, voice_settings: {stability: tts.stability, similarity_boost: tts.similarity, style: tts.style, use_speaker_boost: true, speed: tts.speed}};
+  return xiAudio(`/v1/text-to-speech/${encodeURIComponent(tts.voiceId)}?output_format=mp3_44100_128`, {json: body}, name, 'voz');
+}
+async function xiTry(paths, opts){ let last; for (const p of paths){ try { return await xi(p, opts); } catch(e){ last = e; if (!/40[45]/.test(e.message)) throw e; } } throw last; }
+async function designVoice(description, sampleText){
+  const res = await xiTry(['/v1/text-to-voice/design', '/v1/text-to-voice/create-previews'], {json: {voice_description: description, text: sampleText, model_id: 'eleven_multilingual_ttv_v2'}});
+  const j = await res.json(); return j.previews || [];
+}
+async function saveDesignedVoice(name, description, genId){
+  const res = await xiTry(['/v1/text-to-voice', '/v1/text-to-voice/create-voice-from-preview'], {json: {voice_name: name, voice_description: description, generated_voice_id: genId}});
+  return (await res.json()).voice_id;
+}
+function b64ToArrayBuffer(b64){ const s = atob(b64), u = new Uint8Array(s.length); for (let i=0; i<s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; }
+function wordsToSRT(words){
+  const ws = (words || []).filter(w => w.type !== 'spacing' && w.text?.trim()); const cues = []; let cur = null;
+  ws.forEach(w => { if (!cur || w.end - cur.start > 4 || cur.text.length > 70){ cur = {start: w.start, end: w.end, text: w.text}; cues.push(cur); } else { cur.end = w.end; cur.text += ' ' + w.text; } });
+  const ts = t => { const ms = Math.round(t*1000), h = Math.floor(ms/3600000), m = Math.floor(ms/60000)%60, s = Math.floor(ms/1000)%60; return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')},${String(ms%1000).padStart(3,'0')}`; };
+  return cues.map((c, i) => `${i+1}\n${ts(c.start)} --> ${ts(c.end)}\n${c.text.trim()}\n`).join('\n');
+}
+
+/* ---------------- UI ---------------- */
+function vCard(title, inner, need){ return `<div class="card"${need ? ` data-need="${need}"` : ''}><h2>${title}${need ? `<span class="badge">${need === 'eleven' ? 'ElevenLabs' : 'Claude'}</span>` : ''}</h2>${inner}</div>`; }
+function buildVoiceUI(){
+  $('voiceRoot').innerHTML = `
+  <div class="vgrid">
+   <div>
+    ${vCard('1 · Fonte da voz', `
+      <div class="tabs"><button class="on" data-vt="tts">Texto → fala</button><button data-vt="rec">Gravar / importar</button></div>
+      <div id="vtTTS">
+        <textarea id="vText" rows="4" placeholder="Digite o texto que a voz vai ler…">Olá! Eu sou a voz do NEXI. Posso narrar, dublar e interpretar qualquer personagem.</textarea>
+        <div class="row" style="margin-top:6px"><select id="vVoice" class="grow"></select><button class="btn sm" id="vLoadVoices">↻ Vozes</button></div>
+        <div class="row" style="margin-top:6px"><select id="vModel" class="grow">
+          <option value="eleven_multilingual_v2">Multilingual v2 (qualidade)</option><option value="eleven_v3">Eleven v3 (expressiva)</option>
+          <option value="eleven_turbo_v2_5">Turbo v2.5 (rápida)</option><option value="eleven_flash_v2_5">Flash v2.5 (mais rápida)</option></select></div>
+        <div id="vTtsCtl"></div>
+        <div class="row" style="margin-top:6px"><button class="btn pri grow" id="vSpeak">🗣 Gerar fala (ElevenLabs)</button><button class="btn sm" id="vSys" title="Prévia com voz do sistema (não exporta)">Prévia do sistema</button></div>
+      </div>
+      <div id="vtREC" hidden>
+        <div class="row"><button class="btn pri grow" id="vRec">🎙 Gravar</button><button class="btn grow" id="vImport">📂 Importar áudio</button></div>
+        <div class="hint">Grave em ambiente silencioso. Use “Redução de ruído” no processamento se precisar.</div>
+      </div>
+      <div class="viz" style="margin-top:8px"><canvas id="voWave" style="height:90px"></canvas></div>
+      <div class="row" style="margin-top:6px"><button class="btn sm" id="vPlaySrc">▶ Original</button><button class="btn sm" id="vPlayOut">▶ Processada</button><button class="btn sm" id="vToMix">→ Mixer</button><button class="btn sm" id="vToSfx">→ Camada SFX</button><button class="btn sm" id="vDl">⬇ WAV</button></div>
+      <div class="hint" id="vInfo">Nenhuma voz ainda.</div>`)}
+    ${vCard('2 · Transformar a voz (local)', `
+      <div class="row"><select id="vPreset" class="grow"><option value="">Predefinição de voz…</option>${Object.keys(VOICE_PRESETS).map(k => `<option>${esc(k)}</option>`).join('')}</select></div>
+      <div id="vProcCtl"></div>
+      <div class="row" style="margin-top:6px"><button class="btn pri grow" id="vApply">✨ Aplicar processamento</button></div>`)}
+   </div>
+   <div>
+    ${vCard('3 · Personas leitoras', `
+      <div class="row"><input type="text" id="pName" placeholder="Nome da persona" class="grow"><button class="btn sm" id="pSave">⭐ Salvar atual</button></div>
+      <textarea id="pDesc" rows="2" placeholder="Descreva a persona (ex.: narradora calma de documentário, 40 anos, voz quente e grave)"></textarea>
+      <div class="row" style="margin-top:4px"><button class="btn sm grow" id="pAI" data-need="anthropic">🤖 Criar persona com IA</button><button class="btn sm grow" id="pDesign" data-need="eleven">🎨 Criar voz nova a partir da descrição</button></div>
+      <div class="list" id="pList" style="margin-top:8px;max-height:220px"></div>`)}
+    ${vCard('4 · Leitor de roteiro (vários personagens)', `
+      <textarea id="sText" rows="6" placeholder="Narrador: Era uma noite fria.&#10;Ana: Você ouviu isso?&#10;Narrador: Ninguém respondeu."></textarea>
+      <div class="row" style="margin-top:4px"><input type="text" id="sPrompt" class="grow" placeholder="Ou peça um roteiro: ‘diálogo de 30 s entre um robô e uma criança’"><button class="btn sm" id="sGen" data-need="anthropic">🤖 Escrever</button></div>
+      <div id="sMap" style="margin-top:6px"></div>
+      <div class="row" style="margin-top:6px"><button class="btn pri grow" id="sRead" data-need="eleven">🎬 Ler roteiro e enviar ao mixer</button></div>`)}
+    ${vCard('5 · Ferramentas de IA de voz', `
+      <div class="toolgrid">
+        <button class="btn" id="tClone">🧬 Clonar voz (amostras)</button>
+        <button class="btn" id="tSTS">🔁 Trocar voz (fala → fala)</button>
+        <button class="btn" id="tIsolate">🎧 Isolar voz (remover fundo)</button>
+        <button class="btn" id="tSTT">📝 Transcrever + legendas SRT</button>
+        <button class="btn" id="tDub">🌐 Dublar para outro idioma</button>
+        <button class="btn" id="tSfx">💥 Efeito sonoro por texto</button>
+      </div>
+      <div class="hint">Estas ferramentas usam a API da ElevenLabs (e a Claude para traduzir na dublagem). As transformações da seção 2 rodam no seu navegador, sem internet.</div>
+      <textarea id="tOut" rows="4" placeholder="Transcrições e resultados aparecem aqui" style="margin-top:6px"></textarea>`, 'eleven')}
+   </div>
+  </div>
+  <input type="file" id="vFile" accept="audio/*,video/*" hidden><input type="file" id="vCloneFiles" accept="audio/*" multiple hidden>`;
+  // abas fonte
+  document.querySelectorAll('[data-vt]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-vt]').forEach(x => x.classList.toggle('on', x === b)); $('vtTTS').hidden = b.dataset.vt !== 'tts'; $('vtREC').hidden = b.dataset.vt !== 'rec'; });
+  const tc = $('vTtsCtl');
+  [P('stability','Estabilidade',0,1,0.5,'lin','%'), P('similarity','Similaridade',0,1,0.75,'lin','%'), P('style','Exagero de estilo',0,1,0.15,'lin','%'), P('speed','Velocidade',0.7,1.2,1,'lin','x')]
+    .forEach(d => tc.appendChild(control(d, VS.tts, () => {}, () => {})));
+  $('vModel').onchange = () => VS.tts.model = $('vModel').value;
+  $('vVoice').onchange = () => VS.tts.voiceId = $('vVoice').value;
+  renderProcCtl(); renderVoiceSelects(); renderPersonas();
+  $('vLoadVoices').onclick = loadVoices;
+  $('vSpeak').onclick = () => busy('Gerando fala…', async () => { const t = $('vText').value.trim(); if (!t) throw new Error('digite um texto'); if (!VS.tts.voiceId) await loadVoices(); setVoiceSrc(await ttsEleven(t, VS.tts, t.slice(0, 30))); });
+  $('vSys').onclick = () => { const u = new SpeechSynthesisUtterance($('vText').value); u.lang = 'pt-BR'; u.rate = VS.tts.speed; const v = speechSynthesis.getVoices().find(v => /pt/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.cancel(); speechSynthesis.speak(u); };
+  $('vImport').onclick = () => $('vFile').click();
+  $('vFile').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; try { setVoiceSrc(await decodeToClip(f.name.replace(/\.[^.]+$/, ''), await f.arrayBuffer(), 'voz')); } catch(err){ toast('Não consegui ler o arquivo'); } };
+  $('vRec').onclick = toggleVoiceRec;
+  $('vPlaySrc').onclick = () => { const c = CLIPS.get(VS.src); if (c) previewPCM(c.L, c.R, c.sr); };
+  $('vPlayOut').onclick = () => { const c = CLIPS.get(VS.out); if (c) previewPCM(c.L, c.R, c.sr); else toast('Aplique o processamento primeiro'); };
+  $('vApply').onclick = () => busy('Processando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('nenhuma voz carregada'); const r = await processVoice(c, VS.proc); VS.out = addClip(c.name + ' (processada)', r, 'voz'); drawVoice(); previewPCM(r.L, r.R, r.sr); });
+  $('vPreset').onchange = () => { const p = VOICE_PRESETS[$('vPreset').value]; if (p){ Object.assign(VS.proc, defaultVoiceProc(), p); renderProcCtl(); } $('vPreset').value = ''; };
+  $('vToMix').onclick = () => { const id = VS.out || VS.src; if (!id) return; addClipToMix(id, undefined, 'Voz'); toast('Enviado ao mixer'); };
+  $('vToSfx').onclick = () => { const c = CLIPS.get(VS.out || VS.src); if (!c) return; const sid = 'v' + Date.now().toString(36); SAMPLES.set(sid, {name: c.name, sr: c.sr, ch: [c.L, c.R]}); idbPut(sid, SAMPLES.get(sid)); addLayer('sampler'); S.layers[sel].p.sample = sid; S.layers[sel].env.len = clipDur(c) + 0.1; commit(); renderEditor(); toast('Virou camada no SFX'); };
+  $('vDl').onclick = () => { const c = CLIPS.get(VS.out || VS.src); if (c) download(clipToWavBlob(c), slug(c.name) + '.wav'); };
+  // personas
+  $('pSave').onclick = () => { const n = $('pName').value.trim() || 'Persona ' + (VS.personas.length + 1); VS.personas.unshift({name: n, desc: $('pDesc').value.trim(), tts: {...VS.tts}, proc: {...VS.proc}}); savePersonas(); toast('Persona salva'); };
+  $('pAI').onclick = () => busy('Criando persona…', createPersonaAI);
+  $('pDesign').onclick = () => busy('Criando voz…', designFromDesc);
+  // roteiro
+  $('sText').oninput = renderScriptMap; renderScriptMap();
+  $('sGen').onclick = () => busy('Escrevendo roteiro…', async () => {
+    const names = VS.personas.map(p => p.name).join(', ') || 'livre';
+    const t = await claudeText(`Escreva um roteiro em português do Brasil para: ${$('sPrompt').value || 'uma cena curta'}.\nFormato obrigatório: uma fala por linha, "Personagem: fala". Use, se fizer sentido, estes personagens: ${names}. Inclua só o roteiro, sem títulos ou comentários.`);
+    $('sText').value = t.trim(); renderScriptMap();
+  });
+  $('sRead').onclick = () => busy('Lendo roteiro…', readScript);
+  // ferramentas
+  $('tClone').onclick = () => $('vCloneFiles').click();
+  $('vCloneFiles').onchange = async e => { const fs = [...e.target.files]; e.target.value = ''; if (!fs.length) return; await busy('Clonando voz…', async () => {
+    const name = prompt('Nome da voz clonada:', 'Minha voz') || 'Minha voz', fd = new FormData(); fd.append('name', name); fs.forEach(f => fd.append('files', f, f.name));
+    const j = await (await xi('/v1/voices/add', {form: fd})).json(); VS.tts.voiceId = j.voice_id; await loadVoices(); toast('Voz clonada: ' + name);
+  }); };
+  $('tSTS').onclick = () => busy('Trocando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue ou grave uma voz primeiro'); if (!VS.tts.voiceId) throw new Error('escolha a voz de destino');
+    const fd = new FormData(); fd.append('audio', clipToWavBlob(c), 'voz.wav'); fd.append('model_id', 'eleven_multilingual_sts_v2');
+    VS.out = await xiAudio(`/v1/speech-to-speech/${encodeURIComponent(VS.tts.voiceId)}?output_format=mp3_44100_128`, {form: fd}, c.name + ' (trocada)', 'voz'); drawVoice(); const o = CLIPS.get(VS.out); previewPCM(o.L, o.R, o.sr); });
+  $('tIsolate').onclick = () => busy('Isolando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const fd = new FormData(); fd.append('audio', clipToWavBlob(c), 'audio.wav');
+    VS.out = await xiAudio('/v1/audio-isolation', {form: fd}, c.name + ' (isolada)', 'voz'); drawVoice(); });
+  $('tSTT').onclick = () => busy('Transcrevendo…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const j = await transcribe(c);
+    $('tOut').value = j.text || ''; if (j.words?.length && confirm('Baixar legendas .srt?')) download(new Blob([wordsToSRT(j.words)], {type:'text/plain'}), slug(c.name) + '.srt'); });
+  $('tDub').onclick = () => busy('Dublando…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const lang = prompt('Idioma de destino:', 'inglês'); if (!lang) return;
+    const j = await transcribe(c); const tr = await claudeText(`Traduza para ${lang}, mantendo tom, intenção e duração aproximada (mesmo número de frases). Responda só com a tradução.\n\n${j.text}`);
+    $('tOut').value = tr.trim(); VS.out = await ttsEleven(tr.trim(), {...VS.tts, model: 'eleven_multilingual_v2'}, c.name + ' (' + lang + ')'); drawVoice(); });
+  $('tSfx').onclick = () => busy('Gerando efeito…', async () => { const t = prompt('Descreva o efeito sonoro (em inglês funciona melhor):', 'heavy wooden door creaking open slowly'); if (!t) return;
+    const id = await xiAudio('/v1/sound-generation', {json: {text: t, prompt_influence: 0.4}}, t.slice(0, 40), 'sfx'); const c = CLIPS.get(id); previewPCM(c.L, c.R, c.sr); toast('Efeito adicionado ao banco do mixer'); });
+  refreshApiBadges();
+}
+async function transcribe(c){ const fd = new FormData(); fd.append('file', clipToWavBlob(c), 'audio.wav'); fd.append('model_id', 'scribe_v1'); return (await xi('/v1/speech-to-text', {form: fd})).json(); }
+function renderProcCtl(){
+  const box = $('vProcCtl'); if (!box) return; box.innerHTML = '';
+  const choice = (k, l, opts) => C(k, l, opts, VS.proc[k]);
+  [P('pitch','Altura',-24,24,0,'lin','st'), P('formant','Formantes (timbre)',0.5,2,1,'log','x'), P('speed','Velocidade da fala',0.5,2,1,'log','x'),
+   choice('effect','Efeito', Object.keys(VOICE_EFFECTS)), choice('eq','Tratamento', Object.keys(VOICE_EQ)), choice('reverb','Ambiente', VOICE_REV),
+   P('reverbMix','Quantidade de ambiente',0,1,0.15,'lin','%'), P('denoise','Redução de ruído',0,1,0,'lin','%',{off:v=>v<=0}), P('drive','Saturação',0,1,0,'lin','%',{off:v=>v<=0}),
+   P('lufs','Loudness final',-30,-10,-16,'lin','LUFS'), P('pauseMs','Pausa entre falas (roteiro)',0,2000,350,'lin','ms')]
+    .forEach(d => box.appendChild(control(d, VS.proc, () => {}, () => {})));
+}
+function renderVoiceSelects(){
+  const s = $('vVoice'); if (!s) return; s.innerHTML = '';
+  if (!VS.voices.length){ s.innerHTML = '<option value="">— clique em ↻ para carregar vozes —</option>'; return; }
+  VS.voices.forEach(v => { const o = el('option', null, esc(v.name + (v.labels.accent ? ' · ' + v.labels.accent : '') + (v.labels.gender ? ' · ' + v.labels.gender : ''))); o.value = v.id; s.appendChild(o); });
+  s.value = VS.tts.voiceId;
+}
+function setVoiceSrc(id){ VS.src = id; VS.out = null; drawVoice(); const c = CLIPS.get(id); if (c) previewPCM(c.L, c.R, c.sr); }
+function drawVoice(){
+  const c = CLIPS.get(VS.out || VS.src), {ctx, w, h} = fit($('voWave')); ctx.clearRect(0, 0, w, h); if (!c) return;
+  ctx.fillStyle = VS.out ? cssv('--accent') : cssv('--wave2'); const n = c.L.length, spp = n/w;
+  for (let x=0; x<w; x++){ let pk = 0; for (let i=Math.floor(x*spp); i<Math.min(n, (x+1)*spp); i+=4) pk = Math.max(pk, Math.abs(c.L[i])); ctx.fillRect(x, h/2 - pk*h*0.45, 1, pk*h*0.9 + 1); }
+  const a = analyze({L: c.L, R: c.R, sr: c.sr}), f0 = yinPitch(c.L, c.sr, Math.floor(c.L.length/3), 8192);
+  $('vInfo').textContent = `${VS.out ? 'Processada' : 'Original'}: ${c.name} · ${fmtS(a.dur)} · ${isFinite(a.lufs) ? a.lufs.toFixed(1) : '−∞'} LUFS${f0 ? ` · altura ≈ ${Math.round(f0)} Hz (${midiName(hzToMidi(f0))})` : ''}`;
+}
+let vRecState = null;
+async function toggleVoiceRec(){
+  if (vRecState){ vRecState.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}});
+    const rec = new MediaRecorder(stream), chunks = []; rec.ondataavailable = e => chunks.push(e.data);
+    rec.onstop = async () => { stream.getTracks().forEach(t => t.stop()); vRecState = null; $('vRec').textContent = '🎙 Gravar'; $('vRec').classList.remove('rec');
+      try { setVoiceSrc(await decodeToClip('Gravação ' + new Date().toLocaleTimeString('pt-BR'), await new Blob(chunks).arrayBuffer(), 'voz')); } catch(e){ toast('Falha na gravação'); } };
+    rec.start(); vRecState = rec; $('vRec').textContent = '■ Parar'; $('vRec').classList.add('rec');
+  } catch(e){ toast('Microfone indisponível'); }
+}
+function savePersonas(){ LS.set('nexi-sfx-personas', VS.personas); renderPersonas(); renderScriptMap(); }
+function renderPersonas(){
+  const box = $('pList'); if (!box) return; box.innerHTML = '';
+  if (!VS.personas.length){ box.innerHTML = '<div class="empty">Nenhuma persona. Ajuste voz e processamento e salve, ou crie com IA.</div>'; return; }
+  VS.personas.forEach((p, i) => {
+    const it = el('div', 'item', `<span class="nm" title="${esc(p.desc || '')}">${esc(p.name)}</span><span class="cat">${p.proc.pitch ? (p.proc.pitch > 0 ? '+' : '') + p.proc.pitch.toFixed(0) + 'st' : ''} ${esc(p.proc.effect !== 'Nenhum' ? p.proc.effect : '')}</span><button title="Ouvir">▶</button><button title="Excluir">✕</button>`);
+    const [bp, bx] = it.querySelectorAll('button');
+    it.onclick = () => { VS.tts = {...VS.tts, ...p.tts}; VS.proc = {...defaultVoiceProc(), ...p.proc}; $('pName').value = p.name; $('pDesc').value = p.desc || ''; renderProcCtl(); renderVoiceSelects(); $('vModel').value = VS.tts.model; toast('Persona carregada: ' + p.name); };
+    bp.onclick = e => { e.stopPropagation(); busy('Gerando amostra…', async () => { const id = await ttsEleven(`Olá, eu sou ${p.name}.`, {...VS.tts, ...p.tts}, p.name); const r = await processVoice(CLIPS.get(id), {...defaultVoiceProc(), ...p.proc}); previewPCM(r.L, r.R, r.sr); }); };
+    bx.onclick = e => { e.stopPropagation(); if (confirm(`Excluir a persona "${p.name}"?`)){ VS.personas.splice(i, 1); savePersonas(); } };
+    box.appendChild(it);
+  });
+}
+async function createPersonaAI(){
+  const desc = $('pDesc').value.trim(); if (!desc) throw new Error('descreva a persona');
+  const schema = {type:'object', additionalProperties:false, required:['name','summary','voice_description','pitch','formant','speed','effect','eq','reverb','reverbMix','stability','style','pauseMs'], properties:{
+    name:{type:'string'}, summary:{type:'string'}, voice_description:{type:'string', description:'Descrição em inglês para gerar a voz (idade, gênero, sotaque, timbre, ritmo)'},
+    pitch:{type:'number', description:'semitons, -12 a 12'}, formant:{type:'number', description:'0.6 a 1.6'}, speed:{type:'number', description:'0.7 a 1.3'},
+    effect:{type:'string', enum: Object.keys(VOICE_EFFECTS)}, eq:{type:'string', enum: Object.keys(VOICE_EQ)}, reverb:{type:'string', enum: VOICE_REV},
+    reverbMix:{type:'number'}, stability:{type:'number'}, style:{type:'number'}, pauseMs:{type:'number'}}};
+  const j = await claudeJSON(`Crie as configurações de uma persona leitora para um gerador de voz. Descrição do usuário: "${desc}". Escolha valores sutis e naturais a menos que a descrição peça algo estilizado (robô, monstro, rádio etc.).`, schema,
+    'Você é um diretor de dublagem e engenheiro de áudio. Retorne só o JSON pedido.');
+  VS.proc = {...defaultVoiceProc(), pitch: clamp(j.pitch, -24, 24), formant: clamp(j.formant, 0.5, 2), speed: clamp(j.speed, 0.5, 2), effect: j.effect, eq: j.eq, reverb: j.reverb, reverbMix: clamp(j.reverbMix, 0, 1), pauseMs: clamp(j.pauseMs, 0, 2000)};
+  VS.tts.stability = clamp(j.stability, 0, 1); VS.tts.style = clamp(j.style, 0, 1);
+  $('pName').value = j.name; $('pDesc').value = desc + (j.summary ? `\n— ${j.summary}` : ''); $('pDesc').dataset.voiceDesc = j.voice_description;
+  renderProcCtl(); toast('Persona criada. Clique em “Criar voz nova” para gerar o timbre, ou em Salvar.');
+}
+async function designFromDesc(){
+  const desc = $('pDesc').dataset.voiceDesc || $('pDesc').value.trim(); if (!desc) throw new Error('descreva a voz');
+  const previews = await designVoice(desc, 'Olá! Esta é uma prévia da nova voz criada para o NEXI. Que tal ela soa para você?');
+  if (!previews.length) throw new Error('a ElevenLabs não retornou prévias');
+  let chosen = 0;
+  for (let i=0; i<previews.length; i++){ const id = await decodeToClip(`Prévia ${i+1}`, b64ToArrayBuffer(previews[i].audio_base_64), 'voz'); const c = CLIPS.get(id); previewPCM(c.L, c.R, c.sr);
+    if (confirm(`Prévia ${i+1} de ${previews.length} tocando. Usar esta voz? (Cancelar = próxima)`)){ chosen = i; break; } chosen = -1; }
+  if (chosen < 0) { toast('Nenhuma prévia escolhida'); return; }
+  const name = $('pName').value.trim() || 'Voz NEXI';
+  VS.tts.voiceId = await saveDesignedVoice(name, desc, previews[chosen].generated_voice_id);
+  await loadVoices(); toast('Voz criada e selecionada: ' + name);
+}
+function parseScript(t){ return t.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const m = l.match(/^([^:]{1,40}):\s*(.+)$/); return m ? {who: m[1].trim(), text: m[2].trim()} : {who: 'Narrador', text: l}; }); }
+const scriptCast = {};
+function renderScriptMap(){
+  const box = $('sMap'); if (!box) return; const who = [...new Set(parseScript($('sText').value).map(x => x.who))]; box.innerHTML = '';
+  who.forEach(w => {
+    const row = el('div', 'ctl'); row.appendChild(el('label', null, esc(w))); const s = el('select');
+    s.appendChild(Object.assign(el('option', null, '— voz atual —'), {value: ''}));
+    VS.personas.forEach(p => s.appendChild(Object.assign(el('option', null, esc(p.name)), {value: p.name})));
+    s.value = scriptCast[w] ?? (VS.personas.find(p => p.name.toLowerCase() === w.toLowerCase())?.name || '');
+    scriptCast[w] = s.value; s.onchange = () => scriptCast[w] = s.value; row.appendChild(s); box.appendChild(row);
+  });
+}
+async function readScript(){
+  const lines = parseScript($('sText').value); if (!lines.length) throw new Error('roteiro vazio');
+  const sr = 48000, rendered = [];
+  for (let i=0; i<lines.length; i++){
+    const ln = lines[i], p = VS.personas.find(x => x.name === scriptCast[ln.who]);
+    const tts = p ? {...VS.tts, ...p.tts} : VS.tts, proc = p ? {...defaultVoiceProc(), ...p.proc} : VS.proc;
+    setStatus(`Fala ${i+1}/${lines.length} (${ln.who})…`);
+    const id = await ttsEleven(ln.text, tts, `${ln.who}: ${ln.text.slice(0, 24)}`); const raw = CLIPS.get(id); CLIPS.delete(id);
+    const r = await processVoice(raw, proc); rendered.push({who: ln.who, r: {L: resampleTo(r.L, r.sr, sr), R: resampleTo(r.R, r.sr, sr), sr}, pause: proc.pauseMs/1000});
+  }
+  let t = 0.3;
+  rendered.forEach((x, i) => { const id = addClip(`${x.who} ${i+1}`, x.r, 'voz'); addClipToMix(id, t, 'Voz · ' + x.who); t += x.r.L.length/sr + x.pause; });
+  toast(`${rendered.length} falas enviadas ao mixer`); showModule('mix');
+}
+MODULE_SHOW.voice = () => { if (!$('vText')) buildVoiceUI(); refreshApiBadges(); };
+
+"use strict";
+/* ======================================================================
+   Vídeo → trilha sonora contextualizada
+   ====================================================================== */
+const VID = {file: null, url: null, dur: 0, frames: [], cuts: [], plan: null};
+const VSTYLES = {
+  'Cinematográfico': {cut:'Whoosh', hit:'Impacto de trailer', flash:'Impacto metálico', move:'Whoosh', music:'Épico cinematográfico'},
+  'Realista / Foley': {cut:'Deslizar', hit:'Soco', flash:'Clique', move:'Tecido / roupa', music:'Ambiente'},
+  'Desenho animado': {cut:'Deslizar', hit:'Item / pop', flash:'Magia', move:'Pulo', music:'Chiptune'},
+  'Jogo': {cut:'Whoosh', hit:'Dano', flash:'Power-up', move:'Laser / blaster', music:'Synthwave'},
+  'Documentário': {cut:'Deslizar', hit:'Batida de suspense', flash:'Notificação', move:'Vento', music:'Ambiente'},
+  'Terror / suspense': {cut:'Whoosh', hit:'Boom grave', flash:'Impacto metálico', move:'Porta rangendo', music:'Suspense'},
+};
+const PRESET_NAMES = PRESET_DEFS.map(d => d[1]);
+function presetByName(n){ return PRESET_DEFS.find(d => d[1] === n) || PRESET_DEFS.find(d => d[1].toLowerCase().includes(String(n).toLowerCase())); }
+
+function buildVideoUI(){
+  $('videoRoot').innerHTML = `
+  <div class="vgrid">
+   <div>
+    <div class="card"><h2>Vídeo</h2>
+      <div class="dropzone" id="vdDrop">Solte um vídeo aqui ou <button class="btn sm" id="vdPick">escolha um arquivo</button></div>
+      <video id="vdVideo" controls playsinline style="width:100%;border-radius:10px;margin-top:8px;display:none;background:#000"></video>
+      <canvas id="vdTl" style="height:70px;margin-top:6px"></canvas>
+      <div class="row" style="margin-top:6px"><button class="btn pri" id="vdWatch">▶ Assistir com a trilha</button><button class="btn sm" id="vdStop">■</button><button class="btn sm" id="vdExport">⬇ Exportar vídeo com áudio (.webm)</button><button class="btn sm" id="vdWav">⬇ Só o áudio (.wav)</button></div>
+      <div class="hint" id="vdInfo">Nenhum vídeo carregado.</div>
+    </div>
+   </div>
+   <div>
+    <div class="card"><h2>Gerar trilha</h2>
+      <div class="ctl"><label>Estilo</label><select id="vdStyle">${Object.keys(VSTYLES).map(k => `<option>${esc(k)}</option>`).join('')}</select></div>
+      <div class="ctl"><label>Densidade de efeitos</label><input type="range" id="vdDensity" min="0" max="1" step="0.01" value="0.5"><span class="v"></span></div>
+      <label class="chk"><input type="checkbox" id="vdAmb" checked> Ambiente contínuo</label>
+      <label class="chk"><input type="checkbox" id="vdMusic" checked> Trilha musical</label>
+      <label class="chk"><input type="checkbox" id="vdOrig" checked> Manter áudio original (faixa silenciada)</label>
+      <label class="chk" data-need="anthropic"><input type="checkbox" id="vdNarr"> Narração escrita pela IA</label>
+      <label class="chk" data-need="eleven"><input type="checkbox" id="vdXiSfx"> Efeitos sob medida gerados por IA (ElevenLabs)</label>
+      <label class="chk"><input type="checkbox" id="vdMaster" checked> Mixar e masterizar automaticamente</label>
+      <div class="row" style="margin-top:8px"><button class="btn grow" id="vdLocal">🔍 Analisar (local)</button><button class="btn grow" id="vdAI" data-need="anthropic">🤖 Entender a cena (Claude)</button></div>
+      <div class="row" style="margin-top:6px"><button class="btn pri grow" id="vdGen">🎼 Gerar trilha no mixer</button></div>
+      <div class="hint">A análise local detecta cortes, movimento, flashes, brilho e cor. A análise com a Claude olha os quadros e entende o que acontece (passos, portas, carros, clima) para escolher sons e escrever narração.</div>
+    </div>
+    <div class="card"><h2>Plano de som <span class="cat" id="vdPlanInfo"></span></h2><div class="list" id="vdEvents" style="max-height:340px"></div></div>
+   </div>
+  </div><input type="file" id="vdFile" accept="video/*" hidden>`;
+  const drop = $('vdDrop');
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('on'); }; drop.ondragleave = () => drop.classList.remove('on');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('on'); const f = e.dataTransfer.files[0]; if (f) loadVideo(f); };
+  $('vdPick').onclick = () => $('vdFile').click();
+  $('vdFile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) loadVideo(f); };
+  const dn = $('vdDensity'); const dv = dn.nextElementSibling; const upd = () => dv.textContent = Math.round(dn.value*100) + '%'; dn.oninput = upd; upd();
+  $('vdLocal').onclick = () => busy('Analisando vídeo…', async () => { await analyzeVideo(); VID.plan = localPlan(); renderPlan(); });
+  $('vdAI').onclick = () => busy('A IA está assistindo ao vídeo…', async () => { if (!VID.frames.length) await analyzeVideo(); VID.plan = await aiPlan(); renderPlan(); });
+  $('vdGen').onclick = () => busy('Gerando trilha…', generateSoundtrack);
+  $('vdWatch').onclick = () => busy('Preparando…', async () => { if (!VID.url) throw new Error('carregue um vídeo'); MIX.playhead = 0; await mixPlay(); });
+  $('vdStop').onclick = () => { mixStop(); };
+  $('vdWav').onclick = () => $('mxExport').click();
+  $('vdExport').onclick = () => busy('Gravando vídeo com áudio (tempo real)…', exportVideo);
+  refreshApiBadges();
+}
+async function loadVideo(f){
+  if (VID.url) URL.revokeObjectURL(VID.url);
+  VID.file = f; VID.url = URL.createObjectURL(f); VID.frames = []; VID.cuts = []; VID.plan = null;
+  const v = $('vdVideo'); v.src = VID.url; v.style.display = ''; v.muted = true;
+  await new Promise((res, rej) => { v.onloadedmetadata = res; v.onerror = () => rej(new Error('formato de vídeo não suportado')); });
+  VID.dur = v.duration; $('vdInfo').textContent = `${f.name} · ${fmtS(VID.dur)} · ${v.videoWidth}×${v.videoHeight}`;
+  renderPlan(); drawVideoTl();
+}
+async function seekTo(v, t){ return new Promise(res => { const done = () => { v.removeEventListener('seeked', done); res(); }; v.addEventListener('seeked', done); v.currentTime = Math.min(t, v.duration - 0.05); }); }
+async function analyzeVideo(){
+  const v = $('vdVideo'); if (!VID.url) throw new Error('carregue um vídeo');
+  const fps = Math.min(4, 360/VID.dur), n = Math.max(2, Math.floor(VID.dur*fps)), cw = 96, ch = 54;
+  const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch; const ctx = cv.getContext('2d', {willReadFrequently: true});
+  const big = document.createElement('canvas'), bctx = big.getContext('2d'); const ar = v.videoWidth/v.videoHeight; big.width = 512; big.height = Math.round(512/ar);
+  let prev = null, prevH = null; VID.frames = [];
+  for (let i=0; i<n; i++){
+    const t = (i + 0.5)/fps; setStatus(`Analisando quadro ${i+1}/${n}…`); await seekTo(v, t);
+    ctx.drawImage(v, 0, 0, cw, ch); const d = ctx.getImageData(0, 0, cw, ch).data;
+    let lum = 0, rs = 0, gs = 0, bs = 0, diff = 0; const hist = new Float32Array(16), cur = new Float32Array(cw*ch);
+    for (let p=0, q=0; p<d.length; p+=4, q++){ const l = 0.2126*d[p] + 0.7152*d[p+1] + 0.0722*d[p+2]; cur[q] = l; lum += l; rs += d[p]; gs += d[p+1]; bs += d[p+2]; hist[Math.min(15, l >> 4)]++; if (prev) diff += Math.abs(l - prev[q]); }
+    const np = cw*ch; let hd = 0; if (prevH) for (let k=0; k<16; k++){ const a = hist[k]/np, b = prevH[k]/np; hd += (a - b)*(a - b)/((a + b) || 1); }
+    const fr = {t, lum: lum/np/255, r: rs/np/255, g: gs/np/255, b: bs/np/255, motion: prev ? diff/np/255 : 0, hd};
+    // quadros para a IA (máx. 20, espaçados)
+    if (n <= 20 || i % Math.ceil(n/20) === 0){ bctx.drawImage(v, 0, 0, big.width, big.height); fr.jpeg = big.toDataURL('image/jpeg', 0.7).split(',')[1]; }
+    VID.frames.push(fr); prev = cur; prevH = hist;
+  }
+  const hds = VID.frames.map(f => f.hd), mu = hds.reduce((a, b) => a + b, 0)/hds.length, sd = Math.sqrt(hds.reduce((a, b) => a + (b - mu)**2, 0)/hds.length);
+  VID.cuts = VID.frames.filter((f, i) => i > 0 && f.hd > Math.max(0.25, mu + 3*sd)).map(f => f.t);
+  try { // áudio original
+    const id = await decodeToClip('Áudio original — ' + VID.file.name, await VID.file.arrayBuffer(), 'original'); VID.origClip = id;
+  } catch(e){ VID.origClip = null; }
+  drawVideoTl(); setStatus('Pronto');
+}
+function localPlan(){
+  const st = VSTYLES[$('vdStyle').value], dens = +$('vdDensity').value, F = VID.frames, ev = [];
+  const mot = F.map(f => f.motion), mMu = mot.reduce((a, b) => a + b, 0)/mot.length, mSd = Math.sqrt(mot.reduce((a, b) => a + (b - mMu)**2, 0)/mot.length) || 0.01;
+  VID.cuts.forEach(t => ev.push({time: Math.max(0, t - 0.25), preset: st.cut, description: 'transição de cena', intensity: 0.6}));
+  let last = -9;
+  F.forEach((f, i) => {
+    if (i < 2) return; const z = (f.motion - mMu)/mSd, prevQuiet = F[i-1].motion < mMu, gap = f.t - last;
+    if (VID.cuts.some(c => Math.abs(c - f.t) < 0.4)) return;
+    if (z > 3.2 - dens*1.4 && prevQuiet && gap > 1.2 - dens*0.7){ ev.push({time: f.t - 0.05, preset: st.hit, description: 'pico de movimento', intensity: clamp(z/5, 0.4, 1)}); last = f.t; }
+    else if (f.lum - F[i-1].lum > 0.18){ ev.push({time: f.t, preset: st.flash, description: 'flash de luz', intensity: 0.7}); last = f.t; }
+    else if (z > 1.8 - dens && gap > 2.5 - dens*1.5){ ev.push({time: f.t, preset: st.move, description: 'movimento', intensity: 0.45}); last = f.t; }
+  });
+  const avg = k => F.reduce((a, f) => a + f[k], 0)/F.length, lum = avg('lum'), r = avg('r'), g = avg('g'), b = avg('b');
+  const amb = lum < 0.25 ? 'Drone de tensão' : b > r && b > g && lum > 0.45 ? 'Ondas do mar' : g > r && g > b ? 'Vento' : r > b + 0.08 && lum < 0.5 ? 'Fogo crepitando' : 'Vento';
+  const energy = clamp(mMu*12, 0, 1);
+  return {summary: `Análise local: ${VID.cuts.length} cortes, movimento médio ${(mMu*100).toFixed(1)}%, brilho ${(lum*100).toFixed(0)}%.`,
+    ambience: {preset: amb, description: 'escolhido pela cor e brilho'}, music: {genre: st.music, tempo: Math.round(80 + energy*60), intensity: 0.3 + energy*0.6},
+    narration: {enabled: false, text: ''}, events: ev.sort((a, b) => a.time - b.time)};
+}
+async function aiPlan(){
+  const frames = VID.frames.filter(f => f.jpeg);
+  const content = [];
+  frames.forEach(f => { content.push({type:'text', text:`Quadro em t=${f.t.toFixed(2)}s`}); content.push({type:'image', source:{type:'base64', media_type:'image/jpeg', data: f.jpeg}}); });
+  content.push({type:'text', text:
+`Você está assistindo a um vídeo de ${VID.dur.toFixed(1)} s (quadros acima, com tempos). Cortes detectados automaticamente: ${VID.cuts.map(t => t.toFixed(2)).join(', ') || 'nenhum'}.
+Estilo pedido: ${$('vdStyle').value}. Densidade de efeitos: ${Math.round($('vdDensity').value*100)}%.
+Crie o plano de sound design: efeitos pontuais sincronizados com as ações visíveis (impactos, passos, portas, objetos, transições), um ambiente contínuo coerente com o lugar, a trilha musical e, se fizer sentido, uma narração curta em português do Brasil que caiba no tempo do vídeo.
+Para cada efeito, escolha o preset mais próximo da lista e escreva uma descrição em inglês precisa o bastante para gerar o som por IA.`});
+  const schema = {type:'object', additionalProperties:false, required:['summary','ambience','music','narration','events'], properties:{
+    summary:{type:'string'},
+    ambience:{type:'object', additionalProperties:false, required:['preset','description'], properties:{preset:{type:'string', enum: PRESET_NAMES}, description:{type:'string'}}},
+    music:{type:'object', additionalProperties:false, required:['genre','tempo','intensity'], properties:{genre:{type:'string', enum: Object.keys(GENRES)}, tempo:{type:'number'}, intensity:{type:'number'}}},
+    narration:{type:'object', additionalProperties:false, required:['enabled','text'], properties:{enabled:{type:'boolean'}, text:{type:'string'}}},
+    events:{type:'array', items:{type:'object', additionalProperties:false, required:['time','preset','description','intensity'], properties:{
+      time:{type:'number'}, preset:{type:'string', enum: PRESET_NAMES}, description:{type:'string'}, intensity:{type:'number'}}}}}};
+  return claudeJSON(content, schema, 'Você é um sound designer de cinema e jogos. Seja preciso nos tempos (em segundos, a partir do início). Retorne só o JSON pedido.');
+}
+function renderPlan(){
+  const box = $('vdEvents'); if (!box) return; box.innerHTML = ''; const p = VID.plan;
+  if (!p){ box.innerHTML = '<div class="empty">Analise o vídeo para criar o plano de som.</div>'; $('vdPlanInfo').textContent = ''; return; }
+  $('vdPlanInfo').textContent = `${p.events.length} efeitos`;
+  box.appendChild(el('div', 'hint', `${esc(p.summary)}<br>Ambiente: <b>${esc(p.ambience.preset)}</b> · Música: <b>${esc(p.music.genre)}</b> ${Math.round(p.music.tempo)} BPM${p.narration.enabled ? ' · Narração: “' + esc(p.narration.text.slice(0, 80)) + '…”' : ''}`));
+  p.events.forEach((e, i) => {
+    const it = el('div', 'item', `<span class="cat">${e.time.toFixed(2)}s</span><span class="nm" title="${esc(e.description)}">${esc(e.preset)} — ${esc(e.description)}</span><button title="Ouvir">▶</button><button title="Remover">✕</button>`);
+    const [bp, bx] = it.querySelectorAll('button');
+    bp.onclick = () => busy('Renderizando…', async () => { const d = presetByName(e.preset); if (!d) return; const r = await renderSound(buildPreset(d), 48000); previewPCM(r.L, r.R, r.sr); });
+    bx.onclick = () => { p.events.splice(i, 1); renderPlan(); drawVideoTl(); };
+    it.onclick = ev => { if (ev.target.tagName !== 'BUTTON'){ const v = $('vdVideo'); v.currentTime = e.time; } };
+    box.appendChild(it);
+  });
+  drawVideoTl();
+}
+function drawVideoTl(){
+  const cv = $('vdTl'); if (!cv) return; const {ctx, w, h, dpr} = fit(cv); ctx.clearRect(0, 0, w, h); if (!VID.dur) return;
+  const X = t => t/VID.dur*w;
+  VID.frames.forEach((f, i) => { const x = X(f.t), nx = i+1 < VID.frames.length ? X(VID.frames[i+1].t) : w; ctx.fillStyle = `rgb(${f.r*255|0},${f.g*255|0},${f.b*255|0})`; ctx.fillRect(x, 0, nx - x + 1, h*0.4);
+    ctx.fillStyle = cssv('--wave'); const mh = Math.min(1, f.motion*8)*h*0.35; ctx.fillRect(x, h*0.95 - mh, Math.max(1, nx - x - 1), mh); });
+  ctx.fillStyle = cssv('--hot'); VID.cuts.forEach(t => ctx.fillRect(X(t) - dpr, 0, 2*dpr, h));
+  if (VID.plan){ ctx.fillStyle = cssv('--accent2'); VID.plan.events.forEach(e => { ctx.beginPath(); ctx.arc(X(e.time), h*0.5, 3*dpr, 0, TAU); ctx.fill(); }); }
+}
+function tileAmbience(r, dur){
+  const sr = r.sr, N = Math.ceil(dur*sr), L = new Float32Array(N), R = new Float32Array(N), len = r.L.length, xf = Math.min(Math.floor(len/4), Math.round(1.5*sr));
+  if (len < sr) return {L: r.L, R: r.R, sr};
+  const step = len - xf;
+  for (let s=0; s<N; s+=step) for (let i=0; i<len && s+i<N; i++){ let g = 1; if (i < xf && s > 0) g = Math.sin(i/xf*Math.PI/2); if (i > len - xf) g = Math.cos((i - (len - xf))/xf*Math.PI/2); L[s+i] += r.L[i]*g; R[s+i] += r.R[i]*g; }
+  const fo = Math.min(N, Math.round(2*sr)); for (let i=0; i<fo; i++){ const g = i/fo; L[N-1-i] *= g; R[N-1-i] *= g; }
+  return {L, R, sr};
+}
+async function generateSoundtrack(){
+  if (!VID.url) throw new Error('carregue um vídeo'); if (!VID.plan){ await analyzeVideo(); VID.plan = localPlan(); renderPlan(); }
+  const p = VID.plan, sr = 48000, useXi = $('vdXiSfx').checked && apiKeys.eleven;
+  MIX.tracks = []; mixDirty();
+  if ($('vdOrig').checked && VID.origClip){ addClipToMix(VID.origClip, 0, 'Áudio original'); const t = MIX.tracks.find(x => x.name === 'Áudio original'); t.mute = true; t.role = 'ambiente'; }
+  for (let i=0; i<p.events.length; i++){
+    const e = p.events[i]; setStatus(`Efeito ${i+1}/${p.events.length}…`); let id = null;
+    if (useXi){ try { id = await xiAudio('/v1/sound-generation', {json: {text: e.description, duration_seconds: 2.5, prompt_influence: 0.45}}, e.description.slice(0, 40), 'sfx'); } catch(err){ console.warn(err); } }
+    if (!id){ const d = presetByName(e.preset); if (!d) continue; const r = await renderSound(varySound(buildPreset(d), 0.35), sr); id = addClip(`${e.preset} @${e.time.toFixed(1)}s`, r, 'sfx'); }
+    const d = presetByName(e.preset), cat = d ? d[0] : 'SFX';
+    addClipToMix(id, Math.max(0, e.time), cat === 'Foley' ? 'Foley' : cat === 'Interface' ? 'Interface' : 'Efeitos');
+    const t = MIX.tracks[MIX.tracks.length-1]; const k = t.clips[t.clips.length-1]; k.gain = -14*(1 - clamp(e.intensity, 0, 1));
+  }
+  if ($('vdAmb').checked && p.ambience?.preset){ setStatus('Ambiente…'); const d = presetByName(p.ambience.preset); if (d){ const r = await renderSound(buildPreset(d), sr); const id = addClip('Ambiente — ' + d[1], tileAmbience(r, VID.dur), 'ambiente'); addClipToMix(id, 0, 'Ambiente'); MIX.tracks.find(t => t.name === 'Ambiente').role = 'ambiente'; } }
+  if ($('vdMusic').checked && p.music){ setStatus('Compondo música…'); const m = composeMusic({genre: p.music.genre, bpm: clamp(p.music.tempo, 60, 180), duration: VID.dur, intensity: p.music.intensity, seed: hashStr(VID.file.name)});
+    const r = await renderComposition(m); const id = addClip(`Música — ${p.music.genre}`, r, 'música'); addClipToMix(id, 0, 'Música'); MIX.tracks.find(t => t.name === 'Música').role = 'música'; }
+  if ($('vdNarr').checked && apiKeys.eleven){
+    let text = p.narration?.enabled ? p.narration.text : '';
+    if (!text && apiKeys.anthropic) text = (await claudeText(`Escreva uma narração curta em português do Brasil (no máximo ${Math.round(VID.dur*2.3)} palavras) para um vídeo assim: ${p.summary}. Responda só com o texto.`)).trim();
+    if (text){ setStatus('Narração…'); const id = await ttsEleven(text, VS.tts, 'Narração'); const r = await processVoice(CLIPS.get(id), VS.proc); const nid = addClip('Narração', r, 'voz'); addClipToMix(nid, 0.5, 'Voz · Narração'); }
+  }
+  if ($('vdMaster').checked){ setStatus('Mixando e masterizando…'); await mixAssistant(); MIX.master.dest = 'YouTube (−14 LUFS)'; mixRendered = await renderMix(); masterAssistant(mixRendered); mixMastered = await applyMastering(mixRendered); }
+  MIX.playhead = 0; toast('Trilha gerada! Clique em “Assistir com a trilha”.');
+}
+// sincroniza o vídeo com a reprodução do mixer
+function onMixPlay(off){ const v = $('vdVideo'); if (!v || !VID.url) return; v.muted = true; v.currentTime = Math.min(off, v.duration || 0); v.play().catch(() => {}); }
+function onMixStop(){ const v = $('vdVideo'); if (v && !v.paused) v.pause(); }
+async function exportVideo(){
+  if (!VID.url) throw new Error('carregue um vídeo'); await ensureMixRendered();
+  const v = $('vdVideo'), r = MIX.masterOn ? mixMastered : mixRendered, c = ensureAC();
+  const vs = v.captureStream ? v.captureStream() : v.mozCaptureStream(); const dest = c.createMediaStreamDestination();
+  const b = c.createBuffer(2, r.L.length, r.sr); b.copyToChannel(r.L, 0); b.copyToChannel(r.R, 1); const s = c.createBufferSource(); s.buffer = b; s.connect(dest);
+  const stream = new MediaStream([...vs.getVideoTracks(), ...dest.stream.getAudioTracks()]);
+  const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+  const rec = new MediaRecorder(stream, {mimeType: mime, videoBitsPerSecond: 8e6}), chunks = []; rec.ondataavailable = e => chunks.push(e.data);
+  await seekTo(v, 0); v.muted = true;
+  const done = new Promise(res => rec.onstop = res);
+  rec.start(); s.start(); await v.play();
+  await new Promise(res => v.onended = res); rec.stop(); try { s.stop(); } catch(e){} await done;
+  download(new Blob(chunks, {type: 'video/webm'}), slug(VID.file.name.replace(/\.[^.]+$/, '')) + '-nexi.webm'); toast('Vídeo exportado');
+}
+MODULE_SHOW.video = () => { if (!$('vdDrop')) buildVideoUI(); renderPlan(); refreshApiBadges(); };
+
+"use strict";
+/* ======================================================================
+   Compositor procedural + registro de instrumentos
+   ====================================================================== */
+const MUS_SR = 48000;
+// ---- instrumentos (sintetizados pelo motor do SFX) ----
+const INSTR_DEFS = {
+  'Bumbo': {preset:'Bumbo', drum:true}, 'Caixa': {preset:'Caixa', drum:true}, 'Chimbal': {preset:'Chimbal', drum:true},
+  'Chimbal aberto': {layers:[Ly('noise',{color:'branco'},{env:ONE(0.32,0.4),filter:{type:'hp',freq:7000}}), Ly('fm',{freq:800,r2:1.4471,i2:6,r3:2.3,i3:3},{vol:-6,env:ONE(0.3,0.4),filter:{type:'hp',freq:6000}})], drum:true},
+  'Palmas': {layers:[0,0.012,0.024].map((s, i) => Ly('noise',{color:'branco'},{start:s,vol:i===2?0:-3,env:ONE(i===2?0.16:0.02,0.25),filter:{type:'bp',freq:1300,q:1.2}})), drum:true},
+  'Tambor épico': {layers:[Ly('modal',{material:'pele',freq:70,decay:1.2,hardness:0.5,noise:0.4},{env:PHY(1.6)}), Ly('analog',{wave:'sine',freq:45,drift:0},{env:ONE(1.2,1.5),pitchEnv:{amt:10,time:0.05},drive:0.3})], drum:true},
+  'Prato': {layers:[Ly('noise',{color:'branco',stereo:1},{env:ONE(1.8,2),filter:{type:'hp',freq:5000}}), Ly('fm',{freq:420,r2:1.4471,i2:8,r3:2.73,i3:4,idxDecay:1.5,stereo:15},{vol:-8,env:ONE(1.6,2),filter:{type:'hp',freq:3000}})], drum:true},
+  'Baixo sintetizado': {preset:'Baixo sintetizado', root:36},
+  'Baixo 808': {layers:[Ly('analog',{wave:'sine',freq:NOTE(36),drift:0},{env:env(0.002,1.4,0,1.6,0.1),pitchEnv:{amt:12,time:0.03},drive:0.35})], root:36},
+  'Baixo 8-bit': {layers:[Ly('analog',{wave:'tri',freq:NOTE(36),drift:0},{env:env(0.001,1,1,0.8,0.03)})], root:36},
+  'Piano elétrico': {layers:[Ly('fm',{freq:NOTE(60),r2:1,i2:1.6,idxDecay:0.8,idxSus:0.1,stereo:6},{env:env(0.002,2.2,0,2.4,0.3)}), Ly('analog',{wave:'tri',freq:NOTE(60),drift:0.1},{vol:-10,env:env(0.002,1.6,0,2,0.3)})], root:60},
+  'Cordas': {layers:[Ly('analog',{wave:'saw',freq:NOTE(60),voices:7,detune:16,spread:1,drift:0.3},{filter:{type:'lp',freq:2400},env:env(0.25,1,1,3,0.9,0.4),mod:{vibDepth:0.08,vibRate:5}})], root:60, sustain:true},
+  'Pad atmosférico': {preset:'Pad atmosférico', root:60, sustain:true, dry:true},
+  'Lead serra': {layers:[Ly('analog',{wave:'saw',freq:NOTE(60),voices:3,detune:9,spread:0.5},{filter:{type:'lp',freq:3200,q:1.5,env:1,envTime:0.2},env:env(0.008,0.5,0.6,1.5,0.2),mod:{vibDepth:0.12,vibRate:5.5}})], root:60, sustain:true},
+  'Lead 8-bit': {layers:[Ly('analog',{wave:'pulse',freq:NOTE(60),pw:0.25,drift:0},{env:env(0.001,0.3,0.7,1.2,0.05)})], root:60, sustain:true},
+  'Arpejo pluck': {layers:[Ly('analog',{wave:'saw',freq:NOTE(60),voices:2,detune:7},{filter:{type:'lp',freq:900,env:3,envTime:0.12},env:ONE(0.35,0.5)})], root:60},
+  'Corda dedilhada': {preset:'Corda dedilhada', root:60, dry:true}, 'Pizzicato': {layers:[Ly('string',{freq:NOTE(60),decay:0.6,bright:0.45,pick:0.2,stereo:3},{env:PHY(0.8)})], root:60},
+  'Sino': {preset:'Sino tubular', root:60, dry:true}, 'Xilofone': {preset:'Xilofone de madeira', root:60, dry:true},
+};
+const INSTR_REG = new Map(); // nome -> {render(midi, vel, dur, sr) -> {L,R}}
+const instrCache = new Map();
+async function instrSample(name){
+  if (instrCache.has(name)) return instrCache.get(name);
+  const d = INSTR_DEFS[name]; let snd;
+  if (d.preset){ snd = buildPreset(presetByName(d.preset)); } else snd = {name, layers: JSON.parse(JSON.stringify(d.layers)).map((l, i) => (l.seed = hashStr(name + i), l)), master: defaultMaster()};
+  Object.assign(snd.master, {revMix: 0, dlyMix: 0, norm: 'peak', ceiling: -1});
+  const r = await renderSound(snd, MUS_SR); instrCache.set(name, r); return r;
+}
+Object.keys(INSTR_DEFS).forEach(name => INSTR_REG.set(name, {
+  drum: !!INSTR_DEFS[name].drum,
+  async render(midi, vel, dur, sr){
+    const d = INSTR_DEFS[name], s = await instrSample(name), f = d.drum ? 1 : Math.pow(2, (midi - (d.root || 60))/12);
+    let L = f === 1 ? s.L : stretchResample(s.L, f), R = f === 1 ? s.R : stretchResample(s.R, f);
+    if (d.sustain && dur){ const n = Math.min(L.length, Math.round((dur + 0.25)*sr)), fo = Math.round(0.25*sr); L = L.slice(0, n); R = R.slice(0, n); for (let i=0; i<fo && i<n; i++){ const g = i/fo; L[n-1-i] *= g; R[n-1-i] *= g; } }
+    return {L, R, gain: vel};
+  }}));
+
+// ---- gêneros ----
+const SCALES = {major:[0,2,4,5,7,9,11], minor:[0,2,3,5,7,8,10], dorian:[0,2,3,5,7,9,10], harmMinor:[0,2,3,5,7,8,11]};
+const GENRES = {
+  'Épico cinematográfico': {bpm:[80,100], scale:'minor', prog:[[0,5,2,6],[0,3,5,4],[0,5,3,4]], drums:{'Tambor épico':'x.......x.x.....', 'Caixa':'....x.......x...', 'Prato':'x...............'}, bass:'Baixo sintetizado', bassPat:'x.......x.......', chords:'Cordas', lead:'Sino', arp:null, swing:0, leadDensity:0.35, oct:5},
+  'Lo-fi': {bpm:[72,88], scale:'dorian', prog:[[1,4,0,5],[0,5,3,4],[3,4,2,5]], drums:{'Bumbo':'x.....x...x.....', 'Caixa':'....x.......x...', 'Chimbal':'x.x.x.x.x.x.x.x.'}, bass:'Baixo sintetizado', bassPat:'x.....x...x.....', chords:'Piano elétrico', lead:'Xilofone', arp:null, swing:0.22, leadDensity:0.4, oct:5, seventh:true, lofi:true},
+  'Synthwave': {bpm:[96,112], scale:'minor', prog:[[0,5,2,6],[5,6,0,0],[0,3,5,6]], drums:{'Bumbo':'x...x...x...x...', 'Caixa':'....x.......x...', 'Chimbal':'..x...x...x...x.'}, bass:'Baixo sintetizado', bassPat:'x.x.x.x.x.x.x.x.', chords:'Pad atmosférico', lead:'Lead serra', arp:'Arpejo pluck', swing:0, leadDensity:0.45, oct:5},
+  'Ambiente': {bpm:[60,76], scale:'major', prog:[[0,3,5,4],[0,4,5,3]], drums:{}, bass:null, chords:'Pad atmosférico', lead:'Sino', arp:'Corda dedilhada', swing:0, leadDensity:0.15, oct:5, slowArp:true},
+  'Trap': {bpm:[130,150], scale:'harmMinor', prog:[[0,5,6,4],[0,0,5,6]], drums:{'Baixo 808':'x.......x..x....', 'Palmas':'........x.......', 'Chimbal':'xxxxxxxxxxxxxxxx'}, bass:null, chords:'Pad atmosférico', lead:'Sino', arp:null, swing:0, leadDensity:0.3, oct:5, halfTime:true},
+  'Pop': {bpm:[100,120], scale:'major', prog:[[0,4,5,3],[5,3,0,4],[0,5,3,4]], drums:{'Bumbo':'x...x...x...x...', 'Palmas':'....x.......x...', 'Chimbal':'x.x.x.x.x.x.x.x.'}, bass:'Baixo sintetizado', bassPat:'x..x..x.x..x..x.', chords:'Piano elétrico', lead:'Lead serra', arp:'Arpejo pluck', swing:0, leadDensity:0.5, oct:5},
+  'Chiptune': {bpm:[120,145], scale:'major', prog:[[0,5,3,4],[0,3,4,4]], drums:{'Bumbo':'x.......x.......', 'Caixa':'....x.......x...', 'Chimbal':'x.x.x.x.x.x.x.x.'}, bass:'Baixo 8-bit', bassPat:'x.x.x.x.x.x.x.x.', chords:null, lead:'Lead 8-bit', arp:'Lead 8-bit', swing:0, leadDensity:0.6, oct:5, chip:true},
+  'Suspense': {bpm:[60,72], scale:'harmMinor', prog:[[0,0,5,4],[0,1,0,4]], drums:{'Tambor épico':'x.........x.....'}, bass:'Baixo sintetizado', bassPat:'x...............', chords:'Cordas', lead:'Piano elétrico', arp:null, swing:0, leadDensity:0.18, oct:4},
+  'Orquestral leve': {bpm:[84,100], scale:'major', prog:[[0,3,4,0],[0,5,3,4]], drums:{'Tambor épico':'x.......x.......'}, bass:'Pizzicato', bassPat:'x...x...x...x...', chords:'Cordas', lead:'Sino', arp:'Pizzicato', swing:0, leadDensity:0.35, oct:5},
+};
+
+function composeMusic(o){
+  const g = GENRES[o.genre] || GENRES['Pop'], rnd = mulberry32(o.seed ?? ((Math.random()*1e9)|0));
+  const bpm = o.bpm || Math.round(g.bpm[0] + rnd()*(g.bpm[1]-g.bpm[0])), beat = 60/bpm, bar = beat*4, step = bar/16;
+  const root = o.key ?? Math.floor(rnd()*12), scale = SCALES[g.scale];
+  const bars = Math.max(4, Math.round((o.duration || 30)/bar)), prog = g.prog[Math.floor(rnd()*g.prog.length)];
+  const intensity = o.intensity ?? 0.6, notes = []; // {instr, midi, t, dur, vel, stem}
+  const deg = (d, oct) => { const n = scale.length, o2 = Math.floor(d/n); return 12*(oct + 1 + o2) + root + scale[((d % n) + n) % n]; };
+  const chordOf = d => [deg(d, 4), deg(d+2, 4), deg(d+4, 4)].concat(g.seventh ? [deg(d+6, 4)] : []);
+  const intro = Math.min(2, Math.floor(bars/4)), outro = Math.min(2, Math.floor(bars/5)), bSec = Math.floor(bars/2);
+  // motivo melódico de 2 compassos
+  const motif = []; let cur = 4 + Math.floor(rnd()*3);
+  for (let s=0; s<32; s++){ if (rnd() < g.leadDensity*(s % 4 === 0 ? 1.6 : 0.7)){ cur += [-2,-1,-1,0,1,1,2,3,-3][Math.floor(rnd()*9)]; cur = clamp(cur, 0, 11); const len = [2,2,4,4,6,8][Math.floor(rnd()*6)]; motif.push({s, d: cur, len}); } }
+  for (let b=0; b<bars; b++){
+    const t0 = b*bar, ch = prog[b % prog.length], isIntro = b < intro, isOutro = b >= bars - outro, isB = b >= bSec && !isOutro;
+    const energy = isIntro ? 0.35 : isOutro ? 0.4 : isB ? Math.min(1, intensity + 0.2) : intensity;
+    if (g.chords) chordOf(ch).forEach(m => notes.push({instr: o.inst?.chords || g.chords, midi: m, t: t0, dur: bar*0.98, vel: 0.5*(0.7 + energy*0.3), stem: 'Harmonia'}));
+    if (g.bass && !isIntro){ const pat = g.bassPat; for (let s=0; s<16; s++) if (pat[s] === 'x') notes.push({instr: o.inst?.bass || g.bass, midi: deg(ch, 2) + (pat === 'x.x.x.x.x.x.x.x.' && s % 4 === 2 && g.chip ? 12 : 0), t: t0 + s*step, dur: step*2, vel: 0.75 + 0.15*rnd(), stem: 'Baixo'}); }
+    if (energy > 0.3 && !isIntro || g.drums['Tambor épico']) Object.entries(g.drums).forEach(([inst, pat]) => {
+      if (isIntro && !/Tambor|Chimbal/.test(inst)) return; if (isOutro && inst !== 'Prato' && b === bars-1) return;
+      for (let s=0; s<16; s++){ if (pat[s] !== 'x') continue; if (inst === 'Chimbal' && energy < 0.5 && s % 2) continue; if (inst === 'Prato' && b % 4) continue;
+        const sw = (s % 2 && g.swing) ? g.swing*step : 0; notes.push({instr: inst, midi: 60, t: t0 + s*step + sw + (rnd()-0.5)*0.006, dur: step, vel: (s % 4 === 0 ? 0.95 : 0.7) * (0.85 + 0.15*rnd()), stem: 'Bateria'}); }
+      if (g.halfTime && inst === 'Chimbal' && energy > 0.6 && b % 2) for (let k=0; k<3; k++) notes.push({instr: inst, midi: 60, t: t0 + 14*step + k*step*2/3, dur: step, vel: 0.5, stem: 'Bateria'});
+    });
+    const arpI = o.inst?.arp || g.arp;
+    if (arpI && !isOutro && (energy > 0.45 || g.slowArp)){ const tones = chordOf(ch), every = g.slowArp ? 4 : 2; for (let s=0; s<16; s+=every) notes.push({instr: arpI, midi: tones[(s/every) % tones.length] + 12, t: t0 + s*step, dur: step*every, vel: 0.45, stem: 'Arpejo'}); }
+    if (g.lead && !isIntro && !isOutro){ const half = b % 2, varied = isB && rnd() < 0.5;
+      motif.filter(m => Math.floor(m.s/16) === half).forEach(m => { const d = m.d + (varied ? [0,2,-2][Math.floor(rnd()*3)] : 0) + (isB ? 2 : 0);
+        notes.push({instr: o.inst?.lead || g.lead, midi: deg(ch + d, g.oct) - 12*(d > 7 ? 1 : 0), t: t0 + (m.s % 16)*step, dur: m.len*step, vel: 0.6 + 0.2*energy, stem: 'Melodia'}); }); }
+  }
+  return {genre: o.genre, bpm, root, scaleName: g.scale, bars, duration: bars*bar, notes, lofi: !!g.lofi, chip: !!g.chip};
+}
+async function renderComposition(m, opts = {}){
+  const sr = MUS_SR, N = Math.ceil((m.duration + 4)*sr), stems = {};
+  for (const n of m.notes){
+    const inst = INSTR_REG.get(n.instr); if (!inst) continue;
+    const st = stems[n.stem] || (stems[n.stem] = {L: new Float32Array(N), R: new Float32Array(N)});
+    const r = await inst.render(n.midi, n.vel, n.dur, sr), off = Math.round(n.t*sr), g = r.gain ?? n.vel;
+    for (let i=0; i<r.L.length && off+i<N; i++){ st.L[off+i] += r.L[i]*g; st.R[off+i] += r.R[i]*g; }
+  }
+  const proc = {'Bateria': {ratio:3, thr:-18, revType:'Sala', revMix:0.08}, 'Baixo': {hp:30, lp:5000, ratio:3, thr:-20}, 'Harmonia': {hp:150, revType:'Hall', revMix:0.3, width:1.2},
+    'Arpejo': {hp:200, dlyMix:0.25, dlyTime: 60/m.bpm*0.75, dlyFb:0.35, revType:'Hall', revMix:0.2}, 'Melodia': {hp:150, revType:'Hall', revMix:0.22, dlyMix:0.12, dlyTime: 60/m.bpm/2}};
+  const vol = {'Bateria': -3, 'Baixo': -4, 'Harmonia': -9, 'Arpejo': -12, 'Melodia': -7};
+  const out = {};
+  for (const [k, s] of Object.entries(stems)){ const r = await fxChain(s.L, s.R, sr, {...(proc[k] || {}), ...(proc[k]?.revType ? REV_TYPES[proc[k].revType] : {}), revMix: proc[k]?.revMix || 0}); const g = dbToGain(vol[k] ?? -6); for (let i=0; i<r.L.length; i++){ r.L[i] *= g; r.R[i] *= g; } out[k] = r; }
+  if (opts.stems) return out;
+  let len = 0; Object.values(out).forEach(r => len = Math.max(len, r.L.length));
+  const L = new Float32Array(len), R = new Float32Array(len); Object.values(out).forEach(r => { for (let i=0; i<r.L.length; i++){ L[i] += r.L[i]; R[i] += r.R[i]; } });
+  let mix = {L, R, sr};
+  if (m.lofi){ mix = await fxChain(L, R, sr, {lp: 6500, drive: 0.25, satType: 'Fita', bits: 0}); const rn = mulberry32(9); for (let i=0; i<mix.L.length; i++){ const c = rn() < 0.0004 ? (rn()-0.5)*0.15 : 0, n = (rn()-0.5)*0.004; mix.L[i] += c + n; mix.R[i] += c + n; } }
+  // fade final
+  const fo = Math.min(mix.L.length, Math.round(3*sr)), end = Math.min(mix.L.length, Math.round((m.duration + 2.5)*sr));
+  for (let i=0; i<fo; i++){ const j = end - fo + i; if (j < 0) continue; const gg = 1 - i/fo; mix.L[j] *= gg; mix.R[j] *= gg; }
+  mix.L = mix.L.subarray(0, end); mix.R = mix.R.subarray(0, end);
+  return normalizeLUFS(mix, -16, -1);
+}
+
+/* ---------------- UI ---------------- */
+const MUS = {genre: 'Synthwave', bpm: 0, duration: 30, intensity: 0.6, seed: 1, key: -1, inst: {}, last: null, lastMix: null};
+function buildMusicUI(){
+  const instOpts = sel => `<option value="">padrão do gênero</option>` + [...INSTR_REG.keys()].filter(k => !INSTR_REG.get(k).drum).map(k => `<option ${sel === k ? 'selected' : ''}>${esc(k)}</option>`).join('');
+  $('musicRoot').innerHTML = `
+  <div class="vgrid">
+   <div class="card"><h2>Compositor</h2>
+     <div class="ctl"><label>Gênero</label><select id="muGenre">${Object.keys(GENRES).map(k => `<option ${k === MUS.genre ? 'selected' : ''}>${esc(k)}</option>`).join('')}</select></div>
+     <div class="ctl"><label>Tonalidade</label><select id="muKey"><option value="-1">automática</option>${NOTE_NAMES.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>
+     <div id="muCtl"></div>
+     ${['chords:Harmonia','bass:Baixo','lead:Melodia','arp:Arpejo'].map(x => { const [k, l] = x.split(':'); return `<div class="ctl"><label>${l}</label><select data-inst="${k}">${instOpts(MUS.inst[k])}</select></div>`; }).join('')}
+     <div class="row" style="margin-top:8px"><button class="btn pri grow" id="muGo">🎼 Compor</button><button class="btn grow" id="muNew">🎲 Nova ideia</button></div>
+     <div class="row" style="margin-top:6px"><button class="btn sm grow" id="muPlay">▶ Ouvir</button><button class="btn sm grow" id="muStop">■</button><button class="btn sm grow" id="muMix">→ Mixer (stems)</button><button class="btn sm grow" id="muWav">⬇ WAV</button></div>
+     <div class="hint" id="muInfo">Instrumental gerado por regras de composição (harmonia, motivos, groove) e tocado pelos sintetizadores do NEXI e pelos seus instrumentos.</div>
+   </div>
+   <div>
+     <div class="card"><h2>Partitura (piano roll)</h2><canvas id="muRoll" style="height:260px"></canvas></div>
+     <div class="card" data-need="eleven"><h2>Música com IA (com vocais) <span class="badge">ElevenLabs</span></h2>
+       <textarea id="muPrompt" rows="3" placeholder="Ex.: pop brasileiro animado com voz feminina, sobre um bichinho virtual curioso, refrão grudento"></textarea>
+       <div class="row" style="margin-top:6px"><input type="number" id="muAiLen" value="30" min="10" max="300" style="width:80px"> segundos <button class="btn pri grow" id="muAi">✨ Gerar música</button></div>
+       <div class="hint">Gera faixas completas com vocais pela API de música da ElevenLabs (recurso pago da sua conta).</div>
+     </div>
+   </div>
+  </div>`;
+  const box = $('muCtl');
+  [P('bpm','Andamento (0 = auto)',0,180,0,'int','bpm'), P('duration','Duração',8,300,30,'sq','s'), P('intensity','Energia',0,1,0.6,'lin','%')].forEach(d => box.appendChild(control(d, MUS, () => {}, () => {})));
+  $('muGenre').onchange = () => MUS.genre = $('muGenre').value; $('muKey').value = MUS.key; $('muKey').onchange = () => MUS.key = +$('muKey').value;
+  document.querySelectorAll('[data-inst]').forEach(s => s.onchange = () => { MUS.inst[s.dataset.inst] = s.value || undefined; });
+  $('muGo').onclick = () => busy('Compondo…', () => composeAndRender(false));
+  $('muNew').onclick = () => busy('Compondo…', () => composeAndRender(true));
+  $('muPlay').onclick = () => { if (MUS.lastMix) previewPCM(MUS.lastMix.L, MUS.lastMix.R, MUS.lastMix.sr); };
+  $('muStop').onclick = stopPreview;
+  $('muWav').onclick = () => { if (MUS.lastMix) download(new Blob([encodeWav(MUS.lastMix, 24, false)], {type:'audio/wav'}), slug(MUS.genre) + '.wav'); };
+  $('muMix').onclick = () => busy('Renderizando stems…', async () => { if (!MUS.last) throw new Error('componha primeiro'); const st = await renderComposition(MUS.last, {stems: true});
+    Object.entries(st).forEach(([k, r]) => { const id = addClip(`${MUS.genre} — ${k}`, r, 'música'); addClipToMix(id, 0, 'Música · ' + k); MIX.tracks.find(t => t.name === 'Música · ' + k).role = 'música'; });
+    toast('Stems enviados ao mixer'); showModule('mix'); });
+  $('muAi').onclick = () => busy('Gerando música com IA…', async () => { const p = $('muPrompt').value.trim(); if (!p) throw new Error('descreva a música');
+    const id = await xiAudio('/v1/music', {json: {prompt: p, music_length_ms: clamp(+$('muAiLen').value, 10, 300)*1000}}, 'Música IA — ' + p.slice(0, 30), 'música'); const c = CLIPS.get(id); MUS.lastMix = {L: c.L, R: c.R, sr: c.sr}; previewPCM(c.L, c.R, c.sr); toast('Música adicionada ao banco do mixer'); });
+  drawRoll(); refreshApiBadges();
+}
+async function composeAndRender(newSeed){
+  if (newSeed || !MUS.last) MUS.seed = (Math.random()*1e9)|0;
+  MUS.last = composeMusic({genre: MUS.genre, bpm: MUS.bpm || 0, duration: MUS.duration, intensity: MUS.intensity, seed: MUS.seed, key: MUS.key >= 0 ? MUS.key : undefined, inst: MUS.inst});
+  MUS.lastMix = await renderComposition(MUS.last);
+  $('muInfo').textContent = `${MUS.genre} · ${NOTE_NAMES[MUS.last.root]} ${({major:'maior',minor:'menor',dorian:'dórico',harmMinor:'menor harmônico'})[MUS.last.scaleName]} · ${MUS.last.bpm} BPM · ${MUS.last.bars} compassos · ${MUS.last.notes.length} notas`;
+  drawRoll(); previewPCM(MUS.lastMix.L, MUS.lastMix.R, MUS.lastMix.sr);
+}
+function drawRoll(){
+  const cv = $('muRoll'); if (!cv) return; const {ctx, w, h} = fit(cv); ctx.clearRect(0, 0, w, h); const m = MUS.last; if (!m) return;
+  const cols = {'Bateria':'#ef7d5a','Baixo':'#8fb8d9','Harmonia':'#7a6aa8','Arpejo':'#c9dc86','Melodia':'#f2cf62'};
+  const pitched = m.notes.filter(n => n.stem !== 'Bateria'), lo = Math.min(...pitched.map(n => n.midi), 36) - 1, hi = Math.max(...pitched.map(n => n.midi), 84) + 1;
+  const X = t => t/m.duration*w, Y = p => h*0.82 - (p - lo)/(hi - lo)*h*0.8;
+  ctx.strokeStyle = cssv('--grid'); for (let b=0; b<m.bars; b++){ const x = X(b*240/m.bpm); ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  m.notes.forEach(n => { ctx.fillStyle = cols[n.stem] || '#fff';
+    if (n.stem === 'Bateria'){ const row = {'Bumbo':0,'Baixo 808':0,'Tambor épico':0,'Caixa':1,'Palmas':1,'Chimbal':2,'Chimbal aberto':2,'Prato':3}[n.instr] ?? 2; ctx.fillRect(X(n.t), h*0.86 + row*h*0.035, 2, h*0.03); }
+    else ctx.fillRect(X(n.t), Y(n.midi) - 2, Math.max(2, X(n.dur) - 1), 4); });
+}
+MODULE_SHOW.music = () => { if (!$('muGenre')) buildMusicUI(); refreshApiBadges(); };
+
+"use strict";
+/* ======================================================================
+   Instrumentos: ressíntese aditiva + sampler multi-amostra (zonas,
+   camadas de velocidade, round-robin)
+   ====================================================================== */
+const MODELS = new Map(); // id -> modelo de ressíntese
+const INS = {list: LS.get('nexi-sfx-instruments', []), cur: null, notes: new Map()};
+
+/* ---------------- Análise para ressíntese ---------------- */
+function analyzeResynth(x, sr, name){
+  // trecho estável para detectar a altura
+  let pk = 0, pkI = 0; for (let i=0; i<x.length; i++){ const a = Math.abs(x[i]); if (a > pk){ pk = a; pkI = i; } }
+  const f0 = yinPitch(x, sr, Math.min(x.length - 8192, pkI + Math.round(0.05*sr)), 8192) || yinPitch(x, sr, 0, 8192);
+  if (!f0) throw new Error('não consegui detectar a nota (use uma gravação de uma nota só)');
+  const n = 4096, hop = 256, win = new Float32Array(n); for (let i=0; i<n; i++) win[i] = 0.5 - 0.5*Math.cos(TAU*i/n);
+  const frames = Math.max(1, Math.floor((x.length - n)/hop) + 1), K = Math.min(80, Math.floor(sr*0.45/f0));
+  const partials = []; for (let k=0; k<K; k++) partials.push({ratio: k+1, amps: new Float32Array(frames), fr: []});
+  const NB = 24, bandHz = []; for (let b=0; b<NB; b++) bandHz.push(80*Math.pow(16000/80, b/(NB-1)));
+  const noiseBands = new Float32Array(NB), noiseEnv = new Float32Array(frames);
+  const re = new Float32Array(n), im = new Float32Array(n), mag = new Float32Array(n/2), norm = 2/(n*0.5);
+  for (let f=0; f<frames; f++){
+    const s = f*hop; for (let i=0; i<n; i++){ re[i] = (x[s+i] || 0)*win[i]; im[i] = 0; } fft(re, im);
+    for (let k=0; k<n/2; k++) mag[k] = Math.hypot(re[k], im[k]);
+    const used = new Uint8Array(n/2);
+    partials.forEach((p, k) => {
+      const c = (k+1)*f0/sr*n, lo = Math.max(1, Math.floor(c*0.97) - 1), hi = Math.min(n/2-2, Math.ceil(c*1.03) + 1); let bi = lo;
+      for (let b=lo; b<=hi; b++) if (mag[b] > mag[bi]) bi = b;
+      const a = mag[bi-1], b2 = mag[bi], cc = mag[bi+1], d = 0.5*(a - cc)/((a - 2*b2 + cc) || 1);
+      p.amps[f] = b2*norm; if (b2*norm > 1e-4) p.fr.push((bi + d)/n*sr/f0);
+      for (let b=bi-3; b<=bi+3; b++) if (b > 0 && b < n/2) used[b] = 1;
+    });
+    let ne = 0; const bs = new Float32Array(NB), bc = new Float32Array(NB);
+    for (let k=1; k<n/2; k++){ if (used[k]) continue; const hz = k/n*sr; const bi = clamp(Math.round(Math.log(hz/80)/Math.log(16000/80)*(NB-1)), 0, NB-1); bs[bi] += mag[k]*mag[k]; bc[bi]++; ne += mag[k]*mag[k]; }
+    noiseEnv[f] = Math.sqrt(ne)*norm; for (let b=0; b<NB; b++) if (bc[b]) noiseBands[b] += Math.sqrt(bs[b]/bc[b]);
+  }
+  partials.forEach(p => { if (p.fr.length > 3){ p.fr.sort((a, b) => a - b); p.ratio = p.fr[p.fr.length >> 1]; } delete p.fr; });
+  const nbMax = Math.max(...noiseBands) || 1; for (let b=0; b<NB; b++) noiseBands[b] /= nbMax;
+  // escala do ruído relativa aos parciais
+  return {name, f0, sr, hop, frames, partials: partials.filter(p => Math.max(...p.amps) > 1e-4), noise: {bands: noiseBands, hz: bandHz, env: noiseEnv}, dur: x.length/sr};
+}
+function renderResynth(m, freq, sr, o = {}){
+  const tScale = o.decay || 1, bright = o.bright || 0, stretch = o.inharm || 0, noiseAmt = o.noise ?? 1, preserve = !!o.preserve;
+  const dur = Math.min(30, (o.dur || m.dur*tScale)), N = Math.ceil(dur*sr), out = new Float32Array(N), hopT = m.hop/m.sr, ratioF = freq/m.f0;
+  const loopA = Math.floor(m.frames*0.35), loopB = Math.max(loopA + 2, Math.floor(m.frames*0.7));
+  const frameAt = t => { let f = t/tScale/hopT; if (o.sustain && f > loopB){ const L = loopB - loopA; f = loopA + ((f - loopA) % L); } return f; };
+  // envelope espectral (para preservar o timbre ao transpor)
+  const envAt = hz => { let best = 0, bd = Infinity; m.partials.forEach((p, i) => { const d = Math.abs(p.ratio*m.f0 - hz); if (d < bd){ bd = d; best = i; } }); return best; };
+  m.partials.forEach((p, k) => {
+    const pf = freq*p.ratio*(1 + stretch*0.0015*(p.ratio*p.ratio)); if (pf >= sr*0.45) return;
+    const src = preserve && Math.abs(ratioF - 1) > 0.03 ? m.partials[envAt(pf)] : p;
+    const tilt = Math.pow(p.ratio, bright*0.8);
+    const w = TAU*pf/sr, cw = Math.cos(w), sw = Math.sin(w); let cr = Math.cos(k*1.7), ci = Math.sin(k*1.7);
+    for (let i=0; i<N; i++){
+      const fr = frameAt(i/sr), f0i = Math.floor(fr); if (f0i >= m.frames - 1 && !o.sustain) break;
+      const a0 = src.amps[Math.min(m.frames-1, f0i)], a1 = src.amps[Math.min(m.frames-1, f0i+1)], a = (a0 + (a1 - a0)*(fr - f0i))*tilt;
+      out[i] += ci*a; const nc = cr*cw - ci*sw; ci = cr*sw + ci*cw; cr = nc;
+    }
+  });
+  if (noiseAmt > 0){
+    const rnd = mulberry32(11), fs = m.noise.hz.map(() => newSVF()), gs = m.noise.hz.map(h => Math.tan(Math.PI*Math.min(h*ratioF*(preserve ? 1/ratioF : 1), sr*0.45)/sr));
+    for (let i=0; i<N; i++){
+      const fr = frameAt(i/sr), f0i = Math.min(m.frames-1, Math.floor(fr)); if (fr >= m.frames - 1 && !o.sustain) break;
+      const e = m.noise.env[f0i]*noiseAmt; if (e < 1e-6) continue; const wn = rnd()*2-1; let v = 0;
+      for (let b=0; b<fs.length; b++){ svfTick(fs[b], wn, gs[b], 1.6); v += fs[b].bp*m.noise.bands[b]; }
+      out[i] += v*e*0.35;
+    }
+  }
+  const fo = Math.min(N, Math.round(0.02*sr)); for (let i=0; i<fo; i++) out[N-1-i] *= i/fo;
+  return out;
+}
+// motor de ressíntese dentro do SFX Studio
+ENGINES.resynth = {name:'Ressíntese (instrumento analisado)', tag:'RSN', env: PHYS_ENV, params:[
+  P('model','Modelo',0,0,'','sample'), P('freq','Frequência',20,8000,261.63,'log','Hz'), P('bright','Brilho',-1,1,0,'lin','%'),
+  P('inharm','Inarmonicidade extra',0,1,0,'lin','%'), P('decay','Escala de tempo',0.25,4,1,'log','x'), P('noise','Ruído (sopro/ataque)',0,2,1,'lin','%'),
+  B('preserve','Preservar timbre ao transpor',true), B('sustain','Sustentar (loop)',false)]};
+RENDERERS.resynth = (p, c) => {
+  const m = MODELS.get(p.model); const L = new Float32Array(c.N); if (!m) return {L, R: L.slice()};
+  const y = renderResynth(m, p.freq*c.pm[0], c.sr, {...p, dur: c.N/c.sr}); L.set(y.subarray(0, c.N)); return {L, R: L.slice()};
+};
+
+/* ---------------- Sampler multi-amostra ---------------- */
+function noteFromName(n){
+  const m = n.match(/(?:^|[^A-Za-z])([A-Ga-g])(#|b|s)?(-?\d)(?![\d])/); if (m){ const base = {c:0,d:2,e:4,f:5,g:7,a:9,b:11}[m[1].toLowerCase()] + (m[2] === '#' || m[2] === 's' ? 1 : m[2] === 'b' ? -1 : 0); return 12*(+m[3] + 1) + base; }
+  const d = n.match(/(?:^|\D)(\d{2,3})(?:\D|$)/); if (d && +d[1] >= 21 && +d[1] <= 108) return +d[1];
+  return null;
+}
+function velFromName(n){ const m = n.toLowerCase().match(/(?:^|[_\-\s.])(ppp|pp|p|mp|mf|f|ff|fff|v\d)(?:[_\-\s.]|$)/); if (!m) return null; const map = {ppp:0.1,pp:0.2,p:0.35,mp:0.5,mf:0.62,f:0.78,ff:0.9,fff:1}; return map[m[1]] ?? clamp(+m[1].slice(1)/4, 0, 1); }
+function buildZones(items){
+  const byRoot = {}; items.forEach(it => (byRoot[it.root] = byRoot[it.root] || []).push(it));
+  const roots = Object.keys(byRoot).map(Number).sort((a, b) => a - b), zones = [];
+  roots.forEach((r, i) => {
+    const lo = i === 0 ? 0 : Math.floor((roots[i-1] + r)/2) + 1, hi = i === roots.length-1 ? 127 : Math.floor((r + roots[i+1])/2);
+    const grp = byRoot[r], vels = [...new Set(grp.map(g => g.vel).filter(v => v != null))].sort((a, b) => a - b);
+    grp.forEach(g => {
+      let vLo = 0, vHi = 1;
+      if (g.vel != null && vels.length > 1){ const k = vels.indexOf(g.vel); vLo = k === 0 ? 0 : (vels[k-1] + g.vel)/2; vHi = k === vels.length-1 ? 1 : (g.vel + vels[k+1])/2; }
+      zones.push({sampleId: g.sampleId, name: g.name, root: r, lo, hi, vLo, vHi});
+    });
+  });
+  return zones;
+}
+const rrCounter = new Map();
+function samplerRender(inst, midi, vel, dur, sr){
+  const cands = inst.zones.filter(z => midi >= z.lo && midi <= z.hi && vel >= z.vLo - 1e-6 && vel <= z.vHi + 1e-6 && SAMPLES.has(z.sampleId));
+  if (!cands.length) return null;
+  const key = inst.name + midi, k = (rrCounter.get(key) || 0); rrCounter.set(key, k + 1);
+  const z = cands[k % cands.length], s = SAMPLES.get(z.sampleId), f = Math.pow(2, (midi - z.root + inst.tune/100)/12)*s.sr/sr;
+  const a = inst.adsr, n = Math.min(Math.floor((s.ch[0].length - 2)/f), Math.ceil(((dur || 2) + a.r)*sr)), L = new Float32Array(n), R = new Float32Array(n);
+  const c0 = s.ch[0], c1 = s.ch[1] || s.ch[0], gate = (dur || 2)*sr;
+  for (let i=0; i<n; i++){
+    const t = i/sr; let e = t < a.a ? t/a.a : a.s + (1 - a.s)*Math.exp(-(t - a.a)/Math.max(0.01, a.d));
+    if (i > gate) e *= Math.exp(-(i - gate)/sr/Math.max(0.01, a.r/4));
+    const pos = i*f; L[i] = hermite(c0, pos)*e; R[i] = hermite(c1, pos)*e;
+  }
+  return {L, R, gain: Math.pow(vel, 1.6)*1.2};
+}
+function registerInstrument(inst){
+  INSTR_REG.set('Meu: ' + inst.name, {drum: false, async render(midi, vel, dur, sr){
+    if (inst.type === 'resynth'){ const m = MODELS.get(inst.model); if (!m) return {L: new Float32Array(1), R: new Float32Array(1)};
+      const y = renderResynth(m, 440*Math.pow(2, (midi - 69)/12), sr, {...inst.opts, dur: (dur || 2) + 0.4, sustain: inst.opts.sustain}); return {L: y, R: y, gain: vel}; }
+    return samplerRender(inst, midi, vel, dur, sr) || {L: new Float32Array(1), R: new Float32Array(1)};
+  }});
+}
+function saveInstruments(){ LS.set('nexi-sfx-instruments', INS.list.map(i => { const o = {...i}; delete o.modelData; return o; })); }
+function loadModelsIDB(){
+  [...SAMPLES.keys()].filter(k => k.startsWith('model:')).forEach(k => { MODELS.set(k.slice(6), SAMPLES.get(k)); SAMPLES.delete(k); });
+  INS.list.forEach(registerInstrument);
+}
+function modelBar(l){
+  const bar = el('div', 'smpbar'), s = el('select'); s.style.flex = '1';
+  s.appendChild(Object.assign(el('option', null, MODELS.size ? '— escolha um modelo —' : '— crie um modelo na aba Instrumentos —'), {value: ''}));
+  INS.list.filter(i => i.type === 'resynth' && MODELS.has(i.model)).forEach(i => s.appendChild(Object.assign(el('option', null, esc(i.name)), {value: i.model})));
+  s.value = MODELS.has(l.p.model) ? l.p.model : '';
+  s.onchange = () => { l.p.model = s.value; const m = MODELS.get(s.value); if (m){ l.p.freq = m.f0; l.env.len = m.dur; } commit(); renderEditor(); scheduleRender(true); };
+  const go = el('button', 'btn sm', 'Instrumentos →'); go.onclick = () => showModule('inst');
+  bar.append(s, go); return bar;
+}
+
+/* ---------------- UI ---------------- */
+function buildInstUI(){
+  $('instRoot').innerHTML = `
+  <div class="vgrid">
+   <div>
+    <div class="card"><h2>Sampler multi-amostra</h2>
+      <div class="dropzone" id="inDrop">Solte várias gravações de notas (ex.: piano_C4.wav, piano_E4_f.wav…) ou <button class="btn sm" id="inPick">escolha arquivos</button></div>
+      <div class="hint">A nota de cada arquivo é lida do nome (C4, A#3, 60) ou detectada automaticamente. Arquivos na mesma nota viram round-robin; nomes com pp/mf/ff ou v1…v4 viram camadas de velocidade.</div>
+    </div>
+    <div class="card"><h2>Ressíntese de instrumento</h2>
+      <div class="row"><button class="btn grow" id="inResFile">📂 Analisar gravação de uma nota</button><button class="btn grow" id="inResRec">🎙 Gravar nota</button><button class="btn grow" id="inResClip">Do banco de clipes…</button></div>
+      <div class="hint">Mede cada harmônico (frequência e envelope ao longo do tempo) e o ruído residual (sopro, arco, ataque). O modelo toca em qualquer nota, com controle de brilho, inarmonicidade, sustentação e preservação de timbre. Também vira motor “Ressíntese” nas camadas do SFX.</div>
+    </div>
+    <div class="card"><h2>Meus instrumentos</h2><div class="list" id="inList" style="max-height:260px"></div></div>
+   </div>
+   <div>
+    <div class="card"><h2 id="inTitle">Instrumento</h2><div id="inEdit"><div class="empty">Crie ou escolha um instrumento.</div></div></div>
+    <div class="card"><h2>Tocar</h2><div class="kbwrap" id="inKbd"></div><div class="hint">Use o teclado do computador (A–K) ou um teclado MIDI conectado na aba SFX. As notas tocam o instrumento selecionado aqui.</div></div>
+   </div>
+  </div><input type="file" id="inFiles" accept="audio/*" multiple hidden><input type="file" id="inResInput" accept="audio/*" hidden>`;
+  const drop = $('inDrop');
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('on'); }; drop.ondragleave = () => drop.classList.remove('on');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('on'); importMulti([...e.dataTransfer.files]); };
+  $('inPick').onclick = () => $('inFiles').click(); $('inFiles').onchange = e => { const fs = [...e.target.files]; e.target.value = ''; importMulti(fs); };
+  $('inResFile').onclick = () => $('inResInput').click();
+  $('inResInput').onchange = async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; await busy('Analisando…', async () => { const id = await decodeToClip(f.name.replace(/\.[^.]+$/, ''), await f.arrayBuffer(), 'nota'); createResynth(CLIPS.get(id)); }); };
+  $('inResRec').onclick = async () => { const before = VS.src; toast('Gravando 3 s… toque uma nota'); try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); const rec = new MediaRecorder(stream), ch = [];
+    rec.ondataavailable = e => ch.push(e.data); rec.onstop = async () => { stream.getTracks().forEach(t => t.stop()); await busy('Analisando…', async () => { const id = await decodeToClip('Nota gravada', await new Blob(ch).arrayBuffer(), 'nota'); createResynth(CLIPS.get(id)); }); };
+    rec.start(); setTimeout(() => rec.stop(), 3000); } catch(e){ toast('Microfone indisponível'); } void before; };
+  $('inResClip').onclick = () => { const cs = [...CLIPS.values()]; if (!cs.length){ toast('O banco de clipes está vazio'); return; } const names = cs.map((c, i) => `${i+1}. ${c.name}`).join('\n'); const k = +prompt('Número do clipe:\n' + names, '1'); const c = cs[k-1]; if (c) busy('Analisando…', async () => createResynth(c)); };
+  buildInstKbd(); renderInstList(); renderInstEdit();
+}
+async function importMulti(files){
+  if (!files.length) return;
+  await busy('Importando amostras…', async () => {
+    const items = [];
+    for (const f of files){
+      setStatus(`Lendo ${f.name}…`); const buf = await ensureAC().decodeAudioData(await f.arrayBuffer());
+      const ch = []; for (let c=0; c<Math.min(2, buf.numberOfChannels); c++) ch.push(buf.getChannelData(c).slice());
+      const name = f.name.replace(/\.[^.]+$/, ''); let root = noteFromName(name);
+      if (root == null){ const hz = yinPitch(ch[0], buf.sampleRate, Math.min(ch[0].length - 8192, Math.round(0.08*buf.sampleRate)), 8192); root = hz ? Math.round(hzToMidi(hz)) : 60; }
+      const sid = 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); const smp = {name, sr: buf.sampleRate, ch}; SAMPLES.set(sid, smp); idbPut(sid, smp);
+      items.push({sampleId: sid, name, root, vel: velFromName(name)});
+    }
+    const nm = prompt('Nome do instrumento:', items[0].name.replace(/[_\-\s]*([A-G][#b]?-?\d|\d{2,3}).*$/i, '') || 'Instrumento') || 'Instrumento';
+    const inst = {type: 'sampler', name: nm, zones: buildZones(items), adsr: {a: 0.003, d: 3, s: 1, r: 0.3}, tune: 0};
+    INS.list.unshift(inst); registerInstrument(inst); saveInstruments(); INS.cur = inst; renderInstList(); renderInstEdit();
+    toast(`${items.length} amostras · ${inst.zones.length} zonas`);
+  });
+}
+function createResynth(c){
+  const x = new Float32Array(c.L.length); for (let i=0; i<x.length; i++) x[i] = (c.L[i] + c.R[i])/2;
+  const m = analyzeResynth(x, c.sr, c.name), id = 'm' + Date.now().toString(36); MODELS.set(id, m); idbPut('model:' + id, m);
+  const inst = {type: 'resynth', name: c.name.slice(0, 40), model: id, opts: {bright: 0, inharm: 0, decay: 1, noise: 1, preserve: true, sustain: false}};
+  INS.list.unshift(inst); registerInstrument(inst); saveInstruments(); INS.cur = inst; renderInstList(); renderInstEdit();
+  toast(`Modelo criado: ${m.partials.length} harmônicos, nota ${midiName(hzToMidi(m.f0))} (${m.f0.toFixed(1)} Hz)`);
+}
+function renderInstList(){
+  const box = $('inList'); if (!box) return; box.innerHTML = '';
+  if (!INS.list.length){ box.innerHTML = '<div class="empty">Nenhum instrumento ainda.</div>'; return; }
+  INS.list.forEach((inst, i) => {
+    const it = el('div', 'item' + (inst === INS.cur ? ' cur' : ''), `<span class="nm">${esc(inst.name)}</span><span class="cat">${inst.type === 'resynth' ? 'ressíntese' : inst.zones.length + ' zonas'}</span><button title="Excluir">✕</button>`);
+    it.onclick = () => { INS.cur = inst; INS.notes.clear(); renderInstList(); renderInstEdit(); };
+    it.querySelector('button').onclick = e => { e.stopPropagation(); if (!confirm(`Excluir "${inst.name}"?`)) return; INSTR_REG.delete('Meu: ' + inst.name); INS.list.splice(i, 1); if (INS.cur === inst) INS.cur = null; saveInstruments(); renderInstList(); renderInstEdit(); };
+    box.appendChild(it);
+  });
+}
+function renderInstEdit(){
+  const box = $('inEdit'); if (!box) return; box.innerHTML = ''; const inst = INS.cur;
+  if (!inst){ box.innerHTML = '<div class="empty">Crie ou escolha um instrumento.</div>'; $('inTitle').textContent = 'Instrumento'; return; }
+  $('inTitle').textContent = inst.name;
+  const changed = () => { INS.notes.clear(); saveInstruments(); };
+  if (inst.type === 'resynth'){
+    const m = MODELS.get(inst.model); box.appendChild(el('div', 'hint', m ? `Nota original ${midiName(hzToMidi(m.f0))} · ${m.partials.length} harmônicos · ${fmtS(m.dur)}` : 'Modelo indisponível'));
+    [P('bright','Brilho',-1,1,0,'lin','%'), P('inharm','Inarmonicidade extra',0,1,0,'lin','%'), P('decay','Escala de tempo',0.25,4,1,'log','x'), P('noise','Ruído (sopro/ataque)',0,2,1,'lin','%'),
+     B('preserve','Preservar timbre ao transpor',true), B('sustain','Sustentar (loop)',false)].forEach(d => box.appendChild(control(d, inst.opts, () => {}, changed)));
+    const cv = el('canvas'); cv.style.height = '120px'; box.appendChild(cv); requestAnimationFrame(() => drawPartials(cv, m));
+    const toSfx = el('button', 'btn sm', '→ Usar como camada no SFX'); toSfx.onclick = () => { addLayer('resynth'); const l = S.layers[sel]; l.p.model = inst.model; l.p.freq = m.f0; l.env.len = m.dur; Object.assign(l.p, inst.opts); commit(); renderEditor(); scheduleRender(true); toast('Camada de ressíntese criada no SFX'); };
+    box.appendChild(toSfx);
+  } else {
+    [P('a','Ataque',0.001,2,0.003,'log','s'), P('d','Decaimento',0.05,10,3,'log','s'), P('s','Sustentação',0,1,1,'lin','%'), P('r','Release',0.01,5,0.3,'log','s')].forEach(d => box.appendChild(control(d, inst.adsr, () => {}, changed)));
+    box.appendChild(control(P('tune','Afinação',-100,100,0,'lin','ct'), inst, () => {}, changed));
+    const tbl = el('div', 'list'); tbl.style.maxHeight = '200px';
+    inst.zones.forEach(z => tbl.appendChild(el('div', 'item', `<span class="nm">${esc(z.name)}</span><span class="cat">raiz ${midiName(z.root)} · ${midiName(z.lo)}–${midiName(z.hi)}${z.vLo > 0 || z.vHi < 1 ? ` · vel ${Math.round(z.vLo*127)}–${Math.round(z.vHi*127)}` : ''}</span>`)));
+    box.appendChild(tbl);
+  }
+  box.appendChild(el('div', 'hint', 'Disponível no Compositor como “Meu: ' + esc(inst.name) + '”.'));
+}
+function drawPartials(cv, m){
+  if (!m) return; const {ctx, w, h} = fit(cv); ctx.clearRect(0, 0, w, h); const K = Math.min(40, m.partials.length), mx = Math.max(...m.partials.map(p => Math.max(...p.amps))) || 1;
+  m.partials.slice(0, K).forEach((p, k) => { const a = Math.max(...p.amps)/mx, x = k/K*w; ctx.fillStyle = cssv('--accent'); const hh = Math.max(1, (1 + Math.log10(a + 1e-3)/3)*h*0.9); ctx.fillRect(x + 1, h - hh, w/K - 2, hh); });
+}
+function buildInstKbd(){
+  const kb = $('inKbd'); if (!kb) return; kb.innerHTML = '';
+  const first = 48, whites = [];
+  for (let m=first; m<=first+24; m++){ const pc = m % 12; if (![1,3,6,8,10].includes(pc)){ const k = el('div', 'wk', pc === 0 ? midiName(m) : ''); k.dataset.m = m; kb.appendChild(k); whites.push(k); } }
+  const ww = 100/whites.length; let wi = 0;
+  for (let m=first; m<=first+24; m++){ if ([1,3,6,8,10].includes(m % 12)){ const k = el('div', 'bk'); k.dataset.m = m; k.style.left = `${wi*ww - ww*0.3}%`; k.style.width = `${ww*0.6}%`; kb.appendChild(k); } else wi++; }
+  kb.onpointerdown = e => { const k = e.target.closest('[data-m]'); if (!k) return; e.preventDefault(); instNoteOn(+k.dataset.m, 0.6 + 0.4*clamp(e.offsetY/(k.clientHeight || 1), 0, 1)); k.classList.add('dn'); setTimeout(() => k.classList.remove('dn'), 180); };
+}
+async function instNoteOn(midi, vel = 0.8){
+  const inst = INS.cur; if (!inst) return;
+  const key = midi + ':' + Math.round(vel*4), c = ensureAC(); let r = INS.notes.get(key);
+  if (!r){ r = await INSTR_REG.get('Meu: ' + inst.name).render(midi, vel, 1.5, c.sampleRate); if (inst.type !== 'sampler') INS.notes.set(key, r); }
+  const b = c.createBuffer(2, r.L.length, c.sampleRate); b.copyToChannel(r.L, 0); b.copyToChannel(r.R, 1);
+  const s = c.createBufferSource(), g = c.createGain(); s.buffer = b; g.gain.value = (r.gain ?? vel)*0.8; s.connect(g); g.connect(monGain); s.start();
+}
+// roteia teclado do computador e MIDI para o instrumento quando a aba está aberta
+const _sfxNoteOn = noteOn, _sfxNoteOff = noteOff;
+noteOn = function(semi, vel){ if (curModule === 'inst'){ instNoteOn(60 + semi, vel ?? 0.8); return; } return _sfxNoteOn(semi, vel); };
+noteOff = function(semi, hard){ if (curModule === 'inst') return; return _sfxNoteOff(semi, hard); };
+MODULE_SHOW.inst = () => { if (!$('inDrop')) buildInstUI(); renderInstList(); };
+
+"use strict";
+/* Inicialização: carrega dados salvos e abre a última aba */
+(async function boot(){
+  initSfx(); initSettings();
+  await idbLoadAll(); loadModelsIDB();
+  let tab = 'sfx'; try { tab = localStorage.getItem('nexi-sfx-tab') || 'sfx'; } catch(e){}
+  if (!document.querySelector(`[data-mod="${tab}"]`)) tab = 'sfx';
+  showModule(tab);
 })();
 
 </script>

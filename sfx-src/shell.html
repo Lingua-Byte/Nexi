@@ -99,13 +99,52 @@ kbd{background:var(--panel2);border:1px solid var(--line);border-bottom-width:2p
 details.mg{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 9px;margin-bottom:6px}
 details.mg summary{cursor:pointer;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700;padding:2px 0}
 details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-transform:none;margin-left:6px}
+
+nav#nav{display:flex;gap:4px;flex-wrap:wrap}
+nav#nav button{background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;font-weight:700;font-size:.82rem}
+nav#nav button.on{background:var(--accent);color:#1a2210;border-color:var(--accent)}
+.sfxbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+section[hidden]{display:none!important}
+.vgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:start}
+.vgrid>div>.card+.card{margin-top:10px}
+@media (max-width:900px){.vgrid{grid-template-columns:1fr}}
+textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;color:var(--text);font:inherit;resize:vertical}
+input[type=password]{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:100%}
+.badge{font-size:.6rem;letter-spacing:.06em;background:var(--panel3);color:var(--accent2);border-radius:99px;padding:2px 7px;text-transform:none}
+[data-need].locked{position:relative;opacity:.55}
+.card[data-need].locked{opacity:1}
+.card[data-need].locked h2::after{content:'requer chave de API (Configurações)';color:var(--hot);font-size:.62rem;letter-spacing:0;text-transform:none;margin-left:auto}
+.dropzone{border:2px dashed var(--line);border-radius:12px;padding:22px 12px;text-align:center;color:var(--muted)}
+.dropzone.on{border-color:var(--accent);color:var(--accent)}
+.toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mxlayout{display:grid;grid-template-columns:240px minmax(0,1fr) 300px;gap:10px;align-items:start}
+@media (max-width:1180px){.mxlayout{grid-template-columns:minmax(0,1fr)}}
+#mxTlWrap{overflow-x:auto;background:#0a0c09;border:1px solid var(--line);border-radius:10px}
+#mxTl{display:block}
+.mxstrips{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}
+.strip-ch{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.strip-ch.cur{border-color:var(--accent)}
+.strip-ch .row input[type=text]{min-width:60px}
+#mxSpec{height:120px}
+.settings{max-width:720px}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
   <div class="brand">NEXI <span>SFX</span> STUDIO</div>
-  <button class="btn pri" id="bPlay" title="Tocar (Espaço)">▶ Tocar</button>
+  <nav id="nav">
+    <button data-go="sfx" class="on">🎛 SFX</button><button data-go="mix">🎚 Mixer &amp; Master</button><button data-go="voice">🗣 Voz</button>
+    <button data-go="video">🎬 Vídeo</button><button data-go="music">🎼 Música</button><button data-go="inst">🎹 Instrumentos</button><button data-go="settings">⚙ Configurações</button>
+  </nav>
+  <span class="status" id="status">—</span>
+  <span class="sp"></span>
+  <span class="vol">Monitor <input type="range" id="monVol" min="0" max="1" step="0.01" value="0.8"></span>
+  <a class="btn sm" href="./">← NEXI</a>
+</header>
+
+<section data-mod="sfx">
+<div class="sfxbar"><button class="btn pri" id="bPlay" title="Tocar (Espaço)">▶ Tocar</button>
   <button class="btn" id="bStop" title="Parar">■</button>
   <label class="chk"><input type="checkbox" id="cLoop"> Loop</label>
   <label class="chk"><input type="checkbox" id="cAuto" checked> Tocar ao editar</label>
@@ -113,12 +152,7 @@ details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-
   <button class="btn sm" id="bUndo" title="Desfazer (Ctrl+Z)">↶</button>
   <button class="btn sm" id="bRedo" title="Refazer (Ctrl+Shift+Z)">↷</button>
   <button class="btn sm" id="bNew" title="Projeto vazio">Novo</button>
-  <span class="status" id="status">—</span>
-  <span class="sp"></span>
-  <span class="vol">Monitor <input type="range" id="monVol" min="0" max="1" step="0.01" value="0.8"></span>
-  <a class="btn sm" href="./">← NEXI</a>
-</header>
-
+  </div>
 <div class="layout">
   <aside class="lib">
     <div class="card">
@@ -178,7 +212,7 @@ details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-
       </div>
       <label class="lbl" for="exName">Nome do arquivo</label>
       <input type="text" id="exName" value="sfx" style="width:100%">
-      <div class="row" style="margin-top:8px"><button class="btn pri grow" id="bWav">⬇ Baixar WAV</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn pri grow" id="bWav">⬇ Baixar WAV</button><button class="btn grow" id="bToMix">→ Mixer</button></div>
       <label class="lbl">Variações (round-robin para jogos)</label>
       <div class="row">
         <input type="number" id="varN" min="2" max="64" value="8" style="width:64px">
@@ -197,6 +231,54 @@ details.mg summary .st{color:var(--muted);font-weight:400;letter-spacing:0;text-
     <div class="hint">Atalhos: <kbd>Espaço</kbd> tocar · <kbd>V</kbd> variar · <kbd>Ctrl+Z</kbd> desfazer · duplo clique num controle volta ao padrão · clique no valor para digitar</div>
   </aside>
 </div>
+</section>
+
+<section data-mod="mix" hidden>
+  <div class="mxlayout">
+    <aside><div class="card"><h2>Banco de clipes <button class="btn sm" id="mxImport">📂 Importar</button></h2><div class="list" id="mxBin" style="max-height:60vh"></div></div></aside>
+    <main>
+      <div class="card">
+        <div class="row" style="margin-bottom:8px"><button class="btn pri" id="mxPlay">▶ Tocar</button><button class="btn" id="mxStop">■</button><button class="btn sm" id="mxHome">⏮</button>
+          <button class="btn sm" id="mxAddTrack">+ Faixa</button><span class="vol">Zoom <input type="range" id="mxZoom" min="5" max="300" value="60"></span>
+          <span class="sp"></span><button class="btn sm" id="mxAutoMix">🤖 Assistente de mixagem</button></div>
+        <div id="mxTlWrap"><canvas id="mxTl"></canvas></div>
+        <div id="mxClip" style="margin-top:6px"></div>
+        <div class="mxstrips" id="mxStrips"></div>
+      </div>
+    </main>
+    <aside>
+      <div class="card"><h2>Masterização</h2>
+        <label class="chk"><input type="checkbox" id="mxMasterOn" checked> Master ligado</label>
+        <div class="row" style="margin:6px 0"><button class="btn pri grow" id="mxAutoMaster">✨ Assistente de master</button></div>
+        <div class="row"><button class="btn sm grow on" id="mxAB">Ouvindo: MASTER</button><label class="chk"><input type="checkbox" id="mxMatch" checked> Igualar loudness no A/B</label></div>
+        <canvas id="mxSpec" style="margin-top:8px"></canvas>
+        <div class="hint" id="mxReport">O assistente analisa o espectro e a dinâmica da mixagem, corrige o equilíbrio tonal para o perfil escolhido, comprime por bandas, ajusta a imagem estéreo e entrega no loudness do destino.</div>
+        <div id="mxMaster" style="margin-top:8px"></div>
+      </div>
+      <div class="card"><h2>Exportar mix</h2>
+        <div class="row"><button class="btn pri grow" id="mxExport">⬇ WAV master</button></div>
+        <div class="row" style="margin-top:6px"><button class="btn sm grow" id="mxStems">⬇ Stems (ZIP)</button><button class="btn sm grow" id="mxToClip">→ Banco de clipes</button></div>
+        <div class="hint">Formato segue as opções de exportação da aba SFX (taxa e bits).</div>
+      </div>
+    </aside>
+  </div>
+  <input type="file" id="mxFiles" accept="audio/*,video/*" multiple hidden>
+</section>
+<section data-mod="voice" hidden><div id="voiceRoot"></div></section>
+<section data-mod="video" hidden><div id="videoRoot"></div></section>
+<section data-mod="music" hidden><div id="musicRoot"></div></section>
+<section data-mod="inst" hidden><div id="instRoot"></div></section>
+<section data-mod="settings" hidden>
+  <div class="card settings"><h2>Chaves de API (opcionais)</h2>
+    <p class="hint" style="font-size:.8rem">Quase tudo no NEXI SFX roda no seu navegador, sem internet. Duas integrações opcionais ampliam o que dá para fazer com IA generativa. As chaves ficam salvas só neste navegador e vão direto para cada serviço.</p>
+    <label class="lbl" for="keyAnthropic">Anthropic (Claude): entender vídeos, criar personas, escrever roteiros e narrações, traduzir dublagens</label>
+    <input type="password" id="keyAnthropic" placeholder="sk-ant-…" autocomplete="off">
+    <label class="lbl" for="keyEleven">ElevenLabs: vozes neurais, clonagem, criação de vozes, troca de voz, isolamento, transcrição, efeitos e música com IA</label>
+    <input type="password" id="keyEleven" placeholder="chave xi-api-key" autocomplete="off">
+    <div class="row" style="margin-top:10px"><button class="btn pri" id="bSaveKeys">Salvar</button><button class="btn" id="bTestKeys">Testar conexão</button><button class="btn" id="bClearKeys">Apagar chaves</button></div>
+    <div class="hint" id="keyStatus"></div>
+  </div>
+</section>
 </div>
 <input type="file" id="fileAudio" accept="audio/*" hidden>
 <input type="file" id="fileJson" accept=".json,application/json" hidden>

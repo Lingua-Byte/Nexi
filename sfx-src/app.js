@@ -227,6 +227,7 @@ $('bStems').onclick = () => busy('Exportando stems…', async () => {
   if (!files.length) throw new Error('nenhuma camada ativa');
   download(makeZip(files), base + '_stems.zip'); toast('Stems exportados (sem normalização)');
 });
+$('bToMix').onclick = () => busy('Renderizando…', async () => { const r = await renderSound(S, 48000); const id = addClip(S.name, r, 'sfx'); addClipToMix(id, undefined, 'SFX'); toast('Enviado ao mixer'); });
 $('bProjExp').onclick = () => { download(new Blob([JSON.stringify({app:'nexi-sfx-studio', version:2, sound:S}, null, 1)], {type:'application/json'}), slug(S.name) + '.nexisfx.json'); };
 let jsonTarget = 'project';
 $('bProjImp').onclick = () => { jsonTarget = 'project'; $('fileJson').click(); };
@@ -271,24 +272,24 @@ Object.entries(ENGINES).forEach(([k, e]) => { const o = el('option', null, esc(e
 addSel.onchange = () => { if (addSel.value) addLayer(addSel.value); addSel.value = ''; };
 const held = new Set();
 document.addEventListener('keydown', e => {
-  if (e.target.matches('input[type=text], input[type=search], input[type=number], textarea, select')) return;
+  if (e.target.matches('input[type=text], input[type=search], input[type=number], input[type=password], textarea, select')) return;
+  if (curModule !== 'sfx' && curModule !== 'inst') return;
   const k = e.key.toLowerCase();
   if ((e.ctrlKey || e.metaKey) && k === 'z'){ e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
   if ((e.ctrlKey || e.metaKey) && k === 'y'){ e.preventDefault(); redo(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (e.code === 'Space'){ e.preventDefault(); mainSrc ? stopMain() : playMain(); return; }
+  if (e.code === 'Space'){ if (curModule !== 'sfx') return; e.preventDefault(); mainSrc ? stopMain() : playMain(); return; }
   if (k in KEYMAP){ if (!held.has(k)){ held.add(k); noteOn(KEYMAP[k] + octave*12); } e.preventDefault(); return; }
   if (k === 'z'){ octave = Math.max(-3, octave-1); buildKeyboard(); }
   else if (k === 'x'){ octave = Math.min(3, octave+1); buildKeyboard(); }
-  else if (k === 'v') $('bVary').click();
+  else if (k === 'v' && curModule === 'sfx') $('bVary').click();
 });
 document.addEventListener('keyup', e => { const k = e.key.toLowerCase(); if (held.has(k)){ held.delete(k); noteOff(KEYMAP[k] + octave*12); } });
 let rsT = 0; window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(drawAll, 100); });
 
-(async function init(){
+function initSfx(){
   renderLibrary(); buildKeyboard(); renderBank();
-  await idbLoadAll();
   curPreset = PRESET_DEFS[0][1]; renderLibrary();
   S = buildPreset(PRESET_DEFS[0]); commit(); afterLoad(false);
   wantPlay = false;
-})();
+}
