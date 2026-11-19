@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Carimbar versão do RAIZ (atualização automática do app)
+        run: sed -i "s/__BUILD__/${GITHUB_SHA::8}/g" linguas/sw.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

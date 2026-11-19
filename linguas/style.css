@@ -371,3 +371,12 @@ a.btn.on { color: var(--c-ink); }
 .pbadge.fixed { background: var(--c); color: var(--c-ink); }
 .pbadge.good { background: var(--ink); color: var(--paper); }
 a.cta { text-decoration: none; }
+
+/* ——— Instalar ——— */
+.install { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: start; margin-top: 26px; padding: 14px; border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); box-shadow: var(--shadow); }
+.install .inst-ico { width: 56px; height: 56px; border-radius: 14px; border: 2px solid var(--line); display: grid; place-items: center; font: 900 34px/1 var(--serif); background: var(--paper); text-shadow: 2px 2px 0 #FF5A36; }
+.install > div > b { display: block; font: 800 20px/1.1 var(--serif); }
+.install > div > span { display: block; font-size: 14.5px; color: var(--muted); margin-top: 3px; line-height: 1.35; }
+.install p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.35; }
+.install .cta { grid-column: 1 / -1; }
+.toast { border-radius: 18px; }

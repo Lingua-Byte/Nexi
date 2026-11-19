@@ -1,17 +1,25 @@
 {
+  "id": "./",
   "name": "RAIZ · caderno de línguas",
   "short_name": "RAIZ",
-  "description": "Pronomes, ser e estar, e os verbos que você mais fala — escritos à mão, no celular.",
+  "description": "Pronomes, ser e estar, os verbos que você mais fala e um diário que corrige — escritos à mão, no celular.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone"],
   "orientation": "portrait",
   "background_color": "#F2EBDD",
   "theme_color": "#F2EBDD",
   "lang": "pt-BR",
+  "categories": ["education"],
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Diário de inglês", "short_name": "Diário", "url": "./#/l/en/d", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Meus verbos (inglês)", "short_name": "Verbos", "url": "./#/l/en/s/3", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
   ]
 }

@@ -8,6 +8,12 @@
   const BOX_DAYS = [0, 0, 1, 3, 7, 16, 35];   // intervalo de revisão por caixa (Leitner)
   const SESSION = 10;
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
+  /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
+  const NEWS = [
+    { v: '1.3', t: 'app instalável que se atualiza sozinho' },
+    { v: '1.2', t: 'diário livre com correção' },
+    { v: '1.1', t: 'meus verbos e escrita à mão' }
+  ];
 
   const $app = document.getElementById('app');
   const byId = Object.fromEntries(LANGS.map(l => [l.id, l]));
@@ -200,10 +206,13 @@
           </a>`;
         }).join('')}
       </nav>
+      ${installCard()}
       <footer class="foot">
         <span>Funciona offline. Seu progresso fica neste aparelho.</span>
         <button class="linkbtn" id="theme">${document.documentElement.dataset.theme === 'dark' ? 'Papel claro' : 'Papel noturno'}</button>
+        <span class="mono" style="width:100%;font-size:11px">Versão ${esc(NEWS[0].v)} · ${esc(NEWS[0].t)}</span>
       </footer>`;
+    bindInstall();
     document.getElementById('theme').onclick = () => {
       const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
       S.theme = dark ? 'light' : 'dark'; document.documentElement.dataset.theme = S.theme; save(); renderHome();
@@ -808,10 +817,59 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
     };
   }
 
-  /* ——— offline ——— */
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  /* ——— instalar no Android (e iPhone) ——— */
+  let installEvt = null;
+  const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (!location.hash || location.hash === '#/') renderHome(); });
+  window.addEventListener('appinstalled', () => { installEvt = null; toast('RAIZ instalado! Abra pelo ícone.'); if (!location.hash || location.hash === '#/') renderHome(); });
+  function installCard() {
+    if (standalone()) return '';
+    const how = installEvt ? '' : isIOS
+      ? '<p>No iPhone: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.</p>'
+      : '<p>No Android: abra no <b>Chrome</b>, toque no menu <b>⋮</b> e em <b>Instalar app</b> (ou “Adicionar à tela inicial”).</p>';
+    return `<section class="install enter">
+      <div class="inst-ico" aria-hidden="true">R</div>
+      <div><b>Instale o RAIZ</b><span>Vira um app no seu celular: ícone próprio, tela cheia, funciona sem internet e se atualiza sozinho.</span>${how}</div>
+      ${installEvt ? '<button class="cta" id="install">Instalar app</button>' : ''}
+    </section>`;
   }
+  function bindInstall() {
+    const b = document.getElementById('install'); if (!b) return;
+    b.onclick = async () => { if (!installEvt) return; installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null; if (r.outcome !== 'accepted') renderHome(); };
+  }
+
+  /* ——— atualização automática ——— */
+  // A cada publicação o service worker muda; o app baixa a versão nova sozinho e recarrega.
+  function announceNews() {
+    let seen = null; try { seen = localStorage.getItem('raiz-seen'); } catch (e) { /* ok */ }
+    const v = NEWS[0].v;
+    if (seen && seen !== v) {
+      const fresh = NEWS.slice(0, Math.max(1, NEWS.findIndex(n => n.v === seen))).map(n => n.t).join(' · ');
+      setTimeout(() => toast('Atualizado ✓ ' + fresh), 600);
+    }
+    try { localStorage.setItem('raiz-seen', v); } catch (e) { /* ok */ }
+  }
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    let hadController = !!navigator.serviceWorker.controller;
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) { hadController = true; return; }   // primeira instalação: nada a recarregar
+      if (reloading) return;
+      // não interrompe quem está escrevendo: recarrega quando sair da página de prática/diário
+      const busy = () => /\/(p|d)(\/|$)/.test(location.hash);
+      const go = () => { if (reloading) return; reloading = true; location.reload(); };
+      if (!busy()) go(); else { toast('Nova versão pronta — aplica ao sair desta página.'); window.addEventListener('hashchange', () => { if (!busy()) go(); }); }
+    });
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+        const check = () => reg.update().catch(() => {});
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
+        setInterval(check, 30 * 60e3);
+      }).catch(() => {});
+    });
+  }
+  announceNews();
 
   route();
 })();
