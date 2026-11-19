@@ -1,0 +1,511 @@
+<title>Glossa · Identidade Visual</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: caderno de filólogo no escuro: coluna editorial + "telas" 9:16 como espécimes */
+:root {
+  color-scheme: dark;
+  --grafite: #111114;
+  --grafite-2: #18181D;
+  --linha: #2A2A31;
+  --creme: #F2EAD8;
+  --creme-2: rgba(242,234,216,.68);
+  --creme-3: rgba(242,234,216,.42);
+  --ambar: #E8A33D;
+  --q-onde: #E8A33D;
+  --q-aula: #D9D0BC;
+  --q-mito: #E05A4F;
+  --q-ext: #F2C94C;
+  --q-br: #4CAF7A;
+  --q-primas: #5B9BE0;
+  --q-genios: #A57FDB;
+  --ok: #4CAF7A;
+  --f-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --f-caption: 'Archivo', 'Arial Black', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --f-ipa: 'Noto Sans', 'Charis SIL', 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+body { background: var(--grafite); color: var(--creme); font-family: var(--f-caption); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 80px; }
+.mono { font-family: var(--f-mono); }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--creme-3); }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.05; margin: 8px 0 12px; }
+h3 { font-size: 22px; margin-bottom: 6px; }
+p { margin: 0 0 12px; max-width: 64ch; color: var(--creme-2); }
+p b, li b { color: var(--creme); }
+section { padding-block: 56px; border-top: 1px solid var(--linha); }
+section:first-of-type { border-top: 0; padding-top: 8px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 760px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- herói ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 40px; align-items: center; }
+@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+.verbete-ipa { font-family: var(--f-ipa); color: var(--creme-3); font-size: 15px; margin-bottom: 6px; }
+.wordmark { font-family: var(--f-display); font-size: clamp(76px, 15vw, 168px); line-height: .86; letter-spacing: -.01em; color: var(--creme); }
+.wordmark .ponto { color: var(--ambar); }
+.tagline { font-family: var(--f-display); font-style: italic; font-size: clamp(22px, 3vw, 30px); color: var(--creme-2); margin: 14px 0 18px; }
+.def { border-top: 1px solid var(--creme-3); border-bottom: 1px solid var(--linha); padding: 12px 0; max-width: 60ch; }
+.def p { margin: 0; }
+.def i { color: var(--creme); }
+.hero-controls { display: flex; gap: 10px; margin-top: 14px; justify-content: center; }
+
+/* ---------- telas 9:16 ---------- */
+.tela {
+  container-type: inline-size;
+  position: relative; width: 100%; max-width: 100%; aspect-ratio: 9 / 16;
+  background: #0E0E10; border-radius: 18px; overflow: hidden;
+  box-shadow: 0 0 0 1px var(--linha), 0 24px 60px -30px rgba(0,0,0,.8);
+  isolation: isolate;
+}
+.tela::before { /* textura de papel */
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .07;
+  background-image: radial-gradient(rgba(255,255,255,.9) .6px, transparent .7px), radial-gradient(rgba(255,255,255,.6) .5px, transparent .6px);
+  background-size: 7px 7px, 11px 11px; background-position: 0 0, 3px 5px;
+}
+.selo { position: absolute; top: 5cqw; left: 5cqw; display: flex; align-items: center; gap: 2cqw; font-family: var(--f-caption); font-weight: 800; font-size: 3.4cqw; letter-spacing: .08em; text-transform: uppercase; color: var(--creme); }
+.selo::before { content: ""; width: 2.6cqw; height: 2.6cqw; border-radius: 50%; background: var(--c, var(--ambar)); }
+.marca { position: absolute; top: 5cqw; right: 17cqw; font-family: var(--f-display); font-size: 4cqw; color: var(--creme-3); }
+.marca span { color: var(--ambar); }
+.gancho-t { position: absolute; left: 6cqw; right: 17cqw; top: 15cqw; font-family: var(--f-caption); font-weight: 900; font-size: 7.2cqw; line-height: 1.04; text-transform: uppercase; color: var(--creme); }
+.gancho-t mark { background: none; color: var(--creme); box-shadow: inset 0 -2.2cqw 0 var(--c, var(--ambar)); }
+.palavra { position: absolute; left: 0; right: 0; top: 40%; text-align: center; font-family: var(--f-display); font-size: 17cqw; line-height: 1; color: var(--creme); }
+.palavra small { display: block; font-family: var(--f-ipa); font-size: 4.2cqw; color: var(--creme-3); margin-top: 3cqw; }
+.legenda { position: absolute; left: 6cqw; right: 17cqw; top: 66%; text-align: center; font-family: var(--f-caption); font-weight: 900; font-size: 7cqw; text-transform: uppercase; line-height: 1.05; color: var(--creme); text-shadow: 0 .5cqw 0 rgba(0,0,0,.6); }
+.legenda .ativa { color: var(--c, var(--ambar)); }
+
+/* cartão etimológico */
+.etimo { position: absolute; left: 7cqw; right: 17cqw; top: 33%; display: grid; gap: 3cqw; }
+.etimo .no { border-left: .8cqw solid var(--c, var(--ambar)); padding: 1.5cqw 0 1.5cqw 3.5cqw; }
+.etimo .w { font-family: var(--f-display); font-size: 8.5cqw; line-height: 1; color: var(--creme); }
+.etimo .m { font-family: var(--f-mono); font-size: 3cqw; color: var(--creme-3); letter-spacing: .04em; margin-top: 1cqw; }
+.etimo .seta { font-family: var(--f-mono); color: var(--c, var(--ambar)); font-size: 5cqw; padding-left: 3cqw; line-height: 1; }
+
+/* carimbo */
+.carimbo { position: absolute; left: 50%; top: 52%; translate: -50% -50%; rotate: -11deg; font-family: var(--f-caption); font-weight: 900; font-size: 15cqw; letter-spacing: .06em; color: var(--c, var(--q-mito)); border: 1.4cqw solid currentColor; padding: 1cqw 5cqw; border-radius: 2cqw; opacity: .95; mix-blend-mode: screen; }
+
+/* zonas seguras */
+.zonas::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background:
+    linear-gradient(to top, rgba(224,90,79,.32) 0 20%, transparent 20%),
+    linear-gradient(to left, rgba(224,90,79,.32) 0 15%, transparent 15%);
+}
+.zonas .rotulo-zona { position: absolute; z-index: 6; font-family: var(--f-mono); font-size: 3.1cqw; color: #FFD3CE; }
+
+/* ---------- animação do herói ---------- */
+.hero-tela .cena { position: absolute; inset: 0; opacity: 0; }
+.hero-tela.rodando .cena { animation: cena 12s infinite; }
+.hero-tela .cena:nth-child(1) { animation-delay: 0s; }
+.hero-tela .cena:nth-child(2) { animation-delay: 3s; }
+.hero-tela .cena:nth-child(3) { animation-delay: 6s; }
+.hero-tela .cena:nth-child(4) { animation-delay: 9s; }
+.hero-tela:not(.rodando) .cena:nth-child(2) { opacity: 1; }
+@keyframes cena { 0% { opacity: 0; transform: translateY(2%); } 4%, 23% { opacity: 1; transform: none; } 27%, 100% { opacity: 0; } }
+.hero-tela.rodando .carimbo { animation: bate 12s infinite 9s; }
+@keyframes bate { 0% { scale: 1.8; opacity: 0; } 3% { scale: 1; opacity: .95; } 100% { scale: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-tela.rodando .cena { animation: none; }
+  .hero-tela.rodando .cena:nth-child(2) { opacity: 1; }
+  .hero-tela.rodando .carimbo { animation: none; }
+}
+
+/* ---------- botões ---------- */
+button { font: 500 13px var(--f-mono); color: var(--creme); background: var(--grafite-2); border: 1px solid var(--linha); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+button:hover { border-color: var(--creme-3); }
+button:focus-visible { outline: 2px solid var(--ambar); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--creme); color: var(--grafite); }
+
+/* ---------- avatar ---------- */
+.avatares { display: flex; gap: 20px; flex-wrap: wrap; align-items: end; }
+.avatar { width: 120px; aspect-ratio: 1; border-radius: 50%; background: var(--grafite-2); border: 1px solid var(--linha); display: flex; align-items: center; justify-content: center; font-family: var(--f-display); font-size: 72px; line-height: 1; color: var(--creme); position: relative; }
+.avatar span { color: var(--ambar); }
+.avatar.claro { background: var(--creme); color: var(--grafite); border-color: transparent; }
+.avatar.p { width: 56px; font-size: 34px; }
+.avatar.pp { width: 32px; font-size: 19px; }
+.cap { font-family: var(--f-mono); font-size: 12px; color: var(--creme-3); margin-top: 6px; text-align: center; }
+
+/* ---------- paleta ---------- */
+.paleta { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.amostra { border: 1px solid var(--linha); border-radius: 10px; overflow: hidden; background: var(--grafite-2); }
+.amostra .cor { height: 84px; background: var(--c); box-shadow: inset 0 -1px 0 var(--linha), inset 0 0 0 1px rgba(242,234,216,.08); }
+.amostra .info { padding: 10px 12px; display: grid; gap: 2px; }
+.amostra .nome { font-weight: 800; font-size: 14px; color: var(--creme); }
+.amostra .uso { font-size: 12.5px; color: var(--creme-3); line-height: 1.35; }
+.amostra button { justify-self: start; margin-top: 6px; padding: 4px 10px; font-size: 12px; }
+
+/* ---------- tipografia ---------- */
+.tipos { display: grid; gap: 0; }
+.tipo { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 24px; padding-block: 22px; border-top: 1px solid var(--linha); align-items: baseline; }
+@media (max-width: 640px) { .tipo { grid-template-columns: minmax(0, 1fr); gap: 8px; } }
+.tipo .lado { font-family: var(--f-mono); font-size: 12.5px; color: var(--creme-3); line-height: 1.5; }
+.tipo .lado b { display: block; color: var(--creme); font-family: var(--f-caption); font-size: 15px; margin-bottom: 4px; }
+.esp-display { font-family: var(--f-display); font-size: clamp(44px, 7vw, 72px); line-height: 1; }
+.esp-caption { font-family: var(--f-caption); font-weight: 900; font-size: clamp(26px, 4vw, 38px); text-transform: uppercase; line-height: 1.05; }
+.esp-caption mark { background: none; color: inherit; box-shadow: inset 0 -.32em 0 var(--q-mito); }
+.esp-mono { font-family: var(--f-mono); font-size: 18px; color: var(--creme-2); }
+.esp-ipa { font-family: var(--f-ipa); font-size: clamp(24px, 3.6vw, 32px); }
+
+/* ---------- quadros ---------- */
+.grade-telas { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
+.grade-telas.sete { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 16px; }
+.item-tela figcaption { margin-top: 10px; }
+.item-tela figcaption b { display: block; font-size: 15px; color: var(--creme); }
+.item-tela figcaption span { font-family: var(--f-mono); font-size: 12px; color: var(--creme-3); }
+figure { margin: 0; min-width: 0; }
+
+/* árvore */
+.arvore { position: absolute; left: 6cqw; right: 6cqw; top: 30%; height: 50%; }
+.arvore svg { width: 100%; height: 100%; overflow: visible; }
+
+/* mapa */
+.mapa { position: absolute; left: 0; right: 0; top: 30%; height: 42%; }
+.mapa canvas { width: 100%; height: 100%; display: block; }
+
+/* regras */
+.regras { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 28px; }
+.regra { border-top: 1px solid var(--linha); padding: 14px 0; }
+.regra .num { font-family: var(--f-mono); font-size: 13px; color: var(--ambar); }
+.regra h3 { font-size: 20px; margin: 4px 0 4px; }
+.regra p { font-size: 14.5px; margin: 0; }
+
+.faz { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+@media (max-width: 640px) { .faz { grid-template-columns: minmax(0, 1fr); } }
+.faz ul { margin: 0; padding-left: 18px; color: var(--creme-2); }
+.faz li { margin-bottom: 8px; }
+.faz h3 .tag { font-family: var(--f-mono); font-size: 12px; padding: 2px 8px; border-radius: 999px; margin-right: 6px; vertical-align: middle; }
+.tag.sim { background: rgba(76,175,122,.18); color: #8FD9AE; }
+.tag.nao { background: rgba(224,90,79,.18); color: #F2A099; }
+
+.rodape { margin-top: 40px; font-family: var(--f-mono); font-size: 12px; color: var(--creme-3); }
+</style>
+
+<div class="wrap">
+
+<section>
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Identidade visual · canal dark de linguística</div>
+      <div class="verbete-ipa">/ˈɡlɔs.sa/ · γλῶσσα · s.f.</div>
+      <h1 class="wordmark">Glossa<span class="ponto">.</span></h1>
+      <div class="tagline">A língua por dentro.</div>
+      <div class="def">
+        <p>Do grego <i>glôssa</i>, que quer dizer ao mesmo tempo <b>o órgão da boca e o idioma</b>, igual à nossa palavra "língua". É raiz de <i>glossário</i>, <i>glote</i>, <i>poliglota</i> e <i>isoglossa</i>, a linha que separa dois falares num atlas linguístico.</p>
+      </div>
+      <p style="margin-top:16px">O conceito é o <b>caderno de um filólogo, aberto no escuro</b>. Fundo grafite com textura de papel, a palavra protagonista em serifa clássica, a origem dela em fonte de máquina de escrever e uma cor para cada quadro. Tudo foi pensado para ser lido num celular em 1,5 segundo.</p>
+    </div>
+    <figure>
+      <div class="tela hero-tela rodando" id="heroTela" style="--c: var(--q-onde)" aria-label="Prévia animada de um Short do quadro De Onde Vem?">
+        <div class="cena">
+          <div class="selo">De Onde Vem?</div><div class="marca">G<span>.</span></div>
+          <div class="gancho-t">Algoritmo é <mark>nome de gente</mark></div>
+          <div class="legenda">toda vez que <span class="ativa">você</span></div>
+        </div>
+        <div class="cena">
+          <div class="selo">De Onde Vem?</div><div class="marca">G<span>.</span></div>
+          <div class="palavra">algoritmo<small>/al.ɡoˈɾit͡ʃi.mu/</small></div>
+          <div class="legenda">está falando o <span class="ativa">nome</span></div>
+        </div>
+        <div class="cena">
+          <div class="selo">De Onde Vem?</div><div class="marca">G<span>.</span></div>
+          <div class="etimo">
+            <div class="no"><div class="w">al-Khwārizmī</div><div class="m">PERSA · SÉC. IX</div></div>
+            <div class="seta">↓</div>
+            <div class="no"><div class="w">Algorizmi</div><div class="m">LATIM MEDIEVAL</div></div>
+            <div class="seta">↓</div>
+            <div class="no"><div class="w">algoritmo</div><div class="m">PORTUGUÊS</div></div>
+          </div>
+        </div>
+        <div class="cena" style="--c: var(--q-mito)">
+          <div class="selo">Mito ou Verdade</div><div class="marca">G<span>.</span></div>
+          <div class="gancho-t">Forró = <mark>"for all"?</mark></div>
+          <div class="carimbo">MITO</div>
+          <div class="legenda">vem de <span class="ativa">forrobodó</span></div>
+        </div>
+      </div>
+      <div class="hero-controls">
+        <button type="button" id="btnPausa" aria-pressed="false">Pausar prévia</button>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">01 · Marca</div>
+  <h2>Logotipo e avatar</h2>
+  <div class="cols">
+    <div>
+      <p>O logotipo é a palavra <b>Glossa</b> em DM Serif Display, seguida de um <b>ponto âmbar</b>. O ponto é o único elemento de cor fixo da marca: aparece no avatar, na marca-d'água do canto dos vídeos e no fim da capa.</p>
+      <p>No avatar fica só o "G." em círculo. É legível até em 32 px, o tamanho do perfil nos comentários. Use a versão escura nas três redes. A versão clara fica de reserva para fundos claros (parcerias, mídia kit).</p>
+    </div>
+    <div class="avatares">
+      <div><div class="avatar">G<span>.</span></div><div class="cap">perfil · 320 px</div></div>
+      <div><div class="avatar claro">G<span>.</span></div><div class="cap">reserva clara</div></div>
+      <div><div class="avatar p">G<span>.</span></div><div class="cap">56 px</div></div>
+      <div><div class="avatar pp">G<span>.</span></div><div class="cap">32 px</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">02 · Cor</div>
+  <h2>Paleta: base fixa + uma cor por quadro</h2>
+  <p>A base nunca muda: grafite, creme e âmbar. Cada quadro tem uma cor de destaque, usada no selo, no sublinhado do gancho, na palavra ativa da legenda e nas setas. <b>Use uma única cor de quadro por vídeo.</b></p>
+  <div class="paleta" id="paleta"></div>
+</section>
+
+<section>
+  <div class="eyebrow">03 · Tipografia</div>
+  <h2>Quatro fontes, cada uma com um trabalho</h2>
+  <p>Todas são gratuitas no Google Fonts. Os tamanhos indicados são para uma tela de 1080 × 1920.</p>
+  <div class="tipos">
+    <div class="tipo">
+      <div class="lado"><b>DM Serif Display</b>Palavra protagonista, títulos, cartão etimológico.<br>180–220 px · minúsculas</div>
+      <div class="esp-display">saudade</div>
+    </div>
+    <div class="tipo">
+      <div class="lado"><b>Archivo Black (900)</b>Gancho e legendas palavra a palavra.<br>gancho 78 px · legenda 76 px · CAIXA ALTA</div>
+      <div class="esp-caption">Esquimós têm <mark>100 palavras</mark> para neve?</div>
+    </div>
+    <div class="tipo">
+      <div class="lado"><b>IBM Plex Mono</b>Metadados: língua, século, fonte. É a "voz de dicionário".<br>32–36 px · caixa alta com espaçamento</div>
+      <div class="esp-mono">LATIM · SÉC. I a.C. → PORTUGUÊS · SÉC. XIII</div>
+    </div>
+    <div class="tipo">
+      <div class="lado"><b>Noto Sans</b>Só para transcrição fonética (IPA). As outras fontes não têm todos os símbolos.<br>44 px</div>
+      <div class="esp-ipa">/sawˈda.d͡ʒi/ · [tʃ] · [ɾ] · [ʃ]</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">04 · Quadros</div>
+  <h2>Os 7 selos em uso</h2>
+  <p>Um quadro por horário, todos os dias. O selo fica no canto superior esquerdo, a marca "G." à direita, fora da coluna de botões das redes.</p>
+  <div class="grade-telas sete" id="gradeQuadros"></div>
+</section>
+
+<section>
+  <div class="eyebrow">05 · Componentes</div>
+  <h2>As peças de montar</h2>
+  <p>Monte cada uma como template no seu editor (CapCut, Premiere ou After Effects). Quase todo roteiro do plano mensal se resolve com estas seis peças.</p>
+  <div class="grade-telas">
+    <figure class="item-tela">
+      <div class="tela" style="--c: var(--q-aula)">
+        <div class="selo">Aula de Letras</div><div class="marca">G<span>.</span></div>
+        <div class="gancho-t">Contexto <mark>≠</mark> cotexto</div>
+        <div class="palavra" style="font-size:13cqw">cotexto<small>o entorno linguístico</small></div>
+      </div>
+      <figcaption><b>Palavra protagonista</b><span>entra letra a letra, 40 ms por letra</span></figcaption>
+    </figure>
+    <figure class="item-tela">
+      <div class="tela" style="--c: var(--q-onde)">
+        <div class="selo">De Onde Vem?</div><div class="marca">G<span>.</span></div>
+        <div class="gancho-t">Saudade vem de <mark>solidão</mark></div>
+        <div class="etimo" style="top:36%">
+          <div class="no"><div class="w">solitas</div><div class="m">LATIM</div></div>
+          <div class="seta">↓</div>
+          <div class="no"><div class="w">soidade</div><div class="m">GALEGO-PORTUGUÊS · SÉC. XIII</div></div>
+          <div class="seta">↓</div>
+          <div class="no"><div class="w">saudade</div><div class="m">PORTUGUÊS</div></div>
+        </div>
+      </div>
+      <figcaption><b>Cartão etimológico</b><span>cada nó entra de cima para baixo, a cada 0,8 s</span></figcaption>
+    </figure>
+    <figure class="item-tela">
+      <div class="tela" style="--c: var(--q-ext)">
+        <div class="selo">Línguas Extremas</div><div class="marca">G<span>.</span></div>
+        <div class="gancho-t">A ilha que fala <mark>assobiando</mark></div>
+        <div class="mapa"><canvas id="mapa" aria-label="Mapa estilizado em pontos com uma região acesa"></canvas></div>
+        <div class="legenda">la <span class="ativa">gomera</span></div>
+      </div>
+      <figcaption><b>Mapa escuro</b><span>mapa apagado, região acesa na cor do quadro</span></figcaption>
+    </figure>
+    <figure class="item-tela">
+      <div class="tela" style="--c: var(--q-primas)">
+        <div class="selo">Línguas Primas</div><div class="marca">G<span>.</span></div>
+        <div class="gancho-t">Pai · father · <mark>Vater</mark></div>
+        <div class="arvore">
+          <svg viewBox="0 0 200 180" role="img" aria-label="Árvore de línguas indo-europeias">
+            <g fill="none" stroke="var(--c)" stroke-width="1.6" stroke-linecap="round">
+              <path d="M100 172 V118"/><path d="M100 118 C100 96 50 96 50 74"/><path d="M100 118 C100 96 150 96 150 74"/>
+              <path d="M50 74 C50 56 22 56 22 36"/><path d="M50 74 C50 56 78 56 78 36"/>
+              <path d="M150 74 C150 56 124 56 124 36"/><path d="M150 74 C150 56 178 56 178 36"/>
+            </g>
+            <g fill="var(--creme)" font-family="DM Serif Display, Georgia, serif" font-size="13" text-anchor="middle">
+              <text x="100" y="179" font-size="10" fill="var(--creme-3)" font-family="IBM Plex Mono, monospace">PROTOINDO-EUROPEU</text>
+              <text x="22" y="28">pai</text><text x="78" y="28">padre</text><text x="124" y="28">father</text><text x="178" y="28">Vater</text>
+            </g>
+            <g fill="var(--creme-3)" font-family="IBM Plex Mono, monospace" font-size="8" text-anchor="middle">
+              <text x="50" y="90">LATIM</text><text x="150" y="90">GERMÂNICO</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <figcaption><b>Árvore de línguas</b><span>galhos crescem da raiz para as folhas</span></figcaption>
+    </figure>
+    <figure class="item-tela">
+      <div class="tela" style="--c: var(--q-mito)">
+        <div class="selo">Mito ou Verdade</div><div class="marca">G<span>.</span></div>
+        <div class="gancho-t">Sincero = <mark>"sem cera"?</mark></div>
+        <div class="carimbo">MITO</div>
+      </div>
+      <figcaption><b>Carimbo</b><span>cai com impacto + som seco. VERDADE usa verde</span></figcaption>
+    </figure>
+    <figure class="item-tela">
+      <div class="tela zonas" id="telaZonas" style="--c: var(--q-br)">
+        <div class="selo">Brasil Falado</div><div class="marca">G<span>.</span></div>
+        <div class="gancho-t">"Cê" já foi <mark>Vossa Mercê</mark></div>
+        <div class="legenda">vossa mercê virou <span class="ativa">vosmecê</span></div>
+        <div class="rotulo-zona" style="left:6cqw; bottom:7cqw">interface das redes · 20%</div>
+        <div class="rotulo-zona" style="right:1.5cqw; top:44%; writing-mode: vertical-rl;">botões · 15%</div>
+      </div>
+      <figcaption><b>Legenda + zonas seguras</b><span>3 a 4 palavras por vez, palavra falada na cor do quadro</span></figcaption>
+    </figure>
+  </div>
+  <div style="margin-top:18px"><button type="button" id="btnZonas" aria-pressed="true">Zonas seguras visíveis</button></div>
+</section>
+
+<section>
+  <div class="eyebrow">06 · Edição</div>
+  <h2>Regras de ritmo</h2>
+  <div class="regras">
+    <div class="regra"><div class="num">0–1,5 s</div><h3>Gancho primeiro</h3><p>O texto do gancho já está na tela no frame 1, igual à primeira frase da narração. O primeiro frame também serve de capa.</p></div>
+    <div class="regra"><div class="num">a cada 1,5–3 s</div><h3>Algo sempre muda</h3><p>Um corte, uma palavra nova, um nó do cartão, um zoom lento de 3%. Tela parada por mais de 3 s faz o espectador deslizar.</p></div>
+    <div class="regra"><div class="num">35–45 s</div><h3>Duração alvo</h3><p>Entre 95 e 125 palavras de narração. A partir do mês 2, compilações acima de 60 s para o TikTok.</p></div>
+    <div class="regra"><div class="num">uma voz</div><h3>A voz é a marca</h3><p>A mesma voz (humana ou IA) em todos os vídeos, por volta de 165 palavras por minuto, com o tom de quem conta um segredo.</p></div>
+    <div class="regra"><div class="num">−18 dB</div><h3>Trilha discreta</h3><p>Piano ou lo-fi bem baixo, sempre da mesma família. Efeitos sonoros só para o carimbo e as transições do cartão.</p></div>
+    <div class="regra"><div class="num">último frame</div><h3>Fecho em loop</h3><p>A última frase puxa a primeira. Quando o vídeo recomeça, a pessoa nem percebe.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">07 · Limites</div>
+  <h2>O que fazer e o que evitar</h2>
+  <div class="faz">
+    <div>
+      <h3><span class="tag sim">sim</span>Faça</h3>
+      <ul>
+        <li>Imagens de domínio público (Wikimedia Commons, bibliotecas nacionais), tratadas em duotom grafite + creme.</li>
+        <li>Retratos de linguistas em preto e branco, com a cor do quadro numa borda fina.</li>
+        <li>Datas, línguas e séculos sempre em IBM Plex Mono, como num verbete de dicionário.</li>
+        <li>Na transcrição fonética, use a fonte Noto Sans e confira cada símbolo.</li>
+      </ul>
+    </div>
+    <div>
+      <h3><span class="tag nao">não</span>Evite</h3>
+      <ul>
+        <li>Duas cores de quadro no mesmo vídeo ou cores fora da paleta.</li>
+        <li>Texto nos 20% inferiores ou nos 15% da direita.</li>
+        <li>Imagem realista gerada por IA sem o rótulo de conteúdo sintético.</li>
+        <li>Logo ou marca d'água de outra rede no arquivo enviado.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rodape">Glossa · identidade visual v1 · acompanha o plano editorial do mês 1 (PDF)</div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var cores = [
+    { nome: 'Grafite', v: '#111114', uso: 'Fundo de todos os vídeos', css: '#111114' },
+    { nome: 'Creme', v: '#F2EAD8', uso: 'Texto principal e logotipo', css: '#F2EAD8' },
+    { nome: 'Âmbar · marca', v: '#E8A33D', uso: 'Ponto do logotipo e quadro De Onde Vem?', css: 'var(--q-onde)' },
+    { nome: 'Aula de Letras', v: '#D9D0BC', uso: 'Pergaminho: conceitos do curso', css: 'var(--q-aula)' },
+    { nome: 'Mito ou Verdade', v: '#E05A4F', uso: 'Vermelho de carimbo', css: 'var(--q-mito)' },
+    { nome: 'Línguas Extremas', v: '#F2C94C', uso: 'Amarelo de mapa', css: 'var(--q-ext)' },
+    { nome: 'Brasil Falado', v: '#4CAF7A', uso: 'Verde (também usado no carimbo VERDADE)', css: 'var(--q-br)' },
+    { nome: 'Línguas Primas', v: '#5B9BE0', uso: 'Azul de árvore genealógica', css: 'var(--q-primas)' },
+    { nome: 'Gênios da Linguística', v: '#A57FDB', uso: 'Roxo de arquivo histórico', css: 'var(--q-genios)' }
+  ];
+  var pal = document.getElementById('paleta');
+  cores.forEach(function (c) {
+    var d = document.createElement('div');
+    d.className = 'amostra';
+    d.innerHTML = '<div class="cor" style="--c:' + c.css + '"></div><div class="info"><span class="nome">' + c.nome + '</span><span class="uso">' + c.uso + '</span><button type="button" class="copiar">' + c.v + '</button></div>';
+    pal.appendChild(d);
+  });
+  pal.addEventListener('click', function (ev) {
+    var b = ev.target.closest('.copiar'); if (!b) return;
+    var hex = b.textContent.replace('copiado', '').trim();
+    var done = function () { b.textContent = 'copiado'; setTimeout(function () { b.textContent = hex; }, 1200); };
+    try {
+      navigator.clipboard.writeText(hex).then(done, function () { selecionar(b); });
+    } catch (e) { selecionar(b); }
+  });
+  function selecionar(el) { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+  var quadros = [
+    { n: 'De Onde Vem?', h: '07h', c: 'var(--q-onde)', g: 'Escrúpulo é uma <mark>pedrinha</mark>', p: 'scrupulus', i: 'LATIM · "PEDRINHA"' },
+    { n: 'Aula de Letras', h: '10h', c: 'var(--q-aula)', g: 'Meme é <mark>gênero textual</mark>', p: 'gênero', i: 'MARCUSCHI · 2002' },
+    { n: 'Mito ou Verdade', h: '12h', c: 'var(--q-mito)', g: 'Gringo = <mark>"green, go"?</mark>', p: 'gringo', i: 'DICIONÁRIO · 1787' },
+    { n: 'Línguas Extremas', h: '15h', c: 'var(--q-ext)', g: 'Uma sílaba, <mark>4 palavras</mark>', p: 'mā má mǎ mà', i: 'MANDARIM · 4 TONS' },
+    { n: 'Brasil Falado', h: '18h', c: 'var(--q-br)', g: 'Pipoca é <mark>tupi</mark>', p: 'pi’poka', i: 'TUPI · "PELE ESTOURADA"' },
+    { n: 'Línguas Primas', h: '20h', c: 'var(--q-primas)', g: 'Em grego, laranja é <mark>"Portugal"</mark>', p: 'portokáli', i: 'GREGO MODERNO' },
+    { n: 'Gênios da Linguística', h: '22h', c: 'var(--q-genios)', g: 'Ele desmaiou ao ler <mark>hieróglifos</mark>', p: 'Champollion', i: 'PARIS · 1822' }
+  ];
+  var grade = document.getElementById('gradeQuadros');
+  quadros.forEach(function (q) {
+    var f = document.createElement('figure');
+    f.className = 'item-tela';
+    f.innerHTML = '<div class="tela" style="--c:' + q.c + '"><div class="selo">' + q.n + '</div><div class="marca">G<span>.</span></div>' +
+      '<div class="gancho-t">' + q.g + '</div><div class="palavra" style="font-size:' + (q.p.length > 9 ? 11 : 14) + 'cqw">' + q.p +
+      '<small style="font-family:var(--f-mono);letter-spacing:.06em;font-size:3.2cqw">' + q.i + '</small></div></div>' +
+      '<figcaption><b>' + q.n + '</b><span>' + q.h + ' · ' + q.c.replace('var(--q-', '').replace(')', '') + '</span></figcaption>';
+    grade.appendChild(f);
+  });
+  // legenda: hex no lugar do nome do token
+  var hexes = { onde: '#E8A33D', aula: '#D9D0BC', mito: '#E05A4F', ext: '#F2C94C', br: '#4CAF7A', primas: '#5B9BE0', genios: '#A57FDB' };
+  grade.querySelectorAll('figcaption span').forEach(function (s) {
+    var parts = s.textContent.split(' · '); s.textContent = parts[0] + ' · ' + (hexes[parts[1]] || parts[1]);
+  });
+
+  // herói: pausar
+  var hero = document.getElementById('heroTela'), bp = document.getElementById('btnPausa');
+  bp.addEventListener('click', function () {
+    var rodando = hero.classList.toggle('rodando');
+    bp.setAttribute('aria-pressed', String(!rodando));
+    bp.textContent = rodando ? 'Pausar prévia' : 'Retomar prévia';
+  });
+
+  // zonas seguras
+  var tz = document.getElementById('telaZonas'), bz = document.getElementById('btnZonas');
+  bz.addEventListener('click', function () {
+    var on = tz.classList.toggle('zonas');
+    bz.setAttribute('aria-pressed', String(on));
+    bz.textContent = on ? 'Zonas seguras visíveis' : 'Mostrar zonas seguras';
+    tz.querySelectorAll('.rotulo-zona').forEach(function (r) { r.hidden = !on; });
+  });
+
+  // mapa em pontos (estilizado, mostra o tratamento visual)
+  var cv = document.getElementById('mapa');
+  function desenhar() {
+    var r = cv.getBoundingClientRect(); if (!r.width) return;
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = r.width * dpr; cv.height = r.height * dpr;
+    var x = cv.getContext('2d'); x.scale(dpr, dpr);
+    var W = r.width, H = r.height, passo = Math.max(5, W / 34);
+    // massas de terra aproximadas (elipses) — Europa/África/Américas, só como textura
+    var terras = [[.18,.30,.16,.22],[.27,.62,.10,.22],[.55,.25,.14,.12],[.58,.55,.12,.24],[.80,.30,.18,.18],[.86,.68,.08,.08]];
+    for (var px = passo / 2; px < W; px += passo) for (var py = passo / 2; py < H; py += passo) {
+      var u = px / W, v = py / H, dentro = false;
+      terras.forEach(function (t) { var dx = (u - t[0]) / t[2], dy = (v - t[1]) / t[3]; if (dx * dx + dy * dy < 1) dentro = true; });
+      if (!dentro) continue;
+      x.beginPath(); x.arc(px, py, passo * .16, 0, 6.3); x.fillStyle = 'rgba(242,234,216,.22)'; x.fill();
+    }
+    // ponto aceso (Canárias, aproximado)
+    var cx = W * .44, cy = H * .44;
+    var g = x.createRadialGradient(cx, cy, 0, cx, cy, passo * 2.6);
+    g.addColorStop(0, 'rgba(242,201,76,.9)'); g.addColorStop(1, 'rgba(242,201,76,0)');
+    x.fillStyle = g; x.beginPath(); x.arc(cx, cy, passo * 2.6, 0, 6.3); x.fill();
+    x.fillStyle = '#F2C94C'; x.beginPath(); x.arc(cx, cy, passo * .35, 0, 6.3); x.fill();
+  }
+  desenhar();
+  if (window.ResizeObserver) new ResizeObserver(desenhar).observe(cv);
+})();
+</script>

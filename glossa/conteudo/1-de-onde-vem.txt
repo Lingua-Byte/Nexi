@@ -1,0 +1,209 @@
+## Algoritmo é nome de gente
+G: ALGORITMO = UM HOMEM
+R: Toda vez que você fala "algoritmo", está falando o nome de um homem. No século 9, em Bagdá, viveu o matemático persa al-Khwārizmī, "o de Khwarazm", uma região da Ásia Central. Ele escreveu um livro explicando os algarismos indianos, os que a gente usa até hoje. Traduzido para o latim, o texto começava com "Dixit Algorizmi": "disse Algorizmi". O nome dele virou o nome do próprio método de calcular. Daí vieram "algoritmo" e "algarismo". E outro livro dele tinha no título a palavra "al-jabr", que virou "álgebra". Um homem só, três palavras que você usou na escola.
+V: ALGORITMO letra a letra → mapa acendendo Bagdá e Khwarazm → manuscrito árabe (Wikimedia) → cartão: al-Khwārizmī → Algorizmi → algoritmo / algarismo → "al-jabr" se transformando em ÁLGEBRA.
+L: Você fala o nome dele todo dia sem saber. 🔢
+F: Houaiss (verbetes algoritmo, álgebra); Encyclopaedia Britannica, "al-Khwarizmi".
+
+## Candidato: o homem de branco
+G: CANDIDATO = "O DE BRANCO"
+R: Candidato quer dizer "o que está de branco". Na Roma antiga, quem disputava um cargo público andava pelo fórum com uma toga esfregada com giz, para ficar branquíssima: a toga candida. "Candidus", em latim, é branco brilhante, puro. Daí "candidatus", o vestido de branco. A ideia era passar imagem de pureza e honestidade. A mesma raiz deu "cândido", que é ingênuo, puro, e até "candura". Então, na próxima eleição, lembra: a palavra candidato nasceu como uma estratégia de marketing de roupa. Há dois mil anos.
+V: toga branca brilhando → estátua romana (domínio público) → cartão: candidus → candidatus → candidato / cândido / candura → urna eletrônica estilizada.
+L: Marketing político tem 2.000 anos. 🏛️
+F: Houaiss (candidato); Lewis & Short, Latin Dictionary (candidatus).
+
+## Escrúpulo é uma pedrinha
+G: ESCRÚPULO = PEDRINHA NO SAPATO
+R: Ter escrúpulo é, literalmente, ter uma pedrinha no sapato. Em latim, "scrupus" era uma pedra pontuda, e "scrupulus" uma pedrinha. Imagina um soldado romano marchando com uma pedrinha na sandália: ela incomoda, não deixa você em paz. Os romanos passaram a usar a palavra para aquele incômodo da consciência, a dúvida moral que não sai da cabeça. "Scrupulus" também era uma unidade minúscula de peso. Então quem "não tem escrúpulos" é alguém que anda tranquilo… mesmo pisando em pedra.
+V: sandália romana com pedrinha em zoom → cartão: scrupus → scrupulus → escrúpulo → balança com peso minúsculo.
+L: Você tem pedrinha no sapato? 🪨
+F: Houaiss (escrúpulo); Online Etymology Dictionary (scruple).
+
+## Companheiro: quem divide o pão
+G: COMPANHEIRO = COM + PÃO
+R: Seu companheiro é, literalmente, quem come pão com você. A palavra vem do latim tardio "companio": "com", junto, mais "panis", pão. Era a pessoa com quem você partia o pão, a mesa e a vida. "Companhia" e até "empresa" em inglês, "company", vêm da mesma ideia. É curioso: uma palavra tão afetiva nasceu de uma coisa bem concreta, dividir comida. E faz sentido. Até hoje, a gente chama pra comer quem a gente quer por perto. Marca aqui o seu companheiro de pão de queijo.
+V: pão sendo partido ao meio → cartão: com + panis → companio → companheiro / companhia / company.
+L: Marca seu companheiro de pão. 🥖
+F: Houaiss (companheiro); Online Etymology Dictionary (companion).
+
+## Tchau: "sou seu escravo"
+G: TCHAU = "SOU SEU ESCRAVO"
+R: Quando você diz "tchau", está dizendo "sou seu escravo". O tchau vem do italiano "ciao", que vem do dialeto de Veneza. Lá se dizia "s-ciào vostro": "seu escravo", uma fórmula de cortesia exagerada, tipo "às suas ordens". "S-ciào" vem do latim medieval "sclavus", escravo, mesma origem da palavra "eslavo". Com o tempo, o "s-ciào" encurtou, virou "ciao", espalhou pela Itália como cumprimento informal, e os imigrantes italianos trouxeram para o Brasil. Aqui ele virou despedida. Então, tchau… seu humilde servo.
+V: mapa acendendo Veneza → cartão: sclavus → s-ciào vostro → ciao → tchau → navio de imigrantes (foto de arquivo).
+L: Cuidado com o que você diz na despedida. 👋
+F: Treccani (ciao); Houaiss (tchau).
+
+## Abacate em asteca
+G: ABACATE EM ASTECA ERA… TESTÍCULO
+R: Em náuatle, a língua dos astecas, abacate era "ahuacatl". E "ahuacatl" também significava testículo. Pelo formato, e por crescer em pares na árvore. Os espanhóis adaptaram para "aguacate", e daí veio o nosso abacate. O náuatle deu ao mundo várias palavras de cozinha: tomate vem de "tomatl", chocolate vem do náuatle também, e guacamole é "ahuacamolli", molho de abacate. Então guacamole é, tecnicamente, um molho de… Bom. Você entendeu. Bom apetite.
+V: abacates em par numa árvore → mapa do México acendendo → cartão: ahuacatl → aguacate → abacate → tigela de guacamole com rótulo "ahuacamolli".
+L: Você nunca mais vai olhar pro guacamole igual. 🥑
+F: Real Academia Española (aguacate); Houaiss (abacate).
+
+## Músculo é um ratinho
+G: MÚSCULO = RATINHO
+R: Seu músculo é um ratinho. Em latim, "mus" é rato e "musculus" é ratinho. Os romanos olhavam o bíceps se contraindo debaixo da pele e achavam que parecia um ratinho correndo. E não foram só eles: em grego, "mys" também quer dizer rato e músculo ao mesmo tempo. Daí vêm termos médicos como "miocárdio", o músculo do coração. Então, quando alguém disser que está "pegando muito ferro" na academia, você já sabe: está alimentando os ratinhos.
+V: braço fazendo bíceps com ratinho animado por baixo → cartão: mus → musculus → músculo; grego mys → miocárdio.
+L: Alimente seus ratinhos. 🐭💪
+F: Houaiss (músculo); Online Etymology Dictionary (muscle).
+
+## Pandemônio foi inventado por um poeta
+G: ESSA PALAVRA TEM DONO E DATA
+R: "Pandemônio" foi inventado por um poeta, em 1667. John Milton, no poema "Paraíso Perdido", precisava de um nome para a capital do inferno, onde os demônios se reúnem. Juntou o grego "pan", todos, com "daimon", demônio: Pandaemonium, "o lugar de todos os demônios". A palavra fez tanto sucesso que saiu do poema e virou sinônimo de confusão, caos e barulho. Hoje, quando a sala de aula vira um pandemônio, você está citando um poema épico do século 17 sem saber.
+V: gravura de Gustave Doré do Paraíso Perdido (domínio público) → "pan" + "daimon" → PANDEMÔNIO → sala de aula em caos (ilustração).
+L: Tem palavra que nasce em poema e vai parar no grupo da família. 😈
+F: Oxford English Dictionary (pandemonium); Milton, Paradise Lost, livro I.
+
+## Robô quer dizer trabalho forçado
+G: ROBÔ = TRABALHO FORÇADO
+R: A palavra robô tem 100 anos e nasceu no teatro. Em 1920, o escritor tcheco Karel Čapek escreveu a peça "R.U.R.", sobre fábricas de trabalhadores artificiais que acabam se revoltando. Para nomeá-los, o irmão dele, Josef, sugeriu "roboti", do tcheco "robota": trabalho forçado, servidão. A peça rodou o mundo e a palavra junto. Ou seja: desde o primeiro dia, a palavra robô já carregava a ideia de escravidão… e de revolta. Coincidência ou aviso?
+V: cartaz da peça R.U.R. (domínio público) → retrato de Čapek → cartão: robota → roboti → robô → robôs modernos.
+L: A palavra já avisava. 🤖
+F: Encyclopaedia Britannica (R.U.R.); Online Etymology Dictionary (robot).
+
+## Azulejo não vem de azul
+G: AZULEJO NÃO VEM DE AZUL
+R: Parece óbvio que azulejo vem de azul. Os portugueses amavam azulejo azul e branco. Mas não. Azulejo vem do árabe "az-zulayj", pedrinha polida, ladrilho. Já "azul" vem de outro caminho: do persa "lāžward", o nome da pedra lápis-lazúli, que passou pelo árabe. Duas palavras parecidas, duas origens diferentes, que se encontraram na Península Ibérica, onde o árabe foi falado por séculos. Isso tem nome: quando duas palavras soam parecidas, a gente supõe parentesco que não existe.
+V: painel de azulejos portugueses → split: azulejo ← az-zulayj / azul ← lāžward → pedra de lápis-lazúli.
+L: Às vezes a coincidência engana. 💙
+F: Houaiss (azulejo, azul); Real Academia Española (azulejo).
+
+## Saudade vem de solidão
+G: SAUDADE VEM DE… SOLIDÃO
+R: A palavra mais famosa do português nasceu da solidão. Saudade vem do latim "solitas", solidão. No português antigo, aparecia como "soidade" e "suidade". Com o tempo, foi se misturando com "saudar" e "saúde" e virou "saudade". Repara que a ideia original faz todo o sentido: saudade é a solidão de alguém que não está. E os trovadores galego-portugueses da Idade Média já cantavam a "soidade" nos poemas de amor. Comenta o nome de quem te dá saudade.
+V: cantiga medieval em pergaminho → cartão: solitas → soidade → suidade → saudade.
+L: Saudade é solidão com nome e sobrenome. 🌧️
+F: Houaiss (saudade); Michaëlis, "A saudade portuguesa" (1914).
+
+## Assassino tem origem árabe
+G: ASSASSINO VEM DE UMA SEITA
+R: A palavra assassino nasceu no Oriente Médio, na época das Cruzadas. Os nizaritas, um grupo ismaelita, ficaram famosos por eliminar líderes políticos rivais. Os inimigos os chamavam de "hashishiyyin", que costuma ser associado a haxixe. Hoje, os historiadores acham que era um apelido pejorativo, e não prova de que eles usavam a droga. Os cruzados levaram o nome para a Europa, e ele virou "assassino", quem mata por encomenda. Uma ofensa política virou palavra do dia a dia.
+V: mapa do Oriente Médio medieval → fortaleza de Alamut (foto) → cartão: hashishiyyin → assassino → selo "apelido pejorativo".
+L: Uma palavra que nasceu como fofoca de guerra. 🗡️
+F: Encyclopaedia Britannica (Assassin); Farhad Daftary, "The Assassin Legends" (1994).
+
+## Palavras gêmeas
+G: CADEIRA E CÁTEDRA SÃO A MESMA PALAVRA
+R: Cadeira e cátedra são a mesma palavra. As duas vêm do grego "kathédra", assento. Uma chegou ao português pela boca do povo, gastou e virou cadeira. A outra foi buscada direto nos livros, mais tarde, e ficou com cara de erudita: cátedra. Os linguistas chamam essas duplas de palavras divergentes. Tem várias: chave e clave, cheio e pleno, chão e plano, inteiro e íntegro. Uma é a versão popular, a outra a versão culta. Mesma mãe, educações diferentes.
+V: árvore com raiz kathédra se dividindo em CADEIRA (popular) e CÁTEDRA (culta) → pares surgindo: chave/clave, cheio/pleno, chão/plano.
+L: Mesma mãe, educações diferentes. 👯
+F: Celso Cunha & Lindley Cintra, Nova Gramática do Português Contemporâneo (formas divergentes).
+
+## OK nasceu de uma piada
+G: OK É UMA PIADA DE 1839
+R: A palavra mais usada do planeta nasceu de uma piada. Em 1839, os jornais de Boston tinham uma moda: abreviar expressões escritas errado de propósito. "O.K." era "oll korrect", jeito engraçado de escrever "all correct", tudo certo. A moda passou, mas o OK ficou, porque no ano seguinte virou slogan da campanha do presidente Martin Van Buren, apelidado de "Old Kinderhook". Quem desvendou essa história foi o linguista Allen Walker Read, nos anos 1960. Ok?
+V: jornal antigo de Boston com "o.k." em destaque → "oll korrect" → cartaz de campanha "O.K. Club" → retrato de Allen Walker Read.
+L: Uma piada que deu a volta ao mundo. 👌
+F: Allen Walker Read, artigos em American Speech (1963-64); Allan Metcalf, "OK: The Improbable Story of America's Greatest Word" (2011).
+
+## Nicotina tem nome de diplomata
+G: NICOTINA = NOME DE UM EMBAIXADOR
+R: Nicotina é nome de gente. Jean Nicot era o embaixador da França em Lisboa no século 16. Lá ele conheceu o tabaco, trazido das Américas, e mandou a planta para a rainha francesa, Catarina de Médici, dizendo que curava dor de cabeça. Virou moda na corte. Em homenagem a ele, a planta ganhou o nome científico "Nicotiana", e depois a substância virou "nicotina". Detalhe: tudo começou em Lisboa. O português ajudou a espalhar o fumo pela Europa.
+V: retrato de Jean Nicot → mapa Lisboa → Paris → ilustração botânica de Nicotiana → fórmula da nicotina.
+L: O nome mais famoso de um embaixador. 🚬
+F: Encyclopaedia Britannica (Jean Nicot); Houaiss (nicotina).
+
+## Boicote era um homem
+G: BOICOTE ERA O SENHOR BOYCOTT
+R: Boicote era o nome de um homem que ninguém queria por perto. Em 1880, na Irlanda, Charles Boycott administrava terras de um lorde inglês e se recusou a baixar o aluguel dos camponeses depois de safras ruins. A comunidade decidiu não brigar: simplesmente ignorar. Ninguém trabalhava pra ele, ninguém vendia nada pra ele, nem o carteiro entregava. Os jornais chamaram a tática pelo nome dele. Em poucos anos, "boycott" estava em várias línguas. Ser ignorado nunca foi tão famoso.
+V: caricatura de época de Boycott → mapa da Irlanda → aldeia virando as costas → cartão: Boycott → boycott → boicote.
+L: O cara foi cancelado em 1880. 🚫
+F: Online Etymology Dictionary (boycott); Encyclopaedia Britannica (Charles Boycott).
+
+## Jeans vem de Gênova
+G: SEU JEANS É ITALIANO E SEU DENIM É FRANCÊS
+R: Sua calça jeans tem passaporte europeu. "Jeans" vem de "Gênes", o nome francês de Gênova, na Itália, cidade de onde saía um tecido de algodão resistente usado por marinheiros. Já "denim" vem de "de Nîmes", da cidade de Nîmes, na França, famosa por outra sarja forte. Os dois tecidos foram parar nos Estados Unidos, viraram calça de trabalhador e depois símbolo de estilo. Então seu jeans é italiano, seu denim é francês, e sua calça é americana.
+V: mapa: Gênova e Nîmes acendendo → cartões: Gênes → jeans / de Nîmes → denim → calça jeans.
+L: Sua calça tem duas cidadanias. 👖
+F: Online Etymology Dictionary (jean, denim).
+
+## Bizarro era elogio
+G: "BIZARRO" JÁ FOI ELOGIO
+R: Se você chamasse alguém de bizarro no século 18, a pessoa ia agradecer. Em português e espanhol, "bizarro" queria dizer elegante, valente, generoso, de boa presença. Um "cavaleiro bizarro" era um cavaleiro admirável. Mas o francês "bizarre" significava estranho, esquisito. E de tanto contato com o francês, o sentido estrangeiro foi entrando e venceu. Hoje, bizarro é esquisito. Os dicionários ainda registram o sentido antigo. Isso se chama mudança semântica: a palavra fica, o significado muda.
+V: retrato de cavaleiro elegante com legenda "bizarro (1700)" → transição para meme estranho com legenda "bizarro (hoje)" → cartão de mudança semântica.
+L: Te chamaram de bizarro? Pode ser elogio. 🎩
+F: Houaiss (bizarro); Real Academia Española (bizarro).
+
+## Cretino era cristão
+G: CRETINO VEM DE "CRISTÃO"
+R: Cretino vem de cristão. Nos Alpes franceses e suíços, muitas pessoas nasciam com uma condição causada pela falta de iodo, que afetava o crescimento e o desenvolvimento intelectual. No dialeto local, eram chamadas de "crestin", cristão, no sentido de "ser humano também", "pobre cristão". A palavra entrou no francês como "crétin", virou termo médico e depois, infelizmente, insulto. Hoje a condição é rara graças ao sal iodado, e a palavra virou xingamento. Uma palavra de compaixão que virou ofensa.
+V: paisagem dos Alpes → mapa → cartão: christianus → crestin → crétin → cretino → pacote de sal iodado.
+L: A palavra começou com compaixão. 🏔️
+F: Oxford English Dictionary (cretin); Houaiss (cretino).
+
+## Pupila é uma bonequinha
+G: TEM UMA BONEQUINHA NO SEU OLHO
+R: Olha bem de perto o olho de alguém. Você vai ver uma miniatura sua refletida ali. Os romanos viram isso e deram nome: "pupilla", bonequinha, menininha. Daí vem a pupila, a parte central do olho. E a mesma raiz deu "pupilo", o menino sob tutela de alguém. Os gregos tinham a mesma ideia: "kórē", menina, também era a pupila. Quando você olha nos olhos de alguém, vira, literalmente, uma bonequinha lá dentro.
+V: zoom extremo num olho mostrando reflexo de uma pessoa → cartão: pupa → pupilla → pupila / pupilo.
+L: Você mora no olho de quem te olha. 👁️
+F: Houaiss (pupila); Online Etymology Dictionary (pupil).
+
+## Vacina vem da vaca
+G: VACINA VEM DE VACA
+R: Toda vacina vem de uma vaca. Em 1796, o médico inglês Edward Jenner percebeu que ordenhadoras que pegavam a varíola bovina, uma doença leve, não pegavam a varíola humana. Ele testou a ideia inoculando material da varíola das vacas, em latim "variolae vaccinae". "Vacca" é vaca. O método ficou conhecido como vacinação. Décadas depois, Louis Pasteur propôs usar "vacina" para qualquer imunização, em homenagem a Jenner. Então até a vacina da gripe é, no nome, uma vaca.
+V: vaca ilustrada → retrato de Jenner → cartão: vacca → vaccinae → vacina → seringa moderna.
+L: Muuuito obrigado, Jenner. 🐄
+F: Houaiss (vacina); Encyclopaedia Britannica (Edward Jenner).
+
+## Quarentena eram 40 dias
+G: QUARENTENA = 40 DIAS
+R: Quarentena quer dizer quarenta dias. No século 14, na peste negra, cidades do Mediterrâneo começaram a isolar navios antes de deixá-los desembarcar. Ragusa, atual Dubrovnik, criou em 1377 um isolamento de 30 dias, o "trentino". Depois o padrão passou para 40, em italiano veneziano "quaranta giorni", e daí veio "quarentena". Por que 40? Provavelmente por tradição religiosa: 40 dias da Quaresma, 40 dias de Jesus no deserto. Hoje uma quarentena pode durar 7 dias e continua com o mesmo nome.
+V: navios medievais ancorados → mapa: Dubrovnik e Veneza → "trentino" (30) → "quaranta giorni" (40) → quarentena.
+L: Lembra quando todo mundo aprendeu essa palavra? 😷
+F: Encyclopaedia Britannica (quarantine); Online Etymology Dictionary (quarantine).
+
+## Silhueta era um ministro pão-duro
+G: SILHUETA ERA UM MINISTRO PÃO-DURO
+R: Silhueta era o sobrenome de um ministro francês. Étienne de Silhouette foi ministro das Finanças em 1759 e ficou conhecido por cortar gastos de forma radical. Ele durou poucos meses no cargo. A expressão "à la Silhouette" passou a significar coisa barata, feita com o mínimo. E os retratos de perfil recortados em papel preto, a forma mais barata de retrato da época, ficaram com o nome dele. Ser pão-duro nunca rendeu tanta fama.
+V: retrato de perfil em papel preto → retrato de Étienne de Silhouette → moedas sumindo → SILHUETA.
+L: O pão-duro mais famoso da história. ✂️
+F: Online Etymology Dictionary (silhouette); Larousse (silhouette).
+
+## Dinossauro: lagarto terrível
+G: DINOSSAURO = LAGARTO TERRÍVEL
+R: Dinossauro foi uma palavra inventada em 1842. O paleontólogo britânico Richard Owen juntou o grego "deinós", terrível, assombroso, com "sauros", lagarto. Antes disso, os fósseis gigantes não tinham um grupo com nome. Muitos termos científicos são feitos assim, juntando grego: hipopótamo é "cavalo do rio", rinoceronte é "chifre no nariz". A ciência adora montar palavras com peças gregas, como um Lego de 2.500 anos.
+V: esqueleto de dinossauro → retrato de Owen → peças de Lego: deinós + sauros → hipopótamo (híppos + potamós) → rinoceronte (rhís + kéras).
+L: A ciência fala grego. 🦖
+F: Online Etymology Dictionary (dinosaur); Encyclopaedia Britannica (Richard Owen).
+
+## Hotel, hospital e hóspede são família
+G: HOTEL, HOSPITAL E HOSPÍCIO SÃO IRMÃOS
+R: Hotel, hospital, hospício e hóspede são da mesma família. Todas vêm do latim "hospes", que significava ao mesmo tempo hóspede e anfitrião. Daí veio "hospitale", casa que recebe estranhos, viajantes e doentes. Pelo francês antigo, "hostel" virou "hôtel". Em outras línguas, a mesma raiz deu "hospitalidade". E tem uma prima inesperada: "hostil". O latim "hostis" significava estrangeiro e também inimigo. Receber bem e desconfiar do estranho: duas atitudes, quase a mesma palavra.
+V: árvore genealógica com raiz HOSPES → hotel / hospital / hospício / hóspede / hospitalidade → galho separado: hostis → hostil.
+L: O hotel e o hospital são primos. 🏨🏥
+F: Houaiss (hóspede, hospital, hotel); Online Etymology Dictionary (host, hostile).
+
+## Pânico é culpa de um deus
+G: PÂNICO TEM DONO: UM DEUS
+R: O pânico tem dono: o deus grego Pã. Metade homem, metade bode, ele vivia nos bosques e montanhas. Os gregos diziam que, quando alguém sentia um medo súbito e sem motivo no meio do mato, era Pã gritando. Esse medo coletivo era o "panikós", o terror de Pã. Uma lenda conta que ele ajudou os atenienses na batalha de Maratona espalhando pânico entre os persas. Hoje, quando a internet entra em pânico, é Pã trabalhando.
+V: escultura de Pã (domínio público) → floresta escura → cartão: Pán → panikós → pânico.
+L: Culpa do Pã. 🐐
+F: Houaiss (pânico); Heródoto, Histórias, livro VI.
+
+## Sanduíche era um conde
+G: SANDUÍCHE ERA UM CONDE
+R: Sanduíche é o título de um conde inglês. John Montagu, o 4º conde de Sandwich, viveu no século 18. Conta a tradição que ele não queria parar de jogar cartas para comer e pedia carne entre duas fatias de pão, para não sujar os dedos. Outros jogadores passaram a pedir "o mesmo que Sandwich". Os historiadores dizem que talvez fosse no trabalho, e não no jogo. Mas o nome pegou. Sandwich, por sua vez, é uma cidadezinha inglesa. Seu lanche tem título de nobreza.
+V: retrato do conde → mesa de cartas → sanduíche montado → mapa da cidade de Sandwich, Inglaterra.
+L: Seu lanche é nobre. 🥪
+F: Online Etymology Dictionary (sandwich); N. A. M. Rodger, "The Insatiable Earl" (1993).
+
+## Avatar é um deus que desce
+G: AVATAR É UM DEUS DESCENDO À TERRA
+R: Antes de ser foto de perfil, avatar era um deus. Em sânscrito, "avatāra" significa descida. No hinduísmo, é quando uma divindade desce ao mundo numa forma física. Vishnu, por exemplo, tem vários avatares, como Rama e Krishna. Nos anos 1980, os jogos de computador pegaram a palavra para o personagem que representa você dentro do mundo virtual. Faz sentido: você "desce" para dentro do jogo. E hoje, toda vez que troca a foto de perfil, você troca de… encarnação.
+V: pintura indiana de Vishnu e avatares → cartão: ava (para baixo) + tṛ (atravessar) → avatāra → ícone de perfil.
+L: Sua foto de perfil é uma encarnação divina. 🕉️
+F: Encyclopaedia Britannica (avatar); Online Etymology Dictionary (avatar).
+
+## Por que a mulher diz "obrigada"
+G: "OBRIGADO" É UMA DÍVIDA
+R: Quando você agradece, está assumindo uma dívida. "Obrigado" quer dizer "fico obrigado a você": devo um favor, estou ligado a você por isso. Vem do latim "obligare", amarrar, ligar. Por isso a mulher diz "obrigada": ela está falando de si mesma, é um adjetivo que concorda com quem fala. O japonês, por exemplo, não diz isso e não tem relação nenhuma com "obrigado". Já o inglês diz "much obliged", a mesma ideia. Então, "obrigado pela atenção"... e agora estou te devendo uma.
+V: corda amarrando duas mãos → cartão: obligare → obrigado → balões "obrigado" (homem) / "obrigada" (mulher) → "much obliged".
+L: Agradecer é assumir dívida. 🙏
+F: Houaiss (obrigado); Celso Cunha & Lindley Cintra, Nova Gramática (concordância do particípio).
+
+## Dinheiro era uma moeda de dez
+G: DINHEIRO = "DE DEZ"
+R: A palavra dinheiro vem de uma moeda romana: o denário. Em latim, "denarius" quer dizer "que contém dez", porque, no começo, um denário valia dez asses, outra moeda romana. O denário circulou por séculos e virou sinônimo de moeda em geral. Daí vieram "dinheiro" em português, "dinero" em espanhol e até o "dinar", moeda de vários países árabes hoje. E tem mais: na Inglaterra, até 1971, o "penny" era abreviado com a letra "d", de denarius. Então seu dinheiro é, no nome, uma moeda de dez.
+V: moeda de denário (foto de museu) → "deni" = dez de cada vez → cartão: denarius → dinheiro / dinero / dinar → moeda inglesa com "d".
+L: Seu dinheiro tem 2.000 anos. 💰
+F: Houaiss (dinheiro); Online Etymology Dictionary (denarius, dinar).

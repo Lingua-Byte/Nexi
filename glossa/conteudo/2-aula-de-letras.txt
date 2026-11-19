@@ -1,0 +1,209 @@
+## Contexto não é cotexto
+G: CONTEXTO ≠ COTEXTO
+R: Contexto e cotexto parecem a mesma coisa, mas não são. Pega a frase: "Ele chegou ali ontem". Quem é ele? Onde é ali? Para entender, você precisa de duas coisas. O cotexto é o que está escrito em volta da frase: as outras frases do texto. Se antes estava escrito "O Pedro foi à praia", você sabe quem é ele. Já o contexto é tudo o que está fora do texto: quem fala, onde, quando, com que intenção. Cotexto é o entorno linguístico. Contexto é a situação. Quem faz Letras sofre com essa diferença no primeiro semestre.
+V: frase "Ele chegou ali ontem" no centro → setas para as frases ao redor (COTEXTO, círculo interno) → círculo externo com pessoas, lugar, relógio (CONTEXTO).
+L: Se você confundia, agora não confunde mais. 📖
+F: Ingedore Koch, "O texto e a construção dos sentidos" (1997); Halliday & Hasan, "Cohesion in English" (1976).
+
+## 4 figuras de linguagem antes do almoço
+G: VOCÊ FAZ POESIA SEM SABER
+R: Você odiava figura de linguagem na escola, mas usa quatro antes do almoço. "Já te falei mil vezes!" Mil? Isso é hipérbole, o exagero. "Vou tomar um copo d'água." Você não toma o copo, toma a água: metonímia, trocar uma coisa por outra ligada a ela. "Ele passou desta para melhor": eufemismo, suavizar algo duro. E "o pé da mesa"? A mesa não tem pé. Isso é catacrese: uma metáfora tão velha que ninguém percebe mais. Pois é: você é poeta e não sabia. Comenta outra que você usa todo dia.
+V: cada exemplo num balão de fala → nome da figura carimbado embaixo → ilustrações simples (copo, mesa com pé desenhado).
+L: Seu professor de português estava certo. 😅
+F: Celso Cunha & Lindley Cintra, Nova Gramática (figuras de linguagem).
+
+## Por que árvore se chama árvore?
+G: POR QUE "ÁRVORE" SE CHAMA ÁRVORE?
+R: Por que árvore se chama árvore? Resposta: por nada. Ferdinand de Saussure chamou isso de arbitrariedade do signo. Não existe nada na coisa árvore que exija os sons "á-r-v-o-r-e". Tanto que em inglês é "tree", em alemão "Baum", em japonês "ki". Se o nome viesse da coisa, todas as línguas falariam igual. A ligação entre o som, o significante, e a ideia, o significado, é uma convenção social. Mas cuidado: arbitrário não quer dizer que você pode mudar sozinho. Tenta chamar a árvore de "cadeira" amanhã.
+V: árvore no centro → nomes em várias línguas orbitando → esquema clássico de Saussure: elipse dividida, significado em cima, significante embaixo.
+L: Arbitrário, mas não é bagunça. 🌳
+F: Saussure, Curso de Linguística Geral (1916), parte I, cap. 1.
+
+## Letra não é fonema
+G: "TÁXI" TEM 4 LETRAS E 5 SONS
+R: "Táxi" tem quatro letras e cinco sons: t, a, k, s, i. O "x" vale dois. E "hora" tem quatro letras, mas o "h" não tem som nenhum. Isso acontece porque letra e fonema são coisas diferentes. Fonema é a unidade de som que diferencia palavras: "pato" e "bato" mudam de sentido só pelo primeiro som. Letra é só a forma de escrever isso. A escrita é uma tentativa imperfeita de desenhar a fala. Por isso existe o Alfabeto Fonético Internacional, que tenta dar um símbolo para cada som.
+V: TÁXI com letras numeradas (4) e sons numerados (5) → HORA com o h apagado → pato/bato → tabela do IPA rolando.
+L: A escrita mente. A fala, não. 🔤
+F: Mattoso Câmara Jr., "Estrutura da Língua Portuguesa" (1970); International Phonetic Association.
+
+## O "t" do carioca e do recifense
+G: "TCHIA" OU "TIA"? É O MESMO SOM.
+R: O carioca diz "tchia". O recifense diz "tia". Os dois estão falando o mesmo fonema. Na linguística, o fonema é o som como unidade abstrata, que diferencia palavras: o /t/. Já as diferentes formas de pronunciar esse som, sem mudar o sentido, se chamam alofones. "Tchia" e "tia" significam a mesma coisa. Mas troca o /t/ por /d/ e você tem "dia", outra palavra. Por isso o /t/ e o /d/ são fonemas diferentes, e o "t" e o "tch" são só dois jeitos de dizer o mesmo. Sotaque é, em boa parte, alofone.
+V: mapa: Rio "tchia" / Recife "tia" → caixa /t/ com duas setas para [t] e [tʃ] → tia vs dia com "sentido muda".
+L: Seu sotaque é alofone. 🗣️
+F: Thaïs Cristófaro Silva, "Fonética e Fonologia do Português" (1999).
+
+## "Infelizmente" tem uma mente dentro
+G: TEM UMA "MENTE" EM "INFELIZMENTE"
+R: Desmonta a palavra "infelizmente". "In" quer dizer não. "Feliz" é a base. E "mente"... é mente mesmo. Em latim, "mens" era mente, espírito. Dizer "clara mente" era dizer "com o espírito claro". Com o tempo, "mente" deixou de ser palavra e virou um sufixo para formar advérbios. Cada um desses pedaços com significado se chama morfema: a menor unidade com sentido. Por isso, em textos antigos, você vê "clara e rapidamente": o "mente" só aparece no último, um resto da época em que era palavra separada.
+V: palavra INFELIZMENTE se partindo em três peças coloridas: IN + FELIZ + MENTE → latim "clara mente" → definição de morfema.
+L: Desmontar palavra é um vício bom. 🧩
+F: Mattoso Câmara Jr., "Estrutura da Língua Portuguesa" (1970); Houaiss (-mente).
+
+## As palavras que mudam de significado com você
+G: "EU" SIGNIFICA UMA PESSOA DIFERENTE AGORA
+R: Quando você lê "eu", quem é? Depende de quem está falando. "Eu", "aqui", "agora", "isso", "amanhã": essas palavras não têm um significado fixo. Elas apontam para a situação. Isso se chama dêixis, do grego "mostrar". "Me encontra aqui amanhã" num bilhete sem data e sem lugar é inútil. Você não sabe quando nem onde. A dêixis é a prova de que a língua não funciona solta: ela depende do contexto o tempo todo. E é por isso que mensagem de WhatsApp sem contexto dá briga.
+V: dedo apontando → palavras EU / AQUI / AGORA / ISSO com setas para pessoa, mapa, relógio → bilhete "me encontra aqui amanhã" com interrogações.
+L: "Aqui" fica onde? 📍
+F: Émile Benveniste, "Problemas de Linguística Geral" (1966); Stephen Levinson, "Pragmatics" (1983).
+
+## A palavra que significa duas coisas em Letras
+G: ANÁFORA TEM DOIS SIGNIFICADOS
+R: Em Letras, "anáfora" tem dois significados, e eles confundem muita gente. No primeiro, é uma figura de linguagem: repetir a mesma palavra no começo dos versos. "É pau, é pedra, é o fim do caminho." No segundo, da linguística textual, é a palavra que retoma algo dito antes. "Maria chegou. Ela estava cansada." O "ela" é uma anáfora, porque remete a Maria. Uma é estilo, a outra é coesão. Mesma palavra, duas disciplinas. E é por isso que o professor de literatura e o de linguística às vezes parecem falar línguas diferentes.
+V: tela dividida: esquerda "figura" com versos repetidos destacados / direita "coesão" com seta de "ela" para "Maria".
+L: Mesmo nome, dois trabalhos. 🔁
+F: Ingedore Koch, "A coesão textual" (1989); Tom Jobim, "Águas de Março" (1972).
+
+## Coeso, mas sem sentido
+G: UM TEXTO PODE SER PERFEITO E SEM SENTIDO
+R: Lê isso: "Comprei um carro. O carro é azul. O azul é a cor do céu. O céu tem nuvens. As nuvens são de algodão." Todas as frases se ligam: uma retoma a outra. Isso é coesão, a amarração das palavras. Mas o texto não leva a lugar nenhum, então falta coerência, que é o sentido do todo. O contrário também existe: "Chuva. Guarda-chuva esquecido. Molhado." Quase nenhum conectivo, mas você entende tudo. Coesão está na superfície, coerência está na interpretação. A redação do ENEM cobra as duas.
+V: corrente de frases ligadas por elos (coesão) terminando no vazio → selo "sem coerência" → segundo texto curto com "entendeu tudo".
+L: Seu texto está coeso ou coerente? ✍️
+F: Ingedore Koch & Luiz Carlos Travaglia, "A coerência textual" (1990).
+
+## "Ele é uma cobra" não fala de bicho
+G: "COBRA" PODE NÃO SER UM ANIMAL
+R: "A cobra picou o rapaz." "Meu chefe é uma cobra." É a mesma palavra, mas na segunda ninguém tem medo de picada. No primeiro caso é denotação: o sentido literal, de dicionário. No segundo é conotação: o sentido figurado, carregado de valores e emoções. A conotação depende da cultura. Em português, cobra é traição. Já "raposa" é esperteza, e "anta" é burrice. Os animais não fizeram nada pra merecer isso. Fomos nós que demos esses sentidos a eles.
+V: cobra real (denotação) → chefe de terno com sombra de cobra (conotação) → raposa e anta com etiquetas.
+L: Coitada da anta. 🐍
+F: Celso Cunha & Lindley Cintra, Nova Gramática; Roland Barthes, "Elementos de Semiologia" (1964).
+
+## A manga da camisa e a manga da árvore
+G: A MANGA DA CAMISA NÃO É PARENTE DA FRUTA
+R: A manga da camisa e a manga da fruta não são parentes. A manga da camisa vem do latim "manica", de "manus", mão. A fruta veio da Índia: os portugueses aprenderam o nome com o malaiala, uma língua do sul da Índia. Mesma forma, origens diferentes: isso se chama homonímia. Agora, o "pé" do corpo e o "pé" da mesa vêm da mesma palavra, que ganhou sentidos novos: isso é polissemia. Os dicionários separam as duas coisas: homônimos ganham verbetes diferentes. Polissemia fica no mesmo verbete.
+V: camisa e fruta lado a lado com raízes separadas (manica / malaiala) → pé humano e pé de mesa com raiz única → página de dicionário com verbetes 1 e 2.
+L: Uma palavra, duas famílias. 🥭👕
+F: Houaiss (manga¹, manga²); John Lyons, "Semantics" (1977).
+
+## Comprimento ou cumprimento?
+G: ERRAR ISSO MUDA TUDO
+R: "Meus comprimentos à família." Errado: você mandou medidas à família. Comprimento, com O, é tamanho. Cumprimento, com U, é saudação. Palavras assim, parecidas na forma e diferentes no sentido, se chamam parônimos. Tem mais: descrição é descrever, discrição é ser discreto. Eminente é ilustre, iminente é o que está para acontecer. Ratificar é confirmar, retificar é corrigir. Um "perigo eminente" seria um perigo muito famoso. Salva esse vídeo antes do próximo e-mail formal.
+V: régua medindo uma família (piada visual) → pares em cartões espelhados: comprimento/cumprimento, descrição/discrição, eminente/iminente, ratificar/retificar.
+L: Salva antes do próximo e-mail. 📏
+F: Celso Cunha & Lindley Cintra, Nova Gramática (parônimos).
+
+## Pleonasmo: vício ou poesia?
+G: "SUBIR PRA CIMA" PODE SER POESIA?
+R: "Subir pra cima", "entrar pra dentro", "elo de ligação". Redundância pura. Isso é pleonasmo vicioso. Mas Camões, em Os Lusíadas, escreveu: "Vi, claramente visto, o lume vivo". Ver com a visão, claramente visto: também é redundância. Só que ali ela é proposital, para dar força, para mostrar que o que ele viu era real. Isso é pleonasmo literário, uma figura de linguagem. A diferença não está na frase, está na intenção e no efeito. Na redação, cuidado. Na poesia, à vontade.
+V: elevador com placa "subir pra cima" (riscada em vermelho) → página de Os Lusíadas com o verso destacado em dourado.
+L: Repetir pode ser erro ou arte. 🔁
+F: Camões, Os Lusíadas, canto V, estrofe 18; Celso Cunha & Lindley Cintra, Nova Gramática.
+
+## "Vi o homem com o binóculo"
+G: QUEM ESTÁ COM O BINÓCULO?
+R: "Vi o homem com o binóculo." Quem está com o binóculo, você ou ele? A frase não diz. Isso é ambiguidade estrutural: as palavras são claras, mas a estrutura da frase permite duas leituras. "Com o binóculo" pode se ligar a "vi" ou a "homem". Os linguistas desenham isso em árvores sintáticas, e são duas árvores diferentes para a mesma frase. Outro clássico: "Ela levou o cachorro da vizinha". O cachorro é da vizinha ou ela levou da casa da vizinha? A língua economiza, e às vezes economiza demais.
+V: ilustração dupla: pessoa com binóculo olhando um homem / pessoa olhando homem que segura binóculo → duas árvores sintáticas simplificadas.
+L: Qual foi a sua leitura? 🔭
+F: Noam Chomsky, "Syntactic Structures" (1957); Mário Perini, "Gramática Descritiva do Português" (1995).
+
+## O Hino Nacional cita um poema
+G: O HINO NACIONAL COPIA UM POEMA
+R: "Nossos bosques têm mais vida, nossa vida no teu seio mais amores." Esse trecho do Hino Nacional cita outro texto: a "Canção do Exílio", de Gonçalves Dias, de 1843: "Nossos bosques têm mais vida, nossa vida mais amores". Quando um texto conversa com outro, chama-se intertextualidade. A Canção do Exílio é campeã: Oswald de Andrade, Murilo Mendes, Drummond e muitos outros fizeram paródias e releituras. "Minha terra tem palmeiras onde canta o sabiá" é provavelmente o verso mais reescrito da literatura brasileira.
+V: letra do hino com trecho destacado → manuscrito/edição da Canção do Exílio → paródias surgindo como post-its ao redor.
+L: Você canta um poema sem saber. 🇧🇷
+F: Gonçalves Dias, "Canção do Exílio" (1843); Lei 5.700/1971 (letra do Hino Nacional).
+
+## Um texto, muitas vozes
+G: NENHUM TEXTO TEM UMA VOZ SÓ
+R: Quando você diz "Dizem que eu sou difícil, mas eu só sou sincero", tem duas vozes na frase: a sua e a de quem diz que você é difícil. O teórico russo Mikhail Bakhtin chamou isso de polifonia: vários pontos de vista falando dentro de um texto. A ironia é polifonia pura: "Que dia lindo!", debaixo de chuva, junta a voz que elogia e a voz que debocha. Para Bakhtin, toda fala responde a falas anteriores. Ninguém é o primeiro a falar sobre nada.
+V: frase em dois balões de cores diferentes → retrato de Bakhtin → "Que dia lindo!" sob chuva com duas vozes.
+L: Quantas vozes tem no seu texto? 🎭
+F: Mikhail Bakhtin, "Problemas da Poética de Dostoiévski" (1929/1963).
+
+## Meme é gênero textual
+G: MEME É GÊNERO TEXTUAL. SÉRIO.
+R: Meme é gênero textual, igual a receita, bula e carta. Na linguística, tipo textual é o modo de organizar o texto: narrar, descrever, argumentar, expor, instruir. São poucos. Já gênero textual é o formato social do texto, com função, estrutura e lugar: notícia, receita, piada, post, meme. São infinitos e nascem o tempo todo. O meme tem estrutura fixa, imagem e legenda, regras de uso e circulação própria. Quem disse que gêneros se formam pelo uso foi Bakhtin. A internet só acelerou.
+V: grid: receita, bula, carta, meme com etiqueta "gênero" → lista curta de "tipos" → meme clássico (genérico, sem marca) com anotações de estrutura.
+L: Seu grupo da família produz gênero textual. 😂
+F: Luiz Antônio Marcuschi, "Gêneros textuais: definição e funcionalidade" (2002); Bakhtin, "Os gêneros do discurso".
+
+## As 4 formas de uma língua variar
+G: SUA LÍNGUA MUDA DE 4 JEITOS
+R: Sua língua varia de quatro jeitos. Com o tempo: o português de 1500 não é o de hoje, e isso é variação diacrônica. Com o lugar: "mandioca", "aipim", "macaxeira", e isso é variação diatópica. Com o grupo social: escolaridade, idade, classe, e isso é variação diastrática. E com a situação: você não fala com o chefe como fala com o amigo, e isso é variação diafásica. Ninguém fala de um jeito só. Quem diz que fala "sempre igual" está variando agora mesmo.
+V: quatro quadrantes animados: relógio (diacrônica), mapa (diatópica), pessoas (diastrática), terno/bermuda (diafásica).
+L: Qual variação você mais usa? 🗺️
+F: Eugenio Coseriu (terminologia dia-); Marcos Bagno, "Nada na língua é por acaso" (2007).
+
+## Norma culta não é norma-padrão
+G: NORMA CULTA ≠ NORMA-PADRÃO
+R: Norma culta e norma-padrão não são a mesma coisa, e isso cai em prova de Letras. A norma-padrão é um modelo ideal, o que está nas gramáticas normativas. Ninguém fala exatamente assim. A norma culta é o jeito como as pessoas escolarizadas realmente falam e escrevem. E elas falam "me empresta", "tem muita gente aqui" e "vou no médico", coisas que a gramática tradicional condena. Pesquisas como o Projeto NURC gravaram falantes cultos de cinco capitais e mostraram isso. O padrão é a régua. A culta é a realidade.
+V: régua (padrão) vs gravador antigo (culta, NURC) → exemplos de fala culta real em balões.
+L: Você fala a norma culta, mas não a padrão. 🎓
+F: Carlos Alberto Faraco, "Norma culta brasileira" (2008); Projeto NURC (desde 1969).
+
+## A frase sem sujeito
+G: QUEM CHOVEU?
+R: "Choveu ontem." Quem choveu? Ninguém. É uma oração sem sujeito, e é diferente do sujeito oculto e do indeterminado. Sujeito oculto: "Fui à praia". Você sabe que é "eu" pela terminação do verbo. Sujeito indeterminado: "Roubaram meu celular". Alguém roubou, mas não se sabe quem. Oração sem sujeito: o verbo nem tem a quem se referir. São os fenômenos da natureza, o "haver" de existir e o "fazer" de tempo: "Faz dois anos". Por isso "fazem dois anos" está errado na norma-padrão.
+V: nuvem chovendo com "?" → três cartões: oculto (eu escondido), indeterminado (silhueta), sem sujeito (vazio) → "fazem" riscado.
+L: A chuva não tem dono. 🌧️
+F: Celso Cunha & Lindley Cintra, Nova Gramática (oração sem sujeito); Evanildo Bechara, "Moderna Gramática Portuguesa".
+
+## Crase em 10 segundos
+G: O TRUQUE DA CRASE QUE NUNCA FALHA
+R: Crase é a fusão de duas letras "a": a preposição "a" mais o artigo "a". Truque para nome de lugar: "Vou a, volto da, crase há. Vou a, volto de, crase pra quê?" Volto da Bahia: então "vou à Bahia". Volto de Roma: então "vou a Roma". Para o resto, troca por uma palavra masculina. "Fui à feira" vira "fui ao mercado". Apareceu "ao"? Então tem crase. "Fui a pé" nunca, porque pé é masculino e não tem artigo feminino ali. Salva, que um dia vai salvar você.
+V: a + a se fundindo em À → rima na tela com placas de cidade → troca feira/mercado com "ao" destacado.
+L: Salva pra prova. ✅
+F: Celso Cunha & Lindley Cintra, Nova Gramática (crase).
+
+## Tempo é dinheiro: você pensa em metáforas
+G: VOCÊ PENSA EM METÁFORAS O DIA TODO
+R: "Gastei meu tempo." "Economizei tempo." "Não tenho tempo pra você." Tempo é dinheiro, e a gente nem percebe. Em 1980, George Lakoff e Mark Johnson mostraram, no livro "Metáforas da vida cotidiana", que a metáfora não é enfeite de poema. É um jeito de pensar. Discussão é guerra: "ataquei os argumentos dele", "defendi meu ponto". Feliz é para cima: "estou pra cima", "caí na real". A gente entende o abstrato através do concreto. A sua cabeça é uma fábrica de metáforas.
+V: relógio virando cofre → arena com balões "ataquei", "defendi" → seta para cima com "feliz".
+L: Quantas metáforas você usou hoje? 🧠
+F: George Lakoff & Mark Johnson, "Metaphors We Live By" (1980).
+
+## O que a frase não diz, mas diz
+G: "PAROU DE FUMAR" DIZ MAIS DO QUE PARECE
+R: "Pedro parou de fumar." Sem dizer, a frase informa que Pedro fumava. Isso é um pressuposto: algo que vem marcado na própria frase e continua valendo até na negação. "Pedro não parou de fumar" também diz que ele fumava. Agora: "Nossa, está frio aqui". Talvez você queira que alguém feche a janela. Isso é subentendido: depende do contexto e quem fala pode negar, "eu só comentei!". O linguista Oswald Ducrot estudou essa diferença. A língua fala muito mais do que diz.
+V: cigarro apagado com balão "ele fumava" em transparência → janela aberta, pessoa encolhida, balão "fecha a janela?" pontilhado.
+L: Leia nas entrelinhas. 🪟
+F: Oswald Ducrot, "O dizer e o dito" (1984).
+
+## Frases que fazem coisas
+G: TEM FRASE QUE NÃO DESCREVE. ELA FAZ.
+R: "Eu vos declaro marido e mulher." Essa frase não descreve um casamento. Ela faz o casamento acontecer. O filósofo John Austin chamou isso de enunciado performativo: dizer é fazer. "Prometo", "aposto", "batizo", "te desafio". Mas tem condição: se um desconhecido na rua disser "eu vos declaro marido e mulher", não vale. Precisa da pessoa certa, no lugar certo, do jeito certo. Austin chamou essas falhas de "infelicidades". O livro dele tem o título perfeito: "Quando dizer é fazer".
+V: cerimônia de casamento com a frase em letreiro → lista de verbos performativos → desconhecido na rua dizendo a frase (selo "não vale").
+L: Promete que comenta? 💍
+F: John L. Austin, "How to Do Things with Words" (1962).
+
+## "Sextou" é uma palavra nova
+G: "SEXTOU" É LINGUÍSTICA PURA
+R: "Sextou" não está em muitos dicionários, mas é português perfeito. Os falantes pegaram um substantivo, "sexta", e transformaram em verbo da primeira conjugação, que é a mais produtiva da língua: sextar. Depois veio o passado: sextou. É a mesma regra que criou "deletar", "printar" e "googlar". Isso é neologismo: palavra nova criada por regras que a língua já tem. Ninguém inventa do nada. A gramática está na cabeça do falante, e ele aplica sem pensar. Comenta um neologismo que você usa.
+V: calendário na sexta → SEXTA + -AR → SEXTAR → SEXTOU → outros: deletar, printar.
+L: Sextou com gramática. 🍻
+F: Margarida Basilio, "Formação e Classes de Palavras no Português do Brasil" (2004).
+
+## O cachorro não late igual em todo lugar
+G: EM JAPONÊS, O CACHORRO FAZ "WAN WAN"
+R: Em português, o cachorro faz "au au". Em inglês, "woof woof". Em espanhol, "guau guau". Em japonês, "wan wan". O cachorro é o mesmo. Então por que muda? Porque a onomatopeia, a palavra que imita um som, também passa pelo filtro de cada língua. Cada idioma tem seus sons possíveis e suas combinações preferidas. Por isso a onomatopeia é só parcialmente natural. Ela também é convenção. Até o galo muda: aqui é "cocoricó", em inglês é "cock-a-doodle-doo".
+V: cachorro no centro com balões em várias línguas e bandeiras → galo com "cocoricó" vs "cock-a-doodle-doo".
+L: Como late o cachorro na sua língua? 🐶
+F: Saussure, Curso de Linguística Geral (sobre onomatopeias); Wikipedia, "Cross-linguistic onomatopoeias" (verificar exemplos).
+
+## O som que vira sentido
+G: ESSE VERSO SOA COMO UM VIOLÃO
+R: Escuta: "Vozes veladas, veludosas vozes, volúpias dos violões, vozes veladas". Esse verso é de Cruz e Sousa, poeta simbolista catarinense, e repete o som de "v" sem parar. A repetição de consoantes se chama aliteração. A repetição de vogais se chama assonância. O efeito aqui é imitar o som abafado e vibrante das cordas. No Simbolismo, o som importava tanto quanto o sentido. Fala o verso em voz alta: dá pra ouvir o violão.
+V: verso aparecendo com cada "v" pulsando → retrato de Cruz e Sousa → corda de violão vibrando em sincronia.
+L: Lê em voz alta. 🎸
+F: Cruz e Sousa, "Violões que choram", em "Faróis" (1900).
+
+## Língua, linguagem e fala
+G: LÍNGUA, LINGUAGEM E FALA NÃO SÃO SINÔNIMOS
+R: Língua, linguagem e fala parecem a mesma coisa. Para Saussure, não são. Linguagem é a capacidade humana geral de se comunicar com signos. Língua, a "langue", é o sistema social: o português, com suas regras, que existe na cabeça de todos os falantes. Fala, a "parole", é o uso individual, o que você diz agora, do seu jeito. A língua é a partitura. A fala é cada execução da música. Saussure escolheu estudar a língua, o sistema. E isso fundou a linguística moderna.
+V: três círculos concêntricos: LINGUAGEM > LÍNGUA > FALA → partitura (língua) vs músicos tocando (fala).
+L: Partitura ou música? 🎼
+F: Saussure, Curso de Linguística Geral (1916), introdução, cap. 3.
+
+## O narrador que se mistura com o personagem
+G: QUEM ESTÁ PENSANDO: O NARRADOR OU O PERSONAGEM?
+R: Discurso direto: "Fabiano disse: — Sou um bicho." Indireto: "Fabiano disse que era um bicho." Agora, o terceiro tipo: "Fabiano olhou os filhos. Era um bicho, sim, um bicho capaz de vencer dificuldades." Quem pensa isso? O narrador ou o personagem? Os dois. Isso é discurso indireto livre: a voz do personagem entra na narração sem aviso, sem travessão, sem "disse que". Graciliano Ramos usa a técnica em "Vidas Secas" para entrar na cabeça de quem quase não fala. É um dos recursos mais elegantes da prosa moderna.
+V: três versões da frase (exemplos criados para o vídeo, inspirados no livro) lado a lado com marcas visuais (travessão, "que", nada) → capa estilizada de Vidas Secas (sem logo de editora).
+L: Já tinha percebido isso? 📚
+F: Graciliano Ramos, "Vidas Secas" (1938); Celso Cunha & Lindley Cintra, Nova Gramática (discurso indireto livre). Os exemplos são adaptados: não apresente como citação literal.
+
+## "Não é nada bobo" é um elogio
+G: "ELE NÃO É NADA BOBO" = ELE É ESPERTO
+R: "Ele não é nada bobo." "A comida não estava ruim." "Ela não é feia." Você usa isso para dizer o contrário, de um jeito suave: é esperto, estava boa, é bonita. Essa figura se chama lítotes: afirmar algo negando o contrário. Ela suaviza, mas muitas vezes reforça. E tem ironia escondida: "não foi a melhor ideia da sua vida" é um jeito educado de dizer que foi péssima. O brasileiro, que adora não ser direto, é campeão de lítotes.
+V: frases surgindo com tradução embaixo em outra cor → selo LÍTOTES → exemplo irônico.
+L: Esse vídeo não ficou nada mal, né? 😏
+F: Celso Cunha & Lindley Cintra, Nova Gramática (lítotes).

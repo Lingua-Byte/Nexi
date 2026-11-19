@@ -1,0 +1,209 @@
+## O livro que Saussure nunca escreveu
+G: O LIVRO MAIS FAMOSO DELE... ELE NÃO ESCREVEU.
+R: O livro que fundou a linguística moderna não foi escrito pelo autor. Ferdinand de Saussure, professor suíço, deu cursos de linguística geral em Genebra e morreu em 1913 sem publicar nada sobre eles. Dois colegas, Charles Bally e Albert Sechehaye, juntaram as anotações dos alunos, organizaram tudo e publicaram em 1916 o "Curso de Linguística Geral", em nome dele. Ali estão as ideias que caem em toda prova de Letras: signo, significante, significado. A base de uma ciência inteira é, tecnicamente, um caderno de anotações.
+V: retrato de Saussure → capa da edição de 1916 → cadernos empilhados → esquema signo = significante / significado.
+L: Toda faculdade de Letras deve isso a um caderno. ✍️
+F: Saussure, "Cours de linguistique générale" (1916), prefácio dos editores.
+
+## O juiz que descobriu a família das línguas
+G: UM JUIZ NA ÍNDIA DESCOBRIU A FAMÍLIA DO PORTUGUÊS
+R: Em 1786, em Calcutá, um juiz inglês chamado William Jones fez um discurso que mudou a história da linguística. Ele estudava sânscrito, a língua clássica da Índia, e percebeu semelhanças impressionantes com o latim e o grego, nos verbos e na gramática. Concluiu que as três deviam vir de uma fonte comum, que talvez nem existisse mais. Era o nascimento da ideia da família indo-europeia. Hoje sabemos que o português, o hindi e o persa são todos parentes. Começou com um juiz curioso.
+V: retrato de William Jones → mapa: Calcutá → manuscrito em sânscrito → árvore indo-europeia surgindo.
+L: Um discurso que criou uma ciência. 📜
+F: William Jones, "Third Anniversary Discourse", Asiatic Society (1786).
+
+## Grimm não descobriu a Lei de Grimm primeiro
+G: A LEI DE GRIMM FOI DESCOBERTA POR OUTRO
+R: A famosa Lei de Grimm, a regra que transforma o "p" do latim no "f" do inglês, leva o nome de Jacob Grimm, o dos contos de fadas. Mas quem descreveu primeiro foi um dinamarquês: Rasmus Rask, num estudo publicado em 1818. Grimm sistematizou a regra em 1822, na sua gramática do alemão, e ficou com a fama. Rask morreu jovem, aos 45 anos, e é bem menos lembrado. Na ciência, como na vida, nem sempre o crédito vai para quem chegou primeiro.
+V: retratos de Rask e Grimm lado a lado → linha do tempo 1818 / 1822 → pater → father com o P virando F.
+L: Justiça para Rasmus Rask. ⚖️
+F: Lyle Campbell, "Historical Linguistics" (2013); Encyclopaedia Britannica (Rasmus Rask).
+
+## O homem que decifrou os hieróglifos
+G: ELE DESMAIOU QUANDO DECIFROU OS HIERÓGLIFOS
+R: Por mais de mil anos, ninguém conseguia ler os hieróglifos egípcios. Em 1799, soldados franceses encontraram a Pedra de Roseta, com o mesmo texto em hieróglifos, em demótico e em grego. O francês Jean-François Champollion, que falava copta, a língua descendente do egípcio antigo, percebeu que os hieróglifos misturavam sons e ideias. Em 1822, conseguiu. Conta-se que correu até o irmão, gritou "Consegui!" e desmaiou. A partir dali, o Egito antigo voltou a falar.
+V: Pedra de Roseta com as três escritas destacadas → retrato de Champollion → cartucho de "Ptolomeu" decifrado letra por letra.
+L: Uma pedra, três escritas, um gênio. 🏺
+F: Champollion, "Lettre à M. Dacier" (1822); Andrew Robinson, "Cracking the Egyptian Code" (2012).
+
+## O arquiteto que decifrou uma escrita perdida
+G: UM ARQUITETO DECIFROU UMA ESCRITA DE 3 MIL ANOS
+R: Michael Ventris não era linguista. Era arquiteto. Mas desde criança era obcecado pela Linear B, uma escrita encontrada em tabletes de Creta e da Grécia, com mais de 3 mil anos. Todo mundo achava que era uma língua desconhecida. Em 1952, Ventris descobriu que era grego, um grego muito antigo. Isso empurrou a história escrita do grego séculos para trás. Quatro anos depois, ele morreu num acidente de carro, aos 34 anos. A Linear A, a irmã mais velha, continua sem decifração até hoje.
+V: tablete de Linear B → retrato de Ventris → sinais virando sílabas gregas → selo "Linear A: ainda um mistério".
+L: Um amador que venceu os especialistas. 🏛️
+F: John Chadwick, "The Decipherment of Linear B" (1958).
+
+## A frase sem sentido mais famosa do mundo
+G: "IDEIAS VERDES INCOLORES DORMEM FURIOSAMENTE"
+R: "Ideias verdes incolores dormem furiosamente." A frase não faz sentido nenhum, mas qualquer falante percebe que a gramática está certa. Foi isso que Noam Chomsky quis mostrar em 1957, no livro "Estruturas Sintáticas". Gramática e sentido são coisas separadas. A gente tem na cabeça um sistema de regras que gera frases, mesmo as que nunca ouviu. Compare com "Furiosamente dormem ideias incolores verdes": aí a gramática quebra. Chomsky mudou a linguística com uma frase absurda.
+V: frase com cores e ícones absurdos (ideia verde sem cor dormindo com raiva) → retrato de Chomsky → versão embaralhada com X.
+L: Gramática não é sentido. 💤
+F: Noam Chomsky, "Syntactic Structures" (1957).
+
+## A gramática de 2.400 anos
+G: ESSA GRAMÁTICA TEM 2.400 ANOS E 4 MIL REGRAS
+R: Antes de qualquer gramático grego ou romano, um indiano chamado Pāṇini descreveu o sânscrito com cerca de 4 mil regras, por volta do século 4 antes de Cristo. A obra se chama Aṣṭādhyāyī, "oito capítulos". As regras são curtíssimas, quase como fórmulas, e se aplicam umas sobre as outras numa ordem precisa. Linguistas modernos, incluindo os da gramática gerativa, olham para Pāṇini com admiração: ele fez algo parecido com um algoritmo da língua, dois mil anos antes dos computadores.
+V: manuscrito em devanágari → mapa do noroeste da Índia antiga → regras em formato de código → contador 4.000.
+L: O primeiro programador da linguagem. 🧘
+F: George Cardona, "Pāṇini: A Survey of Research" (1976); Encyclopaedia Britannica (Panini).
+
+## A primeira gramática do português
+G: A PRIMEIRA GRAMÁTICA DO PORTUGUÊS FOI ESCRITA POR UM PADRE REBELDE
+R: A primeira gramática da língua portuguesa saiu em 1536, escrita por Fernão de Oliveira. Ele era padre dominicano, mas largou o convento, foi marinheiro, piloto de navio, esteve preso e foi processado pela Inquisição. Na gramática, defendeu que o português tinha valor próprio e não era só um latim estragado. Quatro anos depois, em 1540, João de Barros publicou outra gramática. Mas o pioneiro foi esse padre aventureiro, que se orgulhava da língua do povo.
+V: página de rosto da "Grammatica da lingoagem portuguesa" (1536) → caravela → selo da Inquisição.
+L: O padre aventureiro da gramática. ⚓
+F: Fernão de Oliveira, "Grammatica da lingoagem portuguesa" (1536); Amadeu Torres & Carlos Assunção, edição crítica (2000).
+
+## Anchieta escreveu a gramática do tupi
+G: A PRIMEIRA GRAMÁTICA FEITA NO BRASIL FOI DE TUPI
+R: Uma das primeiras gramáticas escritas no Brasil não foi de português. Foi de tupi. O jesuíta José de Anchieta aprendeu a língua falada na costa e escreveu a "Arte de gramática da língua mais usada na costa do Brasil", publicada em 1595, em Coimbra. Ele usava o tupi para catequese, teatro e poesia. Anchieta descreveu o tupi com as categorias do latim, o que gerou algumas distorções, mas a obra é até hoje uma fonte fundamental para quem estuda o tupi antigo.
+V: página de rosto da "Arte de gramática" (1595) → retrato de Anchieta → praia da costa paulista → palavras tupis.
+L: O Brasil começou estudando tupi. 📖
+F: José de Anchieta, "Arte de grammatica da lingoa mais usada na costa do Brasil" (1595).
+
+## "A língua é companheira do império"
+G: "A LÍNGUA SEMPRE FOI COMPANHEIRA DO IMPÉRIO"
+R: Em 1492, o mesmo ano em que Colombo chegou à América, Antonio de Nebrija publicou a primeira gramática do castelhano. No prólogo, dedicado à rainha Isabel, escreveu: "a língua sempre foi companheira do império". Quando a rainha perguntou para que servia uma gramática, a resposta, segundo relatos, era: para ensinar a língua aos povos conquistados. Foi uma das primeiras gramáticas de uma língua vulgar europeia. E mostra que gramática também é política.
+V: página de rosto da gramática de Nebrija → retrato da rainha Isabel → caravelas de Colombo → citação em letras grandes.
+L: Gramática também é poder. 👑
+F: Antonio de Nebrija, "Gramática de la lengua castellana" (1492), prólogo.
+
+## O médico que inventou uma língua para acabar com as guerras
+G: ELE INVENTOU UMA LÍNGUA PARA ACABAR COM AS GUERRAS
+R: Ludwik Zamenhof cresceu em Białystok, numa cidade onde poloneses, russos, alemães e judeus falavam línguas diferentes e viviam desconfiando uns dos outros. Ele achou que uma língua neutra ajudaria a paz. Em 1887, publicou o esperanto sob o pseudônimo "Doktoro Esperanto", o doutor que tem esperança. O nome da língua veio daí. A gramática tem só 16 regras básicas, sem exceções. Não acabou com as guerras, mas tem falantes no mundo todo até hoje.
+V: mapa de Białystok com quatro línguas em balões → retrato de Zamenhof → capa do "Unua Libro" (1887) → bandeira verde.
+L: O doutor que tinha esperança. 💚
+F: Encyclopaedia Britannica (Zamenhof); "Unua Libro" (1887).
+
+## Tolkien era linguista
+G: TOLKIEN CRIOU AS LÍNGUAS ANTES DA HISTÓRIA
+R: J. R. R. Tolkien, o autor de "O Senhor dos Anéis", era professor de filologia em Oxford. Antes disso, trabalhou no dicionário Oxford, pesquisando a origem de palavras que começam com W, como "walrus", morsa, e "wasp", vespa. Ele dizia que inventou as línguas élficas primeiro e que as histórias foram feitas para dar a essas línguas um mundo onde existir. O quenya foi inspirado no finlandês e o sindarin, no galês. A Terra-média nasceu de um linguista.
+V: retrato de Tolkien → ficha do dicionário com "walrus" → escrita élfica genérica (tengwar) → mapa de fantasia ilustrado.
+L: A Terra-média nasceu de um linguista. 🧝
+F: Humphrey Carpenter, "J. R. R. Tolkien: A Biography" (1977); Peter Gilliver et al., "The Ring of Words" (2006).
+
+## O dicionário que xingava os escoceses
+G: ESSE DICIONÁRIO TINHA OPINIÃO
+R: Em 1755, Samuel Johnson publicou um dos dicionários mais importantes do inglês. Ele trabalhou quase sozinho por nove anos. E o dicionário tinha opinião. Aveia, por exemplo: "um grão que, na Inglaterra, é dado aos cavalos, mas que na Escócia sustenta o povo". E lexicógrafo, ou seja, ele mesmo: "um escritor de dicionários, um trabalhador inofensivo". Johnson mostrou que até um dicionário tem autor. E que um dicionário com humor fica para a história.
+V: retrato de Johnson → página do dicionário de 1755 com "OATS" em destaque → cavalo e escocês comendo aveia.
+L: O dicionário mais engraçado da história. 🐴
+F: Samuel Johnson, "A Dictionary of the English Language" (1755).
+
+## O assassino que ajudou a escrever o maior dicionário
+G: UM HOMEM PRESO NUM HOSPÍCIO AJUDOU A ESCREVER O OXFORD
+R: O dicionário Oxford foi feito com a ajuda de milhares de voluntários que mandavam fichas com citações de palavras. Um dos mais produtivos era William Chester Minor, um médico americano, ex-cirurgião da Guerra Civil. Ele mandou milhares de citações. O editor, James Murray, só descobriu depois de anos quem ele era: Minor estava internado num hospital psiquiátrico na Inglaterra, depois de ter matado um homem num surto. Essa história virou livro e filme: "O Professor e o Louco".
+V: fichas do dicionário caindo como neve → retrato de Minor → fachada do hospital de Broadmoor → retrato de James Murray.
+L: A história mais estranha da lexicografia. 📚
+F: Simon Winchester, "The Professor and the Madman" (1998).
+
+## O primeiro dicionário de português foi feito por um brasileiro
+G: O PRIMEIRO DICIONÁRIO MODERNO DO PORTUGUÊS É BRASILEIRO
+R: O primeiro grande dicionário só de língua portuguesa foi feito por um brasileiro. Antônio de Morais Silva nasceu no Rio de Janeiro, em 1755. Em 1789, publicou em Lisboa o "Dicionário da Língua Portuguesa", baseado em parte no vocabulário de Rafael Bluteau, mas com muitas mudanças. Ele ficou conhecido como "o Morais" e foi o dicionário de referência por mais de um século. Ou seja, a língua de Portugal ganhou seu dicionário moderno por mãos brasileiras.
+V: retrato de Morais Silva → mapa Rio → Lisboa → página de rosto do dicionário de 1789.
+L: Um carioca dicionarizou o português. 🇧🇷
+F: Antônio de Morais Silva, "Dicionário da Língua Portuguesa" (1789).
+
+## O pai da linguística brasileira
+G: ELE TROUXE A LINGUÍSTICA PARA O BRASIL
+R: Joaquim Mattoso Câmara Jr. formou-se em arquitetura e direito, mas virou o pai da linguística no Brasil. Em 1938, deu o primeiro curso de linguística do país e, em 1941, publicou "Princípios de Linguística Geral", o primeiro livro do assunto no Brasil. Estudou nos Estados Unidos nos anos 1940 e trouxe o estruturalismo para descrever o português. O livro "Estrutura da Língua Portuguesa", de 1970, ainda é leitura obrigatória nos cursos de Letras. Se você faz Letras, deve muito a ele.
+V: retrato de Mattoso Câmara → capa estilizada de "Princípios" (1941) → esquema de morfemas → estudante de Letras.
+L: Se você faz Letras, deve a ele. 🎓
+F: Mattoso Câmara Jr., "Princípios de Linguística Geral" (1941) e "Estrutura da Língua Portuguesa" (1970).
+
+## O "r" do quarto andar
+G: ELE ESTUDOU SOTAQUE EM LOJAS DE DEPARTAMENTO
+R: Em 1962, o linguista William Labov fez um experimento genial em Nova York. Ele foi a três lojas de departamento, uma de luxo, uma média e uma popular, e perguntou aos vendedores onde ficava um produto que estava no quarto andar. A resposta era "fourth floor". Ele queria ouvir se pronunciavam o "r". Resultado: na loja de luxo, mais "r"; na popular, menos. A pronúncia acompanhava a classe social. Com isso, Labov fundou a sociolinguística moderna.
+V: três fachadas de loja (luxo, média, popular) → balão "fourth floor" com o R destacado → gráfico de barras por loja → retrato de Labov.
+L: Seu sotaque tem classe social. 🛍️
+F: William Labov, "The Social Stratification of English in New York City" (1966).
+
+## O inspetor de incêndio que mudou a linguística
+G: UM INSPETOR DE INCÊNDIOS CRIOU UMA TEORIA FAMOSA
+R: Benjamin Lee Whorf trabalhava numa seguradora contra incêndios. E percebeu uma coisa: os trabalhadores tomavam cuidado perto de tambores de gasolina cheios, mas fumavam perto dos "vazios". Só que os vazios estavam cheios de vapor explosivo. A palavra "vazio" fazia as pessoas pensarem que não havia perigo. Daí veio a ideia que ficou conhecida como hipótese Sapir-Whorf: a língua influencia o pensamento. Hoje a versão forte é rejeitada, mas a versão fraca tem apoio em pesquisas.
+V: tambor "vazio" com cigarro aceso perto → retrato de Whorf → cérebro com palavras → selo "versão fraca: tem apoio".
+L: As palavras moldam o pensamento? 🔥
+F: Benjamin Lee Whorf, "Language, Thought, and Reality" (1956).
+
+## As 6 funções da linguagem
+G: SUA FALA TEM 6 FUNÇÕES
+R: Em 1960, o linguista Roman Jakobson listou seis funções da linguagem. Referencial: informar, "está chovendo". Emotiva: expressar o que você sente, "que saudade!". Conativa: convencer alguém, "compre agora!". Fática: testar o canal, "alô? tá me ouvindo?". Metalinguística: falar da própria língua, "o que significa 'cotexto'?", como este canal. E poética: brincar com a forma da mensagem, como na publicidade e na poesia. Toda frase tem todas, mas uma domina. Qual domina neste vídeo?
+V: retrato de Jakobson → seis cartões coloridos, cada um com exemplo → selo "este canal = metalinguagem".
+L: Qual função domina este vídeo? 🗣️
+F: Roman Jakobson, "Linguistics and Poetics" (1960).
+
+## O teórico que fumou o próprio livro
+G: ELE FUMOU PÁGINAS DO PRÓPRIO LIVRO
+R: Mikhail Bakhtin é um dos teóricos mais estudados em Letras: dialogismo, polifonia, gêneros do discurso. A vida dele foi dura. Foi exilado no Cazaquistão pelo regime soviético e teve uma perna amputada por causa de uma doença óssea. Conta-se que, na Segunda Guerra, sem papel para cigarro, ele usou páginas de um manuscrito próprio para enrolar o fumo. Algumas obras do seu círculo saíram com nomes de amigos, como Volóchinov, e até hoje se discute quem escreveu o quê.
+V: retrato de Bakhtin → mapa da URSS com Cazaquistão → manuscrito virando cigarro (ilustração) → interrogação sobre autoria.
+L: Uma das histórias mais estranhas da teoria literária. 🚬
+F: Katerina Clark & Michael Holquist, "Mikhail Bakhtin" (1984).
+
+## As regras secretas da conversa
+G: TODA CONVERSA SEGUE 4 REGRAS SECRETAS
+R: O filósofo Paul Grice mostrou que, quando conversamos, seguimos quatro regras sem perceber. Quantidade: diga o necessário, nem mais nem menos. Qualidade: diga o que acredita ser verdade. Relevância: fale do assunto. Modo: seja claro. E o mais interessante é quando alguém quebra uma regra de propósito. Se você pergunta "o novo estagiário é bom?" e eu respondo "ele tem uma letra linda", eu quebrei a regra da relevância. E você entendeu tudo.
+V: retrato de Grice → quatro placas de trânsito com as máximas → diálogo do estagiário com a placa "relevância" piscando.
+L: Ele tem uma letra linda. 😬
+F: Paul Grice, "Logic and Conversation" (1975).
+
+## O paciente que só dizia "tan"
+G: UM PACIENTE QUE SÓ DIZIA "TAN" MUDOU A CIÊNCIA
+R: Em 1861, o médico francês Paul Broca atendeu um paciente chamado Leborgne, que entendia o que falavam com ele, mas só conseguia dizer uma sílaba: "tan". Quando ele morreu, Broca examinou o cérebro e encontrou uma lesão no lado esquerdo, na parte da frente. Foi uma das primeiras provas de que a linguagem tem regiões específicas no cérebro. Hoje essa área se chama área de Broca. Poucos anos depois, Carl Wernicke encontrou outra área, ligada à compreensão. Nasciam as bases da neurolinguística.
+V: retrato de Broca → cérebro com a área de Broca e a área de Wernicke acendendo → balão "tan".
+L: Uma sílaba que mudou a ciência. 🧠
+F: Paul Broca (1861); Nina Dronkers et al., Brain (2007).
+
+## A língua que nasceu nos anos 80
+G: UMA LÍNGUA NASCEU NOS ANOS 1980
+R: Os linguistas raramente veem uma língua nascer. Na Nicarágua, isso aconteceu. No fim dos anos 1970 e começo dos 1980, escolas para surdos reuniram centenas de crianças que até então viviam isoladas, cada uma com seus gestos caseiros. No pátio, elas foram criando um sistema comum. As crianças mais novas que chegavam deixavam o sistema cada vez mais regular e complexo. Nasceu a Língua de Sinais Nicaraguense. A pesquisadora Ann Senghas estudou o processo. É uma das evidências mais fortes sobre como o cérebro cria gramática.
+V: mapa da Nicarágua → crianças sinalizando no pátio (ilustração) → linha do tempo: gestos → sistema → língua.
+L: Uma língua inventada pelas crianças. 🤟
+F: Ann Senghas, Sotaro Kita & Aslı Özyürek, Science (2004).
+
+## O homem que criou uma escrita sem saber ler
+G: ELE CRIOU UMA ESCRITA SEM SABER LER
+R: Sequoyah era um ferreiro cherokee, nos Estados Unidos, e não sabia ler nem escrever em nenhuma língua. Mas viu que os brancos se comunicavam com papel e quis isso para o seu povo. Durante anos, desenvolveu um sistema em que cada símbolo representa uma sílaba do cherokee. Em 1821, apresentou o silabário com 86 símbolos. Em poucos anos, uma parte enorme do povo cherokee estava alfabetizada, e surgiu até um jornal bilíngue. Um caso raríssimo de escrita criada por uma única pessoa.
+V: retrato de Sequoyah → tabela do silabário cherokee → jornal "Cherokee Phoenix" (1828).
+L: Um gênio sem escola. ✒️
+F: Encyclopaedia Britannica (Sequoyah); Ellen Cushman, "The Cherokee Syllabary" (2011).
+
+## A letra A é uma cabeça de boi
+G: A LETRA A É UMA CABEÇA DE BOI DE CABEÇA PRA BAIXO
+R: Vira a letra A de cabeça para baixo. Viu os chifres? Ela começou como o desenho de uma cabeça de boi. No alfabeto fenício, o "aleph" significava boi. O "beth", casa, virou o B. Os fenícios só escreviam consoantes. Os gregos adaptaram o sistema por volta do século 8 antes de Cristo e transformaram alguns sinais em vogais. Daí vieram "alfa" e "beta", e a palavra alfabeto. Depois os romanos adaptaram o grego. Quando você escreve um A, desenha um boi de três mil anos.
+V: letra A girando até virar cabeça de boi → aleph fenício → alfa grego → A latino → "alfa + beta = alfabeto".
+L: Você desenha um boi toda vez. 🐂
+F: Peter Daniels & William Bright, "The World's Writing Systems" (1996).
+
+## Por que o inglês não se escreve como se fala
+G: O INGLÊS MUDOU A PRONÚNCIA E ESQUECEU DE MUDAR A ESCRITA
+R: Por que "bite" se lê "bait"? Porque, na Idade Média, se lia "bite" mesmo, parecido com o português. Entre 1400 e 1700, o inglês passou pela Grande Mudança Vocálica: as vogais longas foram mudando de lugar na boca. "Name" era "náme" e virou "neim". "Bite" era "bite" e virou "bait". Só que a imprensa chegou à Inglaterra em 1476 e começou a fixar a escrita bem no meio dessa mudança. A fala mudou e a escrita congelou. O inglês escreve como falava há 500 anos.
+V: boca com setas mostrando vogais subindo → "bite" e "name" em versões antiga e moderna → prensa de Caxton (1476).
+L: A escrita congelou no meio da mudança. 🇬🇧
+F: Albert Baugh & Thomas Cable, "A History of the English Language"; David Crystal, "Spell It Out" (2012).
+
+## O livro que ninguém consegue ler
+G: ESSE LIVRO TEM 600 ANOS E NINGUÉM CONSEGUE LER
+R: O manuscrito Voynich é um livro ilustrado com plantas que não existem, diagramas astronômicos e mulheres em banheiras, escrito numa escrita que ninguém conseguiu ler. A datação por carbono do pergaminho deu entre 1404 e 1438. Criptógrafos famosos, inclusive os que quebraram códigos na Segunda Guerra, tentaram e falharam. Seria uma língua desconhecida? Um código? Uma fraude elaborada? Estatisticamente, o texto tem padrões parecidos com os de uma língua natural. Ele está hoje na Universidade Yale, à espera de quem o decifre.
+V: páginas do Voynich (domínio público) com plantas estranhas → linha do tempo do carbono 1404–1438 → lupa sobre a escrita.
+L: Você decifraria? 🔍
+F: Biblioteca Beinecke, Universidade Yale (MS 408); René Zandbergen, voynich.nu.
+
+## A língua que venceu uma guerra
+G: UMA LÍNGUA INDÍGENA FOI UM CÓDIGO NUNCA QUEBRADO
+R: Na Segunda Guerra Mundial, os fuzileiros navais americanos usaram falantes da língua navajo para transmitir mensagens por rádio no Pacífico. O navajo era pouquíssimo documentado e tem uma estrutura muito diferente do inglês e do japonês. Eles ainda criaram um código dentro da língua: "tartaruga" era tanque, "pássaro de ferro" era avião. Foram cerca de 400 "code talkers", e o código nunca foi quebrado. Ironia triste: muitos deles tinham sido punidos na escola por falar navajo.
+V: mapa do Pacífico → rádio de campanha → palavras navajo com tradução do código → medalha do Congresso.
+L: Uma língua que muitos tentaram proibir salvou vidas. 🎖️
+F: Doris Paul, "The Navajo Code Talkers" (1973); Museu Nacional da Segunda Guerra (EUA).
+
+## Linguistas desenharam árvores evolutivas antes de Darwin
+G: LINGUISTAS DESENHARAM A ÁRVORE DA EVOLUÇÃO ANTES DE DARWIN
+R: Em 1853, seis anos antes de "A Origem das Espécies", o linguista alemão August Schleicher desenhou uma árvore genealógica das línguas indo-europeias: um tronco comum se dividindo em galhos. Quando Darwin publicou sua teoria, Schleicher escreveu, em 1863, um texto dizendo que a linguística já pensava assim. E o próprio Darwin usou as línguas como exemplo de evolução. A biologia e a linguística cresceram juntas. Hoje, biólogos e linguistas usam até os mesmos programas para montar árvores.
+V: árvore de Schleicher (1853) ao lado da árvore de Darwin (1859) → retrato de Schleicher → software de filogenia.
+L: A linguística chegou antes. 🌳
+F: August Schleicher, "Die Darwinsche Theorie und die Sprachwissenschaft" (1863).
+
+## O dicionário que virou substantivo
+G: "PEGA O AURÉLIO" VIROU SINÔNIMO DE DICIONÁRIO
+R: "Pega o Aurélio aí." Durante décadas, os brasileiros chamaram o dicionário pelo nome do autor. Aurélio Buarque de Holanda Ferreira era professor, crítico e tradutor e lançou o "Novo Dicionário da Língua Portuguesa" em 1975. Fez tanto sucesso que "aurélio" virou substantivo comum, registrado em dicionários com a definição de dicionário. É um processo linguístico chamado antonomásia: um nome próprio vira nome comum. Igual "gilete", que era uma marca. Comenta outra palavra que nasceu assim.
+V: dicionário pesado → retrato de Aurélio → verbete "aurélio: dicionário" → outros exemplos de nomes que viraram palavras comuns.
+L: Comenta outra palavra que nasceu de um nome. 📕
+F: Aurélio Buarque de Holanda, "Novo Dicionário da Língua Portuguesa" (1975); Houaiss (aurélio, antonomásia).
