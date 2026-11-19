@@ -379,6 +379,7 @@ function setupSlot(rootId, key) {
     } catch (e) { status.textContent = 'Sem acesso ao microfone. Permita o acesso ou envie um arquivo.'; }
   });
 }
+if (window.claude) $('dl').hidden = true;
 setupSlot('slot-src', 'src');
 setupSlot('slot-tgt', 'tgt');
 
