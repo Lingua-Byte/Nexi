@@ -203,7 +203,16 @@ $('bMidi').onclick = async () => {
 
 /* ---------------- Exportação ---------------- */
 const slug = s => (s || 'sfx').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'sfx';
-function download(blob, name){
+// Dentro de um artefato do claude.ai, downloads passam pela capacidade "downloads" (formatos permitidos; WAV vai em ZIP)
+let dlCap = null;
+try { if (window.claude && window.claude.use) window.claude.use('downloads').then(d => { dlCap = d; }).catch(() => {}); } catch(e){}
+async function download(blob, name){
+  if (dlCap){
+    let data = blob, fn = name; const ext = name.split('.').pop().toLowerCase();
+    if (!['zip','json','webm','txt','csv'].includes(ext)){ data = makeZip([{name, data: new Uint8Array(await blob.arrayBuffer())}]); fn = name.replace(/\.[^.]+$/, '') + '.zip'; }
+    try { await dlCap.save({filename: fn, data}); toast('Arquivo salvo'); } catch(e){ if (!e || e.code !== 'declined') toast('Não foi possível salvar aqui: ' + (e && e.code || 'erro')); }
+    return;
+  }
   const url = URL.createObjectURL(blob), a = el('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }

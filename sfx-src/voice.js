@@ -169,7 +169,7 @@ function buildVoiceUI(){
   // ferramentas
   $('tClone').onclick = () => $('vCloneFiles').click();
   $('vCloneFiles').onchange = async e => { const fs = [...e.target.files]; e.target.value = ''; if (!fs.length) return; await busy('Clonando voz…', async () => {
-    const name = prompt('Nome da voz clonada:', 'Minha voz') || 'Minha voz', fd = new FormData(); fd.append('name', name); fs.forEach(f => fd.append('files', f, f.name));
+    const name = await askText('Nome da voz clonada:', 'Minha voz') || 'Minha voz', fd = new FormData(); fd.append('name', name); fs.forEach(f => fd.append('files', f, f.name));
     const j = await (await xi('/v1/voices/add', {form: fd})).json(); VS.tts.voiceId = j.voice_id; await loadVoices(); toast('Voz clonada: ' + name);
   }); };
   $('tSTS').onclick = () => busy('Trocando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue ou grave uma voz primeiro'); if (!VS.tts.voiceId) throw new Error('escolha a voz de destino');
@@ -178,11 +178,11 @@ function buildVoiceUI(){
   $('tIsolate').onclick = () => busy('Isolando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const fd = new FormData(); fd.append('audio', clipToWavBlob(c), 'audio.wav');
     VS.out = await xiAudio('/v1/audio-isolation', {form: fd}, c.name + ' (isolada)', 'voz'); drawVoice(); });
   $('tSTT').onclick = () => busy('Transcrevendo…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const j = await transcribe(c);
-    $('tOut').value = j.text || ''; if (j.words?.length && confirm('Baixar legendas .srt?')) download(new Blob([wordsToSRT(j.words)], {type:'text/plain'}), slug(c.name) + '.srt'); });
-  $('tDub').onclick = () => busy('Dublando…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const lang = prompt('Idioma de destino:', 'inglês'); if (!lang) return;
+    $('tOut').value = j.text || ''; if (j.words?.length && await askConfirm('Baixar legendas .srt?')) download(new Blob([wordsToSRT(j.words)], {type:'text/plain'}), slug(c.name) + '.srt'); });
+  $('tDub').onclick = () => busy('Dublando…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const lang = await askText('Idioma de destino:', 'inglês'); if (!lang) return;
     const j = await transcribe(c); const tr = await claudeText(`Traduza para ${lang}, mantendo tom, intenção e duração aproximada (mesmo número de frases). Responda só com a tradução.\n\n${j.text}`);
     $('tOut').value = tr.trim(); VS.out = await ttsEleven(tr.trim(), {...VS.tts, model: 'eleven_multilingual_v2'}, c.name + ' (' + lang + ')'); drawVoice(); });
-  $('tSfx').onclick = () => busy('Gerando efeito…', async () => { const t = prompt('Descreva o efeito sonoro (em inglês funciona melhor):', 'heavy wooden door creaking open slowly'); if (!t) return;
+  $('tSfx').onclick = () => busy('Gerando efeito…', async () => { const t = await askText('Descreva o efeito sonoro (em inglês funciona melhor):', 'heavy wooden door creaking open slowly'); if (!t) return;
     const id = await xiAudio('/v1/sound-generation', {json: {text: t, prompt_influence: 0.4}}, t.slice(0, 40), 'sfx'); const c = CLIPS.get(id); previewPCM(c.L, c.R, c.sr); toast('Efeito adicionado ao banco do mixer'); });
   refreshApiBadges();
 }
@@ -230,7 +230,7 @@ function renderPersonas(){
     const [bp, bx] = it.querySelectorAll('button');
     it.onclick = () => { VS.tts = {...VS.tts, ...p.tts}; VS.proc = {...defaultVoiceProc(), ...p.proc}; $('pName').value = p.name; $('pDesc').value = p.desc || ''; renderProcCtl(); renderVoiceSelects(); $('vModel').value = VS.tts.model; toast('Persona carregada: ' + p.name); };
     bp.onclick = e => { e.stopPropagation(); busy('Gerando amostra…', async () => { const id = await ttsEleven(`Olá, eu sou ${p.name}.`, {...VS.tts, ...p.tts}, p.name); const r = await processVoice(CLIPS.get(id), {...defaultVoiceProc(), ...p.proc}); previewPCM(r.L, r.R, r.sr); }); };
-    bx.onclick = e => { e.stopPropagation(); if (confirm(`Excluir a persona "${p.name}"?`)){ VS.personas.splice(i, 1); savePersonas(); } };
+    bx.onclick = async e => { e.stopPropagation(); if (await askConfirm(`Excluir a persona "${p.name}"?`)){ VS.personas.splice(i, 1); savePersonas(); } };
     box.appendChild(it);
   });
 }
@@ -254,7 +254,7 @@ async function designFromDesc(){
   if (!previews.length) throw new Error('a ElevenLabs não retornou prévias');
   let chosen = 0;
   for (let i=0; i<previews.length; i++){ const id = await decodeToClip(`Prévia ${i+1}`, b64ToArrayBuffer(previews[i].audio_base_64), 'voz'); const c = CLIPS.get(id); previewPCM(c.L, c.R, c.sr);
-    if (confirm(`Prévia ${i+1} de ${previews.length} tocando. Usar esta voz? (Cancelar = próxima)`)){ chosen = i; break; } chosen = -1; }
+    if (await askConfirm(`Prévia ${i+1} de ${previews.length} tocando. Usar esta voz? (Cancelar = próxima)`)){ chosen = i; break; } chosen = -1; }
   if (chosen < 0) { toast('Nenhuma prévia escolhida'); return; }
   const name = $('pName').value.trim() || 'Voz NEXI';
   VS.tts.voiceId = await saveDesignedVoice(name, desc, previews[chosen].generated_voice_id);

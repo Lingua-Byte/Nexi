@@ -5,14 +5,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f120d">
 <title>NEXI SFX Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="sfx.webmanifest">
+<link rel="icon" href="sfx-icon-192.png">
+<link rel="apple-touch-icon" href="sfx-icon-192.png">
 <style>
-:root{--bg:#0f120d;--panel:#171c14;--panel2:#1f261b;--panel3:#283121;--line:#313d28;--text:#e8efd9;--muted:#93a184;
+:root{color-scheme:dark;--bg:#0f120d;--panel:#171c14;--panel2:#1f261b;--panel3:#283121;--line:#313d28;--text:#e8efd9;--muted:#93a184;
   --accent:#c4d585;--accent2:#f2cf62;--hot:#ef7d5a;--wave:#c9dc86;--wave2:#8fb8d9;--grid:#252e1f}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
 button,select,input{font:inherit;color:inherit}
 a{color:inherit;text-decoration:none}
-.app{max-width:1500px;margin:0 auto;padding:10px 16px 30px}
+.app{max-width:1500px;margin:0 auto;padding-block:10px 30px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+#askModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+#askModal[hidden]{display:none}
+#askModal .card{width:min(440px,100%)}
+.demo{background:var(--panel3);border:1px solid var(--accent2);color:var(--text);border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:.82rem}
 header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .brand{font-weight:950;letter-spacing:.14em;font-size:1.2rem;margin-right:8px;white-space:nowrap}
 .brand span{color:var(--accent)}
@@ -282,6 +290,7 @@ input[type=password]{background:var(--panel2);border:1px solid var(--line);borde
 </div>
 <input type="file" id="fileAudio" accept="audio/*" hidden>
 <input type="file" id="fileJson" accept=".json,application/json" hidden>
+<div id="askModal" hidden><div class="card"><p id="askMsg" style="margin:0 0 10px;white-space:pre-wrap"></p><input type="text" id="askInput" style="width:100%"><div class="row" style="margin-top:10px;justify-content:flex-end"><button class="btn" id="askCancel">Cancelar</button><button class="btn pri" id="askOk">OK</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
 "use strict";
@@ -1310,6 +1319,19 @@ const LS = {
   get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } },
 };
+/* Diálogos dentro da página (prompt/confirm nativos não funcionam em todo lugar) */
+function askDialog(msg, def, withInput){
+  return new Promise(res => {
+    const m = $('askModal'), inp = $('askInput'); $('askMsg').textContent = msg; inp.hidden = !withInput; inp.value = def ?? '';
+    m.hidden = false; (withInput ? inp : $('askOk')).focus(); if (withInput) inp.select();
+    const done = v => { m.hidden = true; $('askOk').onclick = $('askCancel').onclick = inp.onkeydown = null; res(v); };
+    $('askOk').onclick = () => done(withInput ? inp.value : true);
+    $('askCancel').onclick = () => done(withInput ? null : false);
+    inp.onkeydown = e => { if (e.key === 'Enter') done(inp.value); if (e.key === 'Escape') done(null); };
+  });
+}
+const askText = (msg, def) => askDialog(msg, def, true);
+const askConfirm = msg => askDialog(msg, null, false);
 let toastT = 0;
 function toast(m){ const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800); }
 
@@ -1392,8 +1414,8 @@ function control(d, obj, onLive, onCommit){
     r.onchange = () => onCommit(d);
     r.ondblclick = () => { obj[d.k] = d.def; sync(); onCommit(d); };
     v.title = 'Clique para digitar um valor';
-    v.onclick = () => {
-      const t = prompt(`${d.l} (${d.min} a ${d.max}${d.u ? ' '+d.u : ''})`, +(+obj[d.k]).toFixed(4));
+    v.onclick = async () => {
+      const t = await askText(`${d.l} (${d.min} a ${d.max}${d.u ? ' '+d.u : ''})`, +(+obj[d.k]).toFixed(4));
       if (t === null) return; const n = parseFloat(String(t).replace(',', '.'));
       if (isFinite(n)){ obj[d.k] = clamp(d.s === 'int' ? Math.round(n) : n, d.min, d.max); sync(); onCommit(d); }
     };
@@ -1593,8 +1615,8 @@ function renderBank(){
     const it = el('div', 'item', `<span class="nm">${esc(b.name)}</span><button title="Renomear">✎</button><button title="Excluir">✕</button>`);
     const [br, bd] = it.querySelectorAll('button');
     it.onclick = () => loadSound(normalizeSound(b.snd));
-    br.onclick = e => { e.stopPropagation(); const n = prompt('Novo nome:', b.name); if (n){ b.name = n.slice(0,80); saveBank(); } };
-    bd.onclick = e => { e.stopPropagation(); if (confirm(`Excluir "${b.name}"?`)){ bank.splice(i, 1); saveBank(); } };
+    br.onclick = async e => { e.stopPropagation(); const n = await askText('Novo nome:', b.name); if (n){ b.name = n.slice(0,80); saveBank(); } };
+    bd.onclick = async e => { e.stopPropagation(); if (await askConfirm(`Excluir "${b.name}"?`)){ bank.splice(i, 1); saveBank(); } };
     list.appendChild(it);
   });
 }
@@ -1805,7 +1827,16 @@ $('bMidi').onclick = async () => {
 
 /* ---------------- Exportação ---------------- */
 const slug = s => (s || 'sfx').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'sfx';
-function download(blob, name){
+// Dentro de um artefato do claude.ai, downloads passam pela capacidade "downloads" (formatos permitidos; WAV vai em ZIP)
+let dlCap = null;
+try { if (window.claude && window.claude.use) window.claude.use('downloads').then(d => { dlCap = d; }).catch(() => {}); } catch(e){}
+async function download(blob, name){
+  if (dlCap){
+    let data = blob, fn = name; const ext = name.split('.').pop().toLowerCase();
+    if (!['zip','json','webm','txt','csv'].includes(ext)){ data = makeZip([{name, data: new Uint8Array(await blob.arrayBuffer())}]); fn = name.replace(/\.[^.]+$/, '') + '.zip'; }
+    try { await dlCap.save({filename: fn, data}); toast('Arquivo salvo'); } catch(e){ if (!e || e.code !== 'declined') toast('Não foi possível salvar aqui: ' + (e && e.code || 'erro')); }
+    return;
+  }
   const url = URL.createObjectURL(blob), a = el('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
@@ -2382,7 +2413,7 @@ function renderStrips(){
     const mb = el('button', 'btn sm' + (t.mute ? ' on' : ''), 'M'), sb = el('button', 'btn sm' + (t.solo ? ' on' : ''), 'S'), xb = el('button', 'btn sm', '✕');
     mb.onclick = e => { e.stopPropagation(); t.mute = !t.mute; mixDirty(); renderStrips(); };
     sb.onclick = e => { e.stopPropagation(); t.solo = !t.solo; mixDirty(); renderStrips(); };
-    xb.onclick = e => { e.stopPropagation(); if (confirm(`Excluir a faixa "${t.name}"?`)){ MIX.tracks.splice(i, 1); MIX.selTrack = 0; mixDirty(); renderMixerUI(); } };
+    xb.onclick = async e => { e.stopPropagation(); if (await askConfirm(`Excluir a faixa "${t.name}"?`)){ MIX.tracks.splice(i, 1); MIX.selTrack = 0; mixDirty(); renderMixerUI(); } };
     head.append(nm, role, mb, sb, xb); s.appendChild(head);
     const defs = [P('vol','Volume',-48,12,0,'lin','dB'), P('pan','Pan',-1,1,0,'lin','pan'), P('hp','Passa-alta',20,500,30,'log','Hz'),
       P('low','Graves',-12,12,0,'lin','dB'), P('mid','Médios',-12,12,0,'lin','dB'), P('midF','Freq. médios',200,8000,1500,'log','Hz'),
@@ -2712,7 +2743,7 @@ function buildVoiceUI(){
   // ferramentas
   $('tClone').onclick = () => $('vCloneFiles').click();
   $('vCloneFiles').onchange = async e => { const fs = [...e.target.files]; e.target.value = ''; if (!fs.length) return; await busy('Clonando voz…', async () => {
-    const name = prompt('Nome da voz clonada:', 'Minha voz') || 'Minha voz', fd = new FormData(); fd.append('name', name); fs.forEach(f => fd.append('files', f, f.name));
+    const name = await askText('Nome da voz clonada:', 'Minha voz') || 'Minha voz', fd = new FormData(); fd.append('name', name); fs.forEach(f => fd.append('files', f, f.name));
     const j = await (await xi('/v1/voices/add', {form: fd})).json(); VS.tts.voiceId = j.voice_id; await loadVoices(); toast('Voz clonada: ' + name);
   }); };
   $('tSTS').onclick = () => busy('Trocando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue ou grave uma voz primeiro'); if (!VS.tts.voiceId) throw new Error('escolha a voz de destino');
@@ -2721,11 +2752,11 @@ function buildVoiceUI(){
   $('tIsolate').onclick = () => busy('Isolando voz…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const fd = new FormData(); fd.append('audio', clipToWavBlob(c), 'audio.wav');
     VS.out = await xiAudio('/v1/audio-isolation', {form: fd}, c.name + ' (isolada)', 'voz'); drawVoice(); });
   $('tSTT').onclick = () => busy('Transcrevendo…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const j = await transcribe(c);
-    $('tOut').value = j.text || ''; if (j.words?.length && confirm('Baixar legendas .srt?')) download(new Blob([wordsToSRT(j.words)], {type:'text/plain'}), slug(c.name) + '.srt'); });
-  $('tDub').onclick = () => busy('Dublando…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const lang = prompt('Idioma de destino:', 'inglês'); if (!lang) return;
+    $('tOut').value = j.text || ''; if (j.words?.length && await askConfirm('Baixar legendas .srt?')) download(new Blob([wordsToSRT(j.words)], {type:'text/plain'}), slug(c.name) + '.srt'); });
+  $('tDub').onclick = () => busy('Dublando…', async () => { const c = CLIPS.get(VS.src); if (!c) throw new Error('carregue um áudio primeiro'); const lang = await askText('Idioma de destino:', 'inglês'); if (!lang) return;
     const j = await transcribe(c); const tr = await claudeText(`Traduza para ${lang}, mantendo tom, intenção e duração aproximada (mesmo número de frases). Responda só com a tradução.\n\n${j.text}`);
     $('tOut').value = tr.trim(); VS.out = await ttsEleven(tr.trim(), {...VS.tts, model: 'eleven_multilingual_v2'}, c.name + ' (' + lang + ')'); drawVoice(); });
-  $('tSfx').onclick = () => busy('Gerando efeito…', async () => { const t = prompt('Descreva o efeito sonoro (em inglês funciona melhor):', 'heavy wooden door creaking open slowly'); if (!t) return;
+  $('tSfx').onclick = () => busy('Gerando efeito…', async () => { const t = await askText('Descreva o efeito sonoro (em inglês funciona melhor):', 'heavy wooden door creaking open slowly'); if (!t) return;
     const id = await xiAudio('/v1/sound-generation', {json: {text: t, prompt_influence: 0.4}}, t.slice(0, 40), 'sfx'); const c = CLIPS.get(id); previewPCM(c.L, c.R, c.sr); toast('Efeito adicionado ao banco do mixer'); });
   refreshApiBadges();
 }
@@ -2773,7 +2804,7 @@ function renderPersonas(){
     const [bp, bx] = it.querySelectorAll('button');
     it.onclick = () => { VS.tts = {...VS.tts, ...p.tts}; VS.proc = {...defaultVoiceProc(), ...p.proc}; $('pName').value = p.name; $('pDesc').value = p.desc || ''; renderProcCtl(); renderVoiceSelects(); $('vModel').value = VS.tts.model; toast('Persona carregada: ' + p.name); };
     bp.onclick = e => { e.stopPropagation(); busy('Gerando amostra…', async () => { const id = await ttsEleven(`Olá, eu sou ${p.name}.`, {...VS.tts, ...p.tts}, p.name); const r = await processVoice(CLIPS.get(id), {...defaultVoiceProc(), ...p.proc}); previewPCM(r.L, r.R, r.sr); }); };
-    bx.onclick = e => { e.stopPropagation(); if (confirm(`Excluir a persona "${p.name}"?`)){ VS.personas.splice(i, 1); savePersonas(); } };
+    bx.onclick = async e => { e.stopPropagation(); if (await askConfirm(`Excluir a persona "${p.name}"?`)){ VS.personas.splice(i, 1); savePersonas(); } };
     box.appendChild(it);
   });
 }
@@ -2797,7 +2828,7 @@ async function designFromDesc(){
   if (!previews.length) throw new Error('a ElevenLabs não retornou prévias');
   let chosen = 0;
   for (let i=0; i<previews.length; i++){ const id = await decodeToClip(`Prévia ${i+1}`, b64ToArrayBuffer(previews[i].audio_base_64), 'voz'); const c = CLIPS.get(id); previewPCM(c.L, c.R, c.sr);
-    if (confirm(`Prévia ${i+1} de ${previews.length} tocando. Usar esta voz? (Cancelar = próxima)`)){ chosen = i; break; } chosen = -1; }
+    if (await askConfirm(`Prévia ${i+1} de ${previews.length} tocando. Usar esta voz? (Cancelar = próxima)`)){ chosen = i; break; } chosen = -1; }
   if (chosen < 0) { toast('Nenhuma prévia escolhida'); return; }
   const name = $('pName').value.trim() || 'Voz NEXI';
   VS.tts.voiceId = await saveDesignedVoice(name, desc, previews[chosen].generated_voice_id);
@@ -3374,7 +3405,7 @@ function buildInstUI(){
     const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); const rec = new MediaRecorder(stream), ch = [];
     rec.ondataavailable = e => ch.push(e.data); rec.onstop = async () => { stream.getTracks().forEach(t => t.stop()); await busy('Analisando…', async () => { const id = await decodeToClip('Nota gravada', await new Blob(ch).arrayBuffer(), 'nota'); createResynth(CLIPS.get(id)); }); };
     rec.start(); setTimeout(() => rec.stop(), 3000); } catch(e){ toast('Microfone indisponível'); } void before; };
-  $('inResClip').onclick = () => { const cs = [...CLIPS.values()]; if (!cs.length){ toast('O banco de clipes está vazio'); return; } const names = cs.map((c, i) => `${i+1}. ${c.name}`).join('\n'); const k = +prompt('Número do clipe:\n' + names, '1'); const c = cs[k-1]; if (c) busy('Analisando…', async () => createResynth(c)); };
+  $('inResClip').onclick = async () => { const cs = [...CLIPS.values()]; if (!cs.length){ toast('O banco de clipes está vazio'); return; } const names = cs.map((c, i) => `${i+1}. ${c.name}`).join('\n'); const k = +await askText('Número do clipe:\n' + names, '1'); const c = cs[k-1]; if (c) busy('Analisando…', async () => createResynth(c)); };
   buildInstKbd(); renderInstList(); renderInstEdit();
 }
 async function importMulti(files){
@@ -3389,7 +3420,7 @@ async function importMulti(files){
       const sid = 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); const smp = {name, sr: buf.sampleRate, ch}; SAMPLES.set(sid, smp); idbPut(sid, smp);
       items.push({sampleId: sid, name, root, vel: velFromName(name)});
     }
-    const nm = prompt('Nome do instrumento:', items[0].name.replace(/[_\-\s]*([A-G][#b]?-?\d|\d{2,3}).*$/i, '') || 'Instrumento') || 'Instrumento';
+    const nm = await askText('Nome do instrumento:', items[0].name.replace(/[_\-\s]*([A-G][#b]?-?\d|\d{2,3}).*$/i, '') || 'Instrumento') || 'Instrumento';
     const inst = {type: 'sampler', name: nm, zones: buildZones(items), adsr: {a: 0.003, d: 3, s: 1, r: 0.3}, tune: 0};
     INS.list.unshift(inst); registerInstrument(inst); saveInstruments(); INS.cur = inst; renderInstList(); renderInstEdit();
     toast(`${items.length} amostras · ${inst.zones.length} zonas`);
@@ -3408,7 +3439,7 @@ function renderInstList(){
   INS.list.forEach((inst, i) => {
     const it = el('div', 'item' + (inst === INS.cur ? ' cur' : ''), `<span class="nm">${esc(inst.name)}</span><span class="cat">${inst.type === 'resynth' ? 'ressíntese' : inst.zones.length + ' zonas'}</span><button title="Excluir">✕</button>`);
     it.onclick = () => { INS.cur = inst; INS.notes.clear(); renderInstList(); renderInstEdit(); };
-    it.querySelector('button').onclick = e => { e.stopPropagation(); if (!confirm(`Excluir "${inst.name}"?`)) return; INSTR_REG.delete('Meu: ' + inst.name); INS.list.splice(i, 1); if (INS.cur === inst) INS.cur = null; saveInstruments(); renderInstList(); renderInstEdit(); };
+    it.querySelector('button').onclick = async e => { e.stopPropagation(); if (!await askConfirm(`Excluir "${inst.name}"?`)) return; INSTR_REG.delete('Meu: ' + inst.name); INS.list.splice(i, 1); if (INS.cur === inst) INS.cur = null; saveInstruments(); renderInstList(); renderInstEdit(); };
     box.appendChild(it);
   });
 }
@@ -3466,6 +3497,7 @@ MODULE_SHOW.inst = () => { if (!$('inDrop')) buildInstUI(); renderInstList(); };
   let tab = 'sfx'; try { tab = localStorage.getItem('nexi-sfx-tab') || 'sfx'; } catch(e){}
   if (!document.querySelector(`[data-mod="${tab}"]`)) tab = 'sfx';
   showModule(tab);
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sfx-sw.js').catch(() => {});
 })();
 
 </script>

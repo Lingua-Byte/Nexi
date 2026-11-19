@@ -223,7 +223,7 @@ function renderStrips(){
     const mb = el('button', 'btn sm' + (t.mute ? ' on' : ''), 'M'), sb = el('button', 'btn sm' + (t.solo ? ' on' : ''), 'S'), xb = el('button', 'btn sm', '✕');
     mb.onclick = e => { e.stopPropagation(); t.mute = !t.mute; mixDirty(); renderStrips(); };
     sb.onclick = e => { e.stopPropagation(); t.solo = !t.solo; mixDirty(); renderStrips(); };
-    xb.onclick = e => { e.stopPropagation(); if (confirm(`Excluir a faixa "${t.name}"?`)){ MIX.tracks.splice(i, 1); MIX.selTrack = 0; mixDirty(); renderMixerUI(); } };
+    xb.onclick = async e => { e.stopPropagation(); if (await askConfirm(`Excluir a faixa "${t.name}"?`)){ MIX.tracks.splice(i, 1); MIX.selTrack = 0; mixDirty(); renderMixerUI(); } };
     head.append(nm, role, mb, sb, xb); s.appendChild(head);
     const defs = [P('vol','Volume',-48,12,0,'lin','dB'), P('pan','Pan',-1,1,0,'lin','pan'), P('hp','Passa-alta',20,500,30,'log','Hz'),
       P('low','Graves',-12,12,0,'lin','dB'), P('mid','Médios',-12,12,0,'lin','dB'), P('midF','Freq. médios',200,8000,1500,'log','Hz'),

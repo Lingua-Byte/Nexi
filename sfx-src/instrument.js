@@ -166,7 +166,7 @@ function buildInstUI(){
     const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:false}}); const rec = new MediaRecorder(stream), ch = [];
     rec.ondataavailable = e => ch.push(e.data); rec.onstop = async () => { stream.getTracks().forEach(t => t.stop()); await busy('Analisando…', async () => { const id = await decodeToClip('Nota gravada', await new Blob(ch).arrayBuffer(), 'nota'); createResynth(CLIPS.get(id)); }); };
     rec.start(); setTimeout(() => rec.stop(), 3000); } catch(e){ toast('Microfone indisponível'); } void before; };
-  $('inResClip').onclick = () => { const cs = [...CLIPS.values()]; if (!cs.length){ toast('O banco de clipes está vazio'); return; } const names = cs.map((c, i) => `${i+1}. ${c.name}`).join('\n'); const k = +prompt('Número do clipe:\n' + names, '1'); const c = cs[k-1]; if (c) busy('Analisando…', async () => createResynth(c)); };
+  $('inResClip').onclick = async () => { const cs = [...CLIPS.values()]; if (!cs.length){ toast('O banco de clipes está vazio'); return; } const names = cs.map((c, i) => `${i+1}. ${c.name}`).join('\n'); const k = +await askText('Número do clipe:\n' + names, '1'); const c = cs[k-1]; if (c) busy('Analisando…', async () => createResynth(c)); };
   buildInstKbd(); renderInstList(); renderInstEdit();
 }
 async function importMulti(files){
@@ -181,7 +181,7 @@ async function importMulti(files){
       const sid = 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); const smp = {name, sr: buf.sampleRate, ch}; SAMPLES.set(sid, smp); idbPut(sid, smp);
       items.push({sampleId: sid, name, root, vel: velFromName(name)});
     }
-    const nm = prompt('Nome do instrumento:', items[0].name.replace(/[_\-\s]*([A-G][#b]?-?\d|\d{2,3}).*$/i, '') || 'Instrumento') || 'Instrumento';
+    const nm = await askText('Nome do instrumento:', items[0].name.replace(/[_\-\s]*([A-G][#b]?-?\d|\d{2,3}).*$/i, '') || 'Instrumento') || 'Instrumento';
     const inst = {type: 'sampler', name: nm, zones: buildZones(items), adsr: {a: 0.003, d: 3, s: 1, r: 0.3}, tune: 0};
     INS.list.unshift(inst); registerInstrument(inst); saveInstruments(); INS.cur = inst; renderInstList(); renderInstEdit();
     toast(`${items.length} amostras · ${inst.zones.length} zonas`);
@@ -200,7 +200,7 @@ function renderInstList(){
   INS.list.forEach((inst, i) => {
     const it = el('div', 'item' + (inst === INS.cur ? ' cur' : ''), `<span class="nm">${esc(inst.name)}</span><span class="cat">${inst.type === 'resynth' ? 'ressíntese' : inst.zones.length + ' zonas'}</span><button title="Excluir">✕</button>`);
     it.onclick = () => { INS.cur = inst; INS.notes.clear(); renderInstList(); renderInstEdit(); };
-    it.querySelector('button').onclick = e => { e.stopPropagation(); if (!confirm(`Excluir "${inst.name}"?`)) return; INSTR_REG.delete('Meu: ' + inst.name); INS.list.splice(i, 1); if (INS.cur === inst) INS.cur = null; saveInstruments(); renderInstList(); renderInstEdit(); };
+    it.querySelector('button').onclick = async e => { e.stopPropagation(); if (!await askConfirm(`Excluir "${inst.name}"?`)) return; INSTR_REG.delete('Meu: ' + inst.name); INS.list.splice(i, 1); if (INS.cur === inst) INS.cur = null; saveInstruments(); renderInstList(); renderInstEdit(); };
     box.appendChild(it);
   });
 }

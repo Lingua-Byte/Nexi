@@ -6,4 +6,5 @@
   let tab = 'sfx'; try { tab = localStorage.getItem('nexi-sfx-tab') || 'sfx'; } catch(e){}
   if (!document.querySelector(`[data-mod="${tab}"]`)) tab = 'sfx';
   showModule(tab);
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sfx-sw.js').catch(() => {});
 })();

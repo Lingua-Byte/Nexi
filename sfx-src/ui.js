@@ -11,6 +11,19 @@ const LS = {
   get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } },
 };
+/* Diálogos dentro da página (prompt/confirm nativos não funcionam em todo lugar) */
+function askDialog(msg, def, withInput){
+  return new Promise(res => {
+    const m = $('askModal'), inp = $('askInput'); $('askMsg').textContent = msg; inp.hidden = !withInput; inp.value = def ?? '';
+    m.hidden = false; (withInput ? inp : $('askOk')).focus(); if (withInput) inp.select();
+    const done = v => { m.hidden = true; $('askOk').onclick = $('askCancel').onclick = inp.onkeydown = null; res(v); };
+    $('askOk').onclick = () => done(withInput ? inp.value : true);
+    $('askCancel').onclick = () => done(withInput ? null : false);
+    inp.onkeydown = e => { if (e.key === 'Enter') done(inp.value); if (e.key === 'Escape') done(null); };
+  });
+}
+const askText = (msg, def) => askDialog(msg, def, true);
+const askConfirm = msg => askDialog(msg, null, false);
 let toastT = 0;
 function toast(m){ const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800); }
 
@@ -93,8 +106,8 @@ function control(d, obj, onLive, onCommit){
     r.onchange = () => onCommit(d);
     r.ondblclick = () => { obj[d.k] = d.def; sync(); onCommit(d); };
     v.title = 'Clique para digitar um valor';
-    v.onclick = () => {
-      const t = prompt(`${d.l} (${d.min} a ${d.max}${d.u ? ' '+d.u : ''})`, +(+obj[d.k]).toFixed(4));
+    v.onclick = async () => {
+      const t = await askText(`${d.l} (${d.min} a ${d.max}${d.u ? ' '+d.u : ''})`, +(+obj[d.k]).toFixed(4));
       if (t === null) return; const n = parseFloat(String(t).replace(',', '.'));
       if (isFinite(n)){ obj[d.k] = clamp(d.s === 'int' ? Math.round(n) : n, d.min, d.max); sync(); onCommit(d); }
     };
@@ -294,8 +307,8 @@ function renderBank(){
     const it = el('div', 'item', `<span class="nm">${esc(b.name)}</span><button title="Renomear">✎</button><button title="Excluir">✕</button>`);
     const [br, bd] = it.querySelectorAll('button');
     it.onclick = () => loadSound(normalizeSound(b.snd));
-    br.onclick = e => { e.stopPropagation(); const n = prompt('Novo nome:', b.name); if (n){ b.name = n.slice(0,80); saveBank(); } };
-    bd.onclick = e => { e.stopPropagation(); if (confirm(`Excluir "${b.name}"?`)){ bank.splice(i, 1); saveBank(); } };
+    br.onclick = async e => { e.stopPropagation(); const n = await askText('Novo nome:', b.name); if (n){ b.name = n.slice(0,80); saveBank(); } };
+    bd.onclick = async e => { e.stopPropagation(); if (await askConfirm(`Excluir "${b.name}"?`)){ bank.splice(i, 1); saveBank(); } };
     list.appendChild(it);
   });
 }
