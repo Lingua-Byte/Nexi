@@ -1,0 +1,12 @@
+Como o conteúdo está organizado
+
+conteudo/semanas/*.txt  -> FONTE PRINCIPAL. Ordem dos 30 dias, fio de cada dia, formato,
+                           termo do glossário, roteiro conectado (R) e conexões (P) de cada vídeo.
+                           Cada vídeo é identificado por um código: letra do quadro + número
+                           (A = De Onde Vem?, B = Aula de Letras, C = Mito ou Verdade,
+                           D = Línguas Extremas, E = Brasil Falado, F = Línguas Primas, G = Gênios).
+conteudo/1..7-*.txt     -> banco de fatos por quadro: título, visual base, legenda e fonte.
+                           O roteiro (R) destes arquivos é a versão antiga, sem conexões; o PDF usa
+                           o roteiro das semanas.
+
+Para regenerar o PDF:  node build/gerar-plano.js   (a partir da pasta glossa/)
