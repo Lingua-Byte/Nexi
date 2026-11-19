@@ -1,0 +1,26 @@
+name: Build Narrador APK
+on:
+  push:
+    paths: ['narrador/**', 'android/**', '.github/workflows/android-apk.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Android build tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq android-sdk-platform-23 aapt apksigner zipalign dalvik-exchange
+      - name: Restore signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.NARRADOR_KEYSTORE_B64 }}
+        run: if [ -n "$KEYSTORE_B64" ]; then echo "$KEYSTORE_B64" | base64 -d > android/narrador.keystore; fi
+      - name: Build APK
+        env:
+          KS_PASS: ${{ secrets.NARRADOR_KEYSTORE_PASS || 'narrador' }}
+        run: android/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Narrador-apk
+          path: android/Narrador.apk

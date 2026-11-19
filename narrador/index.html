@@ -166,6 +166,30 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </div>
 
 <script>
+/* Ponte para o app Android: o WebView não tem speechSynthesis, então
+   emulamos a API sobre o TextToSpeech nativo (objeto AndroidTTS). */
+(function(){
+  var A=window.AndroidTTS;if(!A)return;
+  var pend={},n=0,cache=[];
+  function Utt(t){this.text=t;this.rate=1;this.pitch=1;this.volume=1;this.voice=null;this.lang='pt-BR';this.onend=null;this.onerror=null;this.onstart=null}
+  function nome(v){var m=/-x-([a-z0-9]+)-/i.exec(v.name);var base=m?'Voz '+m[1].toUpperCase():v.name;return 'Google '+base+(v.network?' Online':' Offline')}
+  var fake={speaking:false,pending:false,paused:false,onvoiceschanged:null,
+    getVoices:function(){try{cache=JSON.parse(A.voices()).map(function(v){return{name:nome(v),lang:v.lang,voiceURI:v.name,localService:!v.network,default:false}})}catch(e){}return cache},
+    speak:function(u){var id='u'+(++n);pend[id]=u;fake.speaking=true;A.speak(id,String(u.text),+u.rate||1,+u.pitch||1,u.voice?u.voice.voiceURI:'',u.lang||'pt-BR')},
+    cancel:function(){var p=pend;pend={};fake.speaking=false;A.stop();for(var k in p){var u=p[k];u.onerror&&u.onerror({error:'canceled'})}},
+    pause:function(){},resume:function(){}};
+  window.__ttsEvent=function(id,ev){var u=pend[id];if(!u)return;
+    if(ev==='start'){u.onstart&&u.onstart({});return}
+    delete pend[id];fake.speaking=Object.keys(pend).length>0;
+    if(ev==='end')u.onend&&u.onend({});else if(ev==='error')u.onerror&&u.onerror({error:'synthesis-failed'});};
+  window.__ttsReady=function(){fake.onvoiceschanged&&fake.onvoiceschanged()};
+  window.__ttsFail=function(){var t=document.getElementById('deviceTip');if(t)t.innerHTML='O motor de voz do Android não iniciou. Instale ou ative o <b>Google Speech Services</b> (Serviços de fala do Google).'};
+  window.SpeechSynthesisUtterance=Utt;
+  try{Object.defineProperty(window,'speechSynthesis',{value:fake,configurable:true,writable:true})}catch(e){window.speechSynthesis=fake}
+  window.IN_ANDROID_APP=true;
+})();
+</script>
+<script>
 'use strict';
 /* =========================================================
    1. NORMALIZAÇÃO — transforma o texto escrito em texto falado
@@ -458,6 +482,7 @@ function loadVoices(){
   const good=use.filter(v=>vScore(v)>=60).length;
   $('deviceTip').innerHTML=!synth?'Este navegador não tem síntese de voz. Use <b>Vozes neurais IA</b>.':
     good?`<b>${good} voz(es) natural(is) ★</b> encontrada(s) — são as que soam mais humanas. O narrador ajusta ritmo, tom e pausas frase a frase conforme o contexto.`:
+    window.IN_ANDROID_APP?'Dica: para vozes mais humanas, instale as vozes do Google em português (Brasil) — as marcadas “Online” ★ são as mais naturais. <button class="btn" onclick="AndroidTTS.openTtsSettings()">Abrir configurações de voz</button>':
     'Dica: para vozes mais humanas use o <b>Microsoft Edge</b> (vozes “Natural”), Chrome (vozes Google) ou, no iPhone, baixe vozes “Aprimoradas” em Ajustes › Acessibilidade › Conteúdo Falado. Ou use <b>Vozes neurais IA</b>.';
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -719,7 +744,7 @@ function updateUI(){
   const on=playing&&!paused;
   $('playBtn').textContent=on?'⏸':'▶';$('playBtn').title=on?'Pausar (espaço)':'Narrar (espaço)';
   $('dlBtn').disabled=st.engine!=='neural';
-  $('dlBtn').classList.toggle('hidden',INSIDE_ARTIFACT);
+  $('dlBtn').classList.toggle('hidden',INSIDE_ARTIFACT||!!window.IN_ANDROID_APP);
 }
 function status(m,err){$('status').textContent=m||'';$('status').classList.toggle('err',!!err)}
 
@@ -775,6 +800,7 @@ function amostra(engine,voice){
 }
 
 $('text').value=st.text||SAMPLE;
+window.__sharedText=t=>{parar();$('text').value=t;st.text=t;save();meta();showReader(false)};
 $('text').oninput=()=>{st.text=$('text').value;save();meta()};
 $('editBtn').onclick=()=>{if(playing)parar(false);showReader(false);$('text').focus()};
 $('sampleBtn').onclick=()=>{parar();$('text').value=SAMPLE;st.text=SAMPLE;save();meta()};

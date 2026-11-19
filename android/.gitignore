@@ -1,0 +1,4 @@
+build/
+Narrador.apk
+*.keystore
+*.idsig
