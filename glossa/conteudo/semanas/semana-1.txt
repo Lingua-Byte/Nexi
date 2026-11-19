@@ -1,0 +1,381 @@
+# DIA 1 | O signo | O que liga uma palavra à coisa que ela nomeia? Hoje, sete respostas.
+
+## A1
+FMT: REVELAÇÃO
+T: Epônimo
+R: Toda vez que você fala "algoritmo", está falando o nome de um homem. No século 9, em Bagdá, viveu o matemático persa al-Khwārizmī, "o de Khwarazm". Ele escreveu um livro explicando os algarismos indianos, os que a gente usa até hoje. Traduzido para o latim, o texto começava com "Dixit Algorizmi", "disse Algorizmi". O nome dele virou o nome do próprio método. Daí "algoritmo" e "algarismo". E outro livro dele tinha no título "al-jabr", que virou "álgebra". Quando um nome de pessoa vira palavra comum, isso se chama epônimo. Guarda esse termo: ele vai voltar muito neste canal. Às 10h: se "algoritmo" tem dono, por que "árvore" não tem?
+P: Primeiro vídeo do canal. Termo nº 1 do Glossário Glossa.
+
+## B3
+FMT: DESAFIO
+T: Arbitrariedade do signo
+G: POR QUE "ÁRVORE" SE CHAMA ÁRVORE?
+R: Desafio: me dá um motivo para a árvore se chamar "árvore". Pensou? Não existe. No vídeo das 7h, "algoritmo" tinha uma origem: um homem. Mas se você voltar o suficiente em qualquer palavra, chega num ponto em que a ligação entre som e coisa é pura convenção. Ferdinand de Saussure chamou isso de arbitrariedade do signo. Prova: em inglês é "tree", em alemão "Baum", em japonês "ki". Se o som viesse da coisa, todo mundo falaria igual. Arbitrário não quer dizer que você pode mudar sozinho: tenta chamar árvore de "cadeira" amanhã. Primeira aula do nosso curso de Letras em 30 aulas. Cadeira a cadeira.
+V+: abrir com cronômetro de 3 segundos e "?" pulsando antes da resposta.
+P: Aula 1 do "Curso de Letras em 30 aulas" (série fixa das 10h).
+
+## C1
+FMT: JULGAMENTO
+T: Etimologia popular
+G: FORRÓ = "FOR ALL"? 🤔
+R: Hoje no tribunal: a palavra forró. A acusação diz que ela vem do inglês "for all". Ingleses que construíam ferrovias no Nordeste davam bailes abertos ao povo, com uma placa "for all". Prova da acusação: nenhuma. Nenhum documento. Agora a defesa: a palavra "forrobodó", festa, arrasta-pé, bagunça, já existia no português do século 19. Encurtou e virou "forró". Veredito: mito. A história do "for all" é o que os linguistas chamam de etimologia popular: quando o povo inventa uma origem que parece fazer sentido. É o contrário do signo arbitrário das 10h: a gente odeia que uma palavra não tenha motivo, então inventa um.
+V+: cenário de tribunal estilizado: "ACUSAÇÃO" / "DEFESA" / martelo batendo no veredito.
+P: Liga com as 10h (signo arbitrário).
+
+## D1
+FMT: CENA
+T: Canal (da comunicação)
+G: ESSA LÍNGUA NÃO TEM VOZ. TEM ASSOBIO.
+R: Imagina: você está num vale, seu vizinho do outro lado, a dois quilômetros. Você não grita. Você assobia, e ele entende uma frase inteira. Isso acontece em La Gomera, nas Ilhas Canárias. É o Silbo Gomero: o espanhol transformado em assobio. Os sons das palavras viram altura e duração do assobio. É a prova de que a língua não está presa ao som da voz. O mesmo sistema pode passar por outro canal: voz, assobio, escrita, mãos. O Silbo quase sumiu no século 20, mas desde 1999 é ensinado nas escolas da ilha, e em 2009 virou patrimônio da UNESCO. A língua é o sistema, não o som.
+V+: abrir em primeira pessoa (câmera no vale), som de vento, depois o assobio.
+P: Prepara o termo "langue" (Aula, Dia 6).
+
+## E1
+FMT: DESMONTE
+T: Gramaticalização
+G: "CÊ" JÁ FOI "VOSSA MERCÊ"
+R: Vamos desmontar uma palavra que você falou hoje: "cê". Antes era "você". Antes, "vosmecê". E antes, "Vossa Mercê", um tratamento para gente importante, algo como "Vossa Graça". De tanto uso, a expressão foi gastando, como pedra no rio, até virar um pronome curtinho. Os linguistas chamam isso de gramaticalização: uma expressão cheia de significado vira peça da gramática. Repara a ligação com o tema de hoje: a forma mudou completamente, mas a função ficou. O signo é flexível. E o "tu" não morreu: vive no Sul, no Norte e em boa parte do Nordeste. Time "tu" ou time "você"?
+V+: cada etapa "encolhe" na tela como peça de Lego sendo retirada.
+P: Termo que volta no Dia 22 ("a gente").
+
+## F2
+FMT: QUIZ
+T: Cognato
+G: NOITE = N + OITO EM VÁRIAS LÍNGUAS?!
+R: Quiz rápido. Noite, oito. Night, eight. Nacht, acht. Nuit, huit. Notte, otto. Em todas, "noite" é N mais o número oito. Isso é: A, um código antigo; B, prova de parentesco; C, coincidência? Responde nos comentários antes de eu falar. Resposta: C. Noite e oito vêm de raízes diferentes do protoindo-europeu, a língua-mãe dessas línguas. As duas já eram parecidas e mudaram em paralelo. Agora, "noite" em português e "night" em inglês, essas sim são parentes: são cognatos, palavras de línguas diferentes com a mesma origem. Coincidência entre palavras da mesma língua, parentesco entre línguas. Hoje o tema é esse: ligação real ou ligação inventada?
+V+: três cartões A/B/C com contagem regressiva de 3 s antes da resposta.
+P: Termo "cognato" volta toda semana no quadro Línguas Primas.
+
+## G1
+FMT: REVELAÇÃO
+T: Signo linguístico
+G: O LIVRO MAIS FAMOSO DELE... ELE NÃO ESCREVEU.
+R: Hoje falamos de signo o dia inteiro. Agora, o homem por trás da ideia. Ferdinand de Saussure, professor suíço, deu cursos de linguística em Genebra e morreu em 1913 sem publicar nada sobre eles. Dois colegas, Charles Bally e Albert Sechehaye, juntaram as anotações dos alunos e publicaram em 1916 o "Curso de Linguística Geral", em nome dele. Ali está o signo: significante, a imagem acústica, e significado, o conceito, ligados de forma arbitrária. A base de uma ciência inteira é um caderno de anotação. Amanhã, às 7h: uma palavra que já foi elogio e hoje é ofensa.
+V+: esquema clássico do signo (elipse dividida) montado ao vivo.
+P: Fecha o Dia 1. Revisão: termos 1 a 7.
+
+# DIA 2 | Palavras mudam de sentido | A forma fica, o significado escorrega.
+
+## A18
+FMT: COMPARATIVO
+T: Mudança semântica
+G: "BIZARRO" JÁ FOI ELOGIO
+R: Duas cenas. 1730: alguém te chama de bizarro e você agradece. 2026: alguém te chama de bizarro e você se ofende. Mesma palavra. Em português e espanhol, "bizarro" queria dizer elegante, valente, generoso. Um "cavaleiro bizarro" era admirável. Mas o francês "bizarre" queria dizer esquisito, e de tanto contato o sentido estrangeiro venceu. Os dicionários ainda registram o sentido antigo. Isso se chama mudança semântica: a palavra fica, o significado escorrega. Ontem a gente viu que a ligação entre som e sentido é arbitrária. Hoje você vê a consequência: se é arbitrária, pode mudar. E muda o tempo todo.
+V+: tela dividida 1730 × 2026 com o mesmo balão "bizarro!".
+P: Callback ao Dia 1 (signo arbitrário).
+
+## B10
+FMT: REVELAÇÃO
+T: Denotação e conotação
+G: "COBRA" PODE NÃO SER UM ANIMAL
+R: Aula 2 do curso de Letras. "A cobra picou o rapaz." "Meu chefe é uma cobra." Mesma palavra, mas na segunda ninguém tem medo de picada. No primeiro caso é denotação: o sentido literal, de dicionário. No segundo é conotação: o sentido figurado, carregado de valores e emoções. Lembra do "bizarro" das 7h? Muitas mudanças de sentido começam assim: uma conotação ganha tanta força que vira o sentido principal. A conotação depende da cultura. Aqui, raposa é esperteza e anta é burrice. Os animais não fizeram nada pra merecer isso. Fomos nós.
+P: Liga com A18.
+
+## C4
+FMT: DETETIVE
+T: Etimologia popular
+G: SINCERO = "SEM CERA"?
+R: Caso do dia: a palavra sincero. Pista número 1: a história famosa diz que escultores romanos desonestos tapavam rachaduras com cera, e as estátuas boas eram "sine cera", sem cera. Pista número 2: procure essa história em textos romanos. Não existe. Pista número 3: o latim já tinha "sincerus", que queria dizer puro, inteiro, sem mistura. A origem exata dele é discutida, mas não é "sine cera". Conclusão: etimologia popular, o mesmo crime do forró de ontem. Reincidente. Dica de detetive: quando a origem de uma palavra parece boa demais e vem com uma historinha perfeita, desconfie.
+V+: quadro de cortiça com fotos, barbante vermelho e carimbo "CASO ENCERRADO".
+P: Callback ao forró (Dia 1). Termo repetido de propósito: reforço.
+
+## D23
+FMT: REVELAÇÃO
+T: Purismo linguístico
+G: EM ISLANDÊS, COMPUTADOR É "PROFETISA DOS NÚMEROS"
+R: Quando surge uma coisa nova, o português costuma importar a palavra: deletar, printar. O islandês faz o contrário. Ele pega palavras antigas e muda o sentido delas. Telefone é "sími", uma palavra antiga para fio. Computador é "tölva", que junta "tala", número, com "völva", profetisa: a profetisa dos números. Existe até um comitê que propõe esses termos. Isso se chama purismo linguístico. É a mudança semântica das 7h usada de propósito, como política. Resultado: o islandês mudou tão pouco em mil anos que os islandeses leem as sagas medievais com relativa facilidade.
+P: Liga com A18 (mudança semântica).
+
+## E21
+FMT: DESMONTE
+T: Erosão fonética
+G: "SEU JOÃO" E "DONA MARIA" SÃO TÍTULOS ANTIGOS
+R: "Seu João", "Dona Maria". Desmonta. "Seu" é "senhor" gasto pela fala: senhor, sô, seu. "Senhor" vem do latim "senior", o mais velho. "Dona" vem de "domina", a senhora da casa, mesma raiz de "dominar" e de "domingo", o dia do Senhor. Em Portugal, "dona" era título de nobreza. No Brasil, virou tratamento de respeito para qualquer mulher. Duas mudanças num vídeo só: a forma encolheu, isso é erosão fonética, e o sentido se espalhou, isso é mudança semântica. Ontem foi "Vossa Mercê" virando "cê". Hoje é a nobreza inteira virando conversa de portão.
+P: Callback a E1 (Dia 1).
+
+## F3
+FMT: CONTAGEM
+T: Falso cognato
+G: NUNCA DIGA "EMBARAZADA" NA ESPANHA
+R: Cinco palavras para não passar vergonha em espanhol. Cinco: "oficina" é escritório. Quatro: "polvo" é poeira, e o bicho é "pulpo". Três: "rato" é um momento, "espera un rato". Dois: "exquisito" é delicioso, não esquisito. E número um: "estoy embarazada" não é estou envergonhada. É estou grávida. Esses são os falsos cognatos: palavras que têm a mesma origem ou forma parecida, mas o sentido foi para lados diferentes em cada língua. É a mudança semântica do tema de hoje, só que entre duas línguas. Ontem você aprendeu cognato. Hoje aprendeu o primo traiçoeiro dele.
+V+: contador 5 → 1 grande no canto, cada item com a ilustração do mal-entendido.
+P: Callback a F2 (cognato, Dia 1).
+
+## G13
+FMT: REVELAÇÃO
+T: Lexicografia
+G: ESSE DICIONÁRIO TINHA OPINIÃO
+R: Se o sentido das palavras muda, alguém precisa registrar. Esse é o trabalho da lexicografia, a arte de fazer dicionários. Em 1755, Samuel Johnson publicou um dos mais importantes do inglês, quase sozinho, depois de nove anos de trabalho. E o dicionário tinha opinião. Aveia: "um grão que, na Inglaterra, é dado aos cavalos, mas que na Escócia sustenta o povo". E lexicógrafo, ou seja, ele mesmo: "um trabalhador inofensivo". Hoje os dicionários tentam ser neutros. Mas o de Johnson mostra uma coisa: todo dicionário é uma foto de uma época, com os preconceitos dela. Amanhã: palavras que atravessaram o mundo.
+P: Abre a minissérie dos dicionários (G14, G15, G30 nesta semana).
+
+# DIA 3 | Palavras viajam | Navios, rotas e imigrantes levam palavras na bagagem.
+
+## A5
+FMT: CENA
+T: Empréstimo linguístico
+G: TCHAU = "SOU SEU ESCRAVO"
+R: Veneza, século 18. Dois cavalheiros se despedem com uma reverência: "s-ciào vostro", "seu escravo", algo como "às suas ordens". A expressão vem do latim medieval "sclavus", escravo, mesma origem de "eslavo". Avança cem anos: a fórmula encolheu para "ciao" e se espalhou pela Itália como cumprimento informal. Avança mais: imigrantes italianos desembarcam no Brasil e trazem o "ciao". Aqui ele vira "tchau", só despedida. Quando uma língua pega uma palavra de outra, isso se chama empréstimo linguístico. E repara: o empréstimo ainda sofreu mudança de sentido no caminho, como vimos ontem. Palavras viajam e mudam de roupa.
+V+: três cenas com legenda de ano no canto (1700 / 1800 / 1900), transição de navio.
+
+## B11
+FMT: COMPARATIVO
+T: Homonímia e polissemia
+G: A MANGA DA CAMISA NÃO É PARENTE DA FRUTA
+R: Aula 3. Manga da camisa contra manga, a fruta. Parentes? Não. A da camisa vem do latim "manica", de "manus", mão. A fruta viajou: os portugueses aprenderam o nome na Índia, com o malaiala. Mesma forma, origens diferentes: homonímia. Agora, pé do corpo contra pé da mesa: mesma palavra que ganhou um sentido novo por metáfora. Isso é polissemia. Os dicionários separam as duas coisas: homônimos ganham verbetes diferentes, enquanto os sentidos polissêmicos ficam no mesmo verbete. E repara no tema de hoje: a manga fruta é um empréstimo que chegou de navio, como o "tchau" das 7h.
+P: Liga com A5 (empréstimo).
+
+## C25
+FMT: QUIZ
+T: Coincidência lexical
+G: ARIGATÔ VEIO DO PORTUGUÊS?
+R: Os portugueses chegaram ao Japão em 1543. Qual destas palavras japonesas veio do português? A, "pan", pão. B, "arigatô", obrigado. C, as duas. Resposta: só a A. "Pan" veio mesmo dos portugueses. Já "arigatô" vem do japonês antigo "arigatashi": "ari", existir, mais "katashi", difícil. Algo difícil de existir, raro, e daí "sou grato". A palavra já aparece em textos japoneses de mil anos atrás, muito antes dos portugueses. É coincidência, como o "noite e oito" de anteontem. Viagens trazem empréstimos de verdade, mas também criam lendas.
+V+: cartões A/B/C, carimbo MITO no B.
+P: Callback a F2 (Dia 1). Prepara F13 (Dia 19: português no japonês).
+
+## D28
+FMT: COMPARATIVO
+T: Língua franca
+G: A LÍNGUA MAIS FALADA NÃO É A QUE VOCÊ PENSA
+R: Qual é a língua mais falada do mundo? Depende da pergunta. Contando quem nasceu falando: mandarim, com quase um bilhão. Contando todo mundo que fala, incluindo quem aprendeu depois: inglês, com cerca de um bilhão e meio. O inglês ganha porque virou a língua franca do planeta, a língua que pessoas de línguas diferentes usam para se entender. E o português? Mais de 250 milhões de falantes, entre as dez mais faladas. Línguas francas aparecem onde há viagens e comércio, como as rotas do tema de hoje. Antes do inglês, o português já foi língua de comércio nos portos da Ásia. Isso aparece na semana 3.
+V+: dois pódios lado a lado.
+P: Teaser para F14 (semana 3).
+
+## E26
+FMT: CONTAGEM
+T: Aportuguesamento
+G: QUASE TODO O FUTEBOL ERA INGLÊS
+R: Cinco palavras do futebol que vieram do inglês. Cinco: back virou beque. Quatro: penalty virou pênalti. Três: goal virou gol. Dois: football virou futebol. E o número um, o mais esperto: center-forward virou centroavante. Ninguém pegou a palavra pronta: traduziu pedaço por pedaço. Isso tem nome: decalque. O resto é aportuguesamento, adaptar a palavra estrangeira à pronúncia e à escrita do português. Teve até quem propusesse palavras "puras", como "ludopédio". Não colou. O tema de hoje é viagem: o futebol chegou de navio, no fim do século 19, e as palavras vieram junto, na mala dos jogadores.
+V+: contador grande, placar antigo trocando os termos.
+
+## F18
+FMT: REVELAÇÃO
+T: Rota de empréstimo
+G: SE SUA LÍNGUA DIZ "CHÁ", O CHÁ VEIO POR TERRA
+R: Quase todas as línguas do mundo chamam o chá de "chá" ou de "tê". Depende da rota. Em mandarim e cantonês, a palavra é "chá". Os portugueses compravam chá em Macau e levaram "chá". Por terra, pela Rota da Seda, foi "chai": russo, persa, turco. Já os holandeses compravam chá em Fujian, onde se dizia "te", e espalharam "te" pela Europa: tea, thé, Tee. O português é das poucas línguas da Europa ocidental com "chá". Se você olhar um mapa das palavras para chá, enxerga as rotas comerciais do século 17. É o melhor exemplo do tema de hoje: a palavra conta por onde viajou.
+V+: mapa com as duas cores e as rotas animadas.
+
+## G2
+FMT: LINHA DO TEMPO
+T: Protoindo-europeu
+G: UM JUIZ NA ÍNDIA DESCOBRIU A FAMÍLIA DO PORTUGUÊS
+R: 1783: o juiz inglês William Jones chega a Calcutá, na Índia. Começa a estudar sânscrito, a língua clássica do país. 1786: num discurso na Sociedade Asiática, ele diz que o sânscrito, o latim e o grego se parecem demais nos verbos e na gramática. Devem vir de uma fonte comum, que talvez nem exista mais. Século 19: os linguistas reconstroem essa fonte e a batizam de protoindo-europeu. Hoje: sabemos que português, hindi, persa, russo e inglês são parentes. Lembra da "noite" e do "night", que eram cognatos? Esse juiz explicou por quê. Viajar não leva só palavras. Às vezes, leva uma descoberta.
+V+: linha do tempo horizontal com datas acendendo.
+P: Callback a F2 (Dia 1).
+
+# DIA 4 | A língua na cozinha | Pão, sal, biscoito e laranja: a comida também fala.
+
+## A4
+FMT: DESMONTE
+T: Composição (formação de palavras)
+G: COMPANHEIRO = COM + PÃO
+R: Desmonta "companheiro". "Com", junto. "Panis", pão. Do latim tardio "companio": quem divide o pão com você. "Companhia" vem da mesma ideia, e o inglês "company", empresa, também. Juntar duas partes para formar uma palavra nova é um dos mecanismos mais antigos das línguas. Uma palavra tão afetiva nasceu de uma coisa bem concreta: comer junto. E faz sentido. Até hoje, a gente chama pra comer quem a gente quer por perto. Hoje o canal inteiro vai para a cozinha: sal, biscoito, laranja… Marca aqui o seu companheiro de pão de queijo.
+V+: pão se partindo em duas metades rotuladas COM + PANIS.
+
+## B22
+FMT: DESAFIO
+T: Metáfora conceitual
+G: VOCÊ PENSA EM METÁFORAS O DIA TODO
+R: Aula 4. Desafio: passe um dia sem metáfora. Impossível. "Engoli o choro." "Isso é difícil de digerir." "Ele cozinhou o problema." Repara: a gente fala de ideias como se fossem comida. Em 1980, George Lakoff e Mark Johnson mostraram que a metáfora não é enfeite de poema. É um jeito de pensar. Tempo é dinheiro: "gastei meu tempo". Discussão é guerra: "ataquei os argumentos dele". Feliz é para cima: "estou pra cima". Isso se chama metáfora conceitual: a gente entende o abstrato através do concreto. Comenta uma metáfora de comida que você usou essa semana.
+V+: expressões aparecendo dentro de um prato.
+
+## C3
+FMT: JULGAMENTO
+T: Etimologia popular
+G: SOLDADOS ROMANOS RECEBIAM EM SAL?
+R: No banco dos réus: o salário. Acusação: "salário vem do sal pago aos soldados romanos". Vamos separar em duas partes. Parte um: salário vem de sal? Verdade. O latim "salarium" é derivado de "sal". Parte dois: os soldados recebiam em sal? Não há nenhum documento romano dizendo isso. Eles recebiam em moeda. O "salarium" pode ter sido um auxílio para comprar sal, ou ter outra origem, mas ninguém sabe ao certo. Veredito: meia verdade. Pela terceira vez em quatro dias, a etimologia popular aparece. Forró, sincero, salário. Percebeu o padrão? A gente adora uma origem com historinha.
+V+: balança da justiça com as duas partes.
+P: Callback a C1 e C4.
+
+## D26
+FMT: DESAFIO
+T: Composicionalidade
+G: UMA LÍNGUA COM SÓ 120 PALAVRAS
+R: Toki Pona tem cerca de 120 palavras. Desafio: adivinha o que significa "telo nasa". "Telo" é líquido, "nasa" é maluco. Líquido maluco… é álcool. E "jan pona"? "Jan" é pessoa, "pona" é bom: amigo. Toki Pona foi inventada em 2001 pela linguista canadense Sonja Lang para simplificar o pensamento. Tudo se diz combinando. Isso se chama composicionalidade: o sentido do todo vem do sentido das partes, como no "companheiro" das 7h, "com" mais "pão". Toda língua faz isso. Toki Pona só leva ao extremo. Comenta como você diria "pão de queijo" em Toki Pona.
+V+: pausa de 2 s com "?" antes de cada resposta.
+P: Liga com A4.
+
+## E2
+FMT: COMPARATIVO
+T: Variação diatópica
+G: BISCOITO OU BOLACHA? A PALAVRA RESPONDE.
+R: Biscoito contra bolacha. A briga mais famosa do Brasil tem resposta linguística: as duas estão certas. Isso é variação diatópica, a variação por lugar. Em São Paulo, bolacha. No Rio, biscoito. A etimologia dá um bônus: biscoito vem do latim "bis coctus", cozido duas vezes, porque era um pão assado duas vezes para durar nas viagens de navio. Bolacha vem de "bolo", com sufixo diminutivo. Repara que biscoito também é uma composição, como o "companheiro" das 7h. Na cozinha da língua, nada se perde. O mapa decide o nome, e a etimologia conta a receita.
+V+: ringue de luta com os dois de cada lado, mapa no final.
+
+## F19
+FMT: QUIZ
+T: Topônimo
+G: EM GREGO, LARANJA SE CHAMA "PORTUGAL"
+R: Quiz. Em grego, laranja se diz "portokáli". Em turco, "portakal". Em árabe, "burtuqāl". De onde vem? A, de uma cidade grega. B, de Portugal. C, de uma deusa. Resposta: B. Os portugueses trouxeram da Ásia laranjas doces no século 16, e no leste do Mediterrâneo elas ficaram conhecidas como "a fruta de Portugal". Uma palavra que vem do nome de um lugar está ligada a um topônimo, como o jeans, que leva o nome de Gênova. E a palavra "laranja" fez outro caminho: do sânscrito "nāraṅga", pelo persa e pelo árabe. Resumindo: a fruta tem nome indiano em português e nome português em grego.
+V+: cartões A/B/C, mapa com as palavras.
+
+## G14
+FMT: CENA
+T: Corpus linguístico
+G: UM HOMEM PRESO NUM HOSPÍCIO AJUDOU A ESCREVER O OXFORD
+R: Oxford, anos 1880. O editor James Murray recebe pelo correio milhares de fichas: citações de palavras, enviadas por voluntários, para provar como cada palavra foi usada ao longo da história. Esse conjunto de textos reais se chama corpus. Um dos voluntários mais produtivos manda milhares de fichas impecáveis: William Chester Minor, médico americano. Anos depois, Murray descobre onde ele mora: num hospital psiquiátrico na Inglaterra, internado depois de ter matado um homem num surto. Anteontem foi o dicionário com opinião de Johnson. Hoje, o dicionário feito por multidões, com uma história que virou filme: "O Professor e o Louco".
+P: Minissérie dos dicionários, parte 2. Callback a G13.
+
+# DIA 5 | Palavras nascem, crescem e encolhem | A vida de uma palavra, do nascimento ao apelido.
+
+## A2
+FMT: CENA
+T: Metonímia
+G: CANDIDATO = "O DE BRANCO"
+R: Roma, século 1 antes de Cristo. Um homem atravessa o fórum com uma toga esfregada com giz, branquíssima. Todo mundo sabe o que isso significa: ele quer um cargo público. A toga era a "toga candida", e "candidus" quer dizer branco brilhante. Quem vestia a toga era o "candidatus", o vestido de branco. A roupa passou a nomear a pessoa: uma palavra ligada a outra por proximidade, uma metonímia. A mesma raiz deu "cândido" e "candura". Hoje o tema é o ciclo de vida das palavras. Essa nasceu de um figurino de campanha. Há dois mil anos já tinha marketing político.
+V+: câmera seguindo a toga, legenda "ROMA · 63 a.C." no canto.
+
+## B25
+FMT: DESMONTE
+T: Neologismo
+G: "SEXTOU" É LINGUÍSTICA PURA
+R: Aula 5: como nasce uma palavra. Desmonta "sextou". Base: "sexta", substantivo. Os falantes transformaram em verbo da primeira conjugação, a mais produtiva do português: sextar. Depois, passado: sextou. É a mesma regra que criou "deletar", "printar" e "googlar". Isso é neologismo: palavra nova feita com regras que a língua já tem. Ninguém inventa do nada. Às 7h, "candidato" nasceu de uma roupa. Aqui, "sextou" nasceu de um dia da semana. A gramática está na cabeça do falante, e ele usa sem pensar. Comenta um neologismo que você usa e que o dicionário ainda não registrou.
+V+: peças SEXTA + -AR montando SEXTAR → SEXTOU.
+
+## C5
+FMT: DETETIVE
+T: Etimologia popular
+G: ESNOBE = "S.NOB."?
+R: Caso: esnobe. Suspeito: a história de que, em Oxford ou Cambridge, alunos que não eram nobres eram listados como "s. nob.", "sine nobilitate", sem nobreza. Pista 1: ninguém encontrou essa abreviação nas listas das universidades. Pista 2: no fim do século 18, "snob" já era gíria inglesa para sapateiro, e depois para pessoa comum. Pista 3: no século 19, passou a nomear quem imita a elite e despreza quem está embaixo. O escritor Thackeray popularizou esse sentido em 1848. Conclusão: etimologia popular, de novo. A palavra mudou de sentido de cabeça para baixo: era o comum e virou o metido.
+V+: lupa sobre lista antiga, carimbo "SEM PROVA".
+P: Quarta etimologia popular da semana: o padrão vira piada interna do canal.
+
+## D11
+FMT: DESMONTE
+T: Língua aglutinante
+G: ESSA PALAVRA É UMA FRASE INTEIRA
+R: Desmonta comigo esta palavra turca: "Çekoslovakyalılaştıramadıklarımızdanmışsınız". Tchecoslováquia, mais "pessoa de", mais "tornar", mais "não conseguir", mais "aqueles que", mais "dizem que". Tradução: "dizem que você é um daqueles que não conseguimos tornar tchecoslovaco". O turco é uma língua aglutinante: cola sufixos um atrás do outro, cada um com uma função. A palavra é brincadeira, mas é gramaticalmente correta. Tema de hoje: palavras crescem. O "sextou" das 10h cresceu um sufixo. Essa cresceu oito. Em português você precisa de uma frase. Em turco, de muito fôlego.
+V+: cada sufixo entra com cor e tradução embaixo, contador de sufixos.
+
+## E14
+FMT: DESMONTE
+T: Erosão fonética
+G: "CADÊ" É UMA FRASE INTEIRA
+R: "Cadê meu celular?" Esse "cadê" é uma frase inteira comprimida. No português antigo se perguntava "que é de?": "que é do meu celular?", o que aconteceu com ele. Na fala rápida, "que é de" virou "quede" e depois "cadê". É a erosão fonética que a gente viu no "seu" e no "dona", anteontem: o uso frequente gasta as palavras como água gasta pedra. O turco das 15h faz palavras crescerem. O português faz elas encolherem. Os dois são vida normal de língua. A gramática tradicional demorou a aceitar o "cadê", mas hoje ele está em todos os dicionários. Cadê o like?
+P: Callback a E21 (Dia 2).
+
+## F20
+FMT: QUIZ
+T: Exônimo
+G: CADA LÍNGUA DIZ QUE O PERU VEIO DE UM LUGAR
+R: O peru é uma ave das Américas. Em inglês, ele se chama "turkey", Turquia. Em turco, "hindi", Índia. Em francês, "dinde", da Índia. Em português, peru. Quem acertou a origem? A, o inglês. B, o turco. C, o português. D, ninguém. Resposta: D. O peru veio do México e da América do Norte. Os europeus confundiam terras distantes e exóticas, e cada povo deu à ave o nome do lugar estranho mais próximo da sua imaginação. Ontem a laranja levou o nome de Portugal. Hoje o peru carrega o nome de três lugares de onde nunca veio.
+V+: peru no centro, bandeiras girando, "ninguém" carimbado.
+P: Callback a F19.
+
+## G15
+FMT: REVELAÇÃO
+T: Dicionário de língua
+G: O PRIMEIRO DICIONÁRIO MODERNO DO PORTUGUÊS É BRASILEIRO
+R: Minissérie dos dicionários, parte 3. Johnson tinha opinião, o Oxford tinha um voluntário internado. E o português? O primeiro grande dicionário só de língua portuguesa foi feito por um brasileiro. Antônio de Morais Silva nasceu no Rio de Janeiro, em 1755. Em 1789, publicou em Lisboa o "Dicionário da Língua Portuguesa", baseado em parte no vocabulário de Rafael Bluteau, mas com muitas mudanças. Ele ficou conhecido como "o Morais" e foi referência por mais de um século. É lá que muitas palavras deste canal aparecem registradas pela primeira vez. A língua de Portugal ganhou seu dicionário moderno pelas mãos de um carioca.
+P: Callback a G13 e G14.
+
+# DIA 6 | Peças e montagens | Palavras são feitas de peças. Hoje a gente abre a caixa.
+
+## A3
+FMT: CENA
+T: Metáfora
+G: ESCRÚPULO = PEDRINHA NO SAPATO
+R: Você é um soldado romano. Trinta quilômetros de marcha, e uma pedrinha entra na sua sandália. Não dá para parar. Ela incomoda a cada passo. Em latim, essa pedrinha é "scrupulus", diminutivo de "scrupus", pedra pontuda. Os romanos passaram a usar a palavra para o incômodo da consciência: a dúvida moral que não deixa você em paz. Daí, escrúpulo. Aqui a metáfora fez a palavra mudar de mundo, do pé para a mente. E repara na peça "-ulus", que é diminutivo: ela aparece em "músculo", "pupila", e vamos desmontar várias delas no canal. Quem "não tem escrúpulos" anda tranquilo… mesmo pisando em pedra.
+V+: câmera baixa na sandália, passo a passo com som de cascalho.
+P: Planta o diminutivo latino (A7, A20 na semana 4).
+
+## B28
+FMT: COMPARATIVO
+T: Langue e parole
+G: LÍNGUA, LINGUAGEM E FALA NÃO SÃO SINÔNIMOS
+R: Aula 6. Três palavras que parecem iguais. Linguagem: a capacidade humana de se comunicar com signos. Língua, a "langue" de Saussure: o sistema social, o português com suas regras, guardado na cabeça de todos os falantes. Fala, a "parole": o uso individual, o que você diz agora, do seu jeito. A língua é a partitura e a fala é cada execução. Lembra do Silbo Gomero, no primeiro dia? O assobio é outra execução, outra "parole", da mesma "langue", o espanhol. Saussure escolheu estudar a língua, o sistema, e isso fundou a linguística moderna. Hoje o tema é peças: a langue é a caixa de peças.
+V+: três círculos concêntricos, partitura × músicos.
+P: Callback a D1 e G1 (Dia 1).
+
+## C26
+FMT: REVELAÇÃO
+T: Empréstimo linguístico
+G: CAFONA É PALAVRA ITALIANA?
+R: Depois de quatro etimologias populares nesta semana, uma verdadeira, pra variar. Cafona vem mesmo do italiano: "cafone", termo do sul da Itália para o camponês, o homem rústico do interior. Nas cidades, virou sinônimo de pessoa grosseira, sem modos. A palavra chegou ao Brasil com os imigrantes italianos e mudou de sentido: aqui, cafona é o brega, o exagerado, o de mau gosto. Em italiano, "cafone" ainda é um insulto bem mais pesado. É o mesmo caminho do "tchau" de anteontem: veio de navio, com os imigrantes, e ficou mais leve na viagem. Carimbo do dia: VERDADE.
+V+: carimbo VERDADE em verde, em contraste com os MITOS da semana.
+P: Callback a A5.
+
+## D12
+FMT: DESMONTE
+T: Composto (palavra composta)
+G: ESSA PALAVRA ALEMÃ ERA UMA LEI
+R: Rindfleischetikettierungsüberwachungsaufgabenübertragungsgesetz. São 63 letras. Desmonta: Rind, boi. Fleisch, carne. Etikettierung, rotulagem. Überwachung, supervisão. Aufgaben, tarefas. Übertragung, transferência. Gesetz, lei. A lei da transferência das tarefas de supervisão da rotulagem da carne de boi. O alemão junta substantivos sem limite para formar compostos. Ontem, o turco colou sufixos. Hoje, o alemão cola palavras inteiras. Peças diferentes, mesma ideia. A lei foi revogada em 2013 e a palavra saiu de uso oficial, mas o mecanismo continua: em alemão, qualquer um inventa um composto novo, e todo mundo entende.
+V+: blocos de Lego com cada parte e tradução.
+P: Callback a D11.
+
+## E15
+FMT: DESMONTE
+T: Interjeição
+G: "OXENTE" E "VIXE" SÃO FRASES ANTIGAS
+R: Desmonta o Nordeste. "Oxente": "ô, gente!", uma exclamação de espanto que se juntou numa palavra só. "Vixe": "Virgem!", de "Virgem Maria!", expressão religiosa de susto. A forma "vixe Maria" ainda entrega a origem. Essas palavras são interjeições: expressam emoção, não descrevem coisas. E repara: estão no mesmo caminho do "cadê" de ontem e do "cê" do primeiro dia. Expressões muito usadas viram peças pequenas, quase sons. A língua do Nordeste guardou as frases dentro das palavras. Comenta qual você mais usa: oxente, vixe ou eita?
+V+: frase original se fundindo animada.
+P: Callback a E14 e E1.
+
+## F22
+FMT: DETETIVE
+T: Família etimológica
+G: POR QUE IRMÃO NÃO PARECE "FRATELLO"?
+R: Mistério: em italiano, irmão é "fratello". Em francês, "frère". Vêm do latim "frater". Mas em português é "irmão", e em espanhol, "hermano". Por quê? Pista: os romanos diziam "frater germanus", irmão de sangue, e "germanus" significava "do mesmo germe", da mesma origem. Na Península Ibérica, as pessoas ficaram só com o "germanus". Mas o "frater" não sumiu do português: ele deu "frade", "freira" e "fraterno". Uma família etimológica é o conjunto de palavras que vêm da mesma raiz. "Frater" tem família no português, só que na igreja.
+V+: árvore com dois troncos (frater / germanus).
+
+## G30
+FMT: REVELAÇÃO
+T: Antonomásia
+G: "PEGA O AURÉLIO" VIROU SINÔNIMO DE DICIONÁRIO
+R: Minissérie dos dicionários, parte 4. "Pega o Aurélio aí." Durante décadas, os brasileiros chamaram o dicionário pelo nome do autor. Aurélio Buarque de Holanda Ferreira lançou o "Novo Dicionário da Língua Portuguesa" em 1975, e foi um sucesso tão grande que "aurélio" virou substantivo comum, registrado nos dicionários como sinônimo de dicionário. Quando um nome próprio vira nome comum, temos uma antonomásia. Lembra do termo nº 1 deste canal, o epônimo, com o "algoritmo"? É primo dele. O dicionário que registra as palavras virou ele mesmo uma palavra. Amanhã é domingo: dia de revisão em forma de jogo.
+P: Callback a A1 (Dia 1).
+
+# DIA 7 | Domingo: quantas palavras cabem numa língua? | Revisão da semana e o primeiro episódio em duas partes.
+
+## A29
+FMT: REVELAÇÃO
+T: Concordância
+G: "OBRIGADO" É UMA DÍVIDA
+R: Quando você agradece, assume uma dívida. "Obrigado" quer dizer "fico obrigado a você": devo um favor, estou ligado a você. Vem do latim "obligare", amarrar. Por isso a mulher diz "obrigada": ela fala de si mesma, e o adjetivo concorda com quem fala. É concordância de gênero. E lembra do "arigatô" da quarta-feira? Não tem nada a ver com "obrigado". Já o inglês diz "much obliged", a mesma ideia de dívida. Semana 1 encerrada: você já aprendeu mais de 40 termos do Glossário Glossa. Obrigado por ter vindo até aqui. E agora estou te devendo uma.
+P: Callback a C25. Abre o domingo de revisão.
+
+## B2
+FMT: REVISÃO
+T: Figura de linguagem
+G: VOCÊ FAZ POESIA SEM SABER
+R: Aula 7, a primeira revisão. Você usa quatro figuras de linguagem antes do almoço. "Já te falei mil vezes": hipérbole, o exagero. "Vou tomar um copo d'água": você toma a água, não o copo. Isso é metonímia, a mesma do "candidato" de sexta. "Ele passou desta para melhor": eufemismo, suavizar. "O pé da mesa": catacrese, uma metáfora tão velha que ninguém percebe, e que também é polissemia, lembra da quarta? Agora o teste: "Engoli o choro" é qual figura? Comenta. Dica: está na aula 4. Se você acertar, a primeira semana do curso de Letras está no bolso.
+V+: no fim, cartão "TESTE" com 5 s de contagem.
+P: Revisão dos termos 5, 23, 33 e 15.
+
+## C2
+FMT: PARTE 1/2
+T: Polissíntese
+G: 100 PALAVRAS PARA NEVE? 🧊
+R: Parte 1 de 2. Você já ouviu que os esquimós têm cem palavras para neve. É mito, ou melhor, uma bola de neve. Em 1911, o antropólogo Franz Boas citou quatro raízes para neve numa língua inuíte. Depois, outros autores foram aumentando: 7, 50, 100, 400. Em 1989, o linguista Geoffrey Pullum chamou isso de "a grande farsa do vocabulário esquimó". Só que tem um problema maior: nas línguas inuítes, contar palavras nem faz sentido. Elas montam palavras do tamanho de frases, igual ao turco de sexta, só que mais. Como assim? A parte 2 sai hoje às 15h, com uma palavra que vai te deixar sem ar.
+V+: contador subindo; card final "PARTE 2 · 15h".
+P: Episódio duplo com D22.
+
+## D22
+FMT: PARTE 2/2
+T: Polissíntese
+G: UMA PALAVRA = "NÃO ESCUTO MUITO BEM"
+R: Parte 2. Hoje ao meio-dia a gente desmontou o mito das cem palavras para neve. Agora, o motivo de ele não fazer sentido. Em inuktitut, língua inuíte do Canadá, "tusaatsiarunnanngittualuujunga" quer dizer "eu não consigo escutar muito bem". Uma palavra. Ouvir, mais "bem", mais "conseguir", mais "não", mais "muito", mais "eu". Isso é polissíntese: a raiz recebe tantos pedaços que vira uma frase. Então quantas palavras para neve existem? Quantas você quiser montar. Não é vocabulário, é gramática. Essa semana você viu o turco colar sufixos, o alemão colar palavras e agora o inuktitut colar uma frase inteira.
+V+: recapitulação visual rápida: turco → alemão → inuktitut.
+P: Fecha o episódio duplo. Callback a D11 e D12.
+
+## E29
+FMT: QUIZ
+T: Topônimo
+G: O NOME DO BRASIL VEM DE BRASA
+R: Quiz de domingo. Qual destes já foi nome oficial do Brasil? A, Ilha de Vera Cruz. B, Terra de Santa Cruz. C, os dois. Resposta: C. O nome que ficou veio de uma árvore: o pau-brasil, a primeira grande riqueza explorada pelos portugueses. Da madeira se tirava uma tinta vermelha, cor de brasa, usada para tingir tecidos. "Brasil" vem de "brasa" e já nomeava tintas avermelhadas antes do descobrimento. Os comerciantes da madeira eram os "brasileiros". Topônimo, lembra? A laranja levou o nome de Portugal na quinta. O Brasil levou o nome de uma cor. E o povo, o nome de uma profissão.
+V+: cartões A/B/C, mapa antigo.
+P: Callback a F19.
+
+## F25
+FMT: DESAFIO
+T: Método comparativo
+G: "DOIS" SE DIZ QUASE IGUAL DA ÍNDIA À IRLANDA
+R: Desafio: ache o padrão. Dois, dos, deux, due, two, zwei, "dva" em russo, "dvi" em sânscrito, "do" em persa. Agora, três: tres, three, drei, tri, trayas. Os números baixos são das palavras mais estáveis das línguas indo-europeias. Comparar listas assim, de forma sistemática, é o método comparativo, a ferramenta que William Jones e os linguistas depois dele usaram para reconstruir o protoindo-europeu, lembra da quarta? E o contraprova: o finlandês, que não é dessa família, diz "kaksi". Completamente diferente. Comenta o "dois" em outra língua que você conhece.
+V+: coluna de números com letras iguais destacadas.
+P: Callback a G2.
+
+## G12
+FMT: REVELAÇÃO
+T: Filologia
+G: TOLKIEN CRIOU AS LÍNGUAS ANTES DA HISTÓRIA
+R: Para fechar a semana dos dicionários e das palavras: J. R. R. Tolkien, o autor de "O Senhor dos Anéis", era filólogo, professor em Oxford. Filologia é o estudo das línguas pelos textos antigos. Antes da fama, ele trabalhou no dicionário Oxford, o mesmo do voluntário internado de quinta, pesquisando palavras com W, como "walrus" e "wasp". Ele dizia que inventou as línguas élficas primeiro e que as histórias serviam para dar a elas um mundo. O quenya foi inspirado no finlandês e o sindarin, no galês. Semana 2 começa amanhã: deixamos as palavras e vamos para o som. Letra não é som. Às 7h você vai entender por quê.
+P: Callback a G14. Ponte para a semana 2.
