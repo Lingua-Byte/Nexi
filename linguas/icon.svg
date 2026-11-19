@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#F2EBDD"/>
+  <g fill="none" stroke="#B6CCDD" stroke-width="4"><path d="M0 150h512M0 230h512M0 310h512M0 390h512"/></g>
+  <path d="M96 0v512" stroke="#E4505B" stroke-width="6"/>
+  <text x="276" y="372" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="330" fill="none" stroke="#FF5A36" stroke-width="7">R</text>
+  <text x="262" y="358" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="330" fill="#17140F">R</text>
+</svg>

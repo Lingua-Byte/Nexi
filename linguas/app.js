@@ -1,0 +1,564 @@
+/* RAIZ — caderno de línguas autodidata.
+   Método: 1) pronomes pessoais do caso reto  2) ser e estar  3) os verbos que VOCÊ mais fala. */
+(() => {
+  'use strict';
+
+  const KEY = 'raiz-v1';
+  const DAY = 864e5;
+  const BOX_DAYS = [0, 0, 1, 3, 7, 16, 35];   // intervalo de revisão por caixa (Leitner)
+  const SESSION = 10;
+  const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
+
+  const $app = document.getElementById('app');
+  const byId = Object.fromEntries(LANGS.map(l => [l.id, l]));
+  const verbById = Object.fromEntries(VERBS.map(v => [v.id, v]));
+
+  /* ——— ícones ——— */
+  const I = {
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 6l3 3"/></svg>',
+    sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7"/><path d="M19 6a8.5 8.5 0 010 12"/></svg>',
+    undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg>',
+    clear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+    ghost: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    paper: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18h2"/></svg>',
+    print: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3"/><path d="M7 14h10v7H7z"/></svg>',
+    flip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0114-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 01-14 5.3L4 15"/><path d="M4 20v-5h5"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg>',
+    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+  };
+
+  /* ——— estado ——— */
+  let S = load();
+  function load() {
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.langs) return s; } catch (e) { /* sem armazenamento */ }
+    return { langs: {}, theme: null };
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ok */ } }
+  function LS(id) {
+    if (!S.langs[id]) S.langs[id] = { verbs: DEFAULT_VERBS.slice(), custom: [], diary: [], counts: {}, prog: {}, mode: 'pad', ghost: false };
+    return S.langs[id];
+  }
+  if (S.theme) document.documentElement.dataset.theme = S.theme;
+
+  /* ——— utilidades ——— */
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const isLatin = L => !L.roman;
+  function toast(msg) {
+    const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  function setLangColors(L) {
+    const r = document.documentElement.style;
+    r.setProperty('--c', L ? L.color : '#17140F');
+    r.setProperty('--c-ink', L ? L.ink : '#17140F');
+  }
+
+  /* ——— voz (síntese do próprio celular) ——— */
+  let voices = [];
+  function loadVoices() { try { voices = speechSynthesis.getVoices(); } catch (e) { voices = []; } }
+  if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+  function speak(text, L) {
+    if (!('speechSynthesis' in window)) { toast('Seu navegador não tem voz.'); return; }
+    const clean = String(text).replace(/〜|~/g, '').replace(/\s*\/\s*/g, ', ');
+    const u = new SpeechSynthesisUtterance(clean);
+    u.lang = L.tts; u.rate = .85;
+    const pre = L.tts.slice(0, 2);
+    const v = voices.find(v => v.lang === L.tts) || voices.find(v => v.lang && v.lang.toLowerCase().startsWith(pre));
+    if (v) u.voice = v; else if (voices.length) toast('Sem voz de ' + L.name + ' neste aparelho — instale nas configurações.');
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }
+
+  /* ——— montar frases: pronome + verbo ——— */
+  function he2(L, i, f, r) {
+    // índices de gênero: 0 m.sg · 1 f.sg · 2 m.pl · 3 f.pl
+    const G = [[0, 1], [0, 1], [0, 0], [1, 1], [2, 3], [2, 3], [2, 2], [3, 3]][i];
+    const join = (pm, pf, vm, vf) => pm === pf && vm === vf ? `${pm} ${vm}` : pm === pf ? `${pm} ${vm} / ${vf}` : vm === vf ? `${pm} / ${pf} ${vm}` : `${pm} ${vm} / ${pf} ${vf}`;
+    return {
+      t: join(L.pronM[i], L.pronF[i], f[G[0]], f[G[1]]),
+      r: r ? join(L.pronMR[i], L.pronFR[i], r[G[0]], r[G[1]]) : ''
+    };
+  }
+  function phrase(L, i, e) {
+    if (!e) return null;
+    if (e.full) return Array.isArray(e.full) ? { t: e.full[i] } : { t: e.full.t[i], r: e.full.r[i] };
+    if (L.id === 'he') return he2(L, i, e.f, e.r);
+    if (L.id === 'ja' || L.id === 'ko') return { t: `${L.topic[i]} ${e[0]}`, r: `${L.topicR[i]} ${e[1]}` };
+    if (L.id === 'en') {
+      if (e.length === 8) return { t: `${L.pron[i]} ${e[i]}` };
+      return { t: `${L.pron[i]} ${i === 2 || i === 3 ? e[1] : e[0]}` };
+    }
+    const form = e[MAP6[i]];
+    let p = L.pron[i];
+    if (L.id === 'fr' && p === 'je' && /^[aeiouhéèêâ]/i.test(form)) return { t: `j’${form}` };
+    return { t: `${p} ${form}` };
+  }
+
+  /* ——— itens de prática por degrau ——— */
+  function items(L, step) {
+    const out = [];
+    if (step === 1) {
+      L.pron.forEach((t, i) => out.push({ id: 'p' + i, pt: PT_PRON[i], t, r: L.pronR ? L.pronR[i] : '' }));
+    } else if (step === 2) {
+      for (const tbl of serTables(L)) tbl.rows.forEach((x, i) => out.push({ id: tbl.key + i, pt: tbl.pt[i], t: x.t, r: x.r || '' }));
+    } else {
+      const st = LS(L.id);
+      st.verbs.forEach(vid => {
+        const v = verbById[vid]; if (!v) return;
+        for (let i = 0; i < 8; i++) {
+          const x = phrase(L, i, v[L.id]); if (!x) continue;
+          out.push({ id: `v:${vid}:${i}`, pt: `${PT_PRON[i]} ${v.ptf[[0, 1, 1, 1, 2, 3, 3, 3][i]]}`, t: x.t, r: x.r || '' });
+        }
+      });
+      st.custom.forEach(c => out.push({ id: 'c:' + c.id, pt: c.pt, t: c.t, r: c.r || '' }));
+    }
+    return out;
+  }
+  function serTables(L) {
+    const s = L.ser, rows = f => [...Array(8)].map((_, i) => f(i));
+    if (L.id === 'en') return [{ key: 's', title: 'to be', pt: PT_SERESTAR, rows: rows(i => phrase(L, i, s.forms8)) }];
+    if (s.forms6) return [{ key: 's', title: s.label, pt: PT_SERESTAR, rows: rows(i => phrase(L, i, s.forms6)) }];
+    if (s.ser6) return [
+      { key: 's', title: 'ser · ' + s.label.split(' · ')[0], pt: PT_SER, rows: rows(i => phrase(L, i, s.ser6)) },
+      { key: 'e', title: 'estar · ' + s.label.split(' · ')[1], pt: PT_ESTAR, rows: rows(i => phrase(L, i, s.estar6)) }];
+    if (s.jaSer) return [
+      { key: 's', title: 'ser · です', pt: PT_SER, rows: rows(i => phrase(L, i, s.jaSer)) },
+      { key: 'e', title: 'estar (em um lugar) · います', pt: PT_ESTAR, rows: rows(i => phrase(L, i, s.jaEstar)) }];
+    if (s.koSer) return [
+      { key: 's', title: 'ser · 이에요', pt: PT_SER, rows: rows(i => phrase(L, i, s.koSer)) },
+      { key: 'e', title: 'estar (em um lugar) · 있어요', pt: PT_ESTAR, rows: rows(i => phrase(L, i, s.koEstar)) }];
+    if (s.heFull) return [{ key: 's', title: 'passado · היה', pt: PT_ERA, rows: rows(i => ({ t: s.heFull.t[i], r: s.heFull.r[i] })) }];
+    return [];
+  }
+
+  /* ——— progresso ——— */
+  function mastery(L, step) {
+    const its = items(L, step); if (!its.length) return 0;
+    const p = LS(L.id).prog;
+    return its.reduce((a, it) => a + Math.min((p[it.id]?.b || 0), 4) / 4, 0) / its.length;
+  }
+  function dueCount(L, step) {
+    const p = LS(L.id).prog, now = Date.now();
+    return items(L, step).filter(it => !p[it.id] || p[it.id].due <= now).length;
+  }
+  function nextStep(L) { for (const s of [1, 2, 3]) if (mastery(L, s) < .6) return s; return 3; }
+  function langPct(L) { return Math.round((mastery(L, 1) + mastery(L, 2) + mastery(L, 3)) / 3 * 100); }
+
+  const STEPS = {
+    1: { t: 'Pronomes', k: 'Eu · você · ele · ela…', d: 'Quem fala, com quem, sobre quem. Toda frase começa aqui.' },
+    2: { t: 'Ser & Estar', k: 'O verbo que liga tudo', d: 'Eu sou, eu estou. Os dois verbos que sustentam a língua.' },
+    3: { t: 'Meus verbos', k: 'Os que eu mais falo', d: 'Pense no que você fala no dia a dia. Esses são os seus verbos.' }
+  };
+
+  /* ——— rotas ——— */
+  function route() {
+    const h = location.hash.replace(/^#\/?/, '').split('/');
+    stopPad();
+    if (h[0] === 'l' && byId[h[1]]) {
+      const L = byId[h[1]]; setLangColors(L);
+      if (h[2] === 's') return renderStudy(L, +h[3] || 1);
+      if (h[2] === 'p') return renderPractice(L, +h[3] || 1);
+      return renderLang(L);
+    }
+    setLangColors(null); renderHome();
+  }
+  window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+  function go(h) { location.hash = h; }
+
+  function topbar(backHref, backLabel, extra = '') {
+    return `<div class="bar"><a class="back" href="${backHref}">${I.back}${esc(backLabel)}</a>${extra}</div>`;
+  }
+
+  /* ——— CAPA ——— */
+  function renderHome() {
+    const today = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+    $app.innerHTML = `
+      <header class="mast enter">
+        <div class="mast-top kicker"><span>Caderno de línguas</span><span>${esc(today)}</span></div>
+        <div class="logo" aria-label="RAIZ"><span class="r2" aria-hidden="true">RAIZ</span><span class="r1">RAIZ</span></div>
+        <div class="stamp" aria-hidden="true"><div><b>8</b>línguas<br>1 método</div></div>
+        <p class="tag">Aprender uma língua começa pela raiz: quem fala, o verbo ser, e as palavras que <em>você</em> diz todo dia.</p>
+      </header>
+      <section class="method enter" aria-label="O método">
+        <div><b>01</b><span>Pronomes pessoais</span></div>
+        <div><b>02</b><span>Ser &amp; estar</span></div>
+        <div><b>03</b><span>Os verbos que você fala</span></div>
+      </section>
+      <div class="section-h"><h2>Escolha a língua</h2><span class="kicker muted">${LANGS.length} cadernos</span></div>
+      <nav class="langs">
+        ${LANGS.map((L, n) => {
+          const pct = langPct(L), on = Math.round(pct / 100 * 8);
+          return `<a class="lang enter" href="#/l/${L.id}" style="--lc:${L.color};--lk:${L.ink};animation-delay:${n * 35}ms" aria-label="${esc(L.name)} — ${pct}%">
+            <span class="no">Nº ${String(n + 1).padStart(2, '0')}</span>
+            <span class="glyph ${isLatin(L) ? 'latin' : ''} ${isLatin(L) && L.glyph.length > 2 ? 'long' : ''}" ${L.dir === 'rtl' ? 'dir="rtl"' : ''} aria-hidden="true">${esc(L.glyph)}</span>
+            <span><span class="nm" style="display:block">${esc(L.name)}</span><span class="nat" style="display:block">${esc(L.native)}</span></span>
+            <span class="ticks" aria-hidden="true">${[...Array(8)].map((_, i) => `<i class="${i < on ? 'on' : ''}"></i>`).join('')}</span>
+          </a>`;
+        }).join('')}
+      </nav>
+      <footer class="foot">
+        <span>Funciona offline. Seu progresso fica neste aparelho.</span>
+        <button class="linkbtn" id="theme">${document.documentElement.dataset.theme === 'dark' ? 'Papel claro' : 'Papel noturno'}</button>
+      </footer>`;
+    document.getElementById('theme').onclick = () => {
+      const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+      S.theme = dark ? 'light' : 'dark'; document.documentElement.dataset.theme = S.theme; save(); renderHome();
+    };
+  }
+
+  /* ——— LÍNGUA: a escada ——— */
+  function renderLang(L) {
+    const nx = nextStep(L);
+    $app.innerHTML = `
+      ${topbar('#/', 'Cadernos')}
+      <section class="hero enter">
+        <span class="big ${isLatin(L) ? 'latin' : ''} ${isLatin(L) && L.glyph.length > 2 ? 'long' : ''}" ${L.dir === 'rtl' ? 'dir="rtl"' : ''} aria-hidden="true">${esc(L.glyph)}</span>
+        <div class="nat">${esc(L.native)}</div>
+        <h1>${esc(L.name)}</h1>
+        <div class="pct"><b>${langPct(L)}%</b> da raiz</div>
+      </section>
+      <div class="stairs">
+        ${[1, 2, 3].map(s => {
+          const m = Math.round(mastery(L, s) * 100), d = dueCount(L, s), n = items(L, s).length;
+          return `<a class="step enter ${s === nx ? 'next' : ''}" href="#/l/${L.id}/s/${s}" style="animation-delay:${s * 60}ms">
+            <span class="n">0${s}</span>
+            <span class="body">
+              <span class="kicker muted">${esc(STEPS[s].k)}</span>
+              <h3>${esc(STEPS[s].t)}${s === nx ? '<span class="flag">agora</span>' : ''}</h3>
+              <p>${esc(STEPS[s].d)}</p>
+              <span class="meter"><i style="width:${m}%"></i></span>
+              <span class="meta"><span>${m}% firme</span><span>${n ? d + ' p/ revisar' : 'escolha verbos'}</span></span>
+            </span>
+          </a>`;
+        }).join('')}
+      </div>`;
+  }
+
+  /* ——— folha de estudo ——— */
+  function sheet(L, rows, head = ['português', L.name]) {
+    const sc = !isLatin(L) ? 'script' : '';
+    return `<div class="sheet">
+      <div class="sheet-h"><span>${esc(head[0])}</span><span>${esc(head[1])}</span></div>
+      ${rows.map(r => `<button class="row" data-say="${esc(r.t)}">
+        <span class="pt">${esc(r.pt)}</span>
+        <span class="tg ${sc}" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(r.t)}${r.r ? `<small dir="ltr">${esc(r.r)}</small>` : ''}</span>
+        <span class="spk" aria-label="ouvir">${I.sound}</span>
+      </button>`).join('')}
+    </div>`;
+  }
+  function bindSay(L, root = $app) {
+    root.querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say, L));
+  }
+  function practiceButtons(L, step, n) {
+    return `<button class="cta noprint" id="practice" ${n ? '' : 'disabled'}>${I.pen}Escrever no papel</button>
+      <div class="actions-2 noprint">
+        <button class="btn" id="printBlank">${I.print}Folha em branco</button>
+        <button class="btn" id="printKey">${I.paper}Folha com gabarito</button>
+      </div>`;
+  }
+  function bindPractice(L, step) {
+    const p = document.getElementById('practice'); if (p) p.onclick = () => go(`#/l/${L.id}/p/${step}`);
+    const pb = document.getElementById('printBlank'), pk = document.getElementById('printKey');
+    if (pb) pb.onclick = () => { document.body.classList.remove('print-key'); window.print(); };
+    if (pk) pk.onclick = () => { document.body.classList.add('print-key'); window.print(); setTimeout(() => document.body.classList.remove('print-key'), 500); };
+  }
+
+  function renderStudy(L, step) {
+    if (step === 3) return renderVerbs(L);
+    let body = '';
+    if (step === 1) {
+      body = `<div class="note"><span class="kicker">Repare</span>${esc(L.pronNote)}</div>
+        ${sheet(L, items(L, 1))}`;
+    } else {
+      const s = L.ser;
+      body = `<div class="note"><span class="kicker">${esc(s.label)}</span>${esc(s.note)}</div>
+        <div class="examples">${s.ex.map(e => `<div class="ex"><div class="pt">${esc(e[0])}</div><div class="tg" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(e[1])}</div>${e[2] ? `<small>${esc(e[2])}</small>` : ''}</div>`).join('')}</div>
+        ${serTables(L).map(t => `<div class="subh">${esc(t.title)}</div>${sheet(L, t.rows.map((x, i) => ({ pt: t.pt[i], t: x.t, r: x.r })))}`).join('')}`;
+    }
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name)}
+      <div class="enter">
+        <div class="kicker muted">Degrau 0${step} · ${esc(L.name)}</div>
+        <h1 class="title-xl">${esc(STEPS[step].t)} <em>${step === 1 ? '·' : '='}</em></h1>
+        <p class="lead">Toque em cada linha para ouvir. Leia em voz alta, depois escreva sem olhar.</p>
+        ${body}
+        ${practiceButtons(L, step, 1)}
+      </div>`;
+    bindSay(L); bindPractice(L, step);
+  }
+
+  /* ——— DEGRAU 3: meus verbos ——— */
+  function detectVerbs(text) {
+    const words = new Set(text.toLowerCase().normalize('NFC').match(/[\p{L}]+/gu) || []);
+    const found = VERBS.filter(v => v.detect.split(' ').some(w => words.has(w))).map(v => v.id);
+    const base = BASE_DETECT.split(' ').some(w => words.has(w));
+    return { found, base };
+  }
+
+  function renderVerbs(L) {
+    const st = LS(L.id);
+    const ranked = Object.entries(st.counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    const its = items(L, 3);
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name)}
+      <div class="enter">
+        <div class="kicker muted">Degrau 03 · ${esc(L.name)}</div>
+        <h1 class="title-xl">Meus verbos <em>✎</em></h1>
+        <p class="lead">Não existe lista certa: existem os verbos que <b>você</b> fala. Escreva frases do seu dia, em português, do jeito que você fala. O caderno encontra os verbos.</p>
+
+        <div class="diary">
+          <textarea id="diary" placeholder="Ex.: Eu quero um café. Vou trabalhar cedo. Preciso falar com minha mãe…" aria-label="O que eu falo hoje"></textarea>
+          <div class="dbar"><span class="kicker muted">O que eu falo</span><button class="btn on" id="note">${I.pen}Anotar</button></div>
+        </div>
+        <div id="found"></div>
+
+        ${ranked.length ? `<div class="subh">Os que eu mais falo <span class="kicker">${st.diary.length} anotações</span></div>
+          <div class="rank">${ranked.map(([id, n]) => `<div><b>${esc(verbById[id]?.pt || id)}</b><span>${n}×</span></div>`).join('')}</div>` : ''}
+
+        <div class="subh">Banco de verbos <span class="kicker">toque p/ escolher</span></div>
+        <div class="chips" id="bank">
+          ${VERBS.map(v => `<button class="chip ${st.verbs.includes(v.id) ? 'on' : ''}" data-v="${v.id}"><span class="dot"></span>${esc(v.pt)}${st.counts[v.id] ? `<small>${st.counts[v.id]}×</small>` : ''}</button>`).join('')}
+        </div>
+
+        <div class="subh">Minhas conjugações <span class="kicker">${st.verbs.length + st.custom.length} verbos</span></div>
+        <div id="cards">
+          ${st.verbs.map(vid => {
+            const v = verbById[vid]; if (!v) return '';
+            const rows = [...Array(8)].map((_, i) => { const x = phrase(L, i, v[L.id]); return { pt: `${PT_PRON[i]} ${v.ptf[[0, 1, 1, 1, 2, 3, 3, 3][i]]}`, t: x.t, r: x.r }; });
+            return `<div class="vcard"><button data-open="${vid}"><span><span class="vpt">${esc(v.pt)}</span><br><span class="vtg" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(rows[0].t)}</span></span>${I.down}</button>
+              <div class="hide" id="open-${vid}">${sheet(L, rows)}</div></div>`;
+          }).join('')}
+          ${st.custom.map(c => `<div class="vcard"><button data-say="${esc(c.t)}"><span><span class="vpt">${esc(c.pt)} · meu</span><br><span class="vtg" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(c.t)}</span>${c.r ? `<br><small class="mono muted">${esc(c.r)}</small>` : ''}</span><span class="linkbtn" data-del="${esc(c.id)}">apagar</span></button></div>`).join('')}
+        </div>
+
+        <div class="subh">Um verbo meu <span class="kicker">do seu dicionário</span></div>
+        <form class="form" id="custom" autocomplete="off">
+          <label for="cpt">Em português</label><input id="cpt" placeholder="ex.: eu acordo" required>
+          <label for="ctg">Em ${esc(L.name.toLowerCase())}</label><input id="ctg" ${L.dir === 'rtl' ? 'dir="rtl"' : ''} placeholder="${esc(L.id === 'en' ? 'ex.: I wake up' : 'como você aprendeu')}" required>
+          ${L.roman ? '<label for="cr">Pronúncia (opcional)</label><input id="cr" placeholder="romanização">' : ''}
+          <button class="btn" type="submit">${I.plus}Guardar no caderno</button>
+        </form>
+        <div style="height:18px"></div>
+        ${practiceButtons(L, 3, its.length)}
+      </div>`;
+
+    bindSay(L); bindPractice(L, 3);
+    const ta = document.getElementById('diary'), fd = document.getElementById('found');
+    const showFound = (txt, saved) => {
+      const { found, base } = detectVerbs(txt);
+      if (!txt.trim()) { fd.innerHTML = ''; return; }
+      fd.innerHTML = `<div class="found">${found.map(id => `<button class="chip ${st.verbs.includes(id) ? 'on' : ''}" data-v="${id}"><span class="dot"></span>${esc(verbById[id].pt)}</button>`).join('')}
+        ${!found.length ? `<span class="muted" style="font-size:14px">${base ? 'Ser/estar apareceu — esse já é o degrau 02. ' : ''}Nenhum verbo do banco ainda. Se for um verbo seu, guarde abaixo em “Um verbo meu”.</span>` : base ? '<span class="muted" style="font-size:14px">+ ser/estar (degrau 02)</span>' : ''}</div>`;
+      bindChips(fd);
+    };
+    ta.addEventListener('input', () => showFound(ta.value));
+    document.getElementById('note').onclick = () => {
+      const txt = ta.value.trim(); if (!txt) { ta.focus(); return; }
+      const { found } = detectVerbs(txt);
+      st.diary.unshift({ d: Date.now(), text: txt }); st.diary = st.diary.slice(0, 200);
+      found.forEach(id => st.counts[id] = (st.counts[id] || 0) + 1);
+      let added = 0;
+      found.forEach(id => { if (!st.verbs.includes(id)) { st.verbs.push(id); added++; } });
+      save();
+      toast(found.length ? `${found.length} verbo${found.length > 1 ? 's' : ''} anotado${found.length > 1 ? 's' : ''}${added ? ` · ${added} novo${added > 1 ? 's' : ''} no caderno` : ''}` : 'Anotado.');
+      renderVerbs(L);
+    };
+    function bindChips(root) {
+      root.querySelectorAll('[data-v]').forEach(b => b.onclick = () => {
+        const id = b.dataset.v, k = st.verbs.indexOf(id);
+        if (k >= 0) st.verbs.splice(k, 1); else st.verbs.push(id);
+        save(); renderVerbs(L);
+      });
+    }
+    bindChips(document.getElementById('bank'));
+    $app.querySelectorAll('[data-open]').forEach(b => b.onclick = () => document.getElementById('open-' + b.dataset.open).classList.toggle('hide'));
+    $app.querySelectorAll('[data-del]').forEach(b => b.onclick = e => {
+      e.stopPropagation(); st.custom = st.custom.filter(c => c.id !== b.dataset.del); save(); renderVerbs(L);
+    });
+    document.getElementById('custom').onsubmit = e => {
+      e.preventDefault();
+      const pt = document.getElementById('cpt').value.trim(), t = document.getElementById('ctg').value.trim();
+      const r = document.getElementById('cr')?.value.trim() || '';
+      if (!pt || !t) return;
+      st.custom.push({ id: Date.now().toString(36), pt, t, r }); save(); toast('Guardado no caderno.'); renderVerbs(L);
+    };
+  }
+
+  /* ——— PRÁTICA: escrever com o dedo ——— */
+  let pad = null;
+  function stopPad() { if (pad) { pad.destroy(); pad = null; } }
+
+  function pickSession(L, step) {
+    const p = LS(L.id).prog, now = Date.now();
+    const all = items(L, step);
+    const score = it => p[it.id] ? p[it.id].due : -1;
+    let due = all.filter(it => !p[it.id] || p[it.id].due <= now);
+    let extra = false;
+    if (!due.length) { due = all.slice(); extra = true; due.sort((a, b) => (p[a.id]?.b || 0) - (p[b.id]?.b || 0)); }
+    else due.sort((a, b) => score(a) - score(b) || Math.random() - .5);
+    const pick = due.slice(0, SESSION);
+    for (let i = pick.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pick[i], pick[j]] = [pick[j], pick[i]]; }
+    return { pick, extra };
+  }
+
+  function renderPractice(L, step) {
+    const st = LS(L.id);
+    const { pick, extra } = pickSession(L, step);
+    if (!pick.length) { go(`#/l/${L.id}/s/${step}`); return; }
+    let k = 0, results = { 3: 0, 2: 0, 1: 0 };
+    if (extra) toast('Tudo revisado! Rodada extra.');
+
+    const show = () => {
+      stopPad();
+      if (k >= pick.length) return finish();
+      const it = pick[k], usePad = st.mode === 'pad';
+      $app.innerHTML = `
+        ${topbar(`#/l/${L.id}/s/${step}`, 'Sair', `<button class="iconbtn" id="mode" aria-label="${usePad ? 'Usar papel de verdade' : 'Escrever na tela'}" title="${usePad ? 'Papel de verdade' : 'Escrever na tela'}">${usePad ? I.paper : I.phone}</button>`)}
+        <div class="prog">${pick.map((_, i) => `<i class="${i < k ? 'done' : i === k ? 'cur' : ''}"></i>`).join('')}</div>
+        <div class="prompt enter">
+          <div class="kicker">Escreva em ${esc(L.name.toLowerCase())} · ${STEPS[step].t}</div>
+          <div class="pt">${esc(it.pt)}</div>
+        </div>
+        ${usePad ? `
+          <div class="pad" id="pad">
+            <div class="ghost ${st.ghost ? '' : 'hide'}" id="ghost" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(it.t)}</div>
+            <canvas id="cv" aria-label="Folha para escrever com o dedo"></canvas>
+            <span class="hint">${L.dir === 'rtl' ? '← escreva da direita p/ esquerda' : 'escreva com o dedo'}</span>
+          </div>
+          <div class="tools">
+            <button class="btn" id="undo">${I.undo}Voltar</button>
+            <button class="btn" id="clr">${I.clear}Limpar</button>
+            <button class="btn ${st.ghost ? 'on' : ''}" id="gh">${I.ghost}Modelo</button>
+            <button class="btn" id="say">${I.sound}Ouvir</button>
+          </div>` : `
+          <div class="realpaper enter"><div><b>Escreva no seu caderno.</b><span class="muted">Sem olhar. Depois vire a folha e confira.</span></div></div>
+          <div style="height:12px"></div>`}
+        <div id="rev"><button class="cta" id="flip">${I.flip}Virar a folha</button></div>`;
+
+      document.getElementById('mode').onclick = () => { st.mode = usePad ? 'paper' : 'pad'; save(); show(); };
+      if (usePad) {
+        pad = makePad(document.getElementById('cv'), document.getElementById('ghost'), it.t);
+        document.getElementById('undo').onclick = () => pad.undo();
+        document.getElementById('clr').onclick = () => pad.clear();
+        document.getElementById('gh').onclick = e => { st.ghost = !st.ghost; save(); e.currentTarget.classList.toggle('on', st.ghost); document.getElementById('ghost').classList.toggle('hide', !st.ghost); };
+        document.getElementById('say').onclick = () => speak(it.t, L);
+      }
+      document.getElementById('flip').onclick = () => reveal(it);
+    };
+
+    const reveal = it => {
+      speak(it.t, L);
+      document.getElementById('rev').innerHTML = `
+        <div class="answer">
+          <div class="row2"><div><div class="kicker">Gabarito</div><div class="tg" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(it.t)}</div>${it.r ? `<small>${esc(it.r)}</small>` : ''}</div>
+          <button class="iconbtn" id="again" aria-label="Ouvir de novo">${I.sound}</button></div>
+        </div>
+        <div class="grade">
+          <button class="btn" data-g="1"><b>✗</b>Errei</button>
+          <button class="btn" data-g="2"><b>≈</b>Quase</button>
+          <button class="btn g3" data-g="3"><b>✓</b>Acertei</button>
+        </div>`;
+      document.getElementById('again').onclick = () => speak(it.t, L);
+      document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => grade(it, +b.dataset.g));
+      document.getElementById('rev').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+
+    const grade = (it, g) => {
+      const p = st.prog[it.id] || { b: 0, due: 0 };
+      if (g === 3) p.b = Math.min(p.b + 1, 6); else if (g === 1) p.b = 1; else p.b = Math.max(p.b, 1);
+      p.due = Date.now() + BOX_DAYS[p.b] * DAY - (BOX_DAYS[p.b] ? 36e5 : 0);
+      st.prog[it.id] = p; results[g]++; save();
+      if (g === 1) pick.push(it);   // volta no fim da rodada
+      k++; show();
+    };
+
+    const finish = () => {
+      const m = Math.round(mastery(L, step) * 100);
+      const total = results[1] + results[2] + results[3];
+      $app.innerHTML = `
+        ${topbar(`#/l/${L.id}`, L.name)}
+        <div class="done enter">
+          <div class="kicker muted">Página concluída</div>
+          <div class="seal"><div><b>${results[3]}/${total}</b><span>de primeira</span></div></div>
+          <h1 class="title-xl">${m >= 60 ? 'Raiz firme.' : 'Mais uma página.'}</h1>
+          <p class="lead">${esc(STEPS[step].t)} está ${m}% firme. ${m >= 60 && step < 3 ? `Pode subir para o degrau 0${step + 1}: ${STEPS[step + 1].t}.` : 'O caderno chama de volta cada item na hora certa.'}</p>
+          <button class="cta" id="more">${I.pen}Outra página</button>
+          <div class="actions-2">
+            <a class="btn" href="#/l/${L.id}/s/${step}">${I.paper}Folha</a>
+            <a class="btn on" href="#/l/${L.id}${m >= 60 && step < 3 ? '/s/' + (step + 1) : ''}">${m >= 60 && step < 3 ? 'Próximo' : 'Escada'}</a>
+          </div>
+        </div>`;
+      document.getElementById('more').onclick = () => renderPractice(L, step);
+    };
+    show();
+  }
+
+  /* ——— a folha de desenho ——— */
+  function makePad(cv, ghost, text) {
+    const ctx = cv.getContext('2d');
+    let strokes = [], cur = null, dpr = 1;
+    const inkColor = () => getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#17140F';
+    function fitGhost() {
+      if (!ghost) return;
+      const w = cv.clientWidth - 60, h = cv.clientHeight - 40, len = [...text].length;
+      const cjk = /[぀-ヿ一-鿿가-힯]/.test(text);
+      let fs = Math.min(h * .55, (w / Math.max(len, 1)) * (cjk ? 1 : 1.75));
+      fs = Math.max(26, Math.min(fs, 96));
+      ghost.style.fontSize = fs + 'px';
+    }
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 3);
+      cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); redraw(); fitGhost();
+    }
+    function seg(s) {
+      const pts = s.pts; if (!pts.length) return;
+      ctx.strokeStyle = s.color; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      if (pts.length === 1) { ctx.beginPath(); ctx.fillStyle = s.color; ctx.arc(pts[0].x, pts[0].y, pts[0].w / 2, 0, 7); ctx.fill(); return; }
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i], m0 = i > 1 ? mid(pts[i - 2], a) : a, m1 = mid(a, b);
+        ctx.beginPath(); ctx.lineWidth = (a.w + b.w) / 2; ctx.moveTo(m0.x, m0.y); ctx.quadraticCurveTo(a.x, a.y, m1.x, m1.y); ctx.stroke();
+      }
+    }
+    const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+    function redraw() { ctx.clearRect(0, 0, cv.width, cv.height); strokes.forEach(seg); }
+    function pt(e) {
+      const r = cv.getBoundingClientRect();
+      const pr = e.pointerType === 'pen' && e.pressure ? e.pressure : .5;
+      return { x: e.clientX - r.left, y: e.clientY - r.top, w: 2.2 + pr * 4.2 };
+    }
+    function down(e) { e.preventDefault(); cv.setPointerCapture(e.pointerId); cur = { color: inkColor(), pts: [pt(e)] }; strokes.push(cur); redraw(); }
+    function move(e) {
+      if (!cur) return; e.preventDefault();
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      for (const ev of evs) {
+        const p = pt(ev), last = cur.pts[cur.pts.length - 1];
+        const d = Math.hypot(p.x - last.x, p.y - last.y); if (d < 1.2) continue;
+        if (ev.pointerType !== 'pen') p.w = Math.max(2.4, Math.min(6.2, last.w * .7 + (6.4 - Math.min(d, 18) * .22) * .3));  // tinta: devagar = traço grosso
+        cur.pts.push(p);
+      }
+      redraw();
+    }
+    function up() { cur = null; }
+    cv.addEventListener('pointerdown', down);
+    cv.addEventListener('pointermove', move);
+    cv.addEventListener('pointerup', up);
+    cv.addEventListener('pointercancel', up);
+    window.addEventListener('resize', resize);
+    requestAnimationFrame(resize);
+    return {
+      undo() { strokes.pop(); redraw(); },
+      clear() { strokes = []; redraw(); },
+      destroy() { window.removeEventListener('resize', resize); }
+    };
+  }
+
+  /* ——— offline ——— */
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+
+  route();
+})();
