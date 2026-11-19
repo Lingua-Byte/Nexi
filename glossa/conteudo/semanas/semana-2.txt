@@ -1,0 +1,376 @@
+# DIA 8 | Letra não é som | A escrita é um desenho imperfeito da fala.
+
+## A14
+FMT: LINHA DO TEMPO
+T: Sigla e abreviação
+G: OK É UMA PIADA DE 1839
+R: Semana 2: saímos das palavras e entramos no som e na escrita. E começamos pela palavra escrita mais usada do planeta. 1839, Boston: os jornais têm uma moda, abreviar expressões escritas errado de propósito. "O.K." é "oll korrect", jeito engraçado de escrever "all correct". 1840: o OK vira slogan da campanha do presidente Martin Van Buren, apelidado de "Old Kinderhook". Anos 1960: o linguista Allen Walker Read desvenda a história nos arquivos. Hoje: o OK está em quase todas as línguas. Uma piada de escrita, uma sigla, virou palavra falada. A partir de hoje, a pergunta é: o que vem primeiro, o som ou a letra?
+V+: linha do tempo com recortes de jornal.
+P: Abre a semana 2 (som e escrita).
+
+## B4
+FMT: DESAFIO
+T: Fonema
+G: "TÁXI" TEM 4 LETRAS E 5 SONS
+R: Aula 8: começa o módulo de fonética e fonologia. Desafio: quantos sons tem "táxi"? Quatro letras… mas cinco sons: t, a, k, s, i. O "x" vale dois. E "hora"? Quatro letras, três sons: o "h" não soa. Letra e fonema são coisas diferentes. Fonema é a unidade de som que diferencia palavras: "pato" e "bato" mudam de sentido só pelo primeiro som. Letra é só a forma de desenhar isso. O OK das 7h nasceu de letras. A língua nasce do som. Por isso existe o Alfabeto Fonético Internacional, que tenta dar um símbolo para cada som. Escreve nos comentários: quantos sons tem "exceção"?
+V+: contadores lado a lado (letras × sons).
+P: Abre o módulo de fonologia (aulas 8 a 14).
+
+## C12
+FMT: REVELAÇÃO
+T: Letra muda
+G: O H DE "HOMEM" JÁ TEVE SOM?
+R: Às 10h, você viu que o "h" de "hora" não tem som. Mas já teve? Verdade, só que no latim. Em latim clássico, o "h" era uma aspiração leve: "homo". Na fala popular romana, ele foi sumindo. O poeta Catulo, no século 1 antes de Cristo, debochou de um tal de Árrio, que botava "h" onde não tinha para parecer chique: dizia "hinsídias" em vez de "insídias". Quando o português nasceu, o "h" já era mudo havia séculos. Ele ficou na escrita só por tradição e etimologia. É uma letra muda: um fóssil na escrita de um som que morreu. Em "homem", "hoje" e "hora", ele é enfeite de dois mil anos.
+P: Liga com B4.
+
+## D4
+FMT: CONTAGEM
+T: Alfabeto
+G: HAVAIANO: 13 LETRAS E MUITAS VOGAIS
+R: O alfabeto havaiano tem só 13 letras. Conta comigo: as cinco vogais, e oito consoantes: h, k, l, m, n, p, w, e uma que parece apóstrofo, o ʻokina, que marca uma parada na garganta. Treze. Por isso as palavras havaianas são cheias de vogais: Hawaiʻi, aloha, e humuhumunukunukuāpuaʻa, o nome de um peixe. Repara no ʻokina: um som que, no português, nem tem letra. É o tema de hoje ao contrário: no havaiano, um som ganhou letra própria. O havaiano foi proibido nas escolas em 1896 e quase sumiu. Hoje tem escolas de imersão e está voltando.
+V+: alfabeto montado letra a letra com contador 1 → 13.
+
+## E7
+FMT: CONTAGEM
+T: Alofone
+G: QUANTOS "R" VOCÊ CONHECE?
+R: Uma letra, cinco sons. Contagem dos erres do Brasil. Um: o toque leve no meio da palavra, "caro", o tepe. Dois: a vibração da ponta da língua, que alguns gaúchos fazem em "rato". Três: o som na garganta, o "rato" carioca. Quatro: um som parecido, mais suave, quase um "h", que aparece em várias regiões. Cinco: o "r" caipira, enrolado, de "porta", que os linguistas chamam de retroflexo. Mesma letra, cinco sons. É o tema de hoje em versão brasileira: a letra R é uma só, o som muda. Se o sentido não muda, esses sons são alofones. Aula completa sobre isso amanhã às 10h. Qual é o seu R?
+V+: mapa com cinco pontos e áudios curtos.
+P: Teaser de B5 (Dia 9).
+
+## F1
+FMT: REVELAÇÃO
+T: Lei fonética (Lei de Grimm)
+G: PAI · FATHER · PADRE · VATER. COINCIDÊNCIA?
+R: Pai, padre, père, father, Vater. No primeiro dia, você viu que "noite" e "oito" são coincidência. Aqui, não. Essas línguas descendem do protoindo-europeu, o ancestral que William Jones intuiu em Calcutá. E tem um detalhe genial: onde o latim tem "p", as línguas germânicas costumam ter "f". Pater, father. Piscis, fish. Pes, foot. Não é uma palavra ou outra: é sistemático. Isso é uma lei fonética, uma mudança de som que afeta a língua inteira. Esta se chama Lei de Grimm, do mesmo Grimm dos contos de fadas. Hoje o tema é som: e o som muda com regra.
+P: Callback a F2 e G2. Prepara G3 (Dia 10).
+
+## G25
+FMT: DESAFIO
+T: Alfabeto fonético
+G: A LETRA A É UMA CABEÇA DE BOI DE CABEÇA PRA BAIXO
+R: Desafio: vira a letra A de cabeça para baixo. Viu os chifres? Ela começou como o desenho de uma cabeça de boi. No alfabeto fenício, o "aleph" significava boi. O "beth", casa, virou o B. Os fenícios só escreviam consoantes. Os gregos adaptaram o sistema por volta do século 8 antes de Cristo e transformaram alguns sinais em vogais. Daí vieram "alfa" e "beta", e a palavra alfabeto. Um alfabeto fonético tenta representar sons, não coisas. O desenho do boi virou o som "a". Hoje você viu que letra não é som. Mas toda letra um dia foi um desenho.
+V+: A girando até virar cabeça de boi.
+
+# DIA 9 | Sotaque tem regra | Ninguém fala "sem sotaque". Todo sotaque é sistema.
+
+## A11
+FMT: LINHA DO TEMPO
+T: Evolução fonética
+G: SAUDADE VEM DE… SOLIDÃO
+R: A palavra mais famosa do português, contada em etapas. Latim: "solitas", solidão. Português medieval: os trovadores cantam a "soidade", a "suidade". Depois: a palavra se mistura com "saudar" e "saúde" e vira "saudade". Cada etapa é uma mudança de som, e isso tem nome: evolução fonética. O "l" do meio caiu, como caiu em tantas palavras do latim para o português. E a ideia original continua lá: saudade é a solidão de alguém que não está. Tema de hoje: as mudanças de som seguem regras, e o sotaque de hoje é a evolução fonética acontecendo ao vivo.
+V+: linha do tempo com a palavra mudando a cada etapa.
+
+## B5
+FMT: COMPARATIVO
+T: Alofone
+G: "TCHIA" OU "TIA"? É O MESMO SOM.
+R: Aula 9, como prometido ontem. O carioca diz "tchia". O recifense diz "tia". Os dois estão falando o mesmo fonema, o /t/. As diferentes formas de pronunciar um fonema, sem mudar o sentido, se chamam alofones. "Tchia" e "tia" significam a mesma coisa. Mas troca o /t/ por /d/ e vira "dia", outra palavra. Por isso /t/ e /d/ são fonemas diferentes, enquanto o "t" e o "tch" são dois jeitos de dizer o mesmo. Os cinco erres de ontem são a mesma história. Sotaque é, em boa parte, isso: alofones diferentes para os mesmos fonemas.
+P: Callback a E7 (Dia 8).
+
+## C11
+FMT: JULGAMENTO
+T: Redução vocálica
+G: PORTUGUÊS DE PORTUGAL É O CERTO?
+R: Réu: o português do Brasil. Acusação: ser uma versão errada do português de Portugal, o "original". Defesa: as duas variedades mudaram depois da colonização. E em alguns pontos o Brasil conservou mais. Em Portugal, a partir do século 18, as vogais átonas foram sendo engolidas: "telefone" virou algo como "tlfon". Isso se chama redução vocálica. O Brasil manteve as vogais mais parecidas com o português da época de Camões. Veredito: mito. Nenhuma variedade é a certa. São irmãs que seguiram caminhos diferentes. E repara no tema de hoje: o sotaque português também é regra. Só que outra regra.
+V+: tribunal; ondas sonoras de "telefone" comparadas.
+
+## D5
+FMT: DESAFIO
+T: Tom (fonologia)
+G: "MA" SIGNIFICA MÃE… OU CAVALO
+R: Desafio: fala "ma" de quatro jeitos diferentes. Em mandarim, cada jeito é uma palavra. Tom alto e plano: mā, mãe. Subindo: má, cânhamo. Descendo e subindo: mǎ, cavalo. Descendo forte: mà, xingar. O mandarim é uma língua tonal, em que a melodia da sílaba é um fonema, porque muda o significado. Em português, a melodia muda a emoção, não a palavra: "tia" com raiva continua sendo "tia". Mais da metade das línguas do mundo usa tons de alguma forma. Na aula das 10h, um alofone não mudava o sentido. Aqui, um tom muda tudo. Cuidado para não xingar a mãe do cavalo.
+V+: quatro curvas de tom desenhadas sobre MA.
+
+## E30
+FMT: DESMONTE
+T: Ditongação
+G: "ARROIZ", "TREIS", "MAIS": TEM REGRA
+R: "Arroiz", "treis", "nóis". Desmonta: antes de um "s" no fim da sílaba, a vogal tônica ganha um "i" suave, uma semivogal. A regra é tão forte que quase ninguém fala "mas" sem o "i": todo mundo diz "mais". Isso se chama ditongação, e aparece principalmente no Rio e no Nordeste. Não é vício de quem não sabe. É uma regra fonológica que o falante aplica sem pensar, igual ao "tch" carioca das 10h. Tema de hoje, de novo: todo sotaque é sistema. A única diferença entre um sotaque "bonito" e um "feio" é o preconceito de quem escuta. A gente volta a esse assunto na semana 4.
+P: Callback a B5. Teaser do bloco de preconceito linguístico (semana 4).
+
+## F28
+FMT: DESAFIO
+T: Correspondência fonética
+G: FAZER = HACER. POR QUE O F VIROU H?
+R: Desafio: descubra a regra. Fazer, hacer. Farinha, harina. Filho, hijo. Fumo, humo. Achou? Onde o português tem "f", o espanhol tem um "h" mudo. No castelhano medieval, o "f" do latim no começo da palavra passou a ser uma aspiração, um "h", e depois sumiu. Isso é uma correspondência fonética: uma relação regular entre os sons de duas línguas. O português manteve o "f" do latim: facere, fazer. Ontem, o "h" do latim que morreu. Hoje, um "h" espanhol que nasceu de um "f". Agora teste: como é "formiga" em espanhol? Comenta.
+V+: pausa com "?" antes de cada par.
+P: Callback a C12 (Dia 8).
+
+## G26
+FMT: REVELAÇÃO
+T: Mudança vocálica (Great Vowel Shift)
+G: O INGLÊS MUDOU A PRONÚNCIA E ESQUECEU DE MUDAR A ESCRITA
+R: Por que "bite" se lê "bait"? Porque, na Idade Média, se lia "bite" mesmo, parecido com o português. Entre 1400 e 1700, o inglês passou pela Grande Mudança Vocálica: as vogais longas mudaram de lugar na boca. "Name" era "náme" e virou "neim". "Bite" virou "bait". Só que a imprensa chegou à Inglaterra em 1476 e começou a fixar a escrita bem no meio dessa mudança. A fala mudou, a escrita congelou. É o tema do dia em escala gigante: um sotaque mudou a língua inteira. E é o tema de ontem também: letra não é som. No inglês, nem perto.
+P: Callback ao Dia 8.
+
+# DIA 10 | Leis do som | As línguas mudam como um relógio, não como um acidente.
+
+## A13
+FMT: COMPARATIVO
+T: Palavras divergentes
+G: CADEIRA E CÁTEDRA SÃO A MESMA PALAVRA
+R: Cadeira contra cátedra. Mesma palavra. As duas vêm do grego "kathédra", assento. Uma chegou ao português pela boca do povo, passou por todas as leis de som e virou cadeira. A outra foi buscada direto nos livros, mais tarde, e ficou com cara de erudita: cátedra. São palavras divergentes. Mais pares: chave e clave, cheio e pleno, chão e plano. Uma passou pelas leis do som, a outra pulou a fila. Hoje vamos ver essas leis funcionando: às 20h, por que "clave" virou "chave". Comparar os pares é a melhor prova de que as mudanças de som têm regra.
+P: Prepara F29 (20h).
+
+## B6
+FMT: DESMONTE
+T: Morfema
+G: TEM UMA "MENTE" EM "INFELIZMENTE"
+R: Aula 10. Desmonta "infelizmente". "In" quer dizer não. "Feliz" é a base. E "mente"… é mente mesmo. Em latim, "mens" era mente, espírito, e "clara mente" era "com o espírito claro". Com o tempo, "mente" deixou de ser palavra e virou sufixo de advérbio. Cada pedaço com significado se chama morfema: a menor unidade com sentido. Por isso, em português, você diz "clara e rapidamente": o "mente" só aparece no último, um resto da época em que era palavra separada. Repara: é a gramaticalização do "Vossa Mercê", do primeiro dia, acontecendo dentro de uma palavra.
+P: Callback a E1 (Dia 1).
+
+## C24
+FMT: DETETIVE
+T: Etimologia popular
+G: GRINGO = "GREEN, GO HOME"?
+R: Caso: gringo. Suspeito: na guerra entre México e Estados Unidos, em 1846, os mexicanos gritariam "green, go!" para soldados de farda verde. Pista 1: a palavra "gringo" já aparece num dicionário espanhol de 1787, quase 60 anos antes da guerra. Pista 2: o dicionário diz que, em Málaga, chamavam de gringos os estrangeiros que falavam mal o espanhol. Pista 3: os soldados americanos nem usavam verde. Origem mais aceita: "griego", grego, como em "isso pra mim é grego". O som da palavra foi gasto pela fala, como as leis do som de hoje mostram. Mais uma etimologia popular para a coleção.
+V+: quadro de detetive, data 1787 circulada.
+P: Callback à série de etimologias populares (semana 1).
+
+## D3
+FMT: CONTAGEM
+T: Inventário fonológico
+G: ESSA LÍNGUA CABE EM 12 LETRAS
+R: Conta comigo: a, e, g, i, k, o, p, r, s, t, u, v. Doze letras. É o alfabeto da língua rotokas, da ilha de Bougainville, na Papua-Nova Guiné. Ela tem um dos menores conjuntos de sons do mundo: seis consoantes e cinco vogais. Nada de "m" nem "n". Esse conjunto de sons de uma língua se chama inventário fonológico. O do português tem cerca de 30 fonemas. Mesmo assim, em rotokas se fala de tudo: com poucos sons, a língua combina mais e cria palavras mais longas. Não existe língua pobre. Amanhã, às 15h: a língua do outro extremo, com mais de cem sons.
+V+: letras surgindo com contador até 12.
+P: Teaser de D2 (Dia 11).
+
+## E18
+FMT: REVELAÇÃO
+T: Dialetologia
+G: O PRIMEIRO LIVRO SOBRE O FALAR CAIPIRA
+R: Em 1920, o escritor Amadeu Amaral publicou "O Dialeto Caipira", o primeiro estudo sério de um falar regional brasileiro. Ele descreveu o "r" retroflexo, aquele do quinto R de anteontem, o "pobrema", o "nóis". E fez isso sem tratar como erro. Queria registrar um falar que estava mudando com a urbanização. Isso é dialetologia: o estudo científico das variedades regionais. O "pobrema" que ele registrou, aliás, é lei do som: trocar "l" por "r" depois de consoante aconteceu na história do português inteiro. "Branco" e "praia" já tiveram "l" no latim. O caipira só continuou uma regra antiga.
+P: Callback a E7 (Dia 8). Conecta com o tema "leis do som".
+
+## F29
+FMT: DESAFIO
+T: Correspondência fonética
+G: CHAVE, LLAVE E CHIAVE VÊM DE "CLAVIS"
+R: Como prometido às 7h. Chave, em latim, era "clavis". Chuva era "pluvia". Chama, "flamma". Cheio, "plenus". Desafio: qual é a regra? Os grupos "cl", "pl" e "fl" do latim viraram "ch" em português. Em espanhol, "ll": llave, lluvia, llama, lleno. Em italiano, o "l" virou "i": chiave, pioggia, fiamma, pieno. Cada língua aplicou sua regra, sempre do mesmo jeito. E "clave", a palavra erudita das 7h? Chegou depois da regra e escapou. Teste: "plano" e "chão" vêm da mesma palavra latina. Qual delas passou pela regra? Comenta.
+V+: tabela de três colunas com o latim em cima.
+P: Callback a A13 (7h).
+
+## G3
+FMT: LINHA DO TEMPO
+T: Linguística histórica
+G: A LEI DE GRIMM FOI DESCOBERTA POR OUTRO
+R: Anteontem você viu a Lei de Grimm, o "p" que vira "f". Agora, a história dela. 1814: o dinamarquês Rasmus Rask termina um estudo comparando línguas germânicas e descreve essa correspondência. 1818: o estudo é publicado. 1822: Jacob Grimm sistematiza a regra na gramática do alemão, e ela fica com o nome dele. 1832: Rask morre aos 45 anos, bem menos lembrado. Os dois ajudaram a fundar a linguística histórica, o estudo de como as línguas mudam com o tempo. Hoje foi o dia das leis do som. Fica a lição: na ciência, nem sempre o crédito vai para quem chegou primeiro.
+P: Callback a F1 (Dia 8).
+
+# DIA 11 | Do som à leitura | Da boca do bebê aos olhos do leitor.
+
+## A26
+FMT: CENA
+T: Mito etiológico
+G: PÂNICO TEM DONO: UM DEUS
+R: Grécia antiga. Você está sozinho numa floresta, ao entardecer. Silêncio. De repente, um medo enorme, sem motivo. Seu coração dispara. Os gregos diziam: é Pã gritando. Metade homem, metade bode, o deus dos bosques. Esse medo súbito era o "panikós", o terror de Pã. Daí, pânico. Quando uma história é criada para explicar a origem de algo, temos um mito etiológico. A lenda conta que Pã espalhou pânico entre os persas na batalha de Maratona. Hoje o tema é som: um grito virou palavra em quase todas as línguas europeias. Quando a internet entra em pânico, é Pã trabalhando.
+V+: floresta escura, som crescente, corte seco no grito.
+
+## B26
+FMT: QUIZ
+T: Onomatopeia
+G: EM JAPONÊS, O CACHORRO FAZ "WAN WAN"
+R: Aula 11. Quiz: em japonês, o cachorro faz… A, "au au". B, "woof". C, "wan wan". Resposta: C. Em português é "au au", em inglês "woof", em espanhol "guau". O cachorro é o mesmo. A onomatopeia, a palavra que imita um som, também passa pelo filtro de cada língua: cada idioma tem seus sons possíveis e suas combinações preferidas. Então a onomatopeia é só parcialmente natural. É convenção, lembra da aula 1, do signo arbitrário? Até o galo muda: aqui é "cocoricó", em inglês é "cock-a-doodle-doo". Comenta como é o gato na língua que você conhece.
+V+: cartões A/B/C; cachorro com balões.
+P: Callback a B3 (Dia 1).
+
+## C23
+FMT: JULGAMENTO
+T: Processamento da leitura
+G: DÁ PARA LER 1.000 PALAVRAS POR MINUTO?
+R: Réu: a leitura dinâmica. Acusação: cursos prometem ler mil palavras por minuto com a mesma compreensão. Defesa: dá para passar os olhos mais rápido. Prova decisiva: em 2016, um grupo de psicólogos revisou décadas de pesquisa e concluiu que existe uma troca entre velocidade e compreensão. Mais rápido, menos entendimento. O gargalo não é o olho, é a mente processando a linguagem. E a leitura depende do som: mesmo em silêncio, a gente "ouve" as palavras por dentro. Veredito: mito. O que acelera a leitura de verdade é vocabulário e prática. Ou seja: ler mais.
+V+: velocímetro × barra de compreensão.
+
+## D2
+FMT: DESAFIO
+T: Consoante de clique
+G: ESSA LÍNGUA TEM DEZENAS DE CLIQUES
+R: Como prometido ontem: o outro extremo. Desafio: faz um "tsc tsc" com a língua. Agora imagina usar esse som como consoante normal, no meio das palavras. A língua taa, também chamada !Xóõ, falada em Botswana e na Namíbia, faz isso. Ela é famosa por ter um dos maiores inventários de sons do mundo, com dezenas de cliques. O ponto de exclamação no nome é um clique. O rotokas de ontem tem 11 fonemas, o português cerca de 30, o taa, dependendo da análise, passa de 100. Mesmo cérebro humano, sistemas completamente diferentes. E toda criança aprende o da sua língua sem esforço.
+P: Callback a D3 (Dia 10).
+
+## E8
+FMT: DETETIVE
+T: Etimologia popular
+G: "UAI" VEM DE "WHY"?
+R: Caso: o "uai" mineiro. Suspeito: o inglês "why", trazido por engenheiros ingleses nas minas. Pista 1: não há nenhum documento ligando uma coisa à outra. Pista 2: o uso não bate. O mineiro usa "uai" para surpresa, para concordar, para dar ênfase, quase nunca como "por quê". Pista 3: "ué" e "uai" aparecem em várias regiões do Brasil, longe das minas inglesas. Conclusão: a origem exata é incerta, mas a história do "why" é etimologia popular. Repara: a semelhança é só de som, como "noite" e "oito" no primeiro dia. Som parecido não prova parentesco.
+P: Callback a F2 (Dia 1).
+
+## F21
+FMT: REVELAÇÃO
+T: Balbucio
+G: "MAMA" E "PAPA" SÃO QUASE UNIVERSAIS
+R: Mama, mamãe, mom, "mama" em mandarim, "mama" em suaíli. Papa, papai, "baba" em várias línguas. Isso não acontece porque as línguas são parentes. Em 1959, o linguista Roman Jakobson explicou: os primeiros sons que os bebês conseguem fazer no balbucio são "m", "p", "b" e "a", porque só pedem lábios e boca aberta. Os pais ouvem "mamama" e acham que é com eles. Então as línguas adotaram essas palavras. Às 15h, o taa tem mais de cem sons. Mas todo bebê do mundo começa pelos mesmos três ou quatro. Não foi o bebê que aprendeu "mamãe". Foi "mamãe" que nasceu do bebê.
+P: Liga com D2. Prepara G19 (Jakobson, semana 4).
+
+## G24
+FMT: CENA
+T: Silabário
+G: ELE CRIOU UMA ESCRITA SEM SABER LER
+R: Estados Unidos, começo do século 19. Um ferreiro cherokee chamado Sequoyah observa os brancos trocando papéis com marcas, e as marcas "falam". Ele não sabe ler em nenhuma língua. Decide criar isso para o seu povo. Passa anos ouvindo o cherokee e separando os sons em sílabas. Em 1821, apresenta o resultado: 86 símbolos, um para cada sílaba. Isso é um silabário. Em poucos anos, uma parte enorme do povo cherokee está alfabetizada, e surge até um jornal bilíngue. Hoje fomos do som à leitura, e ele fez esse caminho sozinho. Amanhã: quem inventou, quem decifrou.
+V+: retrato, tabela do silabário, jornal de 1828.
+
+# DIA 12 | Inventar e decifrar escritas | Toda escrita foi inventada. E muitas foram esquecidas.
+
+## A24
+FMT: DESMONTE
+T: Radical grego (formação erudita)
+G: DINOSSAURO = LAGARTO TERRÍVEL
+R: Desmonta: "deinós", terrível, mais "sauros", lagarto. Dinossauro. Palavra inventada em 1842 pelo paleontólogo britânico Richard Owen. Mais duas: hipopótamo, "híppos", cavalo, mais "potamós", rio: cavalo do rio. Rinoceronte: "rhís", nariz, mais "kéras", chifre. A ciência monta palavras com radicais gregos, como um Lego de 2.500 anos. Repara: são palavras divergentes ao contrário da cadeira de anteontem. Não passaram pela boca do povo: foram montadas direto nos livros. Hoje o tema é escrita, e essas palavras nasceram escritas antes de serem faladas.
+V+: peças de Lego com cada radical.
+P: Callback a A13 (Dia 10).
+
+## B27
+FMT: DESAFIO
+T: Aliteração e assonância
+G: ESSE VERSO SOA COMO UM VIOLÃO
+R: Aula 12. Desafio: lê em voz alta. "Vozes veladas, veludosas vozes, volúpias dos violões, vozes veladas." Ouviu o violão? O verso é de Cruz e Sousa, poeta simbolista catarinense, e repete o som de "v" sem parar. A repetição de consoantes se chama aliteração. A de vogais, assonância. Aqui a escrita foi usada para fazer som: o "v" imita a vibração abafada das cordas. No Simbolismo, o som importava tanto quanto o sentido. E é o contrário do tema de hoje: não é a escrita imitando a fala, é a poesia usando a escrita para fazer música. Comenta outro verso com aliteração que você conhece.
+V+: cada "v" pulsando com a corda do violão.
+
+## C21
+FMT: COMPARATIVO
+T: Invenção independente
+G: A ESCRITA FOI INVENTADA UMA VEZ SÓ?
+R: Os sumérios inventaram a escrita? Em parte. Mesopotâmia: por volta de 3200 antes de Cristo, os sumérios criam o cuneiforme, em argila. Egito: quase na mesma época, os hieróglifos. China: por volta de 1200 antes de Cristo, uma escrita independente. Mesoamérica: olmecas e maias, também por conta própria. Isso se chama invenção independente: povos sem contato chegando à mesma ideia. Veredito: meia verdade. Os sumérios estão entre os primeiros, não são os únicos. E o Sequoyah, de ontem, mostrou que uma pessoa sozinha pode refazer esse caminho.
+V+: mapa com quatro pontos acendendo em ordem.
+P: Callback a G24 (Dia 11).
+
+## D14
+FMT: REVELAÇÃO
+T: Escrita alfabética de traços
+G: UM REI INVENTOU O ALFABETO DO SEU PAÍS
+R: O alfabeto coreano, o hangul, foi encomendado por um rei. Em 1443, o rei Sejong, o Grande, apresentou um sistema novo porque o povo não conseguia aprender milhares de caracteres chineses. A ideia era que qualquer pessoa pudesse ler. E o desenho de algumas consoantes imita a posição da boca e da língua ao pronunciar o som. Lembra da aula 8, de que letra não é som? O hangul é das escritas que mais se aproximam do som, por projeto. Diz-se que dá para aprender numa manhã. Na Coreia do Sul, 9 de outubro é feriado nacional: o Dia do Hangul.
+V+: letras ao lado de diagramas da boca.
+P: Callback a B4 (Dia 8).
+
+## E20
+FMT: COMPARATIVO
+T: Abreviatura
+G: "VC" E "TB" SÃO INVENÇÃO MEDIEVAL
+R: Monge medieval contra adolescente no celular. Os dois abreviam. Os copistas escreviam à mão em pergaminho, que era caro e demorado, e criaram centenas de abreviaturas: um til em cima da letra no lugar do "m" ou do "n", um "q" com traço para "que". E o "&" é uma ligadura de "e" e "t", que forma "et", "e" em latim. O "vc" e o "tb" de hoje são a mesma solução para o mesmo problema: escrever rápido. Tema de hoje: escrita é invenção, e as pessoas reinventam a escrita o tempo todo. O internetês não é a ruína da língua. É mais um capítulo.
+V+: tela dividida: manuscrito × celular.
+
+## F26
+FMT: DESAFIO
+T: Mutação consonantal
+G: WATER VIROU "WASSER". POR QUÊ?
+R: Desafio: adivinha o alemão pelo inglês. Water: Wasser. Two: zwei. Apple: Apfel. Make: machen. A regra: entre os séculos 6 e 8, o alemão do sul passou pela segunda mutação consonantal. O "t" virou "s" ou "z", o "p" virou "f" ou "pf", o "k" virou "ch". O inglês e o holandês não passaram por isso. Lembra da Lei de Grimm, de segunda? Foi a primeira mutação. Esta é a segunda, só no alemão. Teste final: "eat" em alemão é…? Comenta. Dica: o "t" virou "ss".
+V+: pares com a letra mudando; pausa antes de cada resposta.
+P: Callback a F1 e G3.
+
+## G4
+FMT: CENA
+T: Decifração
+G: ELE DESMAIOU QUANDO DECIFROU OS HIERÓGLIFOS
+R: Paris, setembro de 1822. Jean-François Champollion passa noites debruçado sobre cópias da Pedra de Roseta, encontrada por soldados franceses em 1799. O mesmo texto em três escritas: hieróglifos, demótico e grego. Ele fala copta, a língua que descende do egípcio antigo. E percebe: os hieróglifos misturam sons e ideias. Num dia, consegue ler os nomes. Conta-se que correu até o irmão, gritou "Consegui!" e desmaiou. Depois de mais de mil anos, o Egito antigo voltou a falar. Decifrar é fazer o caminho de volta: da escrita ao som e do som à língua.
+V+: câmera sobre a pedra, cartucho de Ptolomeu decifrado.
+
+# DIA 13 | Quando a forma engana | Parecido não é igual, e escrito não é lido.
+
+## A10
+FMT: QUIZ
+T: Paronímia etimológica
+G: AZULEJO NÃO VEM DE AZUL
+R: Quiz: azulejo vem de azul? A, sim, por causa dos azulejos azuis portugueses. B, não. Resposta: B. Azulejo vem do árabe "az-zulayj", pedrinha polida, ladrilho. Azul vem de outro caminho: do persa "lāžward", o nome da pedra lápis-lazúli, que passou pelo árabe. Duas palavras parecidas, duas origens diferentes, que se encontraram na Península Ibérica, onde o árabe foi falado por séculos. Tema de hoje: a forma engana. É o "noite e oito" de novo, só que dentro do português. Os linguistas sempre desconfiam da semelhança e só aceitam parentesco quando a história comprova.
+V+: cartões A/B; split azul × azulejo.
+P: Callback a F2.
+
+## B12
+FMT: CONTAGEM
+T: Parônimos
+G: ERRAR ISSO MUDA TUDO
+R: Aula 13. Quatro pares que enganam. Quatro: comprimento, tamanho; cumprimento, saudação. "Meus comprimentos à família" manda medidas para a família. Três: descrição, descrever; discrição, ser discreto. Dois: ratificar, confirmar; retificar, corrigir. Um: eminente, ilustre; iminente, prestes a acontecer. "Perigo eminente" seria um perigo muito famoso. Palavras assim, parecidas na forma e diferentes no sentido, se chamam parônimos. Às 7h, azul e azulejo enganaram pela origem. Aqui enganam no uso. Salva antes do próximo e-mail formal.
+V+: contador 4 → 1, cartões espelhados.
+P: Liga com A10.
+
+## C30
+FMT: LINHA DO TEMPO
+T: Reforma ortográfica
+G: "PHARMACIA" JÁ FOI O CERTO?
+R: Verdade. Fachada antiga com "Pharmacia" não é erro, é história. Até 1911: escrevia-se "pharmacia", "theatro", "rhythmo" e "Brazil", com z. Era a ortografia etimológica, que imitava o grego e o latim. 1911: Portugal faz uma reforma e simplifica. 1943: o Brasil faz a sua. 1990: o Acordo Ortográfico, em vigor no Brasil desde 2009. Toda vez que a escrita muda por decisão oficial, temos uma reforma ortográfica. Repara no tema de hoje: o som de "farmácia" nunca mudou. Só a forma. A escrita é uma convenção, e convenções se votam.
+V+: linha do tempo com fachadas.
+
+## D18
+FMT: CENA
+T: Escrita indecifrada
+G: NINGUÉM CONSEGUE LER ESSA ESCRITA
+R: Ilha de Páscoa, meio do Pacífico. Você segura uma tábua de madeira coberta de símbolos: pássaros, peixes, figuras humanas. Lê uma linha, vira a tábua de cabeça para baixo e lê a próxima. É o rongorongo, e ninguém conseguiu decifrar até hoje. Restam só cerca de duas dúzias de objetos com inscrições. Ninguém sabe se é uma escrita completa, uma ajuda para a memória ou algo intermediário. Os últimos que talvez soubessem ler morreram no século 19. Ontem o Champollion decifrou os hieróglifos. Mas ele tinha a Pedra de Roseta. O rongorongo não tem a sua.
+V+: tábua girando 180° a cada linha.
+P: Callback a G4 (Dia 12).
+
+## E19
+FMT: REVELAÇÃO
+T: Atlas linguístico
+G: EXISTE UM MAPA OFICIAL DOS SOTAQUES
+R: Existe um atlas que mostra como o Brasil fala: o Atlas Linguístico do Brasil, o ALiB, projeto iniciado em 1996 por pesquisadores de várias universidades. Eles entrevistaram mais de mil pessoas em 250 localidades com as mesmas perguntas: como você chama isso, como pronuncia aquilo. O resultado são mapas: onde se diz "mandioca", "aipim" ou "macaxeira", como se pronuncia o "r", o "s", o "t". Os primeiros volumes saíram em 2014. Tema de hoje: a escrita engana, porque escrevemos "porta" igual no país todo. O atlas mostra o que a escrita esconde. Lembra da "isoglossa", na explicação do nome do canal? É a linha que esses mapas desenham.
+P: Callback a E7 e E18. Wink ao nome do canal.
+
+## F27
+FMT: REVELAÇÃO
+T: Parentesco genético (entre línguas)
+G: O "IRMÃO GÊMEO" DO INGLÊS FICA NA HOLANDA
+R: Qual é a língua mais parecida com o inglês? Nem alemão, nem holandês: o frísio, falado na Frísia, no norte da Holanda e da Alemanha. Tem até um ditado: "Bread, butter, and green cheese is good English and good Fries". Em frísio soa quase igual: "Brea, bûter en griene tsiis". Os anglos, saxões e frísios eram vizinhos antes de parte deles cruzar o mar para a Inglaterra no século 5. Isso é parentesco genético: línguas que descendem do mesmo ancestral. Tema de hoje: forma engana. O inglês parece mais próximo do francês por causa das palavras emprestadas, mas o parente de verdade é o frísio. Na semana 3 você descobre por quê.
+P: Teaser de F5 (pig/pork, semana 3).
+
+## G27
+FMT: DETETIVE
+T: Criptografia e linguística
+G: ESSE LIVRO TEM 600 ANOS E NINGUÉM CONSEGUE LER
+R: Caso não resolvido: o manuscrito Voynich. Pista 1: plantas que não existem, diagramas astronômicos, mulheres em banheiras. Pista 2: uma escrita que ninguém consegue ler. Pista 3: datação por carbono do pergaminho, entre 1404 e 1438. Pista 4: criptógrafos famosos, inclusive os que quebraram códigos na Segunda Guerra, tentaram e falharam. Pista 5: estatisticamente, o texto tem padrões parecidos com os de uma língua natural. Hipóteses: língua desconhecida, código, fraude elaborada. Veredito: caso aberto. Está na Universidade Yale, esperando. Amanhã: um arquiteto que resolveu um caso parecido.
+V+: quadro de detetive com "CASO ABERTO".
+P: Teaser de G5 (Dia 14).
+
+# DIA 14 | Domingo: decifradores | Revisão da semana 2 e um episódio em duas partes.
+
+## A25
+FMT: REVISÃO
+T: Família etimológica
+G: HOTEL, HOSPITAL E HOSPÍCIO SÃO IRMÃOS
+R: Domingo de revisão, em forma de família. Hotel, hospital, hospício, hóspede, hospitalidade: todos do latim "hospes", que era ao mesmo tempo hóspede e anfitrião. Pelo francês antigo, "hostel" virou "hôtel": olha a evolução fonética, termo de terça, o "s" caiu. E tem uma prima inesperada: "hostil", de "hostis", estrangeiro e inimigo. Receber bem e desconfiar do estranho, quase a mesma palavra. Teste da semana: em "hotel" e "hospital", qual passou pela boca do povo e qual parece mais erudita? Comenta. Dica: a aula de quarta, palavras divergentes.
+V+: árvore genealógica; cartão TESTE no final.
+P: Revisão: termos de evolução fonética e palavras divergentes.
+
+## B21
+FMT: REVISÃO
+T: Crase
+G: O TRUQUE DA CRASE QUE NUNCA FALHA
+R: Aula 14, a revisão do módulo de som e forma. Crase é uma fusão de sons: a preposição "a" mais o artigo "a" viram "à". Repara: é um fenômeno de som que a escrita marca com acento. Truque para lugares: "Vou a, volto da, crase há. Vou a, volto de, crase pra quê?" Volto da Bahia: vou à Bahia. Volto de Roma: vou a Roma. Para o resto, troque por uma palavra masculina. "Fui à feira" vira "fui ao mercado". Apareceu "ao"? Tem crase. Teste: "Vou a pé" tem crase? Comenta. Semana que vem, o curso muda de módulo: entra o texto. E entra o termo que todo calouro confunde: cotexto.
+V+: a + a se fundindo; cartão TESTE.
+P: Teaser de B1 (contexto × cotexto, Dia 15).
+
+## C15
+FMT: PARTE 1/2
+T: Escrita × língua
+G: JAPONÊS E CHINÊS SÃO PARENTES?
+R: Parte 1. Muita gente acha que japonês e chinês são parecidos. É mito. Não são da mesma família: o chinês é sino-tibetano, o japonês é de uma família própria, a japônica. A gramática é muito diferente: em chinês, sujeito, verbo, objeto, como no português; em japonês, o verbo vai para o fim. A confusão vem da escrita. O Japão adotou os caracteres chineses há mais de mil anos. É como se o português usasse o alfabeto grego: continuaria sendo português. Lição da semana: escrita não é língua. A parte 2 sai às 15h: o japonês não se contentou com uma escrita. Usa três.
+V+: card final "PARTE 2 · 15h".
+P: Episódio duplo com D13.
+
+## D13
+FMT: PARTE 2/2
+T: Sistema de escrita misto
+G: O JAPONÊS USA TRÊS ESCRITAS AO MESMO TEMPO
+R: Parte 2. Ao meio-dia: o japonês pegou a escrita chinesa. Agora o resto da história. Uma frase em japonês mistura três sistemas. Os kanji, vindos da China, para ideias e raízes. O hiragana, um silabário, como o do Sequoyah de quinta, para as terminações gramaticais. E o katakana, outro silabário, para palavras estrangeiras: como "pan", o pão que veio do português. E ainda aparecem letras latinas em siglas e marcas. Uma criança japonesa sai da escola sabendo mais de dois mil kanji. A semana foi sobre isso: a escrita é uma ferramenta que cada povo adapta do seu jeito.
+V+: frase colorida por sistema.
+P: Fecha o episódio duplo. Callback a G24 e C25.
+
+## E5
+FMT: REVELAÇÃO
+T: Língua de sinais
+G: O BRASIL TEM DUAS LÍNGUAS OFICIAIS
+R: A semana foi de som e escrita. Agora, uma língua sem som nenhum. O Brasil reconhece por lei duas línguas: o português e a Libras, a Língua Brasileira de Sinais, desde 2002. A Libras não é português feito com as mãos. Tem gramática própria, que usa o espaço, as expressões do rosto e o movimento. Lembra do Silbo, do primeiro dia: a língua não depende do canal. A história dela começa em 1857, quando o professor surdo francês Ernest Huet ajudou a fundar no Rio o instituto que hoje é o INES. Por isso, a Libras é parente da língua de sinais francesa. 26 de setembro é o Dia Nacional do Surdo.
+P: Callback a D1 e B28.
+
+## F23
+FMT: COMPARATIVO
+T: Inteligibilidade mútua
+G: POR QUE O ESPANHOL ENTENDE MENOS O PORTUGUÊS?
+R: Brasileiro ouvindo espanhol contra hispânico ouvindo português. O brasileiro costuma entender mais. Isso é inteligibilidade mútua assimétrica: o entendimento não vale igual nos dois sentidos. O motivo é o som, tema da semana. O português tem mais vogais, tem vogais nasais, como em "mãe" e "pão", e reduz sílabas. O espanhol tem cinco vogais, bem claras. Para quem fala português, o espanhol soa como um português limpo. Para quem fala espanhol, o português soa embolado. E lembra do f que virou h, na terça? Cada lei de som que separou as duas línguas é mais uma barreira.
+P: Callback a F28 (Dia 9).
+
+## G5
+FMT: LINHA DO TEMPO
+T: Decifração
+G: UM ARQUITETO DECIFROU UMA ESCRITA DE 3 MIL ANOS
+R: Ontem, o caso aberto do Voynich. Hoje, um caso fechado. 1936: um menino inglês de 14 anos, Michael Ventris, assiste a uma palestra sobre a Linear B, escrita de tabletes de Creta com mais de 3 mil anos, e fica obcecado. Anos 1940: ele vira arquiteto, mas continua estudando. 1952: descobre que a Linear B é grego, um grego muito antigo, e anuncia no rádio. Isso empurra a história escrita do grego séculos para trás. 1956: Ventris morre num acidente de carro, aos 34 anos. A Linear A, a irmã mais velha, continua sem decifração. Semana que vem: famílias, viagens e encontros.
+P: Callback a G27. Ponte para a semana 3.
