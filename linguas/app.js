@@ -113,6 +113,7 @@
         }
       });
       st.custom.forEach(c => out.push({ id: 'c:' + c.id, pt: c.pt, t: c.t, r: c.r || '' }));
+      (st.fixes || []).forEach(f => out.push({ id: 'f:' + f.id, pt: `corrija: “${f.orig}”`, t: f.fix, r: f.r || '' }));
     }
     return out;
   }
@@ -160,6 +161,7 @@
       const L = byId[h[1]]; setLangColors(L);
       if (h[2] === 's') return renderStudy(L, +h[3] || 1);
       if (h[2] === 'p') return renderPractice(L, +h[3] || 1);
+      if (h[2] === 'd') return renderDiary(L);
       return renderLang(L);
     }
     setLangColors(null); renderHome();
@@ -233,7 +235,13 @@
             </span>
           </a>`;
         }).join('')}
-      </div>`;
+      </div>
+      <a class="journal-card enter" href="#/l/${L.id}/d">
+        <span class="kicker">Caderno livre</span>
+        <b>Diário</b>
+        <span>Escreva o que quiser em ${esc(L.name.toLowerCase())}. O diário corrige.</span>
+        <span class="jc-count mono">${(LS(L.id).journal || []).length} páginas</span>
+      </a>`;
   }
 
   /* ——— folha de estudo ——— */
@@ -384,6 +392,251 @@
       if (!pt || !t) return;
       st.custom.push({ id: Date.now().toString(36), pt, t, r }); save(); toast('Guardado no caderno.'); renderVerbs(L);
     };
+  }
+
+  /* ——— DIÁRIO: escrever livre e receber correção ——— */
+  const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.4.0/+esm';
+  const MODEL = 'claude-opus-5-5';
+
+  /* Verificação local (offline): pronome + verbo conjugado na pessoa errada. */
+  const lexCache = {};
+  function lexicon(L) {
+    if (lexCache[L.id]) return lexCache[L.id];
+    const verbs = [];
+    const add = (e, name) => {
+      if (!e || e.full || !Array.isArray(e)) return;
+      const per = [...Array(8)].map((_, i) => {
+        const f = L.id === 'en' ? (e.length === 8 ? e[i] : (i === 2 || i === 3 ? e[1] : e[0])) : e[MAP6[i]];
+        return String(f).toLowerCase().split(' ')[0];
+      });
+      verbs.push({ name, per, all: new Set(per) });
+    };
+    const s = L.ser;
+    add(s.forms8, 'to be'); add(s.forms6, s.label); add(s.ser6, 'ser'); add(s.estar6, 'estar');
+    VERBS.forEach(v => add(v[L.id], v.pt));
+    const pron = {};
+    L.pron.forEach((p, i) => { const k = p.toLowerCase(); (pron[k] = pron[k] || []).push(i); });
+    return (lexCache[L.id] = { verbs, pron });
+  }
+  function localCheck(L, text) {
+    if (L.roman) return null;   // japonês, coreano e hebraico: só a correção completa
+    const { verbs, pron } = lexicon(L);
+    const toks = [...text.matchAll(/[\p{L}]+(?:[’'][\p{L}]+)?|[’']/gu)].map(m => ({ w: m[0], i: m.index }));
+    const out = [];
+    for (let k = 0; k < toks.length; k++) {
+      const t = toks[k], lw = t.w.toLowerCase();
+      const before = out.length;
+      const idx = pron[lw];
+      if (idx && toks[k + 1]) checkPair();
+      if (L.id === 'en' && t.w === 'i') {
+        if (out.length > before) { const x = out[out.length - 1]; x.fix = x.fix.replace(/^i\b/, 'I'); x.why += ' E “I” é sempre maiúsculo.'; }
+        else out.push({ i: t.i, len: 1, orig: 'i', fix: 'I', why: '“I” (eu) é sempre maiúsculo em inglês.' });
+      }
+      continue;
+      function checkPair() {
+      const nx = toks[k + 1], nw = nx.w.toLowerCase();
+      if (nx.i - (t.i + t.w.length) > 2) return;   // precisam estar lado a lado
+      for (const v of verbs) {
+        if (!v.all.has(nw)) continue;
+        const ok = idx.map(i => v.per[i]);
+        if (L.id === 'fr' && lw === 'je' && /^[aeiouhéèêâ]/i.test(nw) && ok.includes(nw)) {
+          out.push({ i: t.i, len: nx.i + nx.w.length - t.i, orig: `${t.w} ${nx.w}`, fix: `j’${nx.w}`, why: 'Antes de vogal ou h, “je” vira “j’”.' });
+        } else if (!ok.includes(nw)) {
+          const pt = PT_PRON[idx[0]];
+          out.push({ i: t.i, len: nx.i + nx.w.length - t.i, orig: `${t.w} ${nx.w}`, fix: `${t.w} ${ok[0]}`, why: `Com “${t.w}” (${pt}), o verbo ${v.name} fica “${ok[0]}”.` });
+        }
+        break;
+      }
+      }
+    }
+    return out;
+  }
+
+  const FIX_SCHEMA = {
+    type: 'object', additionalProperties: false,
+    required: ['all_good', 'corrected', 'romanization', 'errors', 'natural', 'tip', 'verbs'],
+    properties: {
+      all_good: { type: 'boolean', description: 'true se o texto não tem nenhum erro' },
+      corrected: { type: 'string', description: 'o texto do aluno corrigido, mudando o mínimo possível' },
+      romanization: { type: 'string', description: 'pronúncia romanizada do texto corrigido (vazio para línguas de alfabeto latino)' },
+      errors: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['original', 'fix', 'why'],
+        properties: { original: { type: 'string', description: 'trecho exato como o aluno escreveu' }, fix: { type: 'string', description: 'o trecho corrigido' }, why: { type: 'string', description: 'explicação curta em português do Brasil' } } } },
+      natural: { type: 'string', description: 'como um nativo diria (vazio se igual ao corrigido)' },
+      tip: { type: 'string', description: 'uma dica curta e encorajadora em português, ligada ao método' },
+      verbs: { type: 'array', items: { type: 'string' }, description: 'infinitivos em português dos verbos que o aluno usou' }
+    }
+  };
+  function fixPrompt(L, text, meant) {
+    const system = `Você é um professor de ${L.name.toLowerCase()} paciente e caloroso. Corrige o diário de um aluno brasileiro, autodidata e iniciante, que aprende assim: primeiro os pronomes pessoais, depois ser e estar, depois os verbos que ele mais usa no dia a dia.
+Corrija gramática, conjugação, concordância, ortografia e palavras erradas, mudando o mínimo possível — o texto é dele. Não corrija estilo se estiver certo.
+Cada erro vira um item: o trecho exato que ele escreveu, a correção e o porquê em uma frase simples em português do Brasil, sem jargão. Se ele misturou palavras em português, traduza e conte como erro.
+Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próximo passo concreto (ex.: “revise o verbo ter com ‘nós’”).`;
+    const user = `Língua: ${L.name} (${L.native}).\n${meant ? `O que eu quis dizer, em português: ${meant}\n` : ''}Meu diário:\n${text}`;
+    return { system, user };
+  }
+  async function askClaude(L, text, meant) {
+    const { default: Anthropic } = await import(SDK_URL);
+    // A chave é do próprio usuário e fica só neste aparelho.
+    const client = new Anthropic({ apiKey: S.apiKey, dangerouslyAllowBrowser: true });
+    const { system, user } = fixPrompt(L, text, meant);
+    const res = await client.beta.messages.create({
+      model: MODEL,
+      max_tokens: 16000,
+      betas: ['server-side-fallback-2026-07-01'],
+      fallbacks: 'default',
+      output_config: { effort: 'medium', format: { type: 'json_schema', schema: FIX_SCHEMA } },
+      system,
+      messages: [{ role: 'user', content: user }]
+    });
+    if (res.stop_reason === 'refusal') throw new Error('O corretor não pôde revisar este texto.');
+    if (res.stop_reason === 'max_tokens') throw new Error('O texto ficou longo demais para uma correção. Tente dividir em partes.');
+    const block = res.content.find(b => b.type === 'text');
+    if (!block) throw new Error('Resposta vazia.');
+    return JSON.parse(block.text);
+  }
+  function claudeLink(L, text, meant) {
+    const { system, user } = fixPrompt(L, text, meant);
+    const q = `${system}\n\nResponda em português: texto corrigido, lista de erros (trecho → correção → porquê), versão natural e uma dica.\n\n${user}`;
+    return 'https://claude.ai/new?q=' + encodeURIComponent(q);
+  }
+
+  function markLocal(text, issues) {
+    let h = '', p = 0;
+    issues.slice().sort((a, b) => a.i - b.i).forEach(x => {
+      if (x.i < p) return;
+      h += esc(text.slice(p, x.i)) + `<mark>${esc(text.slice(x.i, x.i + x.len))}</mark>`; p = x.i + x.len;
+    });
+    return h + esc(text.slice(p));
+  }
+
+  function renderDiary(L, openId) {
+    const st = LS(L.id);
+    st.journal = st.journal || []; st.fixes = st.fixes || [];
+    let cur = openId ? st.journal.find(j => j.id === openId) : null;
+    const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    const date = new Date(cur ? cur.d : Date.now()).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name)}
+      <div class="enter">
+        <div class="kicker muted">Diário · ${esc(L.name)}</div>
+        <h1 class="title-xl">Diário <em>livre</em></h1>
+        <p class="lead">Escreva o que quiser em ${esc(L.name.toLowerCase())}: seu dia, o que sente, o que vai fazer. Erre à vontade — é assim que se aprende.</p>
+        <div class="diary journal">
+          <div class="jdate mono">${esc(date)}</div>
+          <textarea id="jtext" ${rtl} lang="${L.tts}" placeholder="${esc(L.id === 'en' ? 'Today I am tired. I want a coffee…' : 'Escreva aqui…')}" aria-label="Diário em ${esc(L.name)}">${esc(cur ? cur.text : '')}</textarea>
+          <div class="meant"><label class="kicker muted" for="jmeant">O que eu quis dizer (opcional)</label>
+            <input id="jmeant" placeholder="em português — ajuda na correção" value="${esc(cur ? cur.meant || '' : '')}"></div>
+          <div class="dbar">
+            <button class="btn" id="jlocal">${I.ghost}Conferir</button>
+            <button class="btn on" id="jai">${I.pen}Corrigir</button>
+          </div>
+        </div>
+        <div id="jres"></div>
+
+        <details class="keybox" id="keybox" ${S.apiKey ? '' : ''}>
+          <summary><span class="kicker">Correção completa</span> <span class="muted">${S.apiKey ? '· ligada neste aparelho' : '· como funciona'}</span></summary>
+          <p><b>Conferir</b> é instantâneo e funciona sem internet: aponta pronome + verbo na pessoa errada${L.roman ? ' (no ' + esc(L.name.toLowerCase()) + ', use a correção completa)' : ''}.</p>
+          <p><b>Corrigir</b> usa o Claude para revisar tudo — gramática, palavras, naturalidade — e explica cada erro em português. Para isso, cole sua chave da API da Anthropic (console.anthropic.com). Ela fica salva só neste aparelho e o uso é cobrado na sua conta.</p>
+          <div class="form">
+            <label for="apikey">Chave da API</label>
+            <input id="apikey" type="password" autocomplete="off" placeholder="sk-ant-…" value="${esc(S.apiKey || '')}">
+            <div class="actions-2" style="margin:0"><button class="btn" id="keysave">Salvar</button><button class="btn" id="keydel">Apagar</button></div>
+          </div>
+          <p class="muted" style="font-size:14px">Sem chave? Use <b>“Corrigir no app do Claude”</b>: abre o Claude já com o seu texto e o pedido de correção.</p>
+        </details>
+
+        ${st.journal.length ? `<div class="subh">Páginas anteriores <span class="kicker">${st.journal.length}</span></div>
+          <div class="pages">${st.journal.map(j => `<button class="page" data-j="${j.id}">
+            <span class="mono muted">${new Date(j.d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
+            <span class="ptxt" ${rtl}>${esc(j.text.slice(0, 70))}${j.text.length > 70 ? '…' : ''}</span>
+            <span class="pbadge ${j.fix ? (j.fix.all_good ? 'good' : 'fixed') : ''}">${j.fix ? (j.fix.all_good ? '✓' : j.fix.errors.length + ' erros') : '—'}</span>
+          </button>`).join('')}</div>
+          <button class="btn" id="jnew" style="margin-top:12px;width:100%">${I.plus}Nova página</button>` : ''}
+      </div>`;
+
+    const ta = document.getElementById('jtext'), me = document.getElementById('jmeant'), res = document.getElementById('jres');
+    const persist = () => {
+      const text = ta.value.trim(); if (!text) return null;
+      if (!cur) { cur = { id: Date.now().toString(36), d: Date.now(), text, meant: '' }; st.journal.unshift(cur); st.journal = st.journal.slice(0, 365); }
+      if (cur.text !== text) cur.fix = null;
+      cur.text = text; cur.meant = me.value.trim(); save(); return cur;
+    };
+    let tmr; ta.addEventListener('input', () => { clearTimeout(tmr); tmr = setTimeout(persist, 800); });
+
+    const saveFixes = list => {
+      let n = 0;
+      list.forEach(e => {
+        if (!e.orig || !e.fix || e.orig === e.fix || st.fixes.some(f => f.orig === e.orig && f.fix === e.fix)) return;
+        st.fixes.push({ id: Date.now().toString(36) + n, orig: e.orig, fix: e.fix }); n++;
+      });
+      st.fixes = st.fixes.slice(-80); save();
+      toast(n ? `${n} correç${n > 1 ? 'ões' : 'ão'} no degrau 03 para treinar no papel` : 'Já estavam no caderno.');
+    };
+
+    const showAI = fx => {
+      const bankAdds = (fx.verbs || []).map(p => VERBS.find(v => v.pt === String(p).toLowerCase().trim())).filter(v => v && !st.verbs.includes(v.id));
+      res.innerHTML = `
+        <div class="fixcard enter">
+          <div class="kicker">${fx.all_good ? 'Tudo certo!' : `Correção · ${fx.errors.length} ${fx.errors.length === 1 ? 'ponto' : 'pontos'}`}</div>
+          <div class="fixtext" ${rtl}>${esc(fx.corrected)}</div>
+          ${fx.romanization ? `<small class="mono">${esc(fx.romanization)}</small>` : ''}
+          <button class="iconbtn" id="jsay" aria-label="Ouvir">${I.sound}</button>
+        </div>
+        ${fx.errors.length ? `<div class="errs">${fx.errors.map(e => `<div class="err">
+          <div ${rtl}><s>${esc(e.original)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div>
+          <p>${esc(e.why)}</p></div>`).join('')}</div>` : ''}
+        ${fx.natural && fx.natural !== fx.corrected ? `<div class="ex" style="margin:14px 0"><div class="pt">Como um nativo diria</div><div class="tg" ${rtl}>${esc(fx.natural)}</div></div>` : ''}
+        ${fx.tip ? `<div class="note"><span class="kicker">Próximo passo</span>${esc(fx.tip)}</div>` : ''}
+        ${bankAdds.length ? `<div class="subh" style="margin-top:4px">Verbos que você usou <span class="kicker">add ao caderno</span></div>
+          <div class="chips" style="margin-bottom:14px">${bankAdds.map(v => `<button class="chip" data-addv="${v.id}"><span class="dot"></span>${esc(v.pt)}</button>`).join('')}</div>` : ''}
+        ${fx.errors.length ? `<button class="cta" id="jtrain">${I.pen}Treinar as correções no papel</button>` : ''}`;
+      document.getElementById('jsay').onclick = () => speak(fx.corrected, L);
+      res.querySelectorAll('[data-addv]').forEach(b => b.onclick = () => { st.verbs.push(b.dataset.addv); save(); b.classList.add('on'); b.disabled = true; toast('Verbo no caderno.'); });
+      const tr = document.getElementById('jtrain');
+      if (tr) tr.onclick = () => saveFixes(fx.errors.map(e => ({ orig: e.original, fix: e.fix })));
+    };
+
+    document.getElementById('jlocal').onclick = () => {
+      const c = persist(); if (!c) { ta.focus(); return; }
+      const iss = localCheck(L, c.text);
+      if (iss === null) {
+        res.innerHTML = `<div class="note enter"><span class="kicker">Conferir</span>No ${esc(L.name.toLowerCase())} o verbo não muda com o pronome do mesmo jeito, então a conferência rápida não se aplica. Use <b>Corrigir</b>.</div>`;
+        return;
+      }
+      res.innerHTML = iss.length ? `
+        <div class="fixcard enter"><div class="kicker">Conferência rápida · ${iss.length} ${iss.length === 1 ? 'ponto' : 'pontos'}</div><div class="fixtext marked" ${rtl}>${markLocal(c.text, iss)}</div></div>
+        <div class="errs">${iss.map(e => `<div class="err"><div><s>${esc(e.orig)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div><p>${esc(e.why)}</p></div>`).join('')}</div>
+        <button class="cta" id="jtrain">${I.pen}Treinar no papel</button>
+        <p class="muted" style="font-size:14px;margin-top:10px">A conferência rápida só olha pronome + verbo. Para revisar tudo, toque em <b>Corrigir</b>.</p>`
+        : `<div class="note enter"><span class="kicker">Conferência rápida</span>Pronomes e verbos parecem certos! Para revisar o resto (palavras, ordem, naturalidade), toque em <b>Corrigir</b>.</div>`;
+      const tr = document.getElementById('jtrain'); if (tr) tr.onclick = () => saveFixes(iss);
+    };
+
+    document.getElementById('jai').onclick = async () => {
+      const c = persist(); if (!c) { ta.focus(); return; }
+      if (!S.apiKey) {
+        res.innerHTML = `<div class="note enter"><span class="kicker">Corrigir</span>Para a correção completa aqui dentro, salve sua chave abaixo. Ou abra no app do Claude, sem chave:</div>
+          <a class="cta alt" href="${claudeLink(L, c.text, c.meant)}" target="_blank" rel="noopener">${I.pen}Corrigir no app do Claude</a>`;
+        document.getElementById('keybox').open = true; return;
+      }
+      if (c.fix) { showAI(c.fix); return; }
+      const b = document.getElementById('jai'); b.disabled = true; b.innerHTML = 'Corrigindo…';
+      res.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> o professor está lendo</div>';
+      try {
+        const fx = await askClaude(L, c.text, c.meant);
+        c.fix = fx; save(); showAI(fx);
+      } catch (e) {
+        const msg = /401|authentication/i.test(String(e)) ? 'Chave inválida. Confira em “Correção completa”.' : /fetch|network|Failed to/i.test(String(e)) ? 'Sem internet. A “Conferir” funciona offline.' : String(e.message || e);
+        res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(msg)}</div>
+          <a class="cta alt" href="${claudeLink(L, c.text, c.meant)}" target="_blank" rel="noopener">${I.pen}Corrigir no app do Claude</a>`;
+      } finally { b.disabled = false; b.innerHTML = `${I.pen}Corrigir`; }
+    };
+
+    document.getElementById('keysave').onclick = () => { S.apiKey = document.getElementById('apikey').value.trim() || null; save(); toast(S.apiKey ? 'Chave salva neste aparelho.' : 'Sem chave.'); };
+    document.getElementById('keydel').onclick = () => { S.apiKey = null; document.getElementById('apikey').value = ''; save(); toast('Chave apagada.'); };
+    $app.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { renderDiary(L, b.dataset.j); window.scrollTo(0, 0); });
+    const nb = document.getElementById('jnew'); if (nb) nb.onclick = () => { renderDiary(L); window.scrollTo(0, 0); };
+    if (cur && cur.fix) showAI(cur.fix);
   }
 
   /* ——— PRÁTICA: escrever com o dedo ——— */

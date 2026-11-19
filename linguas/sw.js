@@ -1,5 +1,5 @@
 /* RAIZ — funciona sem internet. */
-const CACHE = 'raiz-v1';
+const CACHE = 'raiz-v2';
 const CORE = ['./', 'index.html', 'style.css', 'data.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
