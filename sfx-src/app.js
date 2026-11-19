@@ -237,6 +237,13 @@ $('bStems').onclick = () => busy('Exportando stems…', async () => {
   download(makeZip(files), base + '_stems.zip'); toast('Stems exportados (sem normalização)');
 });
 $('bToMix').onclick = () => busy('Renderizando…', async () => { const r = await renderSound(S, 48000); const id = addClip(S.name, r, 'sfx'); addClipToMix(id, undefined, 'SFX'); toast('Enviado ao mixer'); });
+async function loadDescribed(make){
+  const d = $('descText').value.trim(); if (!d){ toast('Descreva o som'); return; }
+  await busy('Criando som…', async () => { const r = await make(d); if (!r) throw new Error('não reconheci nenhum som na descrição. Tente palavras como porta, vidro, passos, trovão, motor, magia');
+    curPreset = null; renderLibrary(); loadSound(r.snd || r); $('descInfo').textContent = r.matched ? `Reconhecido: ${r.matched.join(' + ')}${r.mods.length ? ' · ' + r.mods.join(', ') : ''}` : 'Projetado pela IA: ' + (r.name || ''); });
+}
+$('bDesc').onclick = () => loadDescribed(async d => describeToSound(d));
+$('bDescAI').onclick = () => loadDescribed(designSoundAI);
 $('bProjExp').onclick = () => { download(new Blob([JSON.stringify({app:'nexi-sfx-studio', version:2, sound:S}, null, 1)], {type:'application/json'}), slug(S.name) + '.nexisfx.json'); };
 let jsonTarget = 'project';
 $('bProjImp').onclick = () => { jsonTarget = 'project'; $('fileJson').click(); };

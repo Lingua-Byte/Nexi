@@ -26,7 +26,7 @@ const PRESET_DEFS = [
  ], {drive:0.25, ratio:4, thr:-20, revType:'Hall', revMix:0.28, revDecay:3.2, revSize:0.9, low:2}],
 ['Cinema','Braam', [
   Ly('analog',{wave:'saw',freq:55,voices:7,detune:22,spread:0.9},{name:'Metais',env:env(0.04,3,0.7,2.6,1.4),filter:{type:'lp',freq:180,q:1.4,env:3.2,envAtk:0.25,envTime:1.6},drive:0.45}),
-  Ly('analog',{wave:'square',freq:27.5,sub:0.5},{name:'Sub',vol:-6,env:env(0.04,3,0.7,2.6,1.4),filter:{type:'lp',freq:120}}),
+  Ly('analog',{wave:'sine',freq:27.5,sub:0.5,drift:0},{name:'Sub',vol:-6,env:env(0.04,3,0.7,2.6,1.4),filter:{type:'lp',freq:120}}),
   Ly('formant',{freq:55,vowelA:0,vowelB:3,morph:2,size:1.4,growl:0.4,breath:0.1},{name:'Rugido',vol:-8,env:env(0.05,3,0.8,2.6,1.2)}),
  ], {drive:0.35, ratio:3, revType:'Hall', revMix:0.3, revDecay:4, low:3}],
 ['Cinema','Riser de tensão', [
@@ -166,10 +166,6 @@ const PRESET_DEFS = [
   Ly('fm',{freq:NOTE(88),r2:2,i2:1.2,idxDecay:0.3,idxSus:0.2},{name:'Nota 2',start:0.075,env:ONE(0.7,0.8)}),
   Ly('particles',{density:60,fmin:4000,fmax:9000,pdecay:0.05,tone:1,stereo:1},{name:'Brilho',start:0.07,vol:-14,env:ONE(0.5)}),
  ], {revType:'Sala', revMix:0.12, dlyMix:0.1, dlyTime:0.12, dlyFb:0.25}],
-['Jogos','Moeda 8-bit', [
-  Ly('analog',{wave:'square',freq:NOTE(83),drift:0},{name:'Nota 1',env:env(0.001,1,1,0.07,0.01)}),
-  Ly('analog',{wave:'square',freq:NOTE(88),drift:0},{name:'Nota 2',start:0.07,env:ONE(0.35,0.4)}),
- ], {bits:6, rate:2}],
 ['Jogos','Power-up', [
   Ly('analog',{wave:'saw',freq:523,voices:3,detune:10,spread:0.6},{name:'Subida',vol:-2,pitchEnv:{amt:-12,time:0.45,mode:'lin'},filter:{type:'lp',freq:2500,env:1,envTime:0.4},env:env(0.01,0.6,0.4,0.5,0.3)}),
   Ly('fm',{freq:1046,r2:3,i2:1.5},{name:'Cintilar',vol:-8,pitchEnv:{amt:-12,time:0.45,mode:'lin'},env:env(0.01,0.6,0.4,0.5,0.3)}),
@@ -201,12 +197,12 @@ const PRESET_DEFS = [
  ], {revType:'Hall', revMix:0.35, dlyMix:0.12, dlyTime:0.2}],
 ['Jogos','Dano', [
   Ly('noise',{color:'marrom'},{name:'Impacto',env:ONE(0.18,0.3),filter:{type:'lp',freq:2000,env:1,envTime:0.06},drive:0.4}),
-  Ly('analog',{wave:'square',freq:160,drift:0},{name:'Tom',vol:-6,pitchEnv:{amt:12,time:0.06},filter:{type:'lp',freq:1500},env:ONE(0.15,0.3)}),
+  Ly('analog',{wave:'saw',freq:160,voices:2,detune:10},{name:'Tom',vol:-6,pitchEnv:{amt:12,time:0.06},filter:{type:'lp',freq:1500},env:ONE(0.15,0.3)}),
   Ly('modal',{material:'pele',freq:200,hardness:0.6,noise:0.6},{name:'Corpo',vol:-6,env:PHY(0.3)}),
  ], {drive:0.3, ratio:4, revType:'Sala', revMix:0.08}],
 ['Jogos','Pulo', [
   Ly('analog',{wave:'tri',freq:330,drift:0},{name:'Pulo',pitchEnv:{amt:-10,time:0.12},env:ONE(0.22,0.3)}),
-  Ly('analog',{wave:'square',freq:330,drift:0},{name:'Cor',vol:-12,pitchEnv:{amt:-10,time:0.12},filter:{type:'lp',freq:1800},env:ONE(0.22,0.3)}),
+  Ly('noise',{color:'rosa'},{name:'Ar',vol:-16,pitchEnv:{amt:-10,time:0.12},filter:{type:'bp',freq:1800,q:1.5,key:1},env:ONE(0.18,0.3)}),
  ], {revType:'Sala', revMix:0.06}],
 ['Jogos','Teleporte', [
   Ly('fm',{freq:220,r2:2.01,i2:5,idxSus:1},{name:'Energia',pitchEnv:{amt:-24,time:1.2,mode:'lin'},mod:{vibDepth:0.3,vibRate:18},env:env(0.1,1.4,0.3,1.2,0.4)}),
@@ -240,8 +236,8 @@ const PRESET_DEFS = [
   Ly('fm',{freq:NOTE(98),r2:3,i2:0.9,idxDecay:0.4},{name:'Nota 2',start:0.12,env:ONE(1.1,1.2)}),
  ], {revType:'Sala', revMix:0.2, dlyMix:0.12, dlyTime:0.15}],
 ['Interface','Erro', [
-  Ly('analog',{wave:'square',freq:220,voices:2,detune:6},{name:'Nota 1',filter:{type:'lp',freq:1400},env:env(0.002,0.16,0.5,0.12,0.05)}),
-  Ly('analog',{wave:'square',freq:165,voices:2,detune:6},{name:'Nota 2',start:0.16,filter:{type:'lp',freq:1400},env:env(0.002,0.16,0.5,0.18,0.06)}),
+  Ly('fm',{freq:220,r2:2,i2:1.8,idxDecay:0.12,idxSus:0.3},{name:'Nota 1',filter:{type:'lp',freq:2400},env:env(0.002,0.16,0.5,0.12,0.05)}),
+  Ly('fm',{freq:165,r2:2,i2:1.8,idxDecay:0.12,idxSus:0.3},{name:'Nota 2',start:0.16,filter:{type:'lp',freq:2400},env:env(0.002,0.16,0.5,0.18,0.06)}),
  ], {revType:'Sala', revMix:0.08}],
 ['Interface','Sucesso', [
   Ly('analog',{wave:'tri',freq:NOTE(84),voices:2,detune:5},{name:'Dó',env:ONE(0.5)}),

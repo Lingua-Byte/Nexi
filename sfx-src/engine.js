@@ -116,8 +116,7 @@ const MASTER_GROUPS = [
   {name:'Reverb', defs:[C('revType','Ambiente',Object.keys(REV_TYPES),'Sala'), P('revMix','Mistura',0,1,0,'lin','%',{off:v=>v<=0}),
     P('revSize','Tamanho',0,1,0.35,'lin','%'), P('revDecay','Decaimento',0.1,15,0.7,'log','s'), P('revDamp','Abafamento',0,1,0.55,'lin','%'),
     P('revPre','Pré-delay',0,0.25,0.008,'sq','s'), P('revWidth','Largura',0,1,1,'lin','%')]},
-  {name:'Estéreo e lo-fi', defs:[P('width','Largura estéreo',0,2,1,'lin','%'), P('bits','Bits',0,16,0,'int','bits',{off:v=>v<=0}),
-    P('rate','Redução de taxa',1,32,1,'int','div',{off:v=>v<=1})]},
+  {name:'Estéreo', defs:[P('width','Largura estéreo',0,2,1,'lin','%')]},
   {name:'Saída', defs:[C('norm','Normalização',['peak','lufs','none'],'peak'), P('ceiling','Teto (limitador)',-12,0,-1,'lin','dB'),
     P('lufs','Alvo LUFS',-36,-6,-16,'lin','LUFS')]},
 ];

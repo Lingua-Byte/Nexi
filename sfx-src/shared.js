@@ -186,7 +186,7 @@ function normalizeLUFS(r, target, ceilDb = -1){
 
 /* ---------------- Configurações / APIs ---------------- */
 const KEYS_LS = 'nexi-sfx-keys';
-const apiKeys = Object.assign({anthropic:'', eleven:''}, LS.get(KEYS_LS, {}));
+const apiKeys = Object.assign({anthropic:''}, LS.get(KEYS_LS, {})); delete apiKeys.eleven;
 function saveKeys(){ LS.set(KEYS_LS, apiKeys); refreshApiBadges(); }
 function refreshApiBadges(){
   document.querySelectorAll('[data-need]').forEach(e => {
@@ -233,26 +233,15 @@ async function claudeText(prompt, system){
   if (msg.stop_reason === 'refusal') throw new Error('O modelo recusou este pedido');
   return msg.content.filter(b => b.type === 'text').map(b => b.text).join('');
 }
-/* ElevenLabs (REST) */
-const XI = 'https://api.elevenlabs.io';
-async function xi(path, opts = {}){
-  if (!apiKeys.eleven) throw new Error('Configure a chave da ElevenLabs em Configurações');
-  const headers = Object.assign({'xi-api-key': apiKeys.eleven}, opts.json ? {'Content-Type':'application/json'} : {}, opts.headers || {});
-  const res = await fetch(XI + path, {method: opts.method || (opts.json || opts.form ? 'POST' : 'GET'), headers, body: opts.json ? JSON.stringify(opts.json) : opts.form});
-  if (!res.ok){ let t = ''; try { t = (await res.text()).slice(0, 300); } catch(e){} throw new Error(`ElevenLabs ${res.status}: ${t}`); }
-  return res;
-}
-async function xiAudio(path, opts, name, kind){ const res = await xi(path, opts); return decodeToClip(name, await res.arrayBuffer(), kind); }
 function clipToWavBlob(c){ return new Blob([encodeWav({L: c.L, R: c.R, sr: c.sr}, 16, false)], {type:'audio/wav'}); }
 
 /* ---------------- Configurações (UI) ---------------- */
 function initSettings(){
-  $('keyAnthropic').value = apiKeys.anthropic; $('keyEleven').value = apiKeys.eleven;
-  $('bSaveKeys').onclick = () => { apiKeys.anthropic = $('keyAnthropic').value.trim(); apiKeys.eleven = $('keyEleven').value.trim(); anthropicClient = null; saveKeys(); toast('Chaves salvas neste navegador'); };
-  $('bClearKeys').onclick = () => { apiKeys.anthropic = apiKeys.eleven = ''; $('keyAnthropic').value = $('keyEleven').value = ''; anthropicClient = null; saveKeys(); toast('Chaves apagadas'); };
+  $('keyAnthropic').value = apiKeys.anthropic;
+  $('bSaveKeys').onclick = () => { apiKeys.anthropic = $('keyAnthropic').value.trim(); anthropicClient = null; saveKeys(); toast('Chaves salvas neste navegador'); };
+  $('bClearKeys').onclick = () => { apiKeys.anthropic = ''; $('keyAnthropic').value = ''; anthropicClient = null; saveKeys(); toast('Chaves apagadas'); };
   $('bTestKeys').onclick = async () => {
     const out = [];
-    if (apiKeys.eleven){ try { const r = await (await xi('/v1/voices')).json(); out.push(`ElevenLabs OK (${r.voices?.length ?? 0} vozes)`); } catch(e){ out.push('ElevenLabs: ' + e.message); } }
     if (apiKeys.anthropic){ try { const t = await claudeText('Responda só: ok'); out.push('Anthropic OK: ' + t.trim().slice(0, 20)); } catch(e){ out.push('Anthropic: ' + e.message); } }
     $('keyStatus').textContent = out.join(' · ') || 'Nenhuma chave configurada.';
   };

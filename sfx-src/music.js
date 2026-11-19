@@ -12,12 +12,10 @@ const INSTR_DEFS = {
   'Prato': {layers:[Ly('noise',{color:'branco',stereo:1},{env:ONE(1.8,2),filter:{type:'hp',freq:5000}}), Ly('fm',{freq:420,r2:1.4471,i2:8,r3:2.73,i3:4,idxDecay:1.5,stereo:15},{vol:-8,env:ONE(1.6,2),filter:{type:'hp',freq:3000}})], drum:true},
   'Baixo sintetizado': {preset:'Baixo sintetizado', root:36},
   'Baixo 808': {layers:[Ly('analog',{wave:'sine',freq:NOTE(36),drift:0},{env:env(0.002,1.4,0,1.6,0.1),pitchEnv:{amt:12,time:0.03},drive:0.35})], root:36},
-  'Baixo 8-bit': {layers:[Ly('analog',{wave:'tri',freq:NOTE(36),drift:0},{env:env(0.001,1,1,0.8,0.03)})], root:36},
   'Piano elétrico': {layers:[Ly('fm',{freq:NOTE(60),r2:1,i2:1.6,idxDecay:0.8,idxSus:0.1,stereo:6},{env:env(0.002,2.2,0,2.4,0.3)}), Ly('analog',{wave:'tri',freq:NOTE(60),drift:0.1},{vol:-10,env:env(0.002,1.6,0,2,0.3)})], root:60},
   'Cordas': {layers:[Ly('analog',{wave:'saw',freq:NOTE(60),voices:7,detune:16,spread:1,drift:0.3},{filter:{type:'lp',freq:2400},env:env(0.25,1,1,3,0.9,0.4),mod:{vibDepth:0.08,vibRate:5}})], root:60, sustain:true},
   'Pad atmosférico': {preset:'Pad atmosférico', root:60, sustain:true, dry:true},
   'Lead serra': {layers:[Ly('analog',{wave:'saw',freq:NOTE(60),voices:3,detune:9,spread:0.5},{filter:{type:'lp',freq:3200,q:1.5,env:1,envTime:0.2},env:env(0.008,0.5,0.6,1.5,0.2),mod:{vibDepth:0.12,vibRate:5.5}})], root:60, sustain:true},
-  'Lead 8-bit': {layers:[Ly('analog',{wave:'pulse',freq:NOTE(60),pw:0.25,drift:0},{env:env(0.001,0.3,0.7,1.2,0.05)})], root:60, sustain:true},
   'Arpejo pluck': {layers:[Ly('analog',{wave:'saw',freq:NOTE(60),voices:2,detune:7},{filter:{type:'lp',freq:900,env:3,envTime:0.12},env:ONE(0.35,0.5)})], root:60},
   'Corda dedilhada': {preset:'Corda dedilhada', root:60, dry:true}, 'Pizzicato': {layers:[Ly('string',{freq:NOTE(60),decay:0.6,bright:0.45,pick:0.2,stereo:3},{env:PHY(0.8)})], root:60},
   'Sino': {preset:'Sino tubular', root:60, dry:true}, 'Xilofone': {preset:'Xilofone de madeira', root:60, dry:true},
@@ -49,7 +47,6 @@ const GENRES = {
   'Ambiente': {bpm:[60,76], scale:'major', prog:[[0,3,5,4],[0,4,5,3]], drums:{}, bass:null, chords:'Pad atmosférico', lead:'Sino', arp:'Corda dedilhada', swing:0, leadDensity:0.15, oct:5, slowArp:true},
   'Trap': {bpm:[130,150], scale:'harmMinor', prog:[[0,5,6,4],[0,0,5,6]], drums:{'Baixo 808':'x.......x..x....', 'Palmas':'........x.......', 'Chimbal':'xxxxxxxxxxxxxxxx'}, bass:null, chords:'Pad atmosférico', lead:'Sino', arp:null, swing:0, leadDensity:0.3, oct:5, halfTime:true},
   'Pop': {bpm:[100,120], scale:'major', prog:[[0,4,5,3],[5,3,0,4],[0,5,3,4]], drums:{'Bumbo':'x...x...x...x...', 'Palmas':'....x.......x...', 'Chimbal':'x.x.x.x.x.x.x.x.'}, bass:'Baixo sintetizado', bassPat:'x..x..x.x..x..x.', chords:'Piano elétrico', lead:'Lead serra', arp:'Arpejo pluck', swing:0, leadDensity:0.5, oct:5},
-  'Chiptune': {bpm:[120,145], scale:'major', prog:[[0,5,3,4],[0,3,4,4]], drums:{'Bumbo':'x.......x.......', 'Caixa':'....x.......x...', 'Chimbal':'x.x.x.x.x.x.x.x.'}, bass:'Baixo 8-bit', bassPat:'x.x.x.x.x.x.x.x.', chords:null, lead:'Lead 8-bit', arp:'Lead 8-bit', swing:0, leadDensity:0.6, oct:5, chip:true},
   'Suspense': {bpm:[60,72], scale:'harmMinor', prog:[[0,0,5,4],[0,1,0,4]], drums:{'Tambor épico':'x.........x.....'}, bass:'Baixo sintetizado', bassPat:'x...............', chords:'Cordas', lead:'Piano elétrico', arp:null, swing:0, leadDensity:0.18, oct:4},
   'Orquestral leve': {bpm:[84,100], scale:'major', prog:[[0,3,4,0],[0,5,3,4]], drums:{'Tambor épico':'x.......x.......'}, bass:'Pizzicato', bassPat:'x...x...x...x...', chords:'Cordas', lead:'Sino', arp:'Pizzicato', swing:0, leadDensity:0.35, oct:5},
 };
@@ -70,7 +67,7 @@ function composeMusic(o){
     const t0 = b*bar, ch = prog[b % prog.length], isIntro = b < intro, isOutro = b >= bars - outro, isB = b >= bSec && !isOutro;
     const energy = isIntro ? 0.35 : isOutro ? 0.4 : isB ? Math.min(1, intensity + 0.2) : intensity;
     if (g.chords) chordOf(ch).forEach(m => notes.push({instr: o.inst?.chords || g.chords, midi: m, t: t0, dur: bar*0.98, vel: 0.5*(0.7 + energy*0.3), stem: 'Harmonia'}));
-    if (g.bass && !isIntro){ const pat = g.bassPat; for (let s=0; s<16; s++) if (pat[s] === 'x') notes.push({instr: o.inst?.bass || g.bass, midi: deg(ch, 2) + (pat === 'x.x.x.x.x.x.x.x.' && s % 4 === 2 && g.chip ? 12 : 0), t: t0 + s*step, dur: step*2, vel: 0.75 + 0.15*rnd(), stem: 'Baixo'}); }
+    if (g.bass && !isIntro){ const pat = g.bassPat; for (let s=0; s<16; s++) if (pat[s] === 'x') notes.push({instr: o.inst?.bass || g.bass, midi: deg(ch, 2), t: t0 + s*step, dur: step*2, vel: 0.75 + 0.15*rnd(), stem: 'Baixo'}); }
     if (energy > 0.3 && !isIntro || g.drums['Tambor épico']) Object.entries(g.drums).forEach(([inst, pat]) => {
       if (isIntro && !/Tambor|Chimbal/.test(inst)) return; if (isOutro && inst !== 'Prato' && b === bars-1) return;
       for (let s=0; s<16; s++){ if (pat[s] !== 'x') continue; if (inst === 'Chimbal' && energy < 0.5 && s % 2) continue; if (inst === 'Prato' && b % 4) continue;
@@ -83,7 +80,7 @@ function composeMusic(o){
       motif.filter(m => Math.floor(m.s/16) === half).forEach(m => { const d = m.d + (varied ? [0,2,-2][Math.floor(rnd()*3)] : 0) + (isB ? 2 : 0);
         notes.push({instr: o.inst?.lead || g.lead, midi: deg(ch + d, g.oct) - 12*(d > 7 ? 1 : 0), t: t0 + (m.s % 16)*step, dur: m.len*step, vel: 0.6 + 0.2*energy, stem: 'Melodia'}); }); }
   }
-  return {genre: o.genre, bpm, root, scaleName: g.scale, bars, duration: bars*bar, notes, lofi: !!g.lofi, chip: !!g.chip};
+  return {genre: o.genre, bpm, root, scaleName: g.scale, bars, duration: bars*bar, notes, lofi: !!g.lofi};
 }
 async function renderComposition(m, opts = {}){
   const sr = MUS_SR, N = Math.ceil((m.duration + 4)*sr), stems = {};
@@ -96,6 +93,13 @@ async function renderComposition(m, opts = {}){
   const proc = {'Bateria': {ratio:3, thr:-18, revType:'Sala', revMix:0.08}, 'Baixo': {hp:30, lp:5000, ratio:3, thr:-20}, 'Harmonia': {hp:150, revType:'Hall', revMix:0.3, width:1.2},
     'Arpejo': {hp:200, dlyMix:0.25, dlyTime: 60/m.bpm*0.75, dlyFb:0.35, revType:'Hall', revMix:0.2}, 'Melodia': {hp:150, revType:'Hall', revMix:0.22, dlyMix:0.12, dlyTime: 60/m.bpm/2}};
   const vol = {'Bateria': -3, 'Baixo': -4, 'Harmonia': -9, 'Arpejo': -12, 'Melodia': -7};
+  if (m.vocal && m.vocal.lyrics.trim()){
+    const mel = m.notes.filter(n => n.stem === 'Melodia').sort((a, b) => a.t - b.t);
+    if (mel.length){ const mids = mel.map(n => n.midi).sort((a, b) => a - b), target = hzToMidi(m.vocal.voice.f0*1.7), shift = Math.round((target - mids[mids.length >> 1])/12)*12;
+      const sung = singLyrics(m.vocal.lyrics, mel.map(n => ({midi: n.midi + shift, t: n.t, dur: n.dur, vel: 0.85})), {...m.vocal.voice, speed: 1}, TTS_SR);
+      if (sung){ const L = resampleTo(sung.L, sung.sr, sr), st = {L: new Float32Array(N), R: new Float32Array(N)}; st.L.set(L.subarray(0, N)); st.R.set(L.subarray(0, N)); stems['Vocal'] = st; } }
+  }
+  proc['Vocal'] = {hp: 120, ratio: 3, thr: -22, revType: 'Hall', revMix: 0.25, dlyMix: 0.1, dlyTime: 60/m.bpm/2}; vol['Vocal'] = -4; if (stems['Vocal']) vol['Melodia'] = -15;
   const out = {};
   for (const [k, s] of Object.entries(stems)){ const r = await fxChain(s.L, s.R, sr, {...(proc[k] || {}), ...(proc[k]?.revType ? REV_TYPES[proc[k].revType] : {}), revMix: proc[k]?.revMix || 0}); const g = dbToGain(vol[k] ?? -6); for (let i=0; i<r.L.length; i++){ r.L[i] *= g; r.R[i] *= g; } out[k] = r; }
   if (opts.stems) return out;
@@ -127,10 +131,11 @@ function buildMusicUI(){
    </div>
    <div>
      <div class="card"><h2>Partitura (piano roll)</h2><canvas id="muRoll" style="height:260px"></canvas></div>
-     <div class="card" data-need="eleven"><h2>Música com IA (com vocais) <span class="badge">ElevenLabs</span></h2>
-       <textarea id="muPrompt" rows="3" placeholder="Ex.: pop brasileiro animado com voz feminina, sobre um bichinho virtual curioso, refrão grudento"></textarea>
-       <div class="row" style="margin-top:6px"><input type="number" id="muAiLen" value="30" min="10" max="300" style="width:80px"> segundos <button class="btn pri grow" id="muAi">✨ Gerar música</button></div>
-       <div class="hint">Gera faixas completas com vocais pela API de música da ElevenLabs (recurso pago da sua conta).</div>
+     <div class="card"><h2>Vocal sintetizado</h2>
+       <label class="chk"><input type="checkbox" id="muVocalOn"> Cantar a melodia com letra</label>
+       <textarea id="muLyrics" rows="4" style="margin-top:6px">Eu sou o NEXI, um bichinho que aprende com você. Brinca comigo, canta comigo, todo dia é dia de crescer.</textarea>
+       <div class="row" style="margin-top:6px"><select id="muVoice" class="grow"></select><button class="btn sm" id="muLyricAI" data-need="anthropic">🤖 Escrever letra</button></div>
+       <div class="hint">A voz cantada é gerada pelo motor de fala do NEXI: cada sílaba vira uma nota da melodia, com vibrato. Personas da aba Voz aparecem na lista.</div>
      </div>
    </div>
   </div>`;
@@ -146,13 +151,16 @@ function buildMusicUI(){
   $('muMix').onclick = () => busy('Renderizando stems…', async () => { if (!MUS.last) throw new Error('componha primeiro'); const st = await renderComposition(MUS.last, {stems: true});
     Object.entries(st).forEach(([k, r]) => { const id = addClip(`${MUS.genre} — ${k}`, r, 'música'); addClipToMix(id, 0, 'Música · ' + k); MIX.tracks.find(t => t.name === 'Música · ' + k).role = 'música'; });
     toast('Stems enviados ao mixer'); showModule('mix'); });
-  $('muAi').onclick = () => busy('Gerando música com IA…', async () => { const p = $('muPrompt').value.trim(); if (!p) throw new Error('descreva a música');
-    const id = await xiAudio('/v1/music', {json: {prompt: p, music_length_ms: clamp(+$('muAiLen').value, 10, 300)*1000}}, 'Música IA — ' + p.slice(0, 30), 'música'); const c = CLIPS.get(id); MUS.lastMix = {L: c.L, R: c.R, sr: c.sr}; previewPCM(c.L, c.R, c.sr); toast('Música adicionada ao banco do mixer'); });
+  const vs = $('muVoice'); Object.keys(TTS_VOICES).filter(k => k !== 'Sussurro').forEach(k => vs.appendChild(Object.assign(el('option', null, esc(k)), {value: 'v:' + k})));
+  VS.personas.forEach(p => vs.appendChild(Object.assign(el('option', null, '⭐ ' + esc(p.name)), {value: 'p:' + p.name}))); vs.value = 'v:Feminina';
+  $('muLyricAI').onclick = () => busy('Escrevendo letra…', async () => { $('muLyrics').value = (await claudeText(`Escreva uma letra curta em português do Brasil para uma música ${MUS.genre}, com versos simples e cantáveis (cerca de ${Math.round(MUS.duration*1.6)} sílabas). Responda só com a letra.`)).trim(); });
   drawRoll(); refreshApiBadges();
 }
 async function composeAndRender(newSeed){
   if (newSeed || !MUS.last) MUS.seed = (Math.random()*1e9)|0;
   MUS.last = composeMusic({genre: MUS.genre, bpm: MUS.bpm || 0, duration: MUS.duration, intensity: MUS.intensity, seed: MUS.seed, key: MUS.key >= 0 ? MUS.key : undefined, inst: MUS.inst});
+  const vv = $('muVoice').value, per = vv.startsWith('p:') ? VS.personas.find(p => p.name === vv.slice(2)) : null;
+  MUS.last.vocal = $('muVocalOn').checked ? {lyrics: $('muLyrics').value, voice: per ? per.voice : TTS_VOICES[vv.slice(2)] || TTS_VOICES['Feminina']} : null;
   MUS.lastMix = await renderComposition(MUS.last);
   $('muInfo').textContent = `${MUS.genre} · ${NOTE_NAMES[MUS.last.root]} ${({major:'maior',minor:'menor',dorian:'dórico',harmMinor:'menor harmônico'})[MUS.last.scaleName]} · ${MUS.last.bpm} BPM · ${MUS.last.bars} compassos · ${MUS.last.notes.length} notas`;
   drawRoll(); previewPCM(MUS.lastMix.L, MUS.lastMix.R, MUS.lastMix.sr);

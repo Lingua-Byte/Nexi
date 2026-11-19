@@ -6,7 +6,7 @@ const VID = {file: null, url: null, dur: 0, frames: [], cuts: [], plan: null};
 const VSTYLES = {
   'Cinematográfico': {cut:'Whoosh', hit:'Impacto de trailer', flash:'Impacto metálico', move:'Whoosh', music:'Épico cinematográfico'},
   'Realista / Foley': {cut:'Deslizar', hit:'Soco', flash:'Clique', move:'Tecido / roupa', music:'Ambiente'},
-  'Desenho animado': {cut:'Deslizar', hit:'Item / pop', flash:'Magia', move:'Pulo', music:'Chiptune'},
+  'Desenho animado': {cut:'Deslizar', hit:'Item / pop', flash:'Magia', move:'Pulo', music:'Pop'},
   'Jogo': {cut:'Whoosh', hit:'Dano', flash:'Power-up', move:'Laser / blaster', music:'Synthwave'},
   'Documentário': {cut:'Deslizar', hit:'Batida de suspense', flash:'Notificação', move:'Vento', music:'Ambiente'},
   'Terror / suspense': {cut:'Whoosh', hit:'Boom grave', flash:'Impacto metálico', move:'Porta rangendo', music:'Suspense'},
@@ -33,8 +33,8 @@ function buildVideoUI(){
       <label class="chk"><input type="checkbox" id="vdAmb" checked> Ambiente contínuo</label>
       <label class="chk"><input type="checkbox" id="vdMusic" checked> Trilha musical</label>
       <label class="chk"><input type="checkbox" id="vdOrig" checked> Manter áudio original (faixa silenciada)</label>
-      <label class="chk" data-need="anthropic"><input type="checkbox" id="vdNarr"> Narração escrita pela IA</label>
-      <label class="chk" data-need="eleven"><input type="checkbox" id="vdXiSfx"> Efeitos sob medida gerados por IA (ElevenLabs)</label>
+      <label class="chk"><input type="checkbox" id="vdNarr"> Narração (voz do NEXI)</label>
+      <label class="chk"><input type="checkbox" id="vdDescSfx" checked> Efeitos sob medida a partir da descrição de cada cena</label>
       <label class="chk"><input type="checkbox" id="vdMaster" checked> Mixar e masterizar automaticamente</label>
       <div class="row" style="margin-top:8px"><button class="btn grow" id="vdLocal">🔍 Analisar (local)</button><button class="btn grow" id="vdAI" data-need="anthropic">🤖 Entender a cena (Claude)</button></div>
       <div class="row" style="margin-top:6px"><button class="btn pri grow" id="vdGen">🎼 Gerar trilha no mixer</button></div>
@@ -118,7 +118,7 @@ async function aiPlan(){
 `Você está assistindo a um vídeo de ${VID.dur.toFixed(1)} s (quadros acima, com tempos). Cortes detectados automaticamente: ${VID.cuts.map(t => t.toFixed(2)).join(', ') || 'nenhum'}.
 Estilo pedido: ${$('vdStyle').value}. Densidade de efeitos: ${Math.round($('vdDensity').value*100)}%.
 Crie o plano de sound design: efeitos pontuais sincronizados com as ações visíveis (impactos, passos, portas, objetos, transições), um ambiente contínuo coerente com o lugar, a trilha musical e, se fizer sentido, uma narração curta em português do Brasil que caiba no tempo do vídeo.
-Para cada efeito, escolha o preset mais próximo da lista e escreva uma descrição em inglês precisa o bastante para gerar o som por IA.`});
+Para cada efeito, escolha o preset mais próximo da lista e escreva uma descrição curta em português do som (objeto, material, intensidade, distância), como “porta de madeira pesada batendo” ou “passos no cascalho”.`});
   const schema = {type:'object', additionalProperties:false, required:['summary','ambience','music','narration','events'], properties:{
     summary:{type:'string'},
     ambience:{type:'object', additionalProperties:false, required:['preset','description'], properties:{preset:{type:'string', enum: PRESET_NAMES}, description:{type:'string'}}},
@@ -161,12 +161,12 @@ function tileAmbience(r, dur){
 }
 async function generateSoundtrack(){
   if (!VID.url) throw new Error('carregue um vídeo'); if (!VID.plan){ await analyzeVideo(); VID.plan = localPlan(); renderPlan(); }
-  const p = VID.plan, sr = 48000, useXi = $('vdXiSfx').checked && apiKeys.eleven;
+  const p = VID.plan, sr = 48000, useDesc = $('vdDescSfx').checked;
   MIX.tracks = []; mixDirty();
   if ($('vdOrig').checked && VID.origClip){ addClipToMix(VID.origClip, 0, 'Áudio original'); const t = MIX.tracks.find(x => x.name === 'Áudio original'); t.mute = true; t.role = 'ambiente'; }
   for (let i=0; i<p.events.length; i++){
     const e = p.events[i]; setStatus(`Efeito ${i+1}/${p.events.length}…`); let id = null;
-    if (useXi){ try { id = await xiAudio('/v1/sound-generation', {json: {text: e.description, duration_seconds: 2.5, prompt_influence: 0.45}}, e.description.slice(0, 40), 'sfx'); } catch(err){ console.warn(err); } }
+    if (useDesc && e.description){ const dd = describeToSound(e.description); if (dd && dd.matched.length){ const r = await renderSound(varySound(dd.snd, 0.3), sr); id = addClip(`${dd.matched.join(' + ')} @${e.time.toFixed(1)}s`, r, 'sfx'); } }
     if (!id){ const d = presetByName(e.preset); if (!d) continue; const r = await renderSound(varySound(buildPreset(d), 0.35), sr); id = addClip(`${e.preset} @${e.time.toFixed(1)}s`, r, 'sfx'); }
     const d = presetByName(e.preset), cat = d ? d[0] : 'SFX';
     addClipToMix(id, Math.max(0, e.time), cat === 'Foley' ? 'Foley' : cat === 'Interface' ? 'Interface' : 'Efeitos');
@@ -175,10 +175,11 @@ async function generateSoundtrack(){
   if ($('vdAmb').checked && p.ambience?.preset){ setStatus('Ambiente…'); const d = presetByName(p.ambience.preset); if (d){ const r = await renderSound(buildPreset(d), sr); const id = addClip('Ambiente — ' + d[1], tileAmbience(r, VID.dur), 'ambiente'); addClipToMix(id, 0, 'Ambiente'); MIX.tracks.find(t => t.name === 'Ambiente').role = 'ambiente'; } }
   if ($('vdMusic').checked && p.music){ setStatus('Compondo música…'); const m = composeMusic({genre: p.music.genre, bpm: clamp(p.music.tempo, 60, 180), duration: VID.dur, intensity: p.music.intensity, seed: hashStr(VID.file.name)});
     const r = await renderComposition(m); const id = addClip(`Música — ${p.music.genre}`, r, 'música'); addClipToMix(id, 0, 'Música'); MIX.tracks.find(t => t.name === 'Música').role = 'música'; }
-  if ($('vdNarr').checked && apiKeys.eleven){
+  if ($('vdNarr').checked){
     let text = p.narration?.enabled ? p.narration.text : '';
     if (!text && apiKeys.anthropic) text = (await claudeText(`Escreva uma narração curta em português do Brasil (no máximo ${Math.round(VID.dur*2.3)} palavras) para um vídeo assim: ${p.summary}. Responda só com o texto.`)).trim();
-    if (text){ setStatus('Narração…'); const id = await ttsEleven(text, VS.tts, 'Narração'); const r = await processVoice(CLIPS.get(id), VS.proc); const nid = addClip('Narração', r, 'voz'); addClipToMix(nid, 0.5, 'Voz · Narração'); }
+    if (!text) toast('Sem texto de narração: use a análise com a Claude ou escreva na aba Voz');
+    if (text){ setStatus('Narração…'); const raw = speak(applyLexicon(text), VS.voice, TTS_SR, 5); const r = await processVoice(raw, {...VS.proc, pauseMs: 0}); const nid = addClip('Narração', r, 'voz'); addClipToMix(nid, 0.5, 'Voz · Narração'); }
   }
   if ($('vdMaster').checked){ setStatus('Mixando e masterizando…'); await mixAssistant(); MIX.master.dest = 'YouTube (−14 LUFS)'; mixRendered = await renderMix(); masterAssistant(mixRendered); mixMastered = await applyMastering(mixRendered); }
   MIX.playhead = 0; toast('Trilha gerada! Clique em “Assistir com a trilha”.');

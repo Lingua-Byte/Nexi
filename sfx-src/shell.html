@@ -179,6 +179,12 @@ input[type=password]{background:var(--panel2);border:1px solid var(--line);borde
         </div>
       </div>
     </div>
+      <div class="card">
+      <h2>Descrever um som</h2>
+      <textarea id="descText" rows="3" placeholder="Ex.: porta de madeira pesada batendo com eco, depois passos no cascalho"></textarea>
+      <div class="row" style="margin-top:6px"><button class="btn pri grow" id="bDesc">✨ Criar</button><button class="btn grow" id="bDescAI" data-need="anthropic">🤖 Criar com IA</button></div>
+      <div class="hint" id="descInfo">Entende objetos (porta, vidro, trovão, motor, passos, chuva…), materiais e modificadores (pesado, distante, metálico, com eco, abafado, três vezes…). Tudo sintetizado aqui.</div>
+    </div>
   </aside>
 
   <main>
@@ -277,12 +283,10 @@ input[type=password]{background:var(--panel2);border:1px solid var(--line);borde
 <section data-mod="music" hidden><div id="musicRoot"></div></section>
 <section data-mod="inst" hidden><div id="instRoot"></div></section>
 <section data-mod="settings" hidden>
-  <div class="card settings"><h2>Chaves de API (opcionais)</h2>
-    <p class="hint" style="font-size:.8rem">Quase tudo no NEXI SFX roda no seu navegador, sem internet. Duas integrações opcionais ampliam o que dá para fazer com IA generativa. As chaves ficam salvas só neste navegador e vão direto para cada serviço.</p>
+  <div class="card settings"><h2>Chave de API (opcional)</h2>
+    <p class="hint" style="font-size:.8rem">Tudo no NEXI SFX é sintetizado no seu aparelho, sem internet: efeitos, vozes, música, mixagem e masterização. A chave da Claude é opcional e só acrescenta compreensão de linguagem e imagem: entender vídeos, refinar personas, escrever roteiros e letras, e projetar sons a partir de descrições livres. A chave fica salva só neste navegador.</p>
     <label class="lbl" for="keyAnthropic">Anthropic (Claude): entender vídeos, criar personas, escrever roteiros e narrações, traduzir dublagens</label>
     <input type="password" id="keyAnthropic" placeholder="sk-ant-…" autocomplete="off">
-    <label class="lbl" for="keyEleven">ElevenLabs: vozes neurais, clonagem, criação de vozes, troca de voz, isolamento, transcrição, efeitos e música com IA</label>
-    <input type="password" id="keyEleven" placeholder="chave xi-api-key" autocomplete="off">
     <div class="row" style="margin-top:10px"><button class="btn pri" id="bSaveKeys">Salvar</button><button class="btn" id="bTestKeys">Testar conexão</button><button class="btn" id="bClearKeys">Apagar chaves</button></div>
     <div class="hint" id="keyStatus"></div>
   </div>
