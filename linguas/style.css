@@ -380,3 +380,4 @@ a.cta { text-decoration: none; }
 .install p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.35; }
 .install .cta { grid-column: 1 / -1; }
 .toast { border-radius: 18px; }
+.install .apk { grid-column: 1 / -1; text-decoration: none; color: var(--ink); text-transform: none; font-size: 12.5px; }

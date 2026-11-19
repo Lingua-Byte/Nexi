@@ -23,6 +23,7 @@ self.addEventListener('fetch', e => {
   const isFont = /fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
   const same = url.origin === location.origin;
   if (!same && !isFont) return;
+  if (url.pathname.endsWith('.apk')) return;   // o APK vai direto da rede
   // Rede primeiro, sem cache HTTP (sempre a versão mais nova); cache só quando estiver offline.
   const net = same ? fetch(url.href, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(e.request);
   e.respondWith(

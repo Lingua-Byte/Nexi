@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '1.4', t: 'APK para Android' },
     { v: '1.3', t: 'app instalável que se atualiza sozinho' },
     { v: '1.2', t: 'diário livre com correção' },
     { v: '1.1', t: 'meus verbos e escrita à mão' }
@@ -823,7 +824,24 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; if (!location.hash || location.hash === '#/') renderHome(); });
   window.addEventListener('appinstalled', () => { installEvt = null; toast('RAIZ instalado! Abra pelo ícone.'); if (!location.hash || location.hash === '#/') renderHome(); });
+  const apkMatch = navigator.userAgent.match(/RAIZAPK\/(\d+)\/(\d+)/);   // dentro do APK
+  const inApk = !!apkMatch || !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  let apkInfo = null;
+  function loadApkInfo() {
+    fetch('apk.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(j => {
+      if (!j) return; apkInfo = j;
+      if (!location.hash || location.hash === '#/') renderHome();
+    }).catch(() => {});
+  }
   function installCard() {
+    if (inApk) {
+      // O conteúdo já se atualiza sozinho; só avisa quando a parte nativa do APK mudou.
+      const native = apkMatch ? +apkMatch[1] : 0;
+      if (!apkInfo || !native || apkInfo.native <= native) return '';
+      return `<section class="install enter"><div class="inst-ico" aria-hidden="true">R</div>
+        <div><b>Novo APK do RAIZ</b><span>Versão ${esc(apkInfo.versionName)} com melhorias no app Android. Baixe e instale por cima — seu progresso continua.</span></div>
+        <a class="cta" href="RAIZ.apk" download>Baixar APK</a></section>`;
+    }
     if (standalone()) return '';
     const how = installEvt ? '' : isIOS
       ? '<p>No iPhone: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.</p>'
@@ -832,6 +850,7 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
       <div class="inst-ico" aria-hidden="true">R</div>
       <div><b>Instale o RAIZ</b><span>Vira um app no seu celular: ícone próprio, tela cheia, funciona sem internet e se atualiza sozinho.</span>${how}</div>
       ${installEvt ? '<button class="cta" id="install">Instalar app</button>' : ''}
+      ${apkInfo && !isIOS ? `<a class="btn apk" href="RAIZ.apk" download>⬇ Baixar APK para Android · v${esc(apkInfo.versionName)}</a>` : ''}
     </section>`;
   }
   function bindInstall() {
@@ -870,6 +889,7 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
     });
   }
   announceNews();
+  if (location.protocol !== 'file:') loadApkInfo();
 
   route();
 })();
