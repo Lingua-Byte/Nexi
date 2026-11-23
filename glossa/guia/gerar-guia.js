@@ -4,6 +4,7 @@ const path = require('path');
 const E = path.join(__dirname, '..', 'estudio');
 const { chromium } = require(path.join(E, 'node_modules', 'playwright'));
 const { lista } = require(path.join(E, 'plano.js'));
+const { creditoTexto } = require(path.join(E, 'trilhas.js'));
 const F = 'file://' + path.join(E, 'node_modules', '@fontsource');
 
 const TAGS = {
@@ -29,7 +30,7 @@ const posts = semana1.map(v => {
   return `<div class="post"><div class="post-h"><span class="mono">DIA ${v.dia} · ${v.hora} · ${v.id}</span><b>${esc(v.titulo)}</b></div>
   <table class="kv">
    <tr><th>YouTube · título</th><td>${esc(v.titulo)} ${tags.slice(0, 2).join(' ')} #shorts</td></tr>
-   <tr><th>YouTube · descrição</th><td>${esc(v.legenda)}<br>Fonte: ${esc(v.fonte)}<br>${tags.slice(0, 3).join(' ')}</td></tr>
+   <tr><th>YouTube · descrição</th><td>${esc(v.legenda)}<br>Fonte: ${esc(v.fonte)}<br>${esc(creditoTexto(v))}<br>${tags.slice(0, 3).join(' ')}</td></tr>
    <tr><th>Instagram · legenda</th><td>${esc(v.gancho.replace(/<[^>]+>/g, ''))}<br>${esc(v.legenda)}<br>${esc(cta)}<br>${tags.slice(0, 4).join(' ')}</td></tr>
    <tr><th>TikTok · legenda</th><td>${esc(v.titulo)}: ${esc(v.legenda)} ${tags.join(' ')}</td></tr>
    <tr><th>Comentário fixado</th><td>📚 Fonte: ${esc(v.fonte)}${prox ? `<br>▶ ${esc(prox)}` : ''}</td></tr>
@@ -77,10 +78,11 @@ const H = `
 <li><b>Confira o fato</b> na fonte do <span class="mono">posts.txt</span>.</li>
 <li>A fonte vai no <b>comentário fixado</b>, em todas as redes.</li>
 </ul></div><div>
-<h3>Música</h3><ul>
-<li>Use só músicas da biblioteca da própria rede (a "Biblioteca de áudio" do YouTube, os sons do Instagram e do TikTok).</li>
-<li>Volume da música bem baixo, sem cobrir a narração. Instrumental calmo (lo-fi, piano).</li>
-<li>Em conta comercial, o Instagram e o TikTok limitam as músicas famosas. Prefira os sons "livres para uso comercial".</li>
+<h3>Música: só clássica em domínio público</h3><ul>
+<li>Todo vídeo já sai do estúdio com <b>trilha clássica embutida</b> (Bach, Mozart, Haydn, Schubert, Corelli, Beethoven…), mixada baixa sob a voz. <b>Não adicione música na rede.</b></li>
+<li>Domínio público vale para a <b>composição e para a gravação</b>. As trilhas são interpretações geradas pelo próprio estúdio a partir de partituras abertas, ou gravações do Wikimedia Commons marcadas como domínio público ou CC0 (script <span class="mono">baixar_trilhas.py</span>).</li>
+<li>Cada quadro tem sua música-tema, e o crédito vai na descrição e no <span class="mono">posts.txt</span>.</li>
+<li>Se o Content ID reivindicar um vídeo por engano, conteste: "obra em domínio público, interpretação própria".</li>
 </ul>
 <h3>IA e transparência</h3><ul>
 <li>Narração com voz de IA e animações gráficas não costumam exigir rótulo ⚠.</li>
@@ -145,7 +147,7 @@ const H = `
 <li><b>+ → Reel</b> → envie o MP4. Não use a legenda automática.</li>
 <li><b>Capa:</b> escolha o quadro do gancho. ⚠ O grid do perfil corta o Reel em 3:4 (corta o topo e a base), então confira se o texto do gancho continua visível no recorte.</li>
 <li><b>Legenda:</b> primeira linha = o gancho (é o que aparece antes do "mais"), depois a explicação curta, o CTA e 3–5 hashtags.</li>
-<li><b>Áudio:</b> som da biblioteca, com o volume baixo.</li>
+<li><b>Áudio:</b> não adicione som: a trilha clássica já está no vídeo.</li>
 <li><b>Opções avançadas → Agendar.</b></li>
 <li><b>Reels de teste ("Trial Reels")</b> ⚠: mostra o Reel primeiro só para quem não segue você. Use para testar dois ganchos diferentes do mesmo vídeo.</li>
 <li><b>Colaboração:</b> convide perfis de professores, escolas de idiomas ou vestibular como "colaborador". O Reel aparece nos dois perfis.</li>
@@ -194,6 +196,7 @@ const H = `
 <li>Use o <b>TikTok Studio no computador</b> (tiktok.com/tiktokstudio): envie o MP4 e agende (dá para agendar com alguns dias de antecedência ⚠).</li>
 <li><b>Legenda:</b> o TikTok funciona como buscador. Escreva a frase com as palavras que alguém pesquisaria: "origem da palavra algoritmo", "de onde vem a palavra forró". Depois, 3–5 hashtags.</li>
 <li><b>Capa:</b> o quadro do gancho, com o título.</li>
+<li>Não adicione som do TikTok: a trilha clássica já está no vídeo.</li>
 <li>Permita <b>Dueto</b> e <b>Costura</b>. Professores e curiosos vão reagir, e isso é divulgação gratuita.</li>
 <li>Não ative legendas automáticas (a legenda já está no vídeo).</li>
 <li>Fixe o comentário com a fonte. Responda comentários com vídeo-resposta: o recurso "responder com vídeo" gera um vídeo novo sem esforço.</li>
@@ -270,7 +273,7 @@ const H = `
 <section class="pg">
 <div class="eb mono">08 · Regras e riscos</div><h2>O que pode derrubar o canal (e como evitar)</h2>
 <table class="t"><tbody>
-<tr><td><b>Direitos autorais</b></td><td>Imagens só de domínio público ou geradas por você. Música só das bibliotecas das redes. Nada de trechos de filmes, séries ou capas de livros com marca de editora.</td></tr>
+<tr><td><b>Direitos autorais</b></td><td>Imagens só de domínio público ou geradas por você. Música só clássica em domínio público (composição e gravação), já embutida pelo estúdio. Nada de trechos de filmes, séries ou capas de livros com marca de editora.</td></tr>
 <tr><td><b>Conteúdo repetitivo</b></td><td>No YouTube, a política de "conteúdo inautêntico" desmonetiza canais com vídeos em massa e iguais. O Glossa varia formatos, roteiros e temas. Mantenha isso e não reaproveite o mesmo roteiro trocando só a palavra.</td></tr>
 <tr><td><b>Desinformação</b></td><td>Um erro factual viral destrói a credibilidade, que é a marca do canal. Fonte em todo vídeo; correção pública quando errar.</td></tr>
 <tr><td><b>Spam e crescimento falso</b></td><td>Nada de comprar seguidores ou visualizações, "segue que eu sigo" ou grupos de engajamento. As redes detectam e cortam o alcance.</td></tr>

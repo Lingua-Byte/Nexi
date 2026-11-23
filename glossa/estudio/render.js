@@ -48,7 +48,7 @@ async function renderizar(ID, opts = {}) {
     await browser.close(); return;
   }
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-',
-    '-i', path.join(dir, 'narracao.m4a'), '-filter_complex', '[1:a]apad[a]', '-map', '0:v', '-map', '[a]',
+    '-i', fs.existsSync(path.join(dir, 'audio-final.m4a')) ? path.join(dir, 'audio-final.m4a') : path.join(dir, 'narracao.m4a'), '-filter_complex', '[1:a]apad[a]', '-map', '0:v', '-map', '[a]',
     '-c:v', 'libx264', '-preset', 'slow', '-tune', 'stillimage', '-crf', '21', '-pix_fmt', 'yuv420p', '-r', String(FPS),
     '-c:a', 'aac', '-b:a', '160k', '-t', dur.toFixed(2), '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const total = Math.ceil(dur * FPS);

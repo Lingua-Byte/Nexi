@@ -24,3 +24,9 @@ node semana.js A1 C1      # vídeos específicos
 - `PREVIEW="5,15,25"`: só salva quadros PNG para conferir.
 - A narração só é refeita quando o texto muda. Para trocar a voz, use `voz: 'pt-BR-FranciscaNeural'` no roteiro.
 - O texto do post (legenda e fonte) de cada vídeo fica em `videos/<ID>/post.txt`.
+
+## Trilhas (música clássica em domínio público)
+- `python musica.py`: gera a biblioteca `trilhas/` com interpretações próprias de partituras em domínio público (corpus aberto do music21). Composição e gravação ficam livres. Requer `pip install music21 numpy scipy`.
+- `python baixar_trilhas.py`: troca as trilhas por gravações reais do Wikimedia Commons, só com licença domínio público ou CC0 (a licença é conferida automaticamente). Rode no PC.
+- `node remixar.js 1 2 3`: aplica as trilhas em vídeos já renderizados, sem renderizar a imagem de novo. Os vídeos novos já saem com trilha.
+- A música-tema de cada quadro fica em `trilhas.js` (TEMAS). O crédito vai no `post.txt` e no `posts.txt` do ZIP.

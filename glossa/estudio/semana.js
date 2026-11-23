@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 const { porId } = require('./plano');
 const { renderizar } = require('./render');
+const { mixar, creditoTexto } = require('./trilhas');
 
 const PY = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
 const args = process.argv.slice(2);
@@ -41,7 +42,10 @@ function montar(s) {
   });
   fs.writeFileSync(path.join(dir, 'video.json'), JSON.stringify({ id: s.id, titulo: info.titulo, cor: info.cor, selo: info.quadro, cenas }, null, 1));
   // texto do post (legenda + hashtags) para copiar na hora de publicar
-  fs.writeFileSync(path.join(dir, 'post.txt'), `${info.titulo}\n\n${info.legenda}\n\nFonte: ${info.fonte}\n`);
+  fs.writeFileSync(path.join(dir, 'post.txt'), `${info.titulo}\n\n${info.legenda}\n\nFonte: ${info.fonte}\n${creditoTexto(info)}\n`);
+  // trilha clássica (domínio público) mixada sob a narração
+  const pal = JSON.parse(fs.readFileSync(path.join(dir, 'narracao.json'), 'utf8'));
+  mixar(info, pal[pal.length - 1].e + 1.2);
 }
 
 (async () => {

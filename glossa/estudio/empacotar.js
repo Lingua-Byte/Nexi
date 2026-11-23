@@ -2,6 +2,7 @@
 // Uso: node empacotar.js 1   → saida/Glossa-Dia-1.zip
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const { lista } = require('./plano');
+const { creditoTexto } = require('./trilhas');
 const dia = +process.argv[2];
 const tmp = path.join(__dirname, 'saida', `Glossa-Dia-${dia}`);
 fs.rmSync(tmp, { recursive: true, force: true }); fs.mkdirSync(tmp, { recursive: true });
@@ -12,7 +13,7 @@ for (const v of lista.filter(v => v.dia === dia)) {
   if (!fs.existsSync(src)) { console.log('falta', v.id); continue; }
   const nome = `${v.hora}-${v.id}-${slug(v.titulo)}.mp4`;
   fs.copyFileSync(src, path.join(tmp, nome));
-  posts += `── ${v.hora} · ${v.quadro} · ${nome}\nTÍTULO: ${v.titulo}\nLEGENDA: ${v.legenda}\nFONTE (comentário fixado): ${v.fonte}\n\n`;
+  posts += `── ${v.hora} · ${v.quadro} · ${nome}\nTÍTULO: ${v.titulo}\nLEGENDA: ${v.legenda}\nFONTE (comentário fixado): ${v.fonte}\n${creditoTexto(v)}\n\n`;
 }
 fs.writeFileSync(path.join(tmp, 'posts.txt'), posts);
 const zip = path.join(__dirname, 'saida', `Glossa-Dia-${dia}.zip`);
