@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<style>
+@font-face { font-family: 'DM Serif Display'; src: url('node_modules/@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'DM Serif Display'; src: url('node_modules/@fontsource/dm-serif-display/files/dm-serif-display-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: 'Archivo'; font-weight: 800; src: url('node_modules/@fontsource/archivo/files/archivo-latin-800-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 900; src: url('node_modules/@fontsource/archivo/files/archivo-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; src: url('node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Sans'; src: url('node_modules/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff2') format('woff2'); }
+:root { --grafite:#0E0E10; --creme:#F2EAD8; --creme2:rgba(242,234,216,.62); --creme3:rgba(242,234,216,.38); --ambar:#E8A33D; --c:#E8A33D; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--grafite); }
+#tela { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: var(--creme); font-family: 'Archivo', sans-serif; }
+#fundo { position: absolute; inset: -60px; background:
+  radial-gradient(ellipse at 50% 38%, rgba(242,234,216,.06), transparent 60%),
+  radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.3px) 0 0 / 9px 9px,
+  radial-gradient(rgba(255,255,255,.35) 1px, transparent 1.2px) 4px 6px / 13px 13px;
+  opacity: .9; }
+#fundo::after { content:""; position:absolute; inset:0; background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0,0,0,.65) 100%); }
+#grao { position:absolute; inset:0; background: var(--grafite); opacity: .92; }
+.selo { position: absolute; top: 64px; left: 64px; display: flex; align-items: center; gap: 18px; font-weight: 800; font-size: 34px; letter-spacing: .1em; text-transform: uppercase; }
+.selo i { width: 24px; height: 24px; border-radius: 50%; background: var(--c); display: block; }
+.marca { position: absolute; top: 52px; right: 176px; font-family: 'DM Serif Display', serif; font-size: 46px; color: var(--creme3); }
+.marca b { color: var(--ambar); font-weight: 400; }
+.glos { position: absolute; top: 128px; left: 64px; font-family: 'IBM Plex Mono', monospace; font-size: 26px; letter-spacing: .12em; color: var(--c); }
+.cena { position: absolute; inset: 0; }
+.gancho { position: absolute; left: 64px; right: 176px; top: 230px; font-weight: 900; font-size: 92px; line-height: 1.02; text-transform: uppercase; }
+.gancho mark { background: none; color: var(--creme); box-shadow: inset 0 -26px 0 var(--c); }
+.palavra { position: absolute; left: 0; right: 0; top: 760px; text-align: center; font-family: 'DM Serif Display', serif; font-size: 190px; line-height: 1; }
+.palavra small { display: block; font-family: 'Noto Sans','DejaVu Sans', sans-serif; font-size: 46px; color: var(--creme3); margin-top: 28px; }
+.meta { font-family: 'IBM Plex Mono', monospace; font-size: 32px; letter-spacing: .12em; color: var(--creme3); text-transform: uppercase; }
+.bloco { position: absolute; left: 80px; right: 176px; }
+.titulo-serif { font-family: 'DM Serif Display', serif; font-size: 120px; line-height: 1; }
+.no { border-left: 10px solid var(--c); padding: 14px 0 14px 36px; }
+.no .w { font-family: 'DM Serif Display', serif; font-size: 104px; line-height: 1.02; }
+.no .m { margin-top: 10px; }
+.seta { font-family: 'IBM Plex Mono', monospace; color: var(--c); font-size: 64px; padding-left: 34px; line-height: 1.1; }
+.digitos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 10px; text-align: center; font-family: 'DM Serif Display', serif; font-size: 150px; line-height: 1.05; }
+.carimbo { position: absolute; font-weight: 900; letter-spacing: .06em; color: var(--c); border: 14px solid currentColor; border-radius: 22px; padding: 6px 40px; }
+.cartao { border: 2px solid rgba(242,234,216,.18); border-radius: 28px; padding: 50px 54px; background: rgba(242,234,216,.04); }
+.legenda { position: absolute; left: 70px; right: 176px; top: 1300px; text-align: center; font-weight: 900; font-size: 84px; line-height: 1.06; text-transform: uppercase; text-shadow: 0 6px 0 rgba(0,0,0,.6); }
+.legenda .ativa { color: var(--ambar); }
+canvas { position: absolute; }
+</style></head>
+<body><div id="tela"><div id="grao"></div><div id="fundo"></div><div id="camada"></div><div class="legenda" id="leg"></div></div>
+<script>
+// DADOS é injetado pelo render.js: { cor, selo, glossario, cenas:[{tipo, ini, fim, ...}], palavras:[{w,s,e}], dur }
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let D;
+function iniciar(dados) {
+  D = dados;
+  document.documentElement.style.setProperty('--c', D.cor);
+  // grupos de legenda: até 3 palavras, quebra em pontuação
+  const g = []; let cur = [];
+  D.palavras.forEach((p, i) => {
+    cur.push(i);
+    const prox = D.palavras[i + 1];
+    const pausa = !prox || prox.s - p.e > 0.16 || /[.,:;?!]["”]?$/.test(p.w);
+    if (cur.length === 3 || pausa) { g.push(cur); cur = []; }
+  });
+  D.grupos = g;
+}
+function legenda(t) {
+  const P = D.palavras; let html = '';
+  for (let k = 0; k < D.grupos.length; k++) {
+    const gr = D.grupos[k]; const ini = P[gr[0]].s; const prox = D.grupos[k + 1] ? P[D.grupos[k + 1][0]].s : D.dur;
+    if (t >= ini - 0.05 && t < Math.min(prox, P[gr[gr.length - 1]].e + 0.6)) {
+      html = gr.map((i, j) => {
+        const fimW = gr[j + 1] !== undefined ? P[gr[j + 1]].s : P[i].e + 0.6;
+        const w = esc(P[i].w.replace(/["“”.,:;!?]/g, ''));
+        return t >= P[i].s - 0.03 && t < fimW ? `<span class="ativa">${w}</span>` : w;
+      }).join(' ');
+      break;
+    }
+  }
+  $('#leg').innerHTML = html;
+}
+// --- mapa em pontos (Oriente Médio e Ásia Central, estilizado) ---
+const MAR = [
+  [[25,30],[36,31.5],[36.2,36.8],[30,37],[26,40.5],[25,41]], // Mediterrâneo
+  [[27.5,41],[41.5,41],[41.5,46.8],[27.5,46.8]], // Mar Negro
+  [[47,37],[49,37.3],[54,37],[53.5,41],[54,45],[52,47],[49,46.8],[47,44],[49,41.5]], // Cáspio
+  [[58.2,44],[61.2,44],[61.2,46.3],[58.2,46.3]], // Aral
+  [[48,30.2],[50.3,29.3],[52,27.6],[56.3,26.6],[56.6,24.8],[54,24],[51.5,24.6],[50,26.4],[48.5,28.6]], // Golfo Pérsico
+  [[32.3,30],[34.5,28],[37.5,24],[40,20],[42.6,15],[43.5,12.6],[42.3,13.6],[39.2,17.5],[36,22],[34,25.8],[32.6,29.4]], // Mar Vermelho
+  [[43.4,12],[51,11.5],[52.5,15.5],[57.5,18.5],[59.8,22.3],[56.6,24.6],[57.2,25.5],[61.5,25.2],[66.6,25.4],[72,21],[75,15],[75,5],[43,5]], // Mar Arábico
+];
+function dentro(pt, poly) { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if (((yi > pt[1]) !== (yj > pt[1])) && (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi)) c = !c; } return c; }
+function mapa(ctx, W, H, t, pontos, rota, a) {
+  const lon = x => 25 + x / W * 50, lat = y => 50 - y / H * 42;
+  const X = l => (l - 25) / 50 * W, Y = la => (50 - la) / 42 * H;
+  ctx.clearRect(0, 0, W, H); const passo = 24;
+  for (let x = passo / 2; x < W; x += passo) for (let y = passo / 2; y < H; y += passo) {
+    const p = [lon(x), lat(y)]; if (MAR.some(m => dentro(p, m))) continue;
+    ctx.beginPath(); ctx.arc(x, y, 3.6, 0, 6.3); ctx.fillStyle = `rgba(242,234,216,${0.34 * a})`; ctx.fill();
+  }
+  const cor = getComputedStyle(document.documentElement).getPropertyValue('--c').trim();
+  if (rota && rota.length === 2) {
+    const [p, q] = rota.map(r => [X(r[0]), Y(r[1])]); const k = ease((t - rota.t0) / 1.2);
+    ctx.setLineDash([16, 14]); ctx.lineWidth = 5; ctx.strokeStyle = cor; ctx.globalAlpha = a;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+  }
+  pontos.forEach(pt => {
+    const k = ease((t - pt.t0) / 0.6); if (k <= 0) return;
+    const x = X(pt.lon), y = Y(pt.lat), pulso = 1 + 0.25 * Math.sin(t * 4);
+    const g = ctx.createRadialGradient(x, y, 0, x, y, 90 * pulso * k);
+    g.addColorStop(0, cor + 'cc'); g.addColorStop(1, cor + '00'); ctx.fillStyle = g; ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, 90 * pulso * k, 0, 6.3); ctx.fill();
+    ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(x, y, 14 * k, 0, 6.3); ctx.fill();
+    ctx.font = '500 34px "IBM Plex Mono"'; ctx.fillStyle = 'rgba(242,234,216,.9)'; ctx.textAlign = pt.alinhar || 'left';
+    ctx.fillText(pt.rotulo, x + (pt.alinhar === 'right' ? -30 : 30), y - 26); ctx.globalAlpha = 1;
+  });
+}
+// --- cenas ---
+function vis(t, c) { // opacidade + deslocamento de entrada/saída
+  const e = ease((t - c.ini) / 0.4), s = 1 - ease((t - (c.fim - 0.3)) / 0.3);
+  return { a: Math.min(e, s), dy: (1 - e) * 50 };
+}
+const R = {
+  palavra(c, t, v) {
+    const n = Math.round(clamp((t - c.ini - 0.2) / 0.9) * c.palavra.length);
+    return `<div class="gancho" style="opacity:${ease((t - c.ini) / 0.25)}">${c.gancho}</div>
+      <div class="palavra" style="transform:translateY(${v.dy}px)">${esc(c.palavra.slice(0, n))}<span style="opacity:.0">${esc(c.palavra.slice(n))}</span>
+      <small style="opacity:${ease((t - c.ini - 1.2) / 0.5)}">${esc(c.ipa || '')}</small></div>`;
+  },
+  mapa(c, t, v) {
+    return `<canvas id="cv" width="1080" height="900" style="left:0;top:520px"></canvas>
+      <div class="bloco" style="top:250px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
+      <div class="titulo-serif" style="margin-top:18px;font-size:${c.tamanho || 112}px">${esc(c.titulo)}</div>
+      <div class="meta" style="margin-top:16px;color:var(--creme2)">${esc(c.sub || '')}</div></div>`;
+  },
+  digitos(c, t, v) {
+    const ds = c.itens.map((d, i) => `<span style="opacity:${ease((t - c.ini - 0.5 - i * 0.12) / 0.3)}">${esc(d)}</span>`).join('');
+    return `<div class="bloco" style="top:300px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
+      <div class="titulo-serif" style="margin:20px 0 70px;font-size:96px">${esc(c.titulo)}</div>
+      <div class="cartao"><div class="digitos">${ds}</div><div class="meta" style="margin-top:34px;color:var(--c)">${esc(c.rodape)}</div></div></div>`;
+  },
+  citacao(c, t, v) {
+    return `<div class="bloco" style="top:360px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
+      <div class="cartao" style="margin-top:40px"><div class="titulo-serif" style="font-style:italic;font-size:118px">“${esc(c.texto)}”</div>
+      <div class="meta" style="margin-top:36px;color:var(--c);opacity:${ease((t - c.tTraducao) / 0.4)}">${esc(c.traducao)}</div></div></div>`;
+  },
+  etimo(c, t, v) {
+    const nos = c.nos.map((n, i) => {
+      const a = ease((t - n.t0) / 0.45);
+      const seta = i ? `<div class="seta" style="opacity:${a}">↓</div>` : '';
+      const ws = Array.isArray(n.w) ? n.w.map(w => esc(w)).join('<span style="color:var(--creme3)"> · </span>') : esc(n.w);
+      return `${seta}<div class="no" style="opacity:${a};transform:translateX(${(1 - a) * -40}px)"><div class="w">${ws}</div><div class="meta m">${esc(n.m)}</div></div>`;
+    }).join('');
+    return `<div class="bloco" style="top:${c.topo || 300}px">${nos}</div>`;
+  },
+  transforma(c, t, v) {
+    const k = ease((t - c.tVira) / 0.5);
+    return `<div class="bloco" style="top:430px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
+      <div class="no" style="margin-top:40px"><div class="w">${esc(c.de)}</div><div class="meta m">${esc(c.metaDe)}</div></div>
+      <div class="seta" style="opacity:${k}">↓</div>
+      <div class="no" style="opacity:${k};transform:scale(${0.9 + 0.1 * k});transform-origin:left"><div class="w" style="font-size:150px">${esc(c.para)}</div><div class="meta m">${esc(c.metaPara)}</div></div></div>`;
+  },
+  glossario(c, t, v) {
+    const k = ease((t - c.ini - 0.2) / 0.5);
+    return `<div class="bloco" style="top:330px;transform:translateY(${v.dy}px)">
+      <div class="meta" style="color:var(--c)">GLOSSÁRIO GLOSSA</div>
+      <div class="cartao" style="margin-top:34px;border-color:var(--c)">
+        <div class="meta">TERMO Nº ${c.numero}</div>
+        <div class="titulo-serif" style="font-size:150px;margin:18px 0 26px;transform:scale(${0.92 + 0.08 * k});transform-origin:left">${esc(c.termo)}</div>
+        <div style="font-family:'Noto Sans','DejaVu Sans';font-size:44px;color:var(--creme2)">${esc(c.ipa || '')}</div>
+        <div style="font-weight:800;font-size:54px;line-height:1.2;margin-top:34px">${c.definicao}</div>
+        <div class="meta" style="margin-top:30px;opacity:${ease((t - c.tExemplos) / 0.4)}">${esc(c.exemplos || '')}</div>
+      </div></div>`;
+  },
+  proximo(c, t, v) {
+    return `<div class="bloco" style="top:470px;transform:translateY(${v.dy}px);--c:${c.cor}">
+      <div class="meta">A SEGUIR · ${esc(c.hora)}</div>
+      <div class="selo" style="position:static;margin:34px 0 30px"><i></i>${esc(c.quadro)}</div>
+      <div class="gancho" style="position:static">${c.titulo}</div>
+      <div class="meta" style="margin-top:60px">Siga o Glossa · a língua por dentro</div></div>`;
+  },
+};
+function quadro(t) {
+  // fundo fixo: textura parada comprime muito melhor
+  let html = `<div class="selo"><i></i>${esc(D.selo)}</div><div class="marca">G<b>.</b></div>`;
+  if (D.glossario) html += `<div class="glos">${esc(D.glossario)}</div>`;
+  const ativas = D.cenas.filter(c => t >= c.ini && t < c.fim);
+  let pedidosMapa = [];
+  ativas.forEach(c => { const v = vis(t, c); html += `<div class="cena" style="opacity:${v.a}">${R[c.tipo](c, t, v)}</div>`; if (c.tipo === 'mapa') pedidosMapa.push([c, v]); });
+  $('#camada').innerHTML = html;
+  pedidosMapa.forEach(([c, v]) => { const cv = $('#cv'); if (cv) { const rota = c.rota ? Object.assign(c.rota.map(r => [r.lon, r.lat]), { t0: c.rota[0].t0 }) : null; mapa(cv.getContext('2d'), 1080, 900, t, c.pontos, rota, 1); } });
+  legenda(t);
+}
+</script></body></html>

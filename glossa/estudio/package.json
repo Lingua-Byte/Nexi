@@ -1,0 +1,13 @@
+{
+  "name": "glossa-estudio",
+  "private": true,
+  "description": "Gera os Shorts do Glossa (9:16) a partir dos roteiros",
+  "scripts": { "video": "node render.js" },
+  "dependencies": {
+    "@fontsource/archivo": "^5.0.0",
+    "@fontsource/dm-serif-display": "^5.0.0",
+    "@fontsource/ibm-plex-mono": "^5.0.0",
+    "@fontsource/noto-sans": "^5.0.0",
+    "playwright": "^1.47.0"
+  }
+}

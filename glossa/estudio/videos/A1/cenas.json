@@ -1,0 +1,29 @@
+{
+  "id": "A1",
+  "titulo": "Algoritmo é nome de gente",
+  "cor": "#E8A33D",
+  "selo": "De Onde Vem?",
+  "glossario": "TERMO Nº 1 · EPÔNIMO",
+  "glossarioDesde": "Quando",
+  "cenas": [
+    { "tipo": "palavra", "em": 0, "gancho": "Algoritmo = <mark>um homem</mark>", "palavra": "algoritmo", "ipa": "/al.ɡoˈɾit͡ʃi.mu/" },
+    { "tipo": "mapa", "em": "No", "meta": "Bagdá · século IX", "titulo": "al-Khwārizmī", "sub": "matemático persa · “o de Khwarazm”",
+      "pontos": [
+        { "lon": 44.4, "lat": 33.3, "rotulo": "BAGDÁ", "em": "Bagdá" },
+        { "lon": 60.4, "lat": 41.4, "rotulo": "KHWARAZM", "em": "Khwarazm", "alinhar": "right" }
+      ],
+      "rota": [ { "lon": 60.4, "lat": 41.4, "em": "Khwarazm" }, { "lon": 44.4, "lat": 33.3 } ] },
+    { "tipo": "digitos", "em": "Ele", "meta": "O livro", "titulo": "os algarismos indianos", "itens": ["1","2","3","4","5","6","7","8","9","0"], "rodape": "Índia → mundo árabe → Europa → você" },
+    { "tipo": "citacao", "em": "Traduzido", "meta": "Latim medieval · tradução do livro", "texto": "Dixit Algorizmi", "traducao": "“disse Algorizmi”", "traducaoEm": "disse" },
+    { "tipo": "etimo", "em": "O nome", "nos": [
+        { "w": "al-Khwārizmī", "m": "PERSA · SÉC. IX" },
+        { "w": "Algorizmi", "m": "LATIM MEDIEVAL", "em": "virou" },
+        { "w": ["algoritmo", "algarismo"], "m": "PORTUGUÊS", "em": "Daí" }
+      ] },
+    { "tipo": "transforma", "em": "E outro", "meta": "Outro livro dele", "de": "al-jabr", "metaDe": "ÁRABE · “RESTAURAÇÃO”", "para": "álgebra", "metaPara": "PORTUGUÊS", "viraEm": "virou" },
+    { "tipo": "glossario", "em": "Quando", "numero": 1, "termo": "epônimo", "ipa": "/eˈpo.ni.mu/",
+      "definicao": "quando o <span style='color:var(--c)'>nome de uma pessoa</span> vira palavra comum",
+      "exemplos": "algoritmo · sanduíche · boicote · nicotina", "exemplosEm": "Guarda" },
+    { "tipo": "proximo", "em": "Às", "hora": "hoje · 10h", "quadro": "Aula de Letras", "cor": "#D9D0BC", "titulo": "Por que <mark>árvore</mark> se chama árvore?" }
+  ]
+}
