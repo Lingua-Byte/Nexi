@@ -3,19 +3,21 @@
 <style>
 @font-face { font-family: 'DM Serif Display'; src: url('node_modules/@fontsource/dm-serif-display/files/dm-serif-display-latin-400-normal.woff2') format('woff2'); }
 @font-face { font-family: 'DM Serif Display'; src: url('node_modules/@fontsource/dm-serif-display/files/dm-serif-display-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: 'DM Serif Display'; font-style: italic; src: url('node_modules/@fontsource/dm-serif-display/files/dm-serif-display-latin-400-italic.woff2') format('woff2'); }
 @font-face { font-family: 'Archivo'; font-weight: 800; src: url('node_modules/@fontsource/archivo/files/archivo-latin-800-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Archivo'; font-weight: 900; src: url('node_modules/@fontsource/archivo/files/archivo-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 900; src: url('node_modules/@fontsource/archivo/files/archivo-latin-ext-900-normal.woff2') format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
 @font-face { font-family: 'IBM Plex Mono'; font-weight: 500; src: url('node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; src: url('node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-ext-500-normal.woff2') format('woff2'); unicode-range: U+0100-024F, U+1E00-1EFF; }
 @font-face { font-family: 'Noto Sans'; src: url('node_modules/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff2') format('woff2'); }
-:root { --grafite:#0E0E10; --creme:#F2EAD8; --creme2:rgba(242,234,216,.62); --creme3:rgba(242,234,216,.38); --ambar:#E8A33D; --c:#E8A33D; }
+:root { --grafite:#0E0E10; --creme:#F2EAD8; --creme2:rgba(242,234,216,.66); --creme3:rgba(242,234,216,.4); --ambar:#E8A33D; --c:#E8A33D; --ok:#4CAF7A; --mito:#E05A4F; }
 * { box-sizing: border-box; margin: 0; }
 html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--grafite); }
 #tela { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: var(--creme); font-family: 'Archivo', sans-serif; }
-#fundo { position: absolute; inset: -60px; background:
+#fundo { position: absolute; inset: 0; background:
   radial-gradient(ellipse at 50% 38%, rgba(242,234,216,.06), transparent 60%),
-  radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.3px) 0 0 / 9px 9px,
-  radial-gradient(rgba(255,255,255,.35) 1px, transparent 1.2px) 4px 6px / 13px 13px;
-  opacity: .9; }
+  radial-gradient(rgba(255,255,255,.5) 1px, transparent 1.3px) 0 0 / 9px 9px,
+  radial-gradient(rgba(255,255,255,.3) 1px, transparent 1.2px) 4px 6px / 13px 13px; opacity: .9; }
 #fundo::after { content:""; position:absolute; inset:0; background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgba(0,0,0,.65) 100%); }
 #grao { position:absolute; inset:0; background: var(--grafite); opacity: .92; }
 .selo { position: absolute; top: 64px; left: 64px; display: flex; align-items: center; gap: 18px; font-weight: 800; font-size: 34px; letter-spacing: .1em; text-transform: uppercase; }
@@ -25,35 +27,58 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--
 .glos { position: absolute; top: 128px; left: 64px; font-family: 'IBM Plex Mono', monospace; font-size: 26px; letter-spacing: .12em; color: var(--c); }
 .cena { position: absolute; inset: 0; }
 .gancho { position: absolute; left: 64px; right: 176px; top: 230px; font-weight: 900; font-size: 92px; line-height: 1.02; text-transform: uppercase; }
-.gancho mark { background: none; color: var(--creme); box-shadow: inset 0 -26px 0 var(--c); }
+.gancho mark, .mk { background: none; color: var(--creme); box-shadow: inset 0 -0.28em 0 var(--c); }
 .palavra { position: absolute; left: 0; right: 0; top: 760px; text-align: center; font-family: 'DM Serif Display', serif; font-size: 190px; line-height: 1; }
 .palavra small { display: block; font-family: 'Noto Sans','DejaVu Sans', sans-serif; font-size: 46px; color: var(--creme3); margin-top: 28px; }
 .meta { font-family: 'IBM Plex Mono', monospace; font-size: 32px; letter-spacing: .12em; color: var(--creme3); text-transform: uppercase; }
 .bloco { position: absolute; left: 80px; right: 176px; }
+.serif { font-family: 'DM Serif Display', serif; line-height: 1.02; }
 .titulo-serif { font-family: 'DM Serif Display', serif; font-size: 120px; line-height: 1; }
 .no { border-left: 10px solid var(--c); padding: 14px 0 14px 36px; }
-.no .w { font-family: 'DM Serif Display', serif; font-size: 104px; line-height: 1.02; }
+.no .w { font-family: 'DM Serif Display', serif; font-size: 100px; line-height: 1.02; }
 .no .m { margin-top: 10px; }
-.seta { font-family: 'IBM Plex Mono', monospace; color: var(--c); font-size: 64px; padding-left: 34px; line-height: 1.1; }
+.seta { font-family: 'IBM Plex Mono', monospace; color: var(--c); font-size: 60px; padding-left: 34px; line-height: 1.1; }
 .digitos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 10px; text-align: center; font-family: 'DM Serif Display', serif; font-size: 150px; line-height: 1.05; }
-.carimbo { position: absolute; font-weight: 900; letter-spacing: .06em; color: var(--c); border: 14px solid currentColor; border-radius: 22px; padding: 6px 40px; }
-.cartao { border: 2px solid rgba(242,234,216,.18); border-radius: 28px; padding: 50px 54px; background: rgba(242,234,216,.04); }
-.legenda { position: absolute; left: 70px; right: 176px; top: 1300px; text-align: center; font-weight: 900; font-size: 84px; line-height: 1.06; text-transform: uppercase; text-shadow: 0 6px 0 rgba(0,0,0,.6); }
+.cartao { border: 2px solid rgba(242,234,216,.18); border-radius: 28px; padding: 46px 50px; background: rgba(242,234,216,.04); }
+.carimbo { display: inline-block; font-weight: 900; letter-spacing: .06em; color: var(--cc, var(--mito)); border: 14px solid currentColor; border-radius: 22px; padding: 4px 38px; font-size: 140px; line-height: 1.1; }
+.opc { display: flex; align-items: center; gap: 30px; border: 3px solid rgba(242,234,216,.2); border-radius: 22px; padding: 26px 34px; margin-top: 22px; font-weight: 800; font-size: 54px; line-height: 1.1; }
+.opc b { font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 42px; color: var(--creme3); width: 54px; flex: none; }
+.opc.certa { border-color: var(--ok); background: rgba(76,175,122,.14); }
+.opc.errada { opacity: .35; }
+.rot { font-family: 'IBM Plex Mono', monospace; font-size: 30px; letter-spacing: .16em; color: var(--c); }
+.item { margin-top: 30px; }
+.txt { font-weight: 800; font-size: 54px; line-height: 1.14; }
+.pista { background: rgba(242,234,216,.06); border: 2px solid rgba(242,234,216,.16); border-radius: 18px; padding: 24px 30px; margin-top: 22px; display: flex; gap: 26px; font-weight: 800; font-size: 46px; line-height: 1.15; }
+.pista b { font-family: 'IBM Plex Mono', monospace; font-weight: 500; color: var(--c); font-size: 38px; flex: none; }
+.par { display: grid; grid-template-columns: 1fr auto 1fr; gap: 26px; align-items: baseline; margin-top: 26px; font-family: 'DM Serif Display', serif; font-size: 82px; line-height: 1.05; }
+.par i { font-style: normal; font-family: 'IBM Plex Mono', monospace; color: var(--c); font-size: 50px; }
+.par .b { color: var(--c); }
+.colunas { position: absolute; left: 60px; right: 150px; top: 330px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.col { border-top: 8px solid var(--creme3); padding-top: 26px; }
+.col.d { border-color: var(--c); }
+.peca { display: inline-block; padding: 8px 18px; margin: 0 6px 0 0; border-radius: 14px; font-family: 'DM Serif Display', serif; font-size: 118px; line-height: 1.05; }
+.glosa { font-family: 'IBM Plex Mono', monospace; font-size: 30px; letter-spacing: .08em; color: var(--creme2); text-align: center; margin-top: 10px; text-transform: uppercase; }
+.ano { font-family: 'IBM Plex Mono', monospace; font-size: 46px; color: var(--c); }
+.linha-it { border-left: 6px solid rgba(242,234,216,.2); padding: 6px 0 16px 34px; position: relative; }
+.linha-it::before { content: ""; position: absolute; left: -15px; top: 18px; width: 24px; height: 24px; border-radius: 50%; background: var(--c); }
+.legenda { position: absolute; left: 70px; right: 176px; top: 1300px; text-align: center; font-weight: 900; font-size: 82px; line-height: 1.06; text-transform: uppercase; text-shadow: 0 6px 0 rgba(0,0,0,.6); }
 .legenda .ativa { color: var(--ambar); }
+.cta { display: inline-flex; align-items: center; gap: 22px; background: var(--creme); color: var(--grafite); border-radius: 999px; padding: 22px 44px; font-weight: 900; font-size: 50px; text-transform: uppercase; letter-spacing: .02em; }
+.cta i { font-style: normal; font-size: 54px; }
 canvas { position: absolute; }
 </style></head>
 <body><div id="tela"><div id="grao"></div><div id="fundo"></div><div id="camada"></div><div class="legenda" id="leg"></div></div>
 <script>
-// DADOS é injetado pelo render.js: { cor, selo, glossario, cenas:[{tipo, ini, fim, ...}], palavras:[{w,s,e}], dur }
 const $ = s => document.querySelector(s);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const ease = x => 1 - Math.pow(1 - clamp(x), 3);
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const pop = x => { x = clamp(x); return x < 1 ? 1 + 0.6 * Math.sin(x * Math.PI) * (1 - x) : 1; };
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ap = (t, t0, d = 0.4) => ease((t - t0) / d); // aparecer
 let D;
 function iniciar(dados) {
   D = dados;
   document.documentElement.style.setProperty('--c', D.cor);
-  // grupos de legenda: até 3 palavras, quebra em pontuação
   const g = []; let cur = [];
   D.palavras.forEach((p, i) => {
     cur.push(i);
@@ -65,11 +90,12 @@ function iniciar(dados) {
 }
 function legenda(t) {
   const P = D.palavras; let html = '';
+  if (!D.semLegenda?.some(([a, b]) => t >= a && t < b))
   for (let k = 0; k < D.grupos.length; k++) {
     const gr = D.grupos[k]; const ini = P[gr[0]].s; const prox = D.grupos[k + 1] ? P[D.grupos[k + 1][0]].s : D.dur;
-    if (t >= ini - 0.05 && t < Math.min(prox, P[gr[gr.length - 1]].e + 0.6)) {
+    if (t >= ini - 0.05 && t < Math.min(prox, P[gr[gr.length - 1]].e + 0.5)) {
       html = gr.map((i, j) => {
-        const fimW = gr[j + 1] !== undefined ? P[gr[j + 1]].s : P[i].e + 0.6;
+        const fimW = gr[j + 1] !== undefined ? P[gr[j + 1]].s : P[i].e + 0.5;
         const w = esc(P[i].w.replace(/["“”.,:;!?]/g, ''));
         return t >= P[i].s - 0.03 && t < fimW ? `<span class="ativa">${w}</span>` : w;
       }).join(' ');
@@ -78,115 +104,186 @@ function legenda(t) {
   }
   $('#leg').innerHTML = html;
 }
-// --- mapa em pontos (Oriente Médio e Ásia Central, estilizado) ---
+// ---------- mapa do Oriente Médio ----------
 const MAR = [
-  [[25,30],[36,31.5],[36.2,36.8],[30,37],[26,40.5],[25,41]], // Mediterrâneo
-  [[27.5,41],[41.5,41],[41.5,46.8],[27.5,46.8]], // Mar Negro
-  [[47,37],[49,37.3],[54,37],[53.5,41],[54,45],[52,47],[49,46.8],[47,44],[49,41.5]], // Cáspio
-  [[58.2,44],[61.2,44],[61.2,46.3],[58.2,46.3]], // Aral
-  [[48,30.2],[50.3,29.3],[52,27.6],[56.3,26.6],[56.6,24.8],[54,24],[51.5,24.6],[50,26.4],[48.5,28.6]], // Golfo Pérsico
-  [[32.3,30],[34.5,28],[37.5,24],[40,20],[42.6,15],[43.5,12.6],[42.3,13.6],[39.2,17.5],[36,22],[34,25.8],[32.6,29.4]], // Mar Vermelho
-  [[43.4,12],[51,11.5],[52.5,15.5],[57.5,18.5],[59.8,22.3],[56.6,24.6],[57.2,25.5],[61.5,25.2],[66.6,25.4],[72,21],[75,15],[75,5],[43,5]], // Mar Arábico
+  [[25,30],[36,31.5],[36.2,36.8],[30,37],[26,40.5],[25,41]], [[27.5,41],[41.5,41],[41.5,46.8],[27.5,46.8]],
+  [[47,37],[49,37.3],[54,37],[53.5,41],[54,45],[52,47],[49,46.8],[47,44],[49,41.5]], [[58.2,44],[61.2,44],[61.2,46.3],[58.2,46.3]],
+  [[48,30.2],[50.3,29.3],[52,27.6],[56.3,26.6],[56.6,24.8],[54,24],[51.5,24.6],[50,26.4],[48.5,28.6]],
+  [[32.3,30],[34.5,28],[37.5,24],[40,20],[42.6,15],[43.5,12.6],[42.3,13.6],[39.2,17.5],[36,22],[34,25.8],[32.6,29.4]],
+  [[43.4,12],[51,11.5],[52.5,15.5],[57.5,18.5],[59.8,22.3],[56.6,24.6],[57.2,25.5],[61.5,25.2],[66.6,25.4],[72,21],[75,15],[75,5],[43,5]],
 ];
 function dentro(pt, poly) { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if (((yi > pt[1]) !== (yj > pt[1])) && (pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi)) c = !c; } return c; }
-function mapa(ctx, W, H, t, pontos, rota, a) {
-  const lon = x => 25 + x / W * 50, lat = y => 50 - y / H * 42;
-  const X = l => (l - 25) / 50 * W, Y = la => (50 - la) / 42 * H;
-  ctx.clearRect(0, 0, W, H); const passo = 24;
-  for (let x = passo / 2; x < W; x += passo) for (let y = passo / 2; y < H; y += passo) {
-    const p = [lon(x), lat(y)]; if (MAR.some(m => dentro(p, m))) continue;
-    ctx.beginPath(); ctx.arc(x, y, 3.6, 0, 6.3); ctx.fillStyle = `rgba(242,234,216,${0.34 * a})`; ctx.fill();
-  }
-  const cor = getComputedStyle(document.documentElement).getPropertyValue('--c').trim();
-  if (rota && rota.length === 2) {
-    const [p, q] = rota.map(r => [X(r[0]), Y(r[1])]); const k = ease((t - rota.t0) / 1.2);
-    ctx.setLineDash([16, 14]); ctx.lineWidth = 5; ctx.strokeStyle = cor; ctx.globalAlpha = a;
-    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
-  }
-  pontos.forEach(pt => {
-    const k = ease((t - pt.t0) / 0.6); if (k <= 0) return;
-    const x = X(pt.lon), y = Y(pt.lat), pulso = 1 + 0.25 * Math.sin(t * 4);
-    const g = ctx.createRadialGradient(x, y, 0, x, y, 90 * pulso * k);
-    g.addColorStop(0, cor + 'cc'); g.addColorStop(1, cor + '00'); ctx.fillStyle = g; ctx.globalAlpha = a; ctx.beginPath(); ctx.arc(x, y, 90 * pulso * k, 0, 6.3); ctx.fill();
-    ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(x, y, 14 * k, 0, 6.3); ctx.fill();
-    ctx.font = '500 34px "IBM Plex Mono"'; ctx.fillStyle = 'rgba(242,234,216,.9)'; ctx.textAlign = pt.alinhar || 'left';
-    ctx.fillText(pt.rotulo, x + (pt.alinhar === 'right' ? -30 : 30), y - 26); ctx.globalAlpha = 1;
-  });
+const corC = () => getComputedStyle(document.documentElement).getPropertyValue('--c').trim();
+function brilho(ctx, x, y, k, t, rot, alinhar) {
+  const cor = corC(), pulso = 1 + 0.25 * Math.sin(t * 4);
+  const g = ctx.createRadialGradient(x, y, 0, x, y, 90 * pulso * k); g.addColorStop(0, cor + 'cc'); g.addColorStop(1, cor + '00');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 90 * pulso * k, 0, 6.3); ctx.fill();
+  ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(x, y, 14 * k, 0, 6.3); ctx.fill();
+  if (rot) { ctx.font = '500 34px "IBM Plex Mono"'; ctx.fillStyle = 'rgba(242,234,216,.92)'; ctx.textAlign = alinhar || 'left'; ctx.fillText(rot, x + (alinhar === 'right' ? -30 : 30), y - 26); }
 }
-// --- cenas ---
-function vis(t, c) { // opacidade + deslocamento de entrada/saída
-  const e = ease((t - c.ini) / 0.4), s = 1 - ease((t - (c.fim - 0.3)) / 0.3);
-  return { a: Math.min(e, s), dy: (1 - e) * 50 };
+function mapa(ctx, W, H, t, c) {
+  const lon = x => 25 + x / W * 50, lat = y => 50 - y / H * 42, X = l => (l - 25) / 50 * W, Y = la => (50 - la) / 42 * H;
+  ctx.clearRect(0, 0, W, H);
+  for (let x = 12; x < W; x += 24) for (let y = 12; y < H; y += 24) {
+    if (MAR.some(m => dentro([lon(x), lat(y)], m))) continue;
+    ctx.beginPath(); ctx.arc(x, y, 3.6, 0, 6.3); ctx.fillStyle = 'rgba(242,234,216,.34)'; ctx.fill();
+  }
+  if (c.rota) { const [p, q] = c.rota.map(r => [X(r.lon), Y(r.lat)]), k = ease((t - c.rota[0].t0) / 1.2);
+    ctx.setLineDash([16, 14]); ctx.lineWidth = 5; ctx.strokeStyle = corC(); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k); ctx.stroke(); ctx.setLineDash([]); }
+  c.pontos.forEach(pt => { const k = ease((t - pt.t0) / 0.6); if (k > 0) brilho(ctx, X(pt.lon), Y(pt.lat), k, t, pt.rotulo, pt.alinhar); });
 }
+// ---------- globo (graticulado) ----------
+function globo(ctx, W, H, t, c) {
+  ctx.clearRect(0, 0, W, H);
+  const R = 330, cx = W / 2, cy = H / 2, lam0 = (c.lon + (1 - ease((t - c.ini) / 1.6)) * 40) * Math.PI / 180, phi0 = Math.max(-50, Math.min(50, c.lat)) * Math.PI / 180;
+  const proj = (la, lo) => { const p = la * Math.PI / 180, l = lo * Math.PI / 180 - lam0;
+    const cosc = Math.sin(phi0) * Math.sin(p) + Math.cos(phi0) * Math.cos(p) * Math.cos(l);
+    return [cx + R * Math.cos(p) * Math.sin(l), cy - R * (Math.cos(phi0) * Math.sin(p) - Math.sin(phi0) * Math.cos(p) * Math.cos(l)), cosc]; };
+  ctx.strokeStyle = 'rgba(242,234,216,.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 6.3); ctx.stroke();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(242,234,216,.16)';
+  const linha = pts => { ctx.beginPath(); let on = false; pts.forEach(([x, y, v]) => { if (v > 0) { on ? ctx.lineTo(x, y) : ctx.moveTo(x, y); on = true; } else on = false; }); ctx.stroke(); };
+  for (let lo = -180; lo < 180; lo += 20) linha(Array.from({ length: 91 }, (_, i) => proj(-90 + i * 2, lo)));
+  for (let la = -60; la <= 60; la += 20) linha(Array.from({ length: 181 }, (_, i) => proj(la, -180 + i * 2)));
+  const [x, y, v] = proj(c.lat, c.lon); const k = ease((t - c.ini - 1.2) / 0.6);
+  if (v > 0 && k > 0) brilho(ctx, x, y, k, t, c.rotulo, c.lon > 100 ? 'right' : 'left');
+}
+// ---------- cenas ----------
+function vis(t, c) { const e = ease((t - c.ini) / 0.4), s = 1 - ease((t - (c.fim - 0.3)) / 0.3); return { a: Math.min(e, s), dy: (1 - e) * 50 }; }
 const R = {
   palavra(c, t, v) {
     const n = Math.round(clamp((t - c.ini - 0.2) / 0.9) * c.palavra.length);
-    return `<div class="gancho" style="opacity:${ease((t - c.ini) / 0.25)}">${c.gancho}</div>
-      <div class="palavra" style="transform:translateY(${v.dy}px)">${esc(c.palavra.slice(0, n))}<span style="opacity:.0">${esc(c.palavra.slice(n))}</span>
-      <small style="opacity:${ease((t - c.ini - 1.2) / 0.5)}">${esc(c.ipa || '')}</small></div>`;
+    return `${c.gancho ? `<div class="gancho" style="opacity:${ap(t, c.ini, 0.25)}">${c.gancho}</div>` : ''}
+      <div class="palavra" style="top:${c.topo || 760}px;font-size:${c.tam || 190}px">${esc(c.palavra.slice(0, n))}<span style="opacity:0">${esc(c.palavra.slice(n))}</span>
+      <small style="opacity:${ap(t, c.ini + 1.1, 0.5)}">${esc(c.ipa || '')}</small></div>`;
+  },
+  texto(c, t, v) {
+    return `<div class="bloco" style="top:${c.topo || 420}px;transform:translateY(${v.dy}px)">${c.meta ? `<div class="meta">${esc(c.meta)}</div>` : ''}
+      <div class="serif" style="font-size:${c.tam || 112}px;margin-top:24px">${c.texto}</div>
+      ${c.sub ? `<div class="txt" style="margin-top:34px;color:var(--creme2);opacity:${c.tSub ? ap(t, c.tSub) : 1}">${c.sub}</div>` : ''}</div>`;
+  },
+  cena(c, t, v) {
+    const k = ap(t, c.ini, 0.8);
+    return `<div class="bloco" style="top:430px"><div class="meta" style="font-size:40px;color:var(--c);letter-spacing:.2em;opacity:${k}">${esc(c.lugar)}</div>
+      <div class="serif" style="font-size:150px;margin-top:20px;opacity:${k};letter-spacing:${(1 - k) * 0.08}em">${esc(c.ano)}</div>
+      <div class="txt" style="margin-top:44px;color:var(--creme2);opacity:${ap(t, c.ini + 0.7, 0.6)}">${c.texto || ''}</div></div>`;
+  },
+  lugar(c, t, v) {
+    return `<canvas id="cv" data-tipo="globo" width="1080" height="820" style="left:0;top:560px"></canvas>
+      <div class="bloco" style="top:250px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
+      <div class="titulo-serif" style="margin-top:18px;font-size:${c.tam || 110}px">${esc(c.titulo)}</div>
+      <div class="meta" style="margin-top:16px;color:var(--creme2)">${esc(c.sub || '')}</div></div>`;
   },
   mapa(c, t, v) {
-    return `<canvas id="cv" width="1080" height="900" style="left:0;top:520px"></canvas>
+    return `<canvas id="cv" data-tipo="mapa" width="1080" height="900" style="left:0;top:520px"></canvas>
       <div class="bloco" style="top:250px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
-      <div class="titulo-serif" style="margin-top:18px;font-size:${c.tamanho || 112}px">${esc(c.titulo)}</div>
+      <div class="titulo-serif" style="margin-top:18px;font-size:${c.tam || 112}px">${esc(c.titulo)}</div>
       <div class="meta" style="margin-top:16px;color:var(--creme2)">${esc(c.sub || '')}</div></div>`;
   },
   digitos(c, t, v) {
-    const ds = c.itens.map((d, i) => `<span style="opacity:${ease((t - c.ini - 0.5 - i * 0.12) / 0.3)}">${esc(d)}</span>`).join('');
+    const ds = c.itens.map((d, i) => `<span style="opacity:${ap(t, c.ini + 0.5 + i * 0.12, 0.3)}">${esc(d)}</span>`).join('');
     return `<div class="bloco" style="top:300px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
       <div class="titulo-serif" style="margin:20px 0 70px;font-size:96px">${esc(c.titulo)}</div>
       <div class="cartao"><div class="digitos">${ds}</div><div class="meta" style="margin-top:34px;color:var(--c)">${esc(c.rodape)}</div></div></div>`;
   },
   citacao(c, t, v) {
     return `<div class="bloco" style="top:360px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
-      <div class="cartao" style="margin-top:40px"><div class="titulo-serif" style="font-style:italic;font-size:118px">“${esc(c.texto)}”</div>
-      <div class="meta" style="margin-top:36px;color:var(--c);opacity:${ease((t - c.tTraducao) / 0.4)}">${esc(c.traducao)}</div></div></div>`;
+      <div class="cartao" style="margin-top:40px"><div class="serif" style="font-style:italic;font-size:${c.tam || 110}px">“${esc(c.texto)}”</div>
+      ${c.traducao ? `<div class="meta" style="margin-top:36px;color:var(--c);opacity:${c.tTraducao ? ap(t, c.tTraducao) : 1}">${esc(c.traducao)}</div>` : ''}</div></div>`;
   },
   etimo(c, t, v) {
     const nos = c.nos.map((n, i) => {
-      const a = ease((t - n.t0) / 0.45);
-      const seta = i ? `<div class="seta" style="opacity:${a}">↓</div>` : '';
-      const ws = Array.isArray(n.w) ? n.w.map(w => esc(w)).join('<span style="color:var(--creme3)"> · </span>') : esc(n.w);
-      return `${seta}<div class="no" style="opacity:${a};transform:translateX(${(1 - a) * -40}px)"><div class="w">${ws}</div><div class="meta m">${esc(n.m)}</div></div>`;
+      const a = ap(t, n.t0, 0.45);
+      const ws = Array.isArray(n.w) ? n.w.map(esc).join('<span style="color:var(--creme3)"> · </span>') : esc(n.w);
+      return `${i ? `<div class="seta" style="opacity:${a}">↓</div>` : ''}<div class="no" style="opacity:${a};transform:translateX(${(1 - a) * -40}px)"><div class="w" style="font-size:${c.tam || 100}px">${ws}</div><div class="meta m">${esc(n.m)}</div></div>`;
     }).join('');
-    return `<div class="bloco" style="top:${c.topo || 300}px">${nos}</div>`;
+    return `<div class="bloco" style="top:${c.topo || 300}px">${c.meta ? `<div class="meta" style="margin-bottom:30px">${esc(c.meta)}</div>` : ''}${nos}</div>`;
   },
   transforma(c, t, v) {
-    const k = ease((t - c.tVira) / 0.5);
+    const k = ap(t, c.tVira, 0.5);
     return `<div class="bloco" style="top:430px;transform:translateY(${v.dy}px)"><div class="meta">${esc(c.meta)}</div>
       <div class="no" style="margin-top:40px"><div class="w">${esc(c.de)}</div><div class="meta m">${esc(c.metaDe)}</div></div>
       <div class="seta" style="opacity:${k}">↓</div>
-      <div class="no" style="opacity:${k};transform:scale(${0.9 + 0.1 * k});transform-origin:left"><div class="w" style="font-size:150px">${esc(c.para)}</div><div class="meta m">${esc(c.metaPara)}</div></div></div>`;
+      <div class="no" style="opacity:${k}"><div class="w" style="font-size:140px">${esc(c.para)}</div><div class="meta m">${esc(c.metaPara)}</div></div></div>`;
+  },
+  quiz(c, t, v) {
+    const rev = t >= c.tRevela; const espera = clamp((t - c.tPergunta) / (c.tRevela - c.tPergunta));
+    const ops = c.opcoes.map((o, i) => `<div class="opc ${rev ? (i === c.certa ? 'certa' : 'errada') : ''}" style="opacity:${rev ? '' : ap(t, c.ini + 0.4 + i * 0.25, 0.3)}"><b>${'ABCD'[i]}</b>${o}</div>`).join('');
+    const ring = !rev && t >= c.tPergunta ? `<svg width="120" height="120" style="position:absolute;right:0;top:-10px"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(242,234,216,.15)" stroke-width="10"/><circle cx="60" cy="60" r="50" fill="none" stroke="${corC()}" stroke-width="10" stroke-dasharray="${314 * (1 - espera)} 314" transform="rotate(-90 60 60)"/></svg>` : '';
+    return `<div class="bloco" style="top:280px;transform:translateY(${v.dy}px)"><div class="meta" style="color:var(--c)">QUIZ</div>${ring}
+      <div class="txt" style="font-size:66px;margin:22px 0 20px;padding-right:130px">${c.pergunta}</div>${ops}</div>`;
+  },
+  tribunal(c, t, v) {
+    const its = c.itens.map(it => `<div class="item" style="opacity:${ap(t, it.t0)}"><div class="rot">${esc(it.rot)}</div><div class="txt" style="margin-top:8px">${it.txt}</div></div>`).join('');
+    const vk = c.veredito ? (t - c.veredito.t0) : -1;
+    const car = vk >= 0 ? `<div style="margin-top:50px;transform:rotate(-8deg) scale(${pop(vk / 0.35) * (vk < 0.12 ? 1.6 - vk * 5 : 1)});transform-origin:left;opacity:${clamp(vk / 0.1)}"><div class="carimbo" style="--cc:${c.veredito.cor || 'var(--mito)'};font-size:${c.veredito.tam || 140}px">${esc(c.veredito.txt)}</div></div>` : '';
+    return `<div class="bloco" style="top:260px"><div class="meta">${esc(c.titulo || 'TRIBUNAL DA LÍNGUA')}</div>${its}${car}</div>`;
+  },
+  pistas(c, t, v) {
+    const its = c.itens.map((it, i) => `<div class="pista" style="opacity:${ap(t, it.t0)};transform:translateX(${(1 - ap(t, it.t0)) * 60}px) rotate(${[-0.8, 0.6, -0.4, 0.9][i % 4]}deg)"><b>#${i + 1}</b><span>${it.txt}</span></div>`).join('');
+    const ck = c.conclusao ? ap(t, c.conclusao.t0, 0.3) : 0;
+    return `<div class="bloco" style="top:250px"><div class="meta">CASO · ${esc(c.titulo)}</div>${its}
+      ${c.conclusao ? `<div style="margin-top:40px;opacity:${ck};transform:rotate(-6deg) scale(${pop(ck)})"><div class="carimbo" style="font-size:84px;--cc:${c.conclusao.cor || 'var(--mito)'}">${esc(c.conclusao.txt)}</div></div>` : ''}</div>`;
+  },
+  contagem(c, t, v) {
+    let at = -1; c.itens.forEach((it, i) => { if (t >= it.t0) at = i; });
+    const it = c.itens[Math.max(0, at)]; const k = ap(t, it.t0, 0.35);
+    const feitos = c.itens.slice(0, Math.max(0, at)).map(x => `<span style="margin-right:26px">${esc(x.n)} · ${esc(x.curto || x.a)}</span>`).join('');
+    return `<div class="bloco" style="top:250px"><div class="meta">${esc(c.meta)}</div>
+      <div style="opacity:${at < 0 ? 0 : 1}"><div class="serif" style="font-size:300px;color:var(--c);line-height:1;margin-top:20px;transform:scale(${pop(k)});transform-origin:left">${esc(it.n)}</div>
+      <div class="serif" style="font-size:110px;margin-top:10px;opacity:${k}">${it.a}</div>
+      <div class="txt" style="margin-top:22px;color:var(--creme2);opacity:${k}">${it.b || ''}</div></div>
+      <div class="meta" style="margin-top:46px;font-size:26px;line-height:1.6">${feitos}</div></div>`;
+  },
+  pares(c, t, v) {
+    const its = c.itens.map(it => `<div class="par" style="opacity:${ap(t, it.t0)};${c.tam ? `font-size:${c.tam}px` : ''}"><span>${it.a}</span><i>${esc(c.sep || '→')}</i><span class="b">${it.b}</span></div>`).join('');
+    return `<div class="bloco" style="top:${c.topo || 300}px">${c.meta ? `<div class="meta">${esc(c.meta)}</div>` : ''}${its}
+      ${c.rodape ? `<div class="txt" style="margin-top:44px;color:var(--creme2);opacity:${c.tRodape ? ap(t, c.tRodape) : 1}">${c.rodape}</div>` : ''}</div>`;
+  },
+  compara(c, t, v) {
+    const k = c.tDir ? ap(t, c.tDir) : ap(t, c.ini + 0.5);
+    return `<div class="bloco" style="top:250px"><div class="meta">${esc(c.meta || '')}</div></div><div class="colunas">
+      <div class="col"><div class="rot" style="color:var(--creme3)">${esc(c.esq.rot)}</div><div class="serif" style="font-size:${c.tam || 96}px;margin-top:20px">${c.esq.txt}</div><div class="txt" style="font-size:40px;margin-top:20px;color:var(--creme2)">${c.esq.sub || ''}</div></div>
+      <div class="col d" style="opacity:${k}"><div class="rot">${esc(c.dir.rot)}</div><div class="serif" style="font-size:${c.tam || 96}px;margin-top:20px">${c.dir.txt}</div><div class="txt" style="font-size:40px;margin-top:20px;color:var(--creme2)">${c.dir.sub || ''}</div></div></div>`;
+  },
+  desmonte(c, t, v) {
+    const cores = ['var(--c)', '#5B9BE0', '#4CAF7A', '#E05A4F', '#A57FDB', '#F2C94C'];
+    const ps = c.pecas.map((p, i) => { const k = ap(t, p.t0, 0.35);
+      return `<div style="display:inline-block;vertical-align:top;margin:0 8px 30px 0;opacity:${0.25 + 0.75 * k};transform:translateY(${(1 - k) * 30}px)"><div class="peca" style="background:${k > 0.01 ? cores[i % cores.length] + '' : 'transparent'};color:${k > 0.5 ? '#0E0E10' : 'var(--creme)'};font-size:${c.tam || 118}px">${esc(p.p)}</div><div class="glosa" style="opacity:${k}">${esc(p.g || '')}</div></div>`; }).join('');
+    return `<div class="bloco" style="top:${c.topo || 330}px;right:120px"><div class="meta" style="margin-bottom:34px">${esc(c.meta || 'DESMONTANDO')}</div>${ps}
+      ${c.resultado ? `<div class="txt" style="margin-top:20px;color:var(--creme2);opacity:${c.tResultado ? ap(t, c.tResultado) : 1}">${c.resultado}</div>` : ''}</div>`;
+  },
+  linha(c, t, v) {
+    const its = c.itens.map(it => `<div class="linha-it" style="opacity:${ap(t, it.t0)}"><div class="ano">${esc(it.ano)}</div><div class="txt" style="font-size:46px;margin-top:6px">${it.txt}</div></div>`).join('');
+    return `<div class="bloco" style="top:270px"><div class="meta" style="margin-bottom:34px">${esc(c.meta || 'LINHA DO TEMPO')}</div>${its}</div>`;
   },
   glossario(c, t, v) {
-    const k = ease((t - c.ini - 0.2) / 0.5);
+    const k = ap(t, c.ini + 0.2, 0.5);
     return `<div class="bloco" style="top:330px;transform:translateY(${v.dy}px)">
       <div class="meta" style="color:var(--c)">GLOSSÁRIO GLOSSA</div>
       <div class="cartao" style="margin-top:34px;border-color:var(--c)">
-        <div class="meta">TERMO Nº ${c.numero}</div>
-        <div class="titulo-serif" style="font-size:150px;margin:18px 0 26px;transform:scale(${0.92 + 0.08 * k});transform-origin:left">${esc(c.termo)}</div>
-        <div style="font-family:'Noto Sans','DejaVu Sans';font-size:44px;color:var(--creme2)">${esc(c.ipa || '')}</div>
-        <div style="font-weight:800;font-size:54px;line-height:1.2;margin-top:34px">${c.definicao}</div>
-        <div class="meta" style="margin-top:30px;opacity:${ease((t - c.tExemplos) / 0.4)}">${esc(c.exemplos || '')}</div>
+        <div class="meta">${c.novo ? 'TERMO' : 'REVISÃO · TERMO'} Nº ${c.numero}</div>
+        <div class="serif" style="font-size:${c.termo.length > 14 ? 96 : 140}px;margin:18px 0 26px;transform:scale(${0.92 + 0.08 * k});transform-origin:left">${esc(c.termo)}</div>
+        <div style="font-weight:800;font-size:52px;line-height:1.2">${c.definicao}</div>
+        ${c.exemplos ? `<div class="meta" style="margin-top:30px;opacity:${c.tExemplos ? ap(t, c.tExemplos) : 1}">${esc(c.exemplos)}</div>` : ''}
       </div></div>`;
   },
-  proximo(c, t, v) {
-    return `<div class="bloco" style="top:470px;transform:translateY(${v.dy}px);--c:${c.cor}">
-      <div class="meta">A SEGUIR · ${esc(c.hora)}</div>
-      <div class="selo" style="position:static;margin:34px 0 30px"><i></i>${esc(c.quadro)}</div>
-      <div class="gancho" style="position:static">${c.titulo}</div>
-      <div class="meta" style="margin-top:60px">Siga o Glossa · a língua por dentro</div></div>`;
+  fim(c, t, v) {
+    const k = ap(t, c.tCta || c.ini + 0.8, 0.4);
+    const prox = c.prox ? `<div class="meta">A SEGUIR · ${esc(c.prox.quando)}</div>
+      <div class="selo" style="position:static;margin:30px 0 26px;--c:${c.prox.cor}"><i style="background:${c.prox.cor}"></i>${esc(c.prox.quadro)}</div>
+      <div class="serif" style="font-size:96px">${esc(c.prox.titulo)}</div>` : '';
+    return `<div class="bloco" style="top:360px;transform:translateY(${v.dy}px)">${prox}
+      <div style="margin-top:80px;opacity:${k};transform:scale(${pop(k)});transform-origin:left"><div class="cta"><i>${c.icone || '↗'}</i>${esc(c.cta)}</div></div>
+      <div class="meta" style="margin-top:40px;opacity:${k}">@glossa · a língua por dentro</div></div>`;
   },
 };
-function quadro(t) {
-  // fundo fixo: textura parada comprime muito melhor
+function quadro(t, glos) {
   let html = `<div class="selo"><i></i>${esc(D.selo)}</div><div class="marca">G<b>.</b></div>`;
-  if (D.glossario) html += `<div class="glos">${esc(D.glossario)}</div>`;
+  if (glos) html += `<div class="glos">${esc(glos)}</div>`;
   const ativas = D.cenas.filter(c => t >= c.ini && t < c.fim);
-  let pedidosMapa = [];
-  ativas.forEach(c => { const v = vis(t, c); html += `<div class="cena" style="opacity:${v.a}">${R[c.tipo](c, t, v)}</div>`; if (c.tipo === 'mapa') pedidosMapa.push([c, v]); });
+  ativas.forEach(c => { const v = vis(t, c); html += `<div class="cena" style="opacity:${v.a}">${R[c.tipo](c, t, v)}</div>`; });
   $('#camada').innerHTML = html;
-  pedidosMapa.forEach(([c, v]) => { const cv = $('#cv'); if (cv) { const rota = c.rota ? Object.assign(c.rota.map(r => [r.lon, r.lat]), { t0: c.rota[0].t0 }) : null; mapa(cv.getContext('2d'), 1080, 900, t, c.pontos, rota, 1); } });
+  ativas.forEach(c => { const cv = $('#cv'); if (!cv) return; if (c.tipo === 'mapa') mapa(cv.getContext('2d'), 1080, 900, t, c); if (c.tipo === 'lugar') globo(cv.getContext('2d'), 1080, 820, t, c); });
   legenda(t);
 }
 </script></body></html>
