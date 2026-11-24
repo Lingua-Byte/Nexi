@@ -190,3 +190,30 @@ const VERBS = [
 
 /* formas de ser/estar em português: avisam que esse verbo já é a base */
 const BASE_DETECT = 'sou é somos são ser era éramos eram estou está estamos estão estar estava estávamos estavam';
+
+/* Léxico livre: verbos comuns do português que o caderno reconhece em qualquer frase,
+   além do banco. Regulares têm as formas geradas; irregulares listam as suas. */
+const PT_LEX_REG = ('acordar levantar tomar chegar voltar comprar pagar estudar aprender escrever abrir fechar ajudar pensar ' +
+  'achar ficar deixar levar começar terminar esperar encontrar conhecer viver andar correr jogar brincar cozinhar limpar ' +
+  'lavar usar chamar perguntar responder partir mudar passar lembrar esquecer amar adorar assistir ligar mandar enviar ' +
+  'receber ganhar vender beijar abraçar chorar cantar dançar nadar viajar dirigir caminhar parar continuar tentar ' +
+  'acreditar explicar ensinar mostrar olhar procurar cuidar sonhar descansar almoçar jantar treinar morrer nascer ' +
+  'decidir resolver escolher sorrir gritar falar trabalhar morar gostar precisar entender comer beber dormir ' +
+  'arrumar organizar planejar preparar escutar rezar orar visitar namorar casar separar cumprimentar agradecer ' +
+  'desculpar comemorar praticar repetir traduzir ler esperar entrar subir descer atender acompanhar').split(' ');
+const PT_LEX_IRR = {
+  ser: 'sou é somos são era eram fui foi foram sido', estar: 'estou está estamos estão estava estive esteve',
+  ter: 'tenho tem temos têm tinha tive teve', ir: 'vou vai vamos vão ia fui foi fomos foram',
+  fazer: 'faço faz fazemos fazem fazia fiz fez fizeram', poder: 'posso pode podemos podem podia pude pôde',
+  querer: 'quero quer queremos querem queria quis quiseram', saber: 'sei sabe sabemos sabem sabia soube',
+  ver: 'vejo vê vemos veem via vi viu viram', vir: 'venho vem vimos vêm vinha vim veio vieram',
+  dizer: 'digo diz dizemos dizem dizia disse disseram', dar: 'dou dá damos dão dava dei deu deram',
+  sair: 'saio sai saímos saem saía saí saiu saíram', trazer: 'trago traz trazemos trazem trazia trouxe trouxeram',
+  ouvir: 'ouço ouve ouvimos ouvem ouvia ouvi ouviu', ler: 'leio lê lemos leem lia li leu leram',
+  pedir: 'peço pede pedimos pedem pedia pedi pediu', sentir: 'sinto sente sentimos sentem sentia senti sentiu',
+  conseguir: 'consigo consegue conseguimos conseguem conseguia consegui conseguiu', preferir: 'prefiro prefere preferimos preferem preferi',
+  perder: 'perco perde perdemos perdem perdia perdi perdeu', rir: 'rio ri rimos riem ria riu', dormir: 'durmo dorme dormimos dormem dormia dormi dormiu',
+  pôr: 'ponho põe pomos põem punha pus pôs', vestir: 'visto veste vestimos vestem vesti vestiu', seguir: 'sigo segue seguimos seguem segui seguiu'
+};
+/* palavras que parecem verbo mas quase sempre são outra coisa */
+const PT_LEX_SKIP = new Set('como casa jogo trabalho almoço janta volta passo ganho caminho sonho canto cuidado ajuda chamada pergunta resposta conta lembrança mudança fala'.split(' '));

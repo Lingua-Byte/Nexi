@@ -11,18 +11,23 @@ concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
-  # RAIZ: gera um APK novo a cada publicação. Ele abre o app publicado, então o conteúdo
-  # se atualiza sozinho; o número do APK sobe sempre, para instalar por cima do anterior.
-  raiz-apk:
+  deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: raiz-android
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     env:
       RAIZ_VERSION_CODE: ${{ github.run_number }}
       RAIZ_VERSION_NAME: 1.${{ github.run_number }}
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Carimbar versão do RAIZ (atualização automática do app)
+        run: sed -i "s/__BUILD__/${GITHUB_SHA::8}/g" linguas/sw.js
+
+      # RAIZ: um APK novo a cada publicação. Ele abre o app publicado, então o conteúdo
+      # se atualiza sozinho; o número sobe sempre, para instalar por cima do anterior.
+      # Se o APK falhar, o site publica mesmo assim (continue-on-error).
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -33,40 +38,21 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: gradle
-      - name: Marcar a versão nativa no app
+      - name: Gerar o APK do RAIZ
+        id: apk
+        continue-on-error: true
+        working-directory: raiz-android
         run: |
           NATIVE=$(cat native-version.txt)
           node -e "const f='capacitor.config.json',c=JSON.parse(require('fs').readFileSync(f));c.appendUserAgent='RAIZAPK/'+process.argv[1]+'/'+process.env.RAIZ_VERSION_CODE;require('fs').writeFileSync(f,JSON.stringify(c,null,2))" "$NATIVE"
-          echo "{\"versionCode\": $RAIZ_VERSION_CODE, \"versionName\": \"$RAIZ_VERSION_NAME\", \"native\": $NATIVE}" > apk.json
-      - run: npm ci
-      - run: npx cap sync android
-      - run: ./gradlew assembleDebug --no-daemon
-        working-directory: raiz-android/android
-      - run: mkdir -p out && mv android/app/build/outputs/apk/debug/app-debug.apk out/RAIZ.apk && mv apk.json out/
-      - uses: actions/upload-artifact@v4
-        with:
-          name: RAIZ-apk
-          path: raiz-android/out/
+          npm ci
+          npx cap sync android
+          (cd android && ./gradlew assembleDebug --no-daemon)
+          cp android/app/build/outputs/apk/debug/app-debug.apk ../linguas/RAIZ.apk
+          echo "{\"versionCode\": $RAIZ_VERSION_CODE, \"versionName\": \"$RAIZ_VERSION_NAME\", \"native\": $NATIVE}" > ../linguas/apk.json
+      - name: Tirar arquivos de build do site
+        run: rm -rf raiz-android/node_modules raiz-android/android/.gradle raiz-android/android/app/build raiz-android/android/build raiz-android/android/capacitor-cordova-android-plugins
 
-  deploy:
-    needs: raiz-apk
-    # o site publica mesmo se o APK falhar
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Carimbar versão do RAIZ (atualização automática do app)
-        run: sed -i "s/__BUILD__/${GITHUB_SHA::8}/g" linguas/sw.js
-      - name: Colocar o APK do RAIZ no site
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: RAIZ-apk
-          path: linguas/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

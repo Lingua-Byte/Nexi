@@ -464,3 +464,30 @@ a.cta { text-decoration: none; }
 @keyframes pop { 50% { transform: scale(1.03); } }
 @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
 @keyframes rise { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* passos da escrita à mão */
+.steps3 { list-style: none; counter-reset: s; display: flex; gap: 6px; padding: 0; margin: 0 0 12px; }
+.steps3 li { counter-increment: s; flex: 1; display: flex; align-items: center; gap: 6px; font: 700 11px/1.15 var(--mono); color: var(--muted); border: 1.5px solid var(--rule); border-radius: 8px; padding: 6px 7px; }
+.steps3 li::before { content: counter(s); flex: none; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center; font-size: 11px; }
+.steps3 li.on { color: var(--ink); border-color: var(--line); background: var(--sheet); }
+.steps3 li.on::before { background: var(--c); color: var(--c-ink); border-color: var(--line); }
+.steps3 li.ok { color: var(--ok); border-color: var(--ok); }
+.steps3 li.ok::before { content: '✓'; }
+.gradeq { text-align: center; font-size: 15px; margin: 4px 0 10px; }
+
+/* ——— Meus verbos: processo livre ——— */
+.flow { list-style: none; counter-reset: f; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(3, 1fr); border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); }
+.flow li { counter-increment: f; padding: 9px 8px 10px; font-size: 13.5px; line-height: 1.25; border-right: 2px solid var(--line); }
+.flow li:last-child { border-right: 0; }
+.flow li::before { content: '0' counter(f); display: block; font: 900 22px/1 var(--serif); color: var(--c); -webkit-text-stroke: .6px var(--line); margin-bottom: 4px; }
+.flow b { display: block; }
+.chip.new { border-style: dashed; }
+.chip.new small { background: var(--c); color: var(--c-ink); border-radius: 99px; padding: 1px 6px; opacity: 1; }
+.found-hint { font-size: 14px; margin: 6px 0 4px; }
+.mysent { grid-template-columns: 1fr auto; }
+.ms-say { display: grid; gap: 2px; text-align: left; background: none; border: 0; padding: 0; color: var(--ink); min-width: 0; }
+.ms-say .mono { font-size: 11.5px; }
+.ms-say .ptxt { white-space: normal; font-size: 18px; }
+.ms-say small { font-size: 11px; }
+.vnote { margin: 0; padding: 10px 12px; font-size: 14px; border-top: 2px solid var(--line); background: var(--paper); }
+.vdel { display: block; margin: 8px 12px 12px; }
