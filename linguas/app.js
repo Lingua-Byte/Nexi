@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '1.5', t: 'lições interativas com certo e errado' },
     { v: '1.4', t: 'APK para Android' },
     { v: '1.3', t: 'app instalável que se atualiza sozinho' },
     { v: '1.2', t: 'diário livre com correção' },
@@ -168,6 +169,7 @@
       const L = byId[h[1]]; setLangColors(L);
       if (h[2] === 's') return renderStudy(L, +h[3] || 1);
       if (h[2] === 'p') return renderPractice(L, +h[3] || 1);
+      if (h[2] === 'l') return renderLesson(L, +h[3] || 1);
       if (h[2] === 'd') return renderDiary(L);
       return renderLang(L);
     }
@@ -270,7 +272,9 @@
     root.querySelectorAll('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say, L));
   }
   function practiceButtons(L, step, n) {
-    return `<button class="cta noprint" id="practice" ${n ? '' : 'disabled'}>${I.pen}Escrever no papel</button>
+    return `<button class="cta noprint" id="lesson" ${n ? '' : 'disabled'}>${I.flip}Começar lição</button>
+      <div class="lesson-hint noprint">Exercícios com certo e errado: escolher, ouvir, montar a frase e digitar.</div>
+      <button class="cta alt noprint" id="practice" ${n ? '' : 'disabled'}>${I.pen}Escrever no papel</button>
       <div class="actions-2 noprint">
         <button class="btn" id="printBlank">${I.print}Folha em branco</button>
         <button class="btn" id="printKey">${I.paper}Folha com gabarito</button>
@@ -278,6 +282,7 @@
   }
   function bindPractice(L, step) {
     const p = document.getElementById('practice'); if (p) p.onclick = () => go(`#/l/${L.id}/p/${step}`);
+    const ls = document.getElementById('lesson'); if (ls) ls.onclick = () => go(`#/l/${L.id}/l/${step}`);
     const pb = document.getElementById('printBlank'), pk = document.getElementById('printKey');
     if (pb) pb.onclick = () => { document.body.classList.remove('print-key'); window.print(); };
     if (pk) pk.onclick = () => { document.body.classList.add('print-key'); window.print(); setTimeout(() => document.body.classList.remove('print-key'), 500); };
@@ -649,6 +654,198 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
     if (cur && cur.fix) showAI(cur.fix);
   }
 
+  /* ——— LIÇÃO INTERATIVA: certo ou errado, conferido na hora ——— */
+  function applyGrade(st, it, g) {
+    const p = st.prog[it.id] || { b: 0, due: 0 };
+    if (g === 3) p.b = Math.min(p.b + 1, 6); else if (g === 1) p.b = 1; else p.b = Math.max(p.b, 1);
+    p.due = Date.now() + BOX_DAYS[p.b] * DAY - (BOX_DAYS[p.b] ? 36e5 : 0);
+    st.prog[it.id] = p; save();
+  }
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const norm = s => String(s).toLowerCase().normalize('NFC').replace(/[’`´]/g, "'").replace(/[.!?¡¿,;:。、]/g, '').replace(/\s+/g, ' ').trim();
+  const bare = s => norm(s).normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const hasVoice = L => 'speechSynthesis' in window && voices.some(v => v.lang && v.lang.toLowerCase().startsWith(L.tts.slice(0, 2)));
+
+  function distractors(it, pool, n = 3) {
+    const same = it.id.match(/^v:([^:]+):(\d)$/);
+    const diff = pool.filter(x => x.t !== it.t);
+    // verbos: primeiro a mesma conjugação em outra pessoa (o erro mais comum), depois outros verbos
+    const near = same ? diff.filter(x => x.id.startsWith(`v:${same[1]}:`)) : [];
+    const out = [];
+    for (const x of [...shuffle(near), ...shuffle(diff)]) { if (!out.some(o => o.t === x.t)) out.push(x); if (out.length >= n) break; }
+    return out;
+  }
+  function pickKind(L, it, box) {
+    const multi = it.t.includes(' ') && !it.t.includes('/');
+    const kinds = ['choice'];
+    if (hasVoice(L)) kinds.push('listen');
+    if (box >= 1 && multi) kinds.push('build', 'build');
+    if (box >= 2 && !L.roman && !it.t.includes('/')) kinds.push('type', 'type');
+    if (box >= 3 && multi && !L.roman) kinds.push('type');
+    return kinds[Math.floor(Math.random() * kinds.length)];
+  }
+  let audioCtx = null;
+  function beep(ok) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const t = audioCtx.currentTime;
+      (ok ? [660, 990] : [220, 180]).forEach((f, i) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = ok ? 'triangle' : 'sawtooth'; o.frequency.value = f;
+        g.gain.setValueAtTime(.0001, t + i * .09); g.gain.exponentialRampToValueAtTime(ok ? .12 : .06, t + i * .09 + .01);
+        g.gain.exponentialRampToValueAtTime(.0001, t + i * .09 + .16);
+        o.connect(g).connect(audioCtx.destination); o.start(t + i * .09); o.stop(t + i * .09 + .18);
+      });
+    } catch (e) { /* sem som */ }
+    try { navigator.vibrate && navigator.vibrate(ok ? 18 : [40, 50, 40]); } catch (e) { /* ok */ }
+  }
+
+  function renderLesson(L, step) {
+    const st = LS(L.id);
+    const pool = items(L, step);
+    const { pick, extra } = pickSession(L, step);
+    if (!pick.length) { go(`#/l/${L.id}/s/${step}`); return; }
+    if (extra) toast('Tudo revisado! Rodada extra.');
+    const queue = pick.map(it => ({ it, kind: pickKind(L, it, st.prog[it.id]?.b || 0) }));
+    let k = 0, right = 0, wrong = 0, streak = 0, best = 0;
+    const pickLen = queue.length;
+    const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    const sc = !isLatin(L) ? 'script' : '';
+
+    const show = () => {
+      if (k >= queue.length) return finish();
+      const { it, kind } = queue[k];
+      const total = queue.length;
+      let body = '', head = '';
+      if (kind === 'choice' || kind === 'listen') {
+        const opts = shuffle([it, ...distractors(it, pool)]);
+        head = kind === 'listen'
+          ? `<div class="kicker">Ouça e escolha</div><button class="listen" id="play" aria-label="Ouvir">${I.sound}</button>`
+          : `<div class="kicker">Como se diz em ${esc(L.name.toLowerCase())}?</div><div class="pt">${esc(it.pt)}</div>`;
+        body = `<div class="opts">${opts.map((o, i) => `<button class="opt ${sc}" data-o="${i}" ${rtl}><span class="key mono">${i + 1}</span>${esc(o.t)}${kind === 'listen' ? '' : ''}</button>`).join('')}</div>`;
+        queue[k].opts = opts;
+      } else if (kind === 'build') {
+        const toks = it.t.split(' ');
+        const extraTok = distractors(it, pool, 2).flatMap(d => d.t.split(' ')).filter(t => !toks.includes(t) && !t.includes('/')).slice(0, 2);
+        queue[k].tiles = shuffle([...toks, ...extraTok]);
+        head = `<div class="kicker">Monte a frase</div><div class="pt">${esc(it.pt)}</div>`;
+        body = `<div class="answer-line ${sc}" id="line" ${rtl}><span class="ph">toque nas palavras</span></div>
+          <div class="tiles" ${rtl}>${queue[k].tiles.map((t, i) => `<button class="tile ${sc}" data-t="${i}">${esc(t)}</button>`).join('')}</div>`;
+      } else {
+        head = `<div class="kicker">Escreva em ${esc(L.name.toLowerCase())}</div><div class="pt">${esc(it.pt)}</div>`;
+        body = `<input class="typein" id="typein" lang="${L.tts}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="digite aqui" ${rtl}>
+          ${L.id === 'fr' || L.id === 'es' || L.id === 'de' || L.id === 'it' ? `<div class="accents">${({ fr: 'é è ê à ç ’ ô û', es: 'á é í ó ú ñ ü', de: 'ä ö ü ß', it: 'à è é ì ò ù' })[L.id].split(' ').map(c => `<button class="acc" data-c="${c}">${c}</button>`).join('')}</div>` : ''}`;
+      }
+      $app.innerHTML = `
+        ${topbar(`#/l/${L.id}/s/${step}`, 'Sair', `<span class="score mono"><b class="okc">${right}</b> ✓ · <b class="badc">${wrong}</b> ✗${streak > 1 ? ` · 🔥${streak}` : ''}</span>`)}
+        <div class="prog">${queue.map((_, i) => `<i class="${i < k ? 'done' : i === k ? 'cur' : ''}"></i>`).join('')}</div>
+        <div class="lesson enter">
+          <div class="prompt">${head}</div>
+          ${body}
+        </div>
+        <div class="checkbar" id="bar">
+          <button class="cta" id="check" ${kind === 'choice' || kind === 'listen' ? 'hidden' : 'disabled'}>Conferir</button>
+        </div>`;
+      bind(it, kind);
+    };
+
+    const bind = (it, kind) => {
+      const q = queue[k];
+      if (kind === 'listen') { const pl = document.getElementById('play'); pl.onclick = () => speak(it.t, L); setTimeout(() => speak(it.t, L), 250); }
+      if (kind === 'choice' || kind === 'listen') {
+        const choose = i => {
+          const o = q.opts[i]; if (!o || q.done) return;
+          $app.querySelectorAll('.opt').forEach((b, j) => { b.disabled = true; if (q.opts[j].t === it.t) b.classList.add('right'); });
+          const ok = o.t === it.t;
+          if (!ok) $app.querySelector(`[data-o="${i}"]`).classList.add('wrong');
+          verdict(it, ok ? 3 : 1);
+        };
+        $app.querySelectorAll('.opt').forEach(b => b.onclick = () => choose(+b.dataset.o));
+        q.key = e => { const n = +e.key; if (n >= 1 && n <= q.opts.length) choose(n - 1); };
+      }
+      if (kind === 'build') {
+        const line = document.getElementById('line'), chk = document.getElementById('check');
+        q.sel = [];
+        const draw = () => {
+          line.innerHTML = q.sel.length ? q.sel.map((ti, j) => `<button class="tile in ${sc}" data-j="${j}">${esc(q.tiles[ti])}</button>`).join('') : '<span class="ph">toque nas palavras</span>';
+          $app.querySelectorAll('.tiles .tile').forEach(b => b.classList.toggle('used', q.sel.includes(+b.dataset.t)));
+          line.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { if (q.done) return; q.sel.splice(+b.dataset.j, 1); draw(); });
+          chk.disabled = !q.sel.length;
+        };
+        $app.querySelectorAll('.tiles .tile').forEach(b => b.onclick = () => { if (q.done || q.sel.includes(+b.dataset.t)) return; q.sel.push(+b.dataset.t); draw(); });
+        chk.onclick = () => {
+          const ans = q.sel.map(i => q.tiles[i]).join(' ');
+          verdict(it, norm(ans) === norm(it.t) ? 3 : 1, ans);
+        };
+      }
+      if (kind === 'type') {
+        const inp = document.getElementById('typein'), chk = document.getElementById('check');
+        setTimeout(() => inp.focus(), 50);
+        inp.oninput = () => { chk.disabled = !inp.value.trim(); };
+        inp.onkeydown = e => { if (e.key === 'Enter' && inp.value.trim() && !q.done) chk.click(); };
+        $app.querySelectorAll('.acc').forEach(b => b.onclick = () => {
+          const s = inp.selectionStart ?? inp.value.length; inp.value = inp.value.slice(0, s) + b.dataset.c + inp.value.slice(inp.selectionEnd ?? s);
+          inp.focus(); inp.setSelectionRange(s + 1, s + 1); chk.disabled = false;
+        });
+        chk.onclick = () => {
+          const a = inp.value; inp.disabled = true;
+          // aceita sem o pronome no espanhol e no italiano (“tengo” = “yo tengo”)
+          const noPron = (L.id === 'es' || L.id === 'it') && it.t.includes(' ') ? it.t.split(' ').slice(1).join(' ') : null;
+          const exact = norm(a) === norm(it.t) || (noPron && norm(a) === norm(noPron));
+          const close = !exact && (bare(a) === bare(it.t) || (noPron && bare(a) === bare(noPron)));
+          verdict(it, exact ? 3 : close ? 2 : 1, a);
+        };
+      }
+    };
+
+    const verdict = (it, g, given) => {
+      const q = queue[k]; q.done = true;
+      applyGrade(st, it, g);
+      const ok = g === 3, close = g === 2;
+      if (ok) { right++; streak++; best = Math.max(best, streak); } else { streak = 0; if (!close) { wrong++; if (queue.filter(x => x.it.id === it.id).length < 3 && queue.length < pickLen * 2) queue.push({ it, kind: 'choice' }); } else right++; }
+      beep(ok || close);
+      const lesson = $app.querySelector('.lesson'); lesson.classList.add(ok ? 'is-right' : close ? 'is-close' : 'is-wrong');
+      const praise = ['Certo!', 'Isso!', 'Perfeito!', 'Muito bem!', 'Exato!'][Math.floor(Math.random() * 5)];
+      document.getElementById('bar').innerHTML = `
+        <div class="verdict ${ok ? 'ok' : close ? 'close' : 'bad'}">
+          <div class="vrow"><b>${ok ? praise : close ? 'Quase! Cuidado com os acentos.' : 'Errado'}</b>
+            <button class="iconbtn" id="vsay" aria-label="Ouvir">${I.sound}</button></div>
+          ${ok ? '' : `<div class="vans"><span class="kicker">${close ? 'O certo é' : 'Resposta certa'}</span><div class="tg ${sc}" ${rtl}>${esc(it.t)}</div>${it.r ? `<small>${esc(it.r)}</small>` : ''}
+            ${given && !close ? `<div class="given">Você: <s ${rtl}>${esc(given)}</s></div>` : ''}${!close && queue.length > k + 1 && queue[queue.length - 1].it.id === it.id ? '<div class="given">Volta no fim da lição.</div>' : ''}</div>`}
+          <button class="cta" id="next">Continuar</button>
+        </div>`;
+      document.getElementById('vsay').onclick = () => speak(it.t, L);
+      if (q.kind !== 'listen') speak(it.t, L);
+      const nx = document.getElementById('next'); nx.focus();
+      nx.onclick = () => { k++; show(); window.scrollTo(0, 0); };
+      q.key = e => { if (e.key === 'Enter' && document.activeElement !== nx) nx.click(); };
+    };
+
+    const finish = () => {
+      const m = Math.round(mastery(L, step) * 100), firsts = pick.length;
+      const firstRight = Math.max(0, firsts - queue.slice(firsts).length);
+      $app.innerHTML = `
+        ${topbar(`#/l/${L.id}`, L.name)}
+        <div class="finish enter">
+          <div class="kicker muted">Lição concluída</div>
+          <div class="seal"><div><b>${firstRight}/${firsts}</b><span>de primeira</span></div></div>
+          <h1 class="title-xl">${firstRight === firsts ? 'Sem erros!' : m >= 60 ? 'Raiz firme.' : 'Mais uma lição.'}</h1>
+          <p class="lead">${best > 2 ? `Melhor sequência: ${best} seguidas. ` : ''}${esc(STEPS[step].t)} está ${m}% firme. ${m >= 60 && step < 3 ? `Pode subir para o degrau 0${step + 1}: ${STEPS[step + 1].t}.` : 'Os erros voltam na próxima lição.'}</p>
+          <button class="cta" id="more">${I.flip}Outra lição</button>
+          <div class="actions-2">
+            <a class="btn" href="#/l/${L.id}/p/${step}">${I.pen}Escrever no papel</a>
+            <a class="btn on" href="#/l/${L.id}${m >= 60 && step < 3 ? '/s/' + (step + 1) : ''}">${m >= 60 && step < 3 ? 'Próximo' : 'Escada'}</a>
+          </div>
+        </div>`;
+      document.getElementById('more').onclick = () => renderLesson(L, step);
+    };
+
+    lessonKeys = e => { const q = queue[k]; if (q && q.key && !(e.target && e.target.id === 'typein')) q.key(e); };
+    show();
+  }
+  let lessonKeys = null;
+  document.addEventListener('keydown', e => { if (lessonKeys && /\/l\/[a-z]+\/l\//.test(location.hash)) lessonKeys(e); });
+
   /* ——— PRÁTICA: escrever com o dedo ——— */
   let pad = null;
   function stopPad() { if (pad) { pad.destroy(); pad = null; } }
@@ -742,7 +939,7 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
       const total = results[1] + results[2] + results[3];
       $app.innerHTML = `
         ${topbar(`#/l/${L.id}`, L.name)}
-        <div class="done enter">
+        <div class="finish enter">
           <div class="kicker muted">Página concluída</div>
           <div class="seal"><div><b>${results[3]}/${total}</b><span>de primeira</span></div></div>
           <h1 class="title-xl">${m >= 60 ? 'Raiz firme.' : 'Mais uma página.'}</h1>
