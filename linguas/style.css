@@ -491,3 +491,19 @@ a.cta { text-decoration: none; }
 .ms-say small { font-size: 11px; }
 .vnote { margin: 0; padding: 10px 12px; font-size: 14px; border-top: 2px solid var(--line); background: var(--paper); }
 .vdel { display: block; margin: 8px 12px 12px; }
+
+/* ——— Conceito, não palavra ——— */
+.trap-tag { display: inline-block; margin-top: 4px; font: 700 10.5px var(--mono); letter-spacing: .04em; color: var(--bad); }
+.vnote.trap { background: var(--bad-bg); color: var(--ink); }
+.chip.poly { border-color: var(--close); }
+.chip.poly small { background: var(--close); color: #fff; }
+.poly-note { background: var(--close-bg); color: var(--ink); font-size: 14.5px; margin-top: 10px; }
+.senses { border: 2px solid var(--line); background: var(--sheet); border-radius: var(--radius); box-shadow: 3px 3px 0 var(--line); margin-bottom: 6px; }
+.sense-row { display: grid; grid-template-columns: 84px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+.sense-row:last-child { border-bottom: 0; }
+.sense-row > b { font: 800 18px/1.2 var(--serif); padding-top: 2px; }
+.sense-row > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.sense { display: inline-grid; border: 1.5px solid var(--line); border-radius: 8px; padding: 4px 9px 5px; background: var(--paper); }
+.sense small { font: 700 10px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.sense span { font: 700 16px/1.15 var(--script); }
+.row .tg.long { font-size: 17px; line-height: 1.15; }

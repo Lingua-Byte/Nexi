@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment2.outputs.page_url }}
     env:
       RAIZ_VERSION_CODE: ${{ github.run_number }}
       RAIZ_VERSION_NAME: 1.${{ github.run_number }}
@@ -59,6 +59,18 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: '.'
+      # O GitHub às vezes ainda não registrou o pacote logo após o upload ("Found 0 artifacts"):
+      # espera um pouco e, se falhar, tenta de novo.
+      - name: Esperar o GitHub registrar o pacote
+        run: sleep 15
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      - name: Esperar antes de tentar de novo
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+      - name: Deploy to GitHub Pages (2ª tentativa)
+        id: deployment2
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4

@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '1.7', t: 'tradução por conceito: o sentido decide a palavra' },
     { v: '1.6', t: 'qualquer frase vira lição · escrita à mão mais clara' },
     { v: '1.5', t: 'lições interativas com certo e errado' },
     { v: '1.4', t: 'APK para Android' },
@@ -266,7 +267,7 @@
       <div class="sheet-h"><span>${esc(head[0])}</span><span>${esc(head[1])}</span></div>
       ${rows.map(r => `<button class="row" data-say="${esc(r.t)}">
         <span class="pt">${esc(r.pt)}</span>
-        <span class="tg ${sc}" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(r.t)}${r.r ? `<small dir="ltr">${esc(r.r)}</small>` : ''}</span>
+        <span class="tg ${sc} ${String(r.t).length > 15 ? 'long' : ''}" ${L.dir === 'rtl' ? 'dir="rtl"' : ''}>${esc(r.t)}${r.r ? `<small dir="ltr">${esc(r.r)}</small>` : ''}</span>
         <span class="spk" aria-label="ouvir">${I.sound}</span>
       </button>`).join('')}
     </div>`;
@@ -349,14 +350,18 @@
 
   /* Com o Claude: traduz suas frases, conjuga os verbos e devolve tudo pronto para virar lição. */
   const PATH_SCHEMA = {
-    type: 'object', additionalProperties: false, required: ['sentences', 'verbs'],
+    type: 'object', additionalProperties: false, required: ['sentences', 'concepts'],
     properties: {
       sentences: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['pt', 'target', 'romanization'],
         properties: { pt: { type: 'string' }, target: { type: 'string' }, romanization: { type: 'string' } } } },
-      verbs: { type: 'array', items: { type: 'object', additionalProperties: false,
-        required: ['pt_infinitive', 'target_infinitive', 'pt_forms', 'forms', 'forms_romanization', 'note'],
+      concepts: { type: 'array', items: { type: 'object', additionalProperties: false,
+        required: ['pt_verb', 'sense', 'core_sense', 'target_expression', 'literal_trap', 'pt_forms', 'forms', 'forms_romanization', 'note'],
         properties: {
-          pt_infinitive: { type: 'string' }, target_infinitive: { type: 'string' },
+          pt_verb: { type: 'string', description: 'infinitivo do verbo em português' },
+          sense: { type: 'string', description: 'o sentido do verbo NESTA frase, curto, em português (ex.: “beber (café)”)' },
+          core_sense: { type: 'boolean', description: 'true se é o sentido básico do verbo, como no dicionário' },
+          target_expression: { type: 'string', description: 'a expressão que um nativo usa para esse sentido (ex.: “have a coffee”)' },
+          literal_trap: { type: 'string', description: 'se traduzir palavra por palavra fica errado, explique em português; senão vazio' },
           pt_forms: { type: 'array', items: { type: 'string' } }, forms: { type: 'array', items: { type: 'string' } },
           forms_romanization: { type: 'array', items: { type: 'string' } }, note: { type: 'string' } } } }
     }
@@ -372,14 +377,19 @@
     he: 'אני, אתה / את, הוא, היא, אנחנו, אתם / אתן, הם, הן; no presente mostre masculino / feminino quando mudar (ex.: “אני אוהב / אוהבת”, “אתה אוהב / את אוהבת”)'
   };
   function pathPrompt(L, text) {
-    const system = `Você ajuda um brasileiro autodidata a aprender ${L.name.toLowerCase()} a partir das frases que ele realmente fala no dia a dia.
-Receba frases em português. Para cada frase, dê a tradução simples e natural em ${L.name.toLowerCase()}${L.roman ? ' e a romanização' : ' (romanização vazia)'}.
-Liste cada verbo usado nas frases (menos ser e estar, que ele estuda à parte), uma vez só, com:
-- o infinitivo em português e em ${L.name.toLowerCase()};
-- pt_forms: o presente em português com pronome, nesta ordem exata de 8: eu, você, ele, ela, nós, vocês, eles, elas;
-- forms: o presente em ${L.name.toLowerCase()} com pronome, na mesma ordem de 8, usando: ${CONV[L.id]};
+    const lang = L.name.toLowerCase();
+    const system = `Você ajuda um brasileiro autodidata a aprender ${lang} a partir das frases que ele realmente fala no dia a dia.
+Princípio: tradução é de CONCEITO, não de palavra. O mesmo verbo português pode virar verbos diferentes conforme o sentido (em inglês: tomar café → have a coffee; tomar banho → take a shower; tomar o ônibus → take the bus; tomar remédio → take medicine). E verbos diferentes do português podem virar o mesmo verbo.
+Receba frases em português. Para cada frase, dê a tradução simples e natural em ${lang}, como um nativo diria${L.roman ? ', e a romanização' : ' (romanização vazia)'}.
+Liste os conceitos verbais das frases (menos ser e estar, que ele estuda à parte). Um conceito = verbo + o sentido que ele tem naquela frase. Se o mesmo verbo aparece com dois sentidos, são dois conceitos. Para cada um:
+- pt_verb: infinitivo em português; sense: o sentido nesta frase, curto (ex.: “beber (café)”, “pegar (condução)”);
+- core_sense: true só se for o sentido básico de dicionário e a tradução direta funcionar;
+- target_expression: o que um nativo usa para esse sentido;
+- literal_trap: se a tradução palavra por palavra ficaria errada ou estranha, explique em uma frase em português (ex.: “Não é ‘take a coffee’: para comida e bebida usa-se ‘have’.”); senão vazio;
+- pt_forms: presente em português com pronome, nesta ordem exata de 8: eu, você, ele, ela, nós, vocês, eles, elas. Quando o complemento define o sentido, inclua um complemento curto (ex.: “eu tomo um café”); se o verbo é neutro (querer, precisar), só pronome + verbo;
+- forms: o mesmo em ${lang}, na mesma ordem de 8, usando: ${CONV[L.id]};
 - forms_romanization: 8 romanizações${L.roman ? '' : ' vazias'};
-- note: uma observação curta em português se o verbo tiver uma armadilha (irregular, preposição, “gustar”…), senão vazio.
+- note: armadilha de gramática (irregular, preposição…), curta, senão vazio.
 Corrija silenciosamente erros de digitação do português.`;
     return { system, user: text };
   }
@@ -406,6 +416,23 @@ Corrija silenciosamente erros de digitação do português.`;
   function verbAskLink(L, lemma) {
     const q = `Como se diz o verbo “${lemma}” em ${L.name.toLowerCase()}? Conjugue no presente com pronome, nesta ordem: eu, você, ele, ela, nós, vocês, eles, elas (use ${CONV[L.id]}).${L.roman ? ' Inclua a romanização.' : ''} Responda curto.`;
     return 'https://claude.ai/new?q=' + encodeURIComponent(q);
+  }
+
+  function senseMap(L, st) {
+    const by = {};
+    st.myVerbs.forEach(m => { if (m.sense) (by[m.pt] = by[m.pt] || []).push(m); });
+    const rows = Object.entries(by).filter(([, ms]) => ms.length > 1 || ms.some(m => m.trap));
+    if (!rows.length) return '';
+    const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    return `<div class="subh">Um verbo, vários sentidos <span class="kicker">conceito, não palavra</span></div>
+      <div class="senses">${rows.map(([v, ms]) => `<div class="sense-row"><b>${esc(v)}</b><div>${ms.map(m => `<span class="sense"><small>${esc(m.sense)}</small><span ${rtl}>${esc(m.tInf || m.t[0])}</span></span>`).join('')}</div></div>`).join('')}</div>`;
+  }
+
+  function polyNote(found, extra) {
+    const poly = [...found, ...extra].filter(v => PT_SENSES[v]);
+    if (!poly.length) return '';
+    return `<div class="note poly-note"><span class="kicker">O sentido decide</span>${poly.map(v => `<b>${esc(v)}</b> muda de palavra em outras línguas conforme o sentido: ${PT_SENSES[v].map(esc).join(' · ')}.`).join('<br>')}
+      Toque em <b>Transformar em lição</b> para aprender o sentido da <i>sua</i> frase — tradução é de conceito, não de palavra.</div>`;
   }
 
   function renderVerbs(L, keepText = '') {
@@ -438,7 +465,8 @@ Corrija silenciosamente erros de digitação do português.`;
         ${ranked.length ? `<div class="subh">Os que eu mais falo <span class="kicker">${st.diary.length} anotações</span></div>
           <div class="rank">${ranked.map(([id, n]) => `<div><b>${esc(verbById[id]?.pt || id)}</b><span>${n}×</span></div>`).join('')}</div>` : ''}
 
-        <div class="subh">Minhas conjugações <span class="kicker">${nVerbs} verbos</span></div>
+        ${senseMap(L, st)}
+        <div class="subh">Minhas conjugações <span class="kicker">${nVerbs} verbos e conceitos</span></div>
         <div id="cards">
           ${st.verbs.map(vid => {
             const v = verbById[vid]; if (!v) return '';
@@ -448,8 +476,8 @@ Corrija silenciosamente erros de digitação do português.`;
           }).join('')}
           ${st.myVerbs.map(m => {
             const rows = m.t.map((t, i) => ({ pt: m.ptf[i], t, r: m.r[i] }));
-            return `<div class="vcard"><button data-open="m-${m.id}"><span><span class="vpt">${esc(m.pt)} · meu</span><br><span class="vtg" ${rtl}>${esc(m.t[0])}</span></span>${I.down}</button>
-              <div class="hide" id="open-m-${m.id}">${m.note ? `<p class="vnote">${esc(m.note)}</p>` : ''}${sheet(L, rows)}<button class="linkbtn vdel" data-delmy="${esc(m.id)}">apagar este verbo</button></div></div>`;
+            return `<div class="vcard ${m.trap ? 'has-trap' : ''}"><button data-open="m-${m.id}"><span><span class="vpt">${esc(m.pt)}${m.sense ? ` · ${esc(m.sense)}` : ''}</span><br><span class="vtg" ${rtl}>${esc(m.t[0])}</span>${m.trap ? '<br><span class="trap-tag">⚠ não é palavra por palavra</span>' : ''}</span>${I.down}</button>
+              <div class="hide" id="open-m-${m.id}">${m.trap ? `<p class="vnote trap">⚠ ${esc(m.trap)}</p>` : ''}${m.note ? `<p class="vnote">${esc(m.note)}</p>` : ''}${sheet(L, rows)}<button class="linkbtn vdel" data-delmy="${esc(m.id)}">apagar este conceito</button></div></div>`;
           }).join('')}
           ${st.custom.map(c => `<div class="vcard"><button data-say="${esc(c.t)}"><span><span class="vpt">${esc(c.pt)} · meu</span><br><span class="vtg" ${rtl}>${esc(c.t)}</span>${c.r ? `<br><small class="mono muted">${esc(c.r)}</small>` : ''}</span><span class="linkbtn" data-del="${esc(c.id)}">apagar</span></button></div>`).join('')}
         </div>
@@ -478,8 +506,9 @@ Corrija silenciosamente erros de digitação do português.`;
       if (!txt.trim()) { fd.innerHTML = ''; return; }
       fd.innerHTML = `<div class="found">
           ${found.map(id => `<button class="chip ${st.verbs.includes(id) ? 'on' : ''}" data-v="${id}"><span class="dot"></span>${esc(verbById[id].pt)}</button>`).join('')}
-          ${extra.map(l => { const have = st.myVerbs.some(m => m.pt === l); return `<button class="chip new ${have ? 'on' : ''}" data-x="${esc(l)}"><span class="dot"></span>${esc(l)}${have ? '' : '<small>novo</small>'}</button>`; }).join('')}
+          ${extra.map(l => { const have = st.myVerbs.some(m => m.pt === l); const poly = !!PT_SENSES[l]; return `<button class="chip new ${poly ? 'poly' : ''} ${have ? 'on' : ''}" data-x="${esc(l)}"><span class="dot"></span>${esc(l)}${poly ? '<small>sentido?</small>' : have ? '' : '<small>novo</small>'}</button>`; }).join('')}
         </div>
+        ${polyNote(found, extra)}
         <p class="muted found-hint">${!found.length && !extra.length ? 'Nenhum verbo reconhecido ainda — continue escrevendo, ou toque em “Transformar em lição” para o Claude achar.' :
           `${extra.length ? 'Os marcados <b>novo</b> ainda não têm conjugação: toque em “Transformar em lição” (Claude) ou num deles para guardar do seu jeito. ' : ''}${base ? 'Ser/estar já é o degrau 02.' : ''}`}</p>`;
       bindChips(fd);
@@ -521,21 +550,23 @@ Corrija silenciosamente erros de digitação do português.`;
         const out = await callClaude(system, user, PATH_SCHEMA);
         note(txt, true);
         let nv = 0, ns = 0, nb = 0;
-        (out.verbs || []).forEach(v => {
-          const inf = String(v.pt_infinitive || '').toLowerCase().trim();
+        (out.concepts || []).forEach(v => {
+          const inf = String(v.pt_verb || '').toLowerCase().trim();
           if (!inf || inf === 'ser' || inf === 'estar') return;
-          if (verbById[inf]) { if (!st.verbs.includes(inf)) { st.verbs.push(inf); nb++; } return; }   // o banco tem conjugação revisada
+          // sentido básico de um verbo do banco: usa a conjugação revisada do banco
+          if (verbById[inf] && v.core_sense && !v.literal_trap) { if (!st.verbs.includes(inf)) { st.verbs.push(inf); nb++; } return; }
           if (!Array.isArray(v.forms) || v.forms.length !== 8 || !Array.isArray(v.pt_forms) || v.pt_forms.length !== 8) return;
-          if (st.myVerbs.some(m => m.pt === inf)) return;
+          const sense = String(v.sense || '').trim();
+          if (st.myVerbs.some(m => m.pt === inf && (m.sense || '') === sense)) return;
           const r = Array.isArray(v.forms_romanization) && v.forms_romanization.length === 8 ? v.forms_romanization : Array(8).fill('');
-          st.myVerbs.push({ id: Date.now().toString(36) + nv, pt: inf, tInf: v.target_infinitive, ptf: v.pt_forms, t: v.forms, r, note: v.note || '' }); nv++;
+          st.myVerbs.push({ id: Date.now().toString(36) + nv, pt: inf, sense, tInf: v.target_expression, trap: v.literal_trap || '', ptf: v.pt_forms, t: v.forms, r, note: v.note || '' }); nv++;
         });
         (out.sentences || []).forEach(s => {
           if (!s.pt || !s.target || st.mySentences.some(x => x.pt === s.pt)) return;
           st.mySentences.unshift({ id: Date.now().toString(36) + 's' + ns, pt: s.pt, t: s.target, r: s.romanization || '' }); ns++;
         });
         st.mySentences = st.mySentences.slice(0, 120); save();
-        toast(`Pronto: ${nv + nb} verbo(s) e ${ns} frase(s) na sua lição`);
+        toast(`Pronto: ${nv + nb} conceito(s) e ${ns} frase(s) na sua lição`);
         renderVerbs(L);
         const c = document.querySelector('.lesson-hint'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch (e) {
@@ -639,7 +670,7 @@ Corrija silenciosamente erros de digitação do português.`;
   function fixPrompt(L, text, meant) {
     const system = `Você é um professor de ${L.name.toLowerCase()} paciente e caloroso. Corrige o diário de um aluno brasileiro, autodidata e iniciante, que aprende assim: primeiro os pronomes pessoais, depois ser e estar, depois os verbos que ele mais usa no dia a dia.
 Corrija gramática, conjugação, concordância, ortografia e palavras erradas, mudando o mínimo possível — o texto é dele. Não corrija estilo se estiver certo.
-Cada erro vira um item: o trecho exato que ele escreveu, a correção e o porquê em uma frase simples em português do Brasil, sem jargão. Se ele misturou palavras em português, traduza e conte como erro.
+Cada erro vira um item: o trecho exato que ele escreveu, a correção e o porquê em uma frase simples em português do Brasil, sem jargão. Se ele misturou palavras em português, traduza e conte como erro. Tradução é de conceito, não de palavra: se ele traduziu palavra por palavra e um nativo diria de outro jeito (ex.: “I take a coffee” em vez de “I have a coffee”), conte como erro e explique o conceito.
 Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próximo passo concreto (ex.: “revise o verbo ter com ‘nós’”).`;
     const user = `Língua: ${L.name} (${L.native}).\n${meant ? `O que eu quis dizer, em português: ${meant}\n` : ''}Meu diário:\n${text}`;
     return { system, user };

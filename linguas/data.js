@@ -135,7 +135,7 @@ const VERBS = [
     de: ['esse', 'isst', 'isst', 'essen', 'esst', 'essen'], it: ['mangio', 'mangi', 'mangia', 'mangiamo', 'mangiate', 'mangiano'],
     ja: ['食べます', 'tabemasu'], ko: ['먹어요', 'meogeoyo'],
     he: { f: ['אוכל', 'אוכלת', 'אוכלים', 'אוכלות'], r: ['ochél', 'ochélet', 'ochlím', 'ochlót'] } },
-  { id: 'beber', pt: 'beber', ptf: ['bebo', 'bebe', 'bebemos', 'bebem'], detect: 'bebo bebe bebemos bebem beber bebi bebeu beberam bebia tomo tomar tomei',
+  { id: 'beber', pt: 'beber', ptf: ['bebo', 'bebe', 'bebemos', 'bebem'], detect: 'bebo bebe bebemos bebem beber bebi bebeu beberam bebia',
     en: ['drink', 'drinks'], fr: ['bois', 'bois', 'boit', 'buvons', 'buvez', 'boivent'], es: ['bebo', 'bebes', 'bebe', 'bebemos', 'beben', 'beben'],
     de: ['trinke', 'trinkst', 'trinkt', 'trinken', 'trinkt', 'trinken'], it: ['bevo', 'bevi', 'beve', 'beviamo', 'bevete', 'bevono'],
     ja: ['飲みます', 'nomimasu'], ko: ['마셔요', 'masyeoyo'],
@@ -200,7 +200,7 @@ const PT_LEX_REG = ('acordar levantar tomar chegar voltar comprar pagar estudar 
   'acreditar explicar ensinar mostrar olhar procurar cuidar sonhar descansar almoçar jantar treinar morrer nascer ' +
   'decidir resolver escolher sorrir gritar falar trabalhar morar gostar precisar entender comer beber dormir ' +
   'arrumar organizar planejar preparar escutar rezar orar visitar namorar casar separar cumprimentar agradecer ' +
-  'desculpar comemorar praticar repetir traduzir ler esperar entrar subir descer atender acompanhar').split(' ');
+  'desculpar comemorar praticar repetir traduzir ler esperar entrar subir descer atender acompanhar pegar tirar bater botar').split(' ');
 const PT_LEX_IRR = {
   ser: 'sou é somos são era eram fui foi foram sido', estar: 'estou está estamos estão estava estive esteve',
   ter: 'tenho tem temos têm tinha tive teve', ir: 'vou vai vamos vão ia fui foi fomos foram',
@@ -213,7 +213,28 @@ const PT_LEX_IRR = {
   pedir: 'peço pede pedimos pedem pedia pedi pediu', sentir: 'sinto sente sentimos sentem sentia senti sentiu',
   conseguir: 'consigo consegue conseguimos conseguem conseguia consegui conseguiu', preferir: 'prefiro prefere preferimos preferem preferi',
   perder: 'perco perde perdemos perdem perdia perdi perdeu', rir: 'rio ri rimos riem ria riu', dormir: 'durmo dorme dormimos dormem dormia dormi dormiu',
-  pôr: 'ponho põe pomos põem punha pus pôs', vestir: 'visto veste vestimos vestem vesti vestiu', seguir: 'sigo segue seguimos seguem segui seguiu'
+  pôr: 'ponho põe pomos põem punha pus pôs', cair: 'caio cai caímos caem caía caí caiu caíram', vestir: 'visto veste vestimos vestem vesti vestiu', seguir: 'sigo segue seguimos seguem segui seguiu'
 };
 /* palavras que parecem verbo mas quase sempre são outra coisa */
 const PT_LEX_SKIP = new Set('como casa jogo trabalho almoço janta volta passo ganho caminho sonho canto cuidado ajuda chamada pergunta resposta conta lembrança mudança fala'.split(' '));
+
+/* Verbos que mudam de sentido conforme o contexto: em outra língua, cada sentido pode
+   virar uma palavra diferente. Tradução é de conceito, não de palavra. */
+const PT_SENSES = {
+  tomar: ['café / bebida', 'banho', 'remédio', 'ônibus / condução', 'sol', 'conta (cuidar)', 'decisão'],
+  pegar: ['ônibus', 'um objeto', 'gripe / doença', 'no sono'],
+  fazer: ['uma tarefa', 'frio / calor (tempo)', 'aniversário', 'a barba', 'sentido'],
+  dar: ['um presente', 'uma volta', 'certo / errado', 'para (ser possível)'],
+  ficar: ['num lugar', 'cansado / feliz (mudar de estado)', 'com (guardar)', 'bem (roupa)'],
+  passar: ['o tempo', 'por um lugar', 'na prova', 'roupa', 'mal'],
+  levar: ['carregar', 'tempo (leva uma hora)', 'alguém a um lugar'],
+  deixar: ['permitir', 'largar / esquecer', 'de (parar de)'],
+  achar: ['encontrar', 'opinião (eu acho que)'],
+  ter: ['possuir', 'idade', 'que (obrigação)', 'existir (tem café?)'],
+  sair: ['de um lugar', 'passear / sair com amigos', 'dar resultado'],
+  botar: ['colocar', 'roupa'], pôr: ['colocar', 'roupa', 'a mesa'],
+  tirar: ['remover', 'foto', 'nota', 'férias'],
+  bater: ['na porta', 'papo', 'o carro'],
+  cair: ['no chão', 'a ficha (entender)', 'bem (combinar)'],
+  jogar: ['um jogo / esporte', 'fora (descartar)', 'algo (arremessar)']
+};
