@@ -221,8 +221,8 @@ const PT_LEX_SKIP = new Set('como casa jogo trabalho almoço janta volta passo g
 /* Verbos que mudam de sentido conforme o contexto: em outra língua, cada sentido pode
    virar uma palavra diferente. Tradução é de conceito, não de palavra. */
 const PT_SENSES = {
-  tomar: ['café / bebida', 'banho', 'remédio', 'ônibus / condução', 'sol', 'conta (cuidar)', 'decisão'],
-  pegar: ['ônibus', 'um objeto', 'gripe / doença', 'no sono'],
+  tomar: ['café / bebida', 'banho', 'remédio', 'sol', 'conta (cuidar)', 'decisão', 'susto'],
+  pegar: ['ônibus / condução', 'um objeto', 'gripe / doença', 'no sono', 'trânsito'],
   fazer: ['uma tarefa', 'frio / calor (tempo)', 'aniversário', 'a barba', 'sentido'],
   dar: ['um presente', 'uma volta', 'certo / errado', 'para (ser possível)'],
   ficar: ['num lugar', 'cansado / feliz (mudar de estado)', 'com (guardar)', 'bem (roupa)'],

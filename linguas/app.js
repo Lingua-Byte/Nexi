@@ -10,7 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
-    { v: '1.7', t: 'tradução por conceito: o sentido decide a palavra' },
+    { v: '1.7', t: 'tradução por conceito: o sentido decide a palavra (pegar o ônibus)' },
     { v: '1.6', t: 'qualquer frase vira lição · escrita à mão mais clara' },
     { v: '1.5', t: 'lições interativas com certo e errado' },
     { v: '1.4', t: 'APK para Android' },
@@ -379,7 +379,8 @@
   function pathPrompt(L, text) {
     const lang = L.name.toLowerCase();
     const system = `Você ajuda um brasileiro autodidata a aprender ${lang} a partir das frases que ele realmente fala no dia a dia.
-Princípio: tradução é de CONCEITO, não de palavra. O mesmo verbo português pode virar verbos diferentes conforme o sentido (em inglês: tomar café → have a coffee; tomar banho → take a shower; tomar o ônibus → take the bus; tomar remédio → take medicine). E verbos diferentes do português podem virar o mesmo verbo.
+Princípio: tradução é de CONCEITO, não de palavra. O mesmo verbo português pode virar verbos diferentes conforme o sentido (em inglês: tomar café → have a coffee; tomar banho → take a shower; tomar remédio → take medicine). E verbos diferentes do português podem virar o mesmo verbo (tomar banho, tomar remédio e pegar o ônibus viram todos “take” em inglês).
+O aluno é brasileiro: o português de pt_forms, sense e das explicações é sempre o do Brasil, falado no dia a dia (pegar o ônibus, não tomar o autocarro). Se ele usar uma forma de Portugal ou de outra região, mantenha o sentido e não corrija o jeito dele.
 Receba frases em português. Para cada frase, dê a tradução simples e natural em ${lang}, como um nativo diria${L.roman ? ', e a romanização' : ' (romanização vazia)'}.
 Liste os conceitos verbais das frases (menos ser e estar, que ele estuda à parte). Um conceito = verbo + o sentido que ele tem naquela frase. Se o mesmo verbo aparece com dois sentidos, são dois conceitos. Para cada um:
 - pt_verb: infinitivo em português; sense: o sentido nesta frase, curto (ex.: “beber (café)”, “pegar (condução)”);
