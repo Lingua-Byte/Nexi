@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '2.3', t: 'o diário libera palavras e conceitos: coleção, palavras vizinhas, missões, nível e Pares' },
     { v: '2.2', t: 'o diário é o centro: escreva em português ou na língua, toque numa palavra e ela acende na outra' },
     { v: '2.1', t: 'o contexto passa de uma frase para a outra (sujeito oculto) · “o próximo”' },
     { v: '2.0', t: 'tradutor interno: traduz e corrige dentro do celular, sem chave' },
@@ -113,6 +114,7 @@
   /* ——— itens de prática por degrau ——— */
   function items(L, step) {
     const out = [];
+    if (step === 4) return Object.values(LS(L.id).vocab || {}).map(v => ({ id: 'w:' + v.pt, pt: v.pt, t: v.t, r: v.r || '' }));
     if (step === 1) {
       L.pron.forEach((t, i) => out.push({ id: 'p' + i, pt: PT_PRON[i], t, r: L.pronR ? L.pronR[i] : '' }));
     } else if (step === 2) {
@@ -167,6 +169,7 @@
   const STEPS = {
     1: { t: 'Pronomes', k: 'Eu · você · ele · ela…', d: 'Quem fala, com quem, sobre quem. Toda frase começa aqui.' },
     2: { t: 'Ser & Estar', k: 'O verbo que liga tudo', d: 'Eu sou, eu estou. Os dois verbos que sustentam a língua.' },
+    4: { t: 'Meu vocabulário', k: 'Do seu diário', d: 'As palavras que vieram da sua vida.' },
     3: { t: 'Meus verbos', k: 'Do que eu falo', d: 'Escreva qualquer frase do seu dia: o app acha os verbos e transforma em lição.' }
   };
 
@@ -181,6 +184,9 @@
       if (h[2] === 'l') return renderLesson(L, +h[3] || 1);
       if (h[2] === 'd') return renderDiary(L);
       if (h[2] === 't') return renderDiary(L);   // o tradutor agora vive no diário
+      if (h[2] === 'c') return renderColecao(L);
+      if (h[2] === 'v') return renderVocab(L);
+      if (h[2] === 'g') return renderPares(L);
       return renderLang(L);
     }
     setLangColors(null); renderHome();
@@ -247,8 +253,9 @@
         <span class="kicker">Comece aqui · todo dia</span>
         <b>Diário</b>
         <span>Escreva a sua vida em português ou em ${esc(L.name.toLowerCase())}. O diário mostra o que é o quê — toque numa palavra e ela acende na outra língua.</span>
-        <span class="jc-count mono">${(LS(L.id).journal || []).length} páginas</span>
+        <span class="jc-count mono">${(n => `${n} página${n === 1 ? '' : 's'}`)((LS(L.id).journal || []).length)}</span>
       </a>
+      ${painelHTML(L)}
       <div class="section-h" style="margin:26px 0 10px"><h2>A raiz</h2><span class="kicker muted">a base que sustenta tudo</span></div>
       <div class="stairs">
         ${[1, 2, 3].map(s => {
@@ -885,6 +892,7 @@
         if (lang === 'pt') {
           const out = await analisar(L, c.text);
           note(c.text); save(); showPt(c, out);
+          colher(L, c.text, out).catch(() => {});
         } else {
           const issues = localCheck(L, c.text) || [];
           const al = await mtAligned(L.id, 'pt', c.text);
@@ -901,6 +909,7 @@
           const n = issues.length + (d && d.score < 70 ? 1 : 0);
           const fx = { text: c.text, meant: c.meant, back, src: al.src, toks: al.toks, ref, sim, issues, concepts, n, ok: !issues.length && (!ref || (d && d.score >= 70)) && (!c.meant || sim >= 55) };
           c.fix = fx; save(); showTg(fx);
+          const nFr = frases(c.text).length; contar(L, 'alvo', nFr); contar(L, 'frases', nFr); ganharXP(L, 15 * nFr);
         }
       } catch (e) {
         res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(String(e.message || e))}</div>`;
@@ -918,6 +927,240 @@
     $app.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { renderDiary(L, b.dataset.j); window.scrollTo(0, 0); });
     const nb = document.getElementById('jnew'); if (nb) nb.onclick = () => { renderDiary(L); window.scrollTo(0, 0); };
     if (cur && cur.lang && cur.lang !== 'pt' && cur.fix && cur.fix.toks) showTg(cur.fix);
+  }
+
+  /* ——— JOGO: o diário libera palavras e conceitos ——— */
+  const hojeK = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+  const diaK = d => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  function G(L) {
+    const st = LS(L.id);
+    st.game = st.game || { xp: 0, days: {}, unlocked: {}, fields: {}, today: {} };
+    st.vocab = st.vocab || {};
+    const g = st.game;
+    if (g.today.date !== hojeK()) g.today = { date: hojeK(), frases: 0, acertos: 0, palavras: 0, conceitos: 0, pares: 0, alvo: 0, ok: {} };
+    return g;
+  }
+  const nivel = xp => Math.floor(Math.sqrt(xp / 40)) + 1;
+  const xpDoNivel = n => 40 * (n - 1) * (n - 1);
+  function sequencia(g) {
+    const d = new Date(); let n = 0;
+    if (!g.days[diaK(d)]) d.setDate(d.getDate() - 1);
+    while (g.days[diaK(d)]) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  const MISSOES = L => [
+    { id: 'frases', t: 'Escreva 3 frases no diário', meta: 3 },
+    { id: 'acertos', t: 'Acerte 10 numa lição', meta: 10 },
+    { id: 'palavras', t: 'Ganhe 5 palavras novas', meta: 5 },
+    { id: 'conceitos', t: 'Descubra 1 conceito', meta: 1 },
+    { id: 'pares', t: 'Vença uma partida de Pares', meta: 1 },
+    { id: 'alvo', t: `Escreva 1 frase em ${L.name.toLowerCase()}`, meta: 1 }
+  ];
+  function missoesDoDia(L) {
+    const k = hojeK() + L.id; let h = 0; for (const c of k) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    const pool = MISSOES(L), out = [];
+    while (out.length < 3) { const m = pool[h % pool.length]; if (!out.includes(m)) out.push(m); h = (h * 1103515245 + 12345) >>> 0; }
+    return out;
+  }
+  /* fila de comemorações (carimbos) */
+  const festa = [];
+  function celebrar(item) {
+    festa.push(item);
+    if (festa.length === 1) mostrarFesta();
+  }
+  function mostrarFesta() {
+    const it = festa[0]; if (!it) return;
+    const ov = document.createElement('div');
+    ov.className = 'festa ' + (it.raro || '');
+    ov.innerHTML = `<div class="festa-card"><div class="festa-ico">${it.icone || '★'}</div><div class="kicker">${esc(it.kicker)}</div>
+      <h2>${esc(it.titulo)}</h2>${it.corpo ? `<p>${it.corpo}</p>` : ''}<button class="cta">Continuar</button></div>`;
+    document.body.appendChild(ov);
+    beep(true);
+    ov.querySelector('button').onclick = () => { ov.remove(); festa.shift(); mostrarFesta(); };
+  }
+  function ganharXP(L, n) {
+    const g = G(L), antes = nivel(g.xp);
+    g.xp += n; g.days[hojeK()] = true; save();
+    const depois = nivel(g.xp);
+    if (depois > antes) celebrar({ icone: '⬆', kicker: 'Subiu de nível', titulo: `Nível ${depois}`, corpo: `A sua raiz em ${esc(L.name.toLowerCase())} está mais funda.` });
+  }
+  function contar(L, chave, n = 1) {
+    const g = G(L); g.today[chave] = (g.today[chave] || 0) + n; save();
+    for (const m of missoesDoDia(L)) {
+      if (m.id === chave && !g.today.ok[m.id] && g.today[m.id] >= m.meta) {
+        g.today.ok[m.id] = true; save();
+        celebrar({ icone: '✓', kicker: 'Missão do dia cumprida', titulo: m.t, corpo: '+30 XP' });
+        ganharXP(L, 30);
+      }
+    }
+  }
+  function raridade(c) { return LENDARIOS.has(c.id) ? 'lendario' : c.tipo === 'verbo' || /expressão|Machado/.test(c.diz) ? 'raro' : 'comum'; }
+  function categoriaConceito(c) {
+    if (LENDARIOS.has(c.id)) return 'intraduzível';
+    if (/Nordeste|Sul|Minas|Rio Grande|regionais|Pernambuco/.test(c.diz)) return 'regional';
+    if (/formal|cartas|e-mails/i.test(c.diz)) return 'formal';
+    if (c.tipo === 'verbo') return 'expressão';
+    return 'fala do dia a dia';
+  }
+  const PALAVRA_VAZIA = w => w.length < 3 || /\d/.test(w) || SETS.pt.has(w) || /^(está|estão|estou|isso|essa|esse|este|esta|aquele|aquela|muito|muita|pelo|pela|para|como|quando|onde|depois|antes|então|também|ainda|sempre|nunca|agora|hoje|ontem|amanhã|todo|toda|todos|todas|meus|minhas|seus|suas|nossa|nosso|dele|dela|nele|nela|num|numa|até|sobre)$/.test(w);
+  /* Depois do diário (português → língua): colhe palavras, conceitos e pacotes de palavras vizinhas. */
+  const SO_PRONOME = /^(i|you|he|she|we|they|it|me|yo|tú|él|ella|nosotros|je|tu|il|elle|nous|vous|ich|du|er|sie|wir|io|lui|lei|noi)$/i;
+  /* palavra solta traduzida vem com maiúscula (“Cup”); no alemão substantivo tem maiúscula de verdade */
+  const minus = (L, t) => (L.id === 'de' || !/^\p{Lu}\p{Ll}/u.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1));
+  async function colher(L, text, out) {
+    const st = LS(L.id), g = G(L);
+    let novas = 0;
+    const escritas = new Set(falado(text).toLowerCase().match(/[\p{L}-]+/gu) || []);   // só o que a pessoa escreveu
+    for (const s of out.sentences) {
+      if (!s.toks) continue;
+      s.src.forEach((w, i) => {
+        const key = w.toLowerCase().replace(/[^\p{L}-]/gu, '');
+        if (!key || PALAVRA_VAZIA(key) || st.vocab[key] || !escritas.has(key)) return;
+        let t = s.toks.filter(tk => tk.k.includes(i)).map(tk => tk.t).join(' ').replace(/[.,!?;:¿¡]+/g, '').trim();
+        if (!t || SO_PRONOME.test(t)) return;
+        t = minus(L, t);
+        st.vocab[key] = { pt: key, t, r: roman(L, t), src: 'diário', d: Date.now() }; novas++;
+      });
+    }
+    contar(L, 'frases', out.sentences.length);
+    ganharXP(L, 5 * out.sentences.length + 2 * novas);
+    if (novas) contar(L, 'palavras', novas);
+    // conceitos descobertos
+    for (const c of out.concepts) {
+      if (g.unlocked[c.id]) continue;
+      g.unlocked[c.id] = Date.now();
+      const def = CONCEITOS.find(x => x.id === c.id) || c, rar = raridade(def);
+      celebrar({ icone: rar === 'lendario' ? '✦' : rar === 'raro' ? '◆' : '●', raro: rar, kicker: `Conceito ${rar === 'lendario' ? 'lendário' : rar} descoberto`, titulo: c.pt, corpo: `${esc(c.diz)}${c.t ? `<br><b>${esc(c.t)}</b>` : ''}` });
+      contar(L, 'conceitos'); ganharXP(L, rar === 'lendario' ? 50 : rar === 'raro' ? 30 : 20);
+    }
+    save();
+    // palavras vizinhas: o assunto que a pessoa trouxe abre o pacote daquele mundo
+    const words = new Set(falado(text).toLowerCase().match(/[\p{L}]+/gu) || []);
+    for (const campo of CAMPOS) {
+      if (g.fields[campo.id] || !campo.gatilho.split(' ').some(w => words.has(w))) continue;
+      const lista = [];
+      for (const p of campo.palavras) { const t = minus(L, clean(await mt('pt', L.id, p))); lista.push({ pt: p, t }); if (!st.vocab[p]) { st.vocab[p] = { pt: p, t, r: roman(L, t), src: 'vizinha', campo: campo.id, d: Date.now() }; } }
+      g.fields[campo.id] = { d: Date.now(), words: lista }; save();
+      celebrar({ icone: campo.icone, raro: 'pacote', kicker: 'Palavras vizinhas liberadas', titulo: campo.nome, corpo: `Você escreveu sobre isso — o diário abriu o mundo em volta:<br><span class="festa-words">${lista.map(x => `<span><small>${esc(x.pt)}</small>${esc(x.t)}</span>`).join('')}</span>` });
+      contar(L, 'palavras', lista.length); ganharXP(L, 15);
+      break;   // um pacote por vez: a próxima frase abre o próximo
+    }
+  }
+  const nivelPalavra = b => !b ? ['🌱', 'semente'] : b <= 2 ? ['🌿', 'broto'] : b <= 4 ? ['🪴', 'raiz'] : ['🌳', 'árvore'];
+
+  /* Painel do jogo (página da língua) */
+  function painelHTML(L) {
+    const g = G(L), st = LS(L.id), n = nivel(g.xp), a0 = xpDoNivel(n), a1 = xpDoNivel(n + 1);
+    const seq = sequencia(g), ms = missoesDoDia(L);
+    const nConc = Object.keys(g.unlocked).length, nVoc = Object.keys(st.vocab).length;
+    return `<section class="painel enter">
+      <div class="p-top"><div class="p-lvl"><b>${n}</b><span>nível</span></div>
+        <div class="p-xp"><div class="kicker">${g.xp} XP · faltam ${a1 - g.xp} para o nível ${n + 1}</div><div class="meter"><i style="width:${Math.round((g.xp - a0) / (a1 - a0) * 100)}%"></i></div></div>
+        <div class="p-fogo ${seq ? 'on' : ''}"><b>${seq ? '🔥' : '○'} ${seq}</b><span>dia${seq === 1 ? '' : 's'}</span></div></div>
+      <div class="p-miss"><div class="kicker">Missões de hoje</div>${ms.map(m => { const v = Math.min(g.today[m.id] || 0, m.meta), ok = g.today.ok[m.id]; return `<div class="miss ${ok ? 'ok' : ''}"><span>${ok ? '✓' : '○'}</span>${esc(m.t)}<em>${v}/${m.meta}</em></div>`; }).join('')}</div>
+      <div class="p-links">
+        <a class="btn" href="#/l/${L.id}/v">🌱 Vocabulário · ${nVoc}</a>
+        <a class="btn" href="#/l/${L.id}/c">✦ Coleção · ${nConc}/${CONCEITOS.length}</a>
+        <a class="btn on" href="#/l/${L.id}/g">◧ Pares</a>
+      </div>
+    </section>`;
+  }
+
+  /* Coleção: conceitos (álbum) e pacotes de palavras vizinhas */
+  function renderColecao(L) {
+    const g = G(L), rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    const seen = new Set(), lista = CONCEITOS.filter(c => { const k = c.pt; if (seen.has(k)) return false; seen.add(k); return true; });
+    const tem = lista.filter(c => g.unlocked[c.id]).length;
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name)}
+      <div class="enter">
+        <div class="kicker muted">Coleção · ${esc(L.name)}</div>
+        <h1 class="title-xl">O que a sua vida <em>já abriu</em></h1>
+        <p class="lead">Cada conceito aparece quando você o usa no diário. Os que faltam estão escondidos — a dica diz que tipo de fala os destrava.</p>
+        <div class="subh">Palavras vizinhas <span class="kicker">${Object.keys(g.fields).length}/${CAMPOS.length} mundos</span></div>
+        <div class="packs">${CAMPOS.map(c => { const f = g.fields[c.id]; return f
+          ? `<details class="pack on"><summary><span class="pk-ico">${c.icone}</span><b>${esc(c.nome)}</b><small>${f.words.length} palavras</small></summary><div class="pk-words">${f.words.map(w => `<button class="pk-w" data-say="${esc(w.t)}"><small>${esc(w.pt)}</small><span ${rtl}>${esc(w.t)}</span></button>`).join('')}</div></details>`
+          : `<div class="pack"><span class="pk-ico">${c.icone}</span><b>${esc(c.nome)}</b><small>escreva sobre: ${esc(c.gatilho.split(' ').slice(0, 3).join(', '))}…</small></div>`; }).join('')}</div>
+        <div class="subh">Conceitos <span class="kicker">${tem}/${lista.length}</span></div>
+        ${(() => {
+          const rot = r => (r === 'lendario' ? '✦ lendário' : r === 'raro' ? '◆ raro' : '● comum');
+          const on = lista.filter(c => g.unlocked[c.id]), off = lista.filter(c => !g.unlocked[c.id]);
+          const porTipo = {}; off.forEach(c => { const k = categoriaConceito(c); porTipo[k] = (porTipo[k] || 0) + 1; });
+          // iscas: alguns escondidos de cada raridade
+          const iscas = [...off.filter(c => raridade(c) === 'lendario').slice(0, 2), ...off.filter(c => raridade(c) === 'raro').slice(0, 2), ...off.filter(c => raridade(c) === 'comum').slice(0, 2)];
+          return `${on.length ? `<div class="album">${on.map(c => `<div class="carta ${raridade(c)} on"><span class="c-rar">${rot(raridade(c))}</span><b>${esc(c.pt)}</b><p>${esc(c.diz)}</p></div>`).join('')}</div>` : '<p class="muted">Nenhum ainda — escreva no diário do seu jeito, com gíria, expressão, “intraduzível”.</p>'}
+            ${off.length ? `<div class="kicker muted" style="margin:16px 0 8px">Ainda escondidos · ${off.length}</div>
+              <div class="faltam">${Object.entries(porTipo).sort((x, y) => y[1] - x[1]).map(([k, n]) => `<span><b>${n}</b> ${esc(k)}</span>`).join('')}</div>
+              <div class="album">${iscas.map(c => `<div class="carta ${raridade(c)}"><span class="c-rar">${rot(raridade(c))}</span><b>? ? ?</b><p>${esc(categoriaConceito(c))}</p></div>`).join('')}</div>` : ''}`;
+        })()}
+      </div>`;
+    bindSay(L);
+  }
+
+  /* Vocabulário: o dicionário que o diário montou */
+  function renderVocab(L) {
+    const st = LS(L.id), rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    const vs = Object.values(st.vocab).sort((a, b) => b.d - a.d);
+    const grupos = { 'diário': vs.filter(v => v.src === 'diário'), 'vizinha': vs.filter(v => v.src === 'vizinha') };
+    const linha = v => { const [ic, nm] = nivelPalavra(st.prog['w:' + v.pt]?.b); return `<button class="voc" data-say="${esc(v.t)}"><span class="v-ic" title="${nm}">${ic}</span><span class="v-pt">${esc(v.pt)}</span><span class="v-tg" ${rtl}>${esc(v.t)}</span></button>`; };
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name)}
+      <div class="enter">
+        <div class="kicker muted">Vocabulário · ${esc(L.name)}</div>
+        <h1 class="title-xl">Meu vocabulário <em>${vs.length}</em></h1>
+        <p class="lead">Palavras que vieram da sua vida: as que você escreveu e as vizinhas que o diário abriu. 🌱 semente → 🌿 broto → 🪴 raiz → 🌳 árvore, conforme você acerta.</p>
+        ${vs.length ? `<button class="cta" id="vtrain">${I.flip}Treinar meu vocabulário</button><a class="btn" style="width:100%;margin-top:10px" href="#/l/${L.id}/g">◧ Jogar Pares</a>` : `<div class="note"><span class="kicker">Ainda vazio</span>Escreva no diário em português: cada palavra que você usa entra aqui, já traduzida.</div><a class="cta" href="#/l/${L.id}/d">${I.pen}Ir para o diário</a>`}
+        ${grupos['diário'].length ? `<div class="subh">Do meu diário <span class="kicker">${grupos['diário'].length}</span></div><div class="vocs">${grupos['diário'].map(linha).join('')}</div>` : ''}
+        ${grupos['vizinha'].length ? `<div class="subh">Palavras vizinhas <span class="kicker">${grupos['vizinha'].length}</span></div><div class="vocs">${grupos['vizinha'].map(linha).join('')}</div>` : ''}
+      </div>`;
+    bindSay(L);
+    const b = document.getElementById('vtrain'); if (b) b.onclick = () => go(`#/l/${L.id}/l/4`);
+  }
+
+  /* Pares: memória com o próprio vocabulário */
+  function renderPares(L) {
+    const st = LS(L.id);
+    let pool = Object.values(st.vocab).map(v => ({ id: 'w:' + v.pt, pt: v.pt, t: v.t }));
+    if (pool.length < 6) pool = pool.concat(items(L, 1), items(L, 3)).filter((x, i, arr) => arr.findIndex(y => y.t === x.t) === i);
+    pool.sort((x, y) => (st.prog[x.id]?.b || 0) - (st.prog[y.id]?.b || 0) || Math.random() - .5);
+    const par = shuffle(pool.slice(0, 12)).slice(0, 6);
+    const cartas = shuffle(par.flatMap((p, i) => [{ i, txt: p.pt, lado: 'pt' }, { i, txt: p.t, lado: 'tg' }]));
+    let abertas = [], feitos = 0, jogadas = 0, t0 = Date.now(), trava = false;
+    const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name, `<span class="score mono" id="pscore">0/6 · 0 jogadas</span>`)}
+      <div class="enter">
+        <div class="kicker muted">Pares · ${esc(L.name)}</div>
+        <h1 class="title-xl">Ache os <em>pares</em></h1>
+        <p class="lead">Português com ${esc(L.name.toLowerCase())}. As palavras vêm do seu vocabulário.</p>
+        <div class="pares">${cartas.map((c, k) => `<button class="pc ${c.lado}" data-k="${k}"><span class="pc-back">R</span><span class="pc-face" ${c.lado === 'tg' ? rtl : ''}>${esc(c.txt)}</span></button>`).join('')}</div>
+      </div>`;
+    const score = () => { document.getElementById('pscore').textContent = `${feitos}/6 · ${jogadas} jogadas`; };
+    $app.querySelectorAll('.pc').forEach(b => b.onclick = () => {
+      if (trava || b.classList.contains('open') || b.classList.contains('done')) return;
+      const c = cartas[+b.dataset.k]; b.classList.add('open'); abertas.push([b, c]);
+      if (c.lado === 'tg') speak(c.txt, L);
+      if (abertas.length < 2) return;
+      jogadas++; const [[b1, c1], [b2, c2]] = abertas; abertas = [];
+      if (c1.i === c2.i && c1.lado !== c2.lado) {
+        b1.classList.add('done'); b2.classList.add('done'); feitos++; beep(true);
+        const it = par[c1.i]; if (it.id.startsWith('w:')) applyGrade(st, it, 3);
+        score();
+        if (feitos === 6) {
+          const s = Math.round((Date.now() - t0) / 1000);
+          setTimeout(() => {
+            contar(L, 'pares'); ganharXP(L, 20);
+            celebrar({ icone: '◧', kicker: 'Pares completos', titulo: `${jogadas} jogadas · ${s} s`, corpo: jogadas <= 8 ? 'Memória de elefante!' : 'Cada par acertado conta para o nível da palavra.' });
+            $app.querySelector('.enter').insertAdjacentHTML('beforeend', `<button class="cta" id="pnovo" style="margin-top:16px">${I.flip}Jogar de novo</button>`);
+            document.getElementById('pnovo').onclick = () => renderPares(L);
+          }, 400);
+        }
+      } else {
+        trava = true; beep(false);
+        setTimeout(() => { b1.classList.remove('open'); b2.classList.remove('open'); trava = false; }, 800);
+        score();
+      }
+    });
   }
 
   /* ——— LIÇÃO INTERATIVA: certo ou errado, conferido na hora ——— */
@@ -1068,7 +1311,7 @@
       const q = queue[k]; q.done = true;
       applyGrade(st, it, g);
       const ok = g === 3, close = g === 2;
-      if (ok) { right++; streak++; best = Math.max(best, streak); } else { streak = 0; if (!close) { wrong++; if (queue.filter(x => x.it.id === it.id).length < 3 && queue.length < pickLen * 2) queue.push({ it, kind: 'choice' }); } else right++; }
+      if (ok) { right++; streak++; best = Math.max(best, streak); contar(L, 'acertos'); ganharXP(L, 3); } else { streak = 0; if (!close) { wrong++; if (queue.filter(x => x.it.id === it.id).length < 3 && queue.length < pickLen * 2) queue.push({ it, kind: 'choice' }); } else right++; }
       beep(ok || close);
       const lesson = $app.querySelector('.lesson'); lesson.classList.add(ok ? 'is-right' : close ? 'is-close' : 'is-wrong');
       const praise = ['Certo!', 'Isso!', 'Perfeito!', 'Muito bem!', 'Exato!'][Math.floor(Math.random() * 5)];

@@ -32,12 +32,19 @@ Princípios que guiam todas as decisões:
 
 Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da direita para a esquerda). Japonês, coreano e hebraico mostram romanização nos dados prontos.
 
-## O que o app faz hoje (versão 2.2)
+## O que o app faz hoje (versão 2.3)
 
 **O diário é o centro** (é a primeira coisa na página de cada língua). A pessoa escreve a própria vida em português **ou** na língua estudada; o diário identifica a língua sozinho.
 - *Português* → mostra como dizer na outra língua, frase por frase, com as duas línguas alinhadas: **tocar numa palavra acende a correspondente na outra** (e fala). Explica os conceitos e os verbos no sentido da frase. “Agora é a sua vez”: a pessoa tenta escrever ela mesma e o diário compara com o que ela quis dizer.
 - *Língua estudada* → correção: regras de gramática, o que o app entendeu (alinhado palavra por palavra), comparação com o que a pessoa quis dizer, como o tradutor diria e as diferenças.
 - O vocabulário vem da vida da pessoa, não de falas externas — é o método do autor (aprendeu duas línguas assim e está na terceira).
+
+**O diário libera o vocabulário (gamificado)** — aprender não pode depender só da vontade de escrever:
+- *Vocabulário vivo*: cada palavra que a pessoa escreve entra no vocabulário já traduzida (pelo alinhamento), com nível 🌱 semente → 🌿 broto → 🪴 raiz → 🌳 árvore conforme acerta.
+- *Palavras vizinhas* (`campos.js`): escrever sobre um assunto da vida (café, chuva, trabalho…) libera o pacote de palavras daquele mundo (20 mundos × 8 palavras), traduzidas no aparelho.
+- *Coleção de conceitos*: os conceitos da base viram um álbum com raridade (comum, raro, lendário); os que faltam ficam escondidos com dica do tipo de fala.
+- *Missões do dia* (3 por dia), XP, nível, sequência de dias e carimbos de comemoração.
+- *Pares*: jogo de memória com o próprio vocabulário. A lição interativa também treina o vocabulário (“degrau 4”).
 
 **A raiz: escada de 3 degraus por língua**
 1. *Pronomes* — tabela com áudio e notas do que muda em cada língua.
@@ -78,6 +85,10 @@ As correções do diário e as frases traduzidas viram cartões para treinar (li
 - A correção do diário não é um “professor”: é regras + comparação + tradução de volta. A tradução de volta pode esconder erros (“Yo tiene” volta como “Tenho”), por isso as regras e a comparação existem.
 - Romanização gerada só para o coreano; japonês e hebraico têm romanização apenas nos dados prontos.
 - Ainda **não foi testado num celular de verdade**: tradutor no aparelho, APK e atualização automática foram testados em navegador simulado. O download do tradutor é grande para dados móveis.
+
+## Testes do tradutor
+
+`tools/testes/`: 230 frases em 9 categorias (formal, cotidiano, gíria, idiomáticas, intraduzíveis, contexto, regional, poético, ironia), executor que passa cada uma pelo caminho completo do app e relatório (`RELATORIO.md`). Inglês: 62% → ~91% de frases boas depois de ampliar a base de conceitos. Rodar a cada mudança no tradutor ou na base.
 
 ## Ideias em aberto
 

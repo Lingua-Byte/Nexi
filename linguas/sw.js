@@ -3,7 +3,7 @@
    então todo deploy gera um service worker novo e o app instalado se atualiza. */
 const BUILD = '__BUILD__';
 const CACHE = 'raiz-' + BUILD;
-const CORE = ['./', 'index.html', 'style.css', 'data.js', 'linguistica.js', 'motor.js', 'vendor/bergamot/translator.js', 'vendor/bergamot/worker/translator-worker.js', 'vendor/bergamot/worker/bergamot-translator-worker.js', 'vendor/bergamot/worker/bergamot-translator-worker.wasm', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
+const CORE = ['./', 'index.html', 'style.css', 'data.js', 'linguistica.js', 'campos.js', 'motor.js', 'vendor/bergamot/translator.js', 'vendor/bergamot/worker/translator-worker.js', 'vendor/bergamot/worker/bergamot-translator-worker.js', 'vendor/bergamot/worker/bergamot-translator-worker.wasm', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
