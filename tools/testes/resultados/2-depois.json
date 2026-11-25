@@ -1,0 +1,2812 @@
+[
+ {
+  "cat": "formal",
+  "pt": "Venho por meio desta solicitar a gentileza de reconsiderar a decisão.",
+  "via": "",
+  "conceitos": [],
+  "en": "I hereby ask for the kindness of reconsidering the decision.",
+  "en_ms": 919,
+  "es": "Por la presente pido la amabilidad de reconsiderar la decisión.",
+  "es_ms": 812,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Informamos que o prazo para entrega dos documentos foi prorrogado.",
+  "via": "",
+  "conceitos": [],
+  "en": "We inform you that the deadline for submission of the documents has been extended.",
+  "en_ms": 71,
+  "es": "Le informamos que se ha ampliado el plazo para la presentación de los documentos.",
+  "es_ms": 128,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Prezado senhor, agradeço antecipadamente a atenção dispensada.",
+  "via": "",
+  "conceitos": [],
+  "en": "Dear Sir, I thank you in advance for the attention paid.",
+  "en_ms": 63,
+  "es": "Estimado señor, le agradezco de antemano la atención prestada.",
+  "es_ms": 144,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Solicito que me seja concedida uma audiência com o diretor.",
+  "via": "",
+  "conceitos": [],
+  "en": "I request that I be granted a hearing with the director.",
+  "en_ms": 57,
+  "es": "Pido que me concedan una audiencia con el director.",
+  "es_ms": 112,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Conforme acordado na reunião anterior, segue o relatório em anexo.",
+  "via": "Conforme acordado na reunião anterior, envio em anexo o relatório.",
+  "conceitos": [
+   "anexo"
+  ],
+  "en": "As agreed at the previous meeting, I have annexed the report.",
+  "en_ms": 56,
+  "es": "Como se acordó en la sesión anterior, he anexado el informe.",
+  "es_ms": 117,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "A presente declaração tem validade de noventa dias.",
+  "via": "",
+  "conceitos": [],
+  "en": "This declaration shall be valid for ninety days.",
+  "en_ms": 44,
+  "es": "Esta declaración será válida por noventa días.",
+  "es_ms": 80,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Gostaria de manifestar minha profunda insatisfação com o atendimento.",
+  "via": "",
+  "conceitos": [],
+  "en": "I would like to express my deep dissatisfaction with the service.",
+  "en_ms": 67,
+  "es": "Me gustaría expresar mi profunda insatisfacción con el servicio.",
+  "es_ms": 127,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Fica vedada a entrada de pessoas não autorizadas.",
+  "via": "",
+  "conceitos": [],
+  "en": "The entry of unauthorized persons is prohibited.",
+  "en_ms": 45,
+  "es": "Se prohíbe la entrada de personas no autorizadas.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Ressaltamos a importância da participação de todos.",
+  "via": "",
+  "conceitos": [],
+  "en": "We emphasize the importance of everyone’s participation.",
+  "en_ms": 52,
+  "es": "Destacamos la importancia de la participación de todos.",
+  "es_ms": 95,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "O senhor poderia, por gentileza, aguardar um instante?",
+  "via": "",
+  "conceitos": [],
+  "en": "Could you please wait a moment?",
+  "en_ms": 44,
+  "es": "¿Podrías esperar un momento?",
+  "es_ms": 80,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Encaminho, para vossa apreciação, a proposta revisada.",
+  "via": "Envio para vossa apreciação, a proposta revisada.",
+  "conceitos": [
+   "encaminho"
+  ],
+  "en": "I send for your consideration, the revised proposal.",
+  "en_ms": 50,
+  "es": "Envío a su consideración, la propuesta revisada.",
+  "es_ms": 90,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Lamentamos informar que sua solicitação foi indeferida.",
+  "via": "",
+  "conceitos": [],
+  "en": "We regret to inform you that your request has been rejected.",
+  "en_ms": 57,
+  "es": "Lamentamos informarle de que su solicitud ha sido rechazada.",
+  "es_ms": 111,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "A empresa reserva-se o direito de alterar as condições sem aviso prévio.",
+  "via": "",
+  "conceitos": [],
+  "en": "The company reserves the right to change the conditions without prior notice.",
+  "en_ms": 59,
+  "es": "La empresa se reserva el derecho de modificar las condiciones sin previo aviso.",
+  "es_ms": 117,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Peço desculpas pelo transtorno causado.",
+  "via": "",
+  "conceitos": [],
+  "en": "I apologize for the inconvenience caused.",
+  "en_ms": 45,
+  "es": "Me disculpo por las molestias causadas.",
+  "es_ms": 94,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Seria possível remarcar a consulta para a próxima semana?",
+  "via": "",
+  "conceitos": [],
+  "en": "Would it be possible to reschedule the appointment for next week?",
+  "en_ms": 56,
+  "es": "¿Sería posible reprogramar la cita para la próxima semana?",
+  "es_ms": 106,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Desde já, coloco-me à disposição para quaisquer esclarecimentos.",
+  "via": "Antecipadamente, coloco-me à disposição para quaisquer esclarecimentos.",
+  "conceitos": [
+   "desdeja"
+  ],
+  "en": "In advance, I make myself available for any clarifications.",
+  "en_ms": 52,
+  "es": "Por adelantado, me pongo a disposición para cualquier aclaración.",
+  "es_ms": 101,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "O réu foi absolvido por falta de provas.",
+  "via": "",
+  "conceitos": [],
+  "en": "The defendant was acquitted for lack of evidence.",
+  "en_ms": 52,
+  "es": "El acusado fue absuelto por falta de pruebas.",
+  "es_ms": 96,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Os candidatos deverão comparecer munidos de documento com foto.",
+  "via": "Os candidatos deverão comparecer com documento com foto.",
+  "conceitos": [
+   "munidos"
+  ],
+  "en": "Candidates must appear with a photo document.",
+  "en_ms": 38,
+  "es": "Los candidatos deben aparecer con un documento de foto.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Agradecemos a preferência e esperamos revê-lo em breve.",
+  "via": "Agradecemos a preferência e esperamos vê-lo novamente em breve.",
+  "conceitos": [
+   "reve"
+  ],
+  "en": "We appreciate the preference and hope to see you again soon.",
+  "en_ms": 53,
+  "es": "Apreciamos la preferencia y esperamos volver a verte pronto.",
+  "es_ms": 109,
+  "flags": []
+ },
+ {
+  "cat": "formal",
+  "pt": "Cumpre-me informar que o contrato será rescindido.",
+  "via": "",
+  "conceitos": [],
+  "en": "I must inform you that the contract will be terminated.",
+  "en_ms": 57,
+  "es": "Debo informarle que el contrato será terminado.",
+  "es_ms": 100,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Hoje acordei cedo e fui correr no parque.",
+  "via": "",
+  "conceitos": [],
+  "en": "I woke up early today and went running in the park.",
+  "en_ms": 55,
+  "es": "Me desperté temprano y salí corriendo al parque.",
+  "es_ms": 95,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Preciso comprar pão e leite antes de voltar para casa.",
+  "via": "",
+  "conceitos": [],
+  "en": "I need to buy bread and milk before I go home.",
+  "en_ms": 50,
+  "es": "Necesito comprar pan y leche antes de ir a casa.",
+  "es_ms": 95,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Minha mãe liga para mim todo domingo.",
+  "via": "",
+  "conceitos": [],
+  "en": "My mom calls me every Sunday.",
+  "en_ms": 38,
+  "es": "Mi mamá me llama todos los domingos.",
+  "es_ms": 76,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "O ônibus atrasou e eu cheguei tarde no trabalho.",
+  "via": "",
+  "conceitos": [],
+  "en": "The bus delayed and I arrived late at work.",
+  "en_ms": 50,
+  "es": "El autobús se retrasó y llegué tarde al trabajo.",
+  "es_ms": 102,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Vamos jantar fora hoje à noite?",
+  "via": "",
+  "conceitos": [],
+  "en": "Are we going out to dinner tonight?",
+  "en_ms": 40,
+  "es": "¿Vamos a cenar esta noche?",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Eu gosto de ouvir música enquanto cozinho.",
+  "via": "",
+  "conceitos": [],
+  "en": "I like to listen to music while I cook.",
+  "en_ms": 46,
+  "es": "Me gusta escuchar música mientras cocino.",
+  "es_ms": 86,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Meu filho começou a escola esta semana.",
+  "via": "",
+  "conceitos": [],
+  "en": "My son started school this week.",
+  "en_ms": 40,
+  "es": "Mi hijo empezó la escuela esta semana.",
+  "es_ms": 76,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Ela está aprendendo a tocar violão.",
+  "via": "",
+  "conceitos": [],
+  "en": "She is learning to play the guitar.",
+  "en_ms": 36,
+  "es": "Está aprendiendo a tocar la guitarra.",
+  "es_ms": 73,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Esqueci o guarda-chuva e me molhei todo.",
+  "via": "",
+  "conceitos": [],
+  "en": "I forgot the umbrella and got all wet.",
+  "en_ms": 56,
+  "es": "Olvidé el paraguas y me mojé.",
+  "es_ms": 93,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Nós vamos viajar para a praia no feriado.",
+  "via": "",
+  "conceitos": [],
+  "en": "We're going to travel to the beach on holiday.",
+  "en_ms": 45,
+  "es": "Vamos a viajar a la playa de vacaciones.",
+  "es_ms": 82,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Você já almoçou?",
+  "via": "Você almoçou?",
+  "conceitos": [
+   "jaq"
+  ],
+  "en": "Did you have lunch?",
+  "en_ms": 27,
+  "es": "¿Has almorzado?",
+  "es_ms": 70,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Estou com dor de cabeça desde ontem.",
+  "via": "",
+  "conceitos": [],
+  "en": "I've been having a headache since yesterday.",
+  "en_ms": 64,
+  "es": "He estado teniendo dolor de cabeza desde ayer.",
+  "es_ms": 86,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "O mercado fecha às dez.",
+  "via": "",
+  "conceitos": [],
+  "en": "The market closes at ten.",
+  "en_ms": 35,
+  "es": "El mercado cierra a las diez.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Ele trabalha de casa às sextas-feiras.",
+  "via": "",
+  "conceitos": [],
+  "en": "He works from home on Fridays.",
+  "en_ms": 38,
+  "es": "Trabaja desde casa los viernes.",
+  "es_ms": 67,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Quanto custa esse casaco?",
+  "via": "",
+  "conceitos": [],
+  "en": "How much does that jacket cost?",
+  "en_ms": 34,
+  "es": "¿Cuánto cuesta esa chaqueta?",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Meu celular está sem bateria.",
+  "via": "",
+  "conceitos": [],
+  "en": "My phone is without battery.",
+  "en_ms": 34,
+  "es": "Mi teléfono está sin batería.",
+  "es_ms": 64,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Choveu o dia inteiro e ninguém saiu de casa.",
+  "via": "",
+  "conceitos": [],
+  "en": "It rained all day and no one left home.",
+  "en_ms": 50,
+  "es": "Llovió todo el día y nadie se fue de casa.",
+  "es_ms": 96,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Eu tomo remédio para pressão todas as manhãs.",
+  "via": "",
+  "conceitos": [],
+  "en": "I take pressure medicine every morning.",
+  "en_ms": 37,
+  "es": "Tomo medicamentos a presión todas las mañanas.",
+  "es_ms": 80,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "A gente se vê amanhã na faculdade.",
+  "via": "",
+  "conceitos": [],
+  "en": "We'll see each other tomorrow in college.",
+  "en_ms": 47,
+  "es": "Nos veremos mañana en la universidad.",
+  "es_ms": 74,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Ela pediu uma pizza e um refrigerante.",
+  "via": "",
+  "conceitos": [],
+  "en": "She ordered a pizza and a soda.",
+  "en_ms": 44,
+  "es": "Ella pidió una pizza y un refresco.",
+  "es_ms": 76,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Meu cachorro late quando alguém toca a campainha.",
+  "via": "",
+  "conceitos": [],
+  "en": "My dog barks when someone rings the bell.",
+  "en_ms": 52,
+  "es": "Mi perro ladra cuando alguien toca la campana.",
+  "es_ms": 99,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Estou lendo um livro muito bom.",
+  "via": "",
+  "conceitos": [],
+  "en": "I'm reading a very good book.",
+  "en_ms": 42,
+  "es": "Estoy leyendo un libro muy bueno.",
+  "es_ms": 73,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Eles se mudaram para um apartamento maior.",
+  "via": "",
+  "conceitos": [],
+  "en": "They moved into a bigger apartment.",
+  "en_ms": 37,
+  "es": "Se mudaron a un apartamento más grande.",
+  "es_ms": 72,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Você pode me passar o sal?",
+  "via": "",
+  "conceitos": [],
+  "en": "Can you pass me the salt?",
+  "en_ms": 36,
+  "es": "¿Puedes pasarme la sal?",
+  "es_ms": 73,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Eu nunca fui ao Japão.",
+  "via": "",
+  "conceitos": [],
+  "en": "I've never been to Japan.",
+  "en_ms": 43,
+  "es": "Nunca he estado en Japón.",
+  "es_ms": 86,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "O médico disse que eu preciso descansar.",
+  "via": "",
+  "conceitos": [],
+  "en": "The doctor said I need to rest.",
+  "en_ms": 42,
+  "es": "El doctor dijo que necesito descansar.",
+  "es_ms": 74,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Hoje faz muito calor.",
+  "via": "",
+  "conceitos": [],
+  "en": "Today it's very hot.",
+  "en_ms": 37,
+  "es": "Hoy hace mucho calor.",
+  "es_ms": 61,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Lavei a louça e arrumei a cozinha.",
+  "via": "",
+  "conceitos": [],
+  "en": "I washed the dishes and packed the kitchen.",
+  "en_ms": 46,
+  "es": "Lavé los platos y empaqué la cocina.",
+  "es_ms": 90,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Minha avó faz o melhor bolo de cenoura do mundo.",
+  "via": "",
+  "conceitos": [],
+  "en": "My grandmother makes the best carrot cake in the world.",
+  "en_ms": 56,
+  "es": "Mi abuela hace el mejor pastel de zanahoria del mundo.",
+  "es_ms": 121,
+  "flags": []
+ },
+ {
+  "cat": "cotidiano",
+  "pt": "Perdi a chave de casa outra vez.",
+  "via": "",
+  "conceitos": [],
+  "en": "I lost the key to my house again.",
+  "en_ms": 41,
+  "es": "Perdí la llave de mi casa de nuevo.",
+  "es_ms": 79,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Tô morto de cansado, mano.",
+  "via": "Estou muito cansado.",
+  "conceitos": [
+   "morto",
+   "vocativo"
+  ],
+  "en": "I'm very tired.",
+  "en_ms": 30,
+  "es": "Estoy muy cansada.",
+  "es_ms": 60,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Cê tá ligado que amanhã tem prova, né?",
+  "via": "Você sabe que amanhã tem exame",
+  "conceitos": [
+   "prova",
+   "ligado"
+  ],
+  "en": "You know you have an exam tomorrow",
+  "en_ms": 39,
+  "es": "Sabes que mañana tienes un examen",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Que massa, curti demais o rolê.",
+  "via": "Que legal, curti muito o passeio.",
+  "conceitos": [
+   "curtidemais",
+   "massa",
+   "role"
+  ],
+  "en": "How cool, I really enjoyed the ride.",
+  "en_ms": 50,
+  "es": "Qué bien, realmente disfruté el viaje.",
+  "es_ms": 102,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Esse filme é muito chato, dormi no meio.",
+  "via": "",
+  "conceitos": [],
+  "en": "This movie is very boring, I slept in the middle.",
+  "en_ms": 56,
+  "es": "Esta película es muy aburrida, dormí en el medio.",
+  "es_ms": 106,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Para de encher o saco, pô!",
+  "via": "Para de incomodar!",
+  "conceitos": [
+   "vocativo",
+   "saco"
+  ],
+  "en": "Stop bothering!",
+  "en_ms": 28,
+  "es": "¡Deja de molestarte!",
+  "es_ms": 56,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ele é gente boa demais.",
+  "via": "Ele é uma pessoa muito legal.",
+  "conceitos": [
+   "gentebo"
+  ],
+  "en": "He's a really nice person.",
+  "en_ms": 38,
+  "es": "Es una persona muy agradable.",
+  "es_ms": 70,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Fiquei de cara com o preço da gasolina.",
+  "via": "Fiquei chocado com o preço da gasolina.",
+  "conceitos": [
+   "decara"
+  ],
+  "en": "I was shocked by the price of gasoline.",
+  "en_ms": 45,
+  "es": "Me sorprendió el precio de la gasolina.",
+  "es_ms": 82,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Bora tomar uma cerveja depois do trampo?",
+  "via": "Vamos, tomar uma cerveja depois do trabalho?",
+  "conceitos": [
+   "trampo",
+   "bora"
+  ],
+  "en": "Come on, have a beer after work?",
+  "en_ms": 40,
+  "es": "Vamos, ¿toma una cerveza después del trabajo?",
+  "es_ms": 88,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Tô duro, não tenho grana nem pro busão.",
+  "via": "Estou sem dinheiro, não tenho dinheiro nem para o ônibus.",
+  "conceitos": [
+   "duro",
+   "grana",
+   "busao"
+  ],
+  "en": "I'm out of money, I don't even have money for the bus.",
+  "en_ms": 71,
+  "es": "Me he quedado sin dinero, ni siquiera tengo dinero para el autobús.",
+  "es_ms": 133,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Essa música é muito top.",
+  "via": "Essa música é ótima.",
+  "conceitos": [
+   "top"
+  ],
+  "en": "That song is great.",
+  "en_ms": 32,
+  "es": "Esa canción es genial.",
+  "es_ms": 51,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ela tá se achando só porque comprou carro novo.",
+  "via": "Ela está se sentindo superior só porque comprou carro novo.",
+  "conceitos": [
+   "seachando"
+  ],
+  "en": "She's feeling superior just because she bought a new car.",
+  "en_ms": 56,
+  "es": "Se siente superior solo porque compró un auto nuevo.",
+  "es_ms": 104,
+  "flags": [
+   "es: sobrou português (porque)"
+  ]
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Mó calor hoje, véi.",
+  "via": "Muito calor hoje.",
+  "conceitos": [
+   "vocativo"
+  ],
+  "en": "Very hot today.",
+  "en_ms": 27,
+  "es": "Muy caliente hoy.",
+  "es_ms": 45,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Deu ruim, perdi o ônibus.",
+  "via": "Fracassou, perdi o ônibus.",
+  "conceitos": [
+   "deuruim",
+   "errado"
+  ],
+  "en": "It failed, I missed the bus.",
+  "en_ms": 36,
+  "es": "Falló, perdí el autobús.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ele vacilou feio com a namorada.",
+  "via": "Ele errou muito com a namorada.",
+  "conceitos": [
+   "vacilo"
+  ],
+  "en": "He made a lot of mistakes with his girlfriend.",
+  "en_ms": 41,
+  "es": "Cometió muchos errores con su novia.",
+  "es_ms": 84,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Relaxa, tá tudo sob controle.",
+  "via": "Relaxa, está tudo sob controle.",
+  "conceitos": [],
+  "en": "Relax, everything's under control.",
+  "en_ms": 37,
+  "es": "Relájate, todo está bajo control.",
+  "es_ms": 85,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Que mico eu paguei na festa!",
+  "via": "Que vergonha eu passei na festa!",
+  "conceitos": [
+   "quemico2"
+  ],
+  "en": "What a shame I spent at the party!",
+  "en_ms": 44,
+  "es": "¡Qué pena que pasé en la fiesta!",
+  "es_ms": 85,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Tô de boa, só curtindo.",
+  "via": "Estou tranquilo, só curtindo.",
+  "conceitos": [
+   "deboa"
+  ],
+  "en": "I'm calm, just enjoying it.",
+  "en_ms": 46,
+  "es": "Estoy tranquilo, solo disfrutándolo.",
+  "es_ms": 84,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Valeu pela força, irmão.",
+  "via": "Obrigado pela força, irmão.",
+  "conceitos": [
+   "valeu"
+  ],
+  "en": "Thank you for the strength, brother.",
+  "en_ms": 40,
+  "es": "Gracias por la fuerza, hermano.",
+  "es_ms": 73,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ela é muito zoeira.",
+  "via": "Ela é muito brincalhona.",
+  "conceitos": [
+   "zoeira"
+  ],
+  "en": "She's very playful.",
+  "en_ms": 38,
+  "es": "Es muy juguetona.",
+  "es_ms": 67,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ele saiu na mão com o vizinho.",
+  "via": "Ele brigou com o vizinho.",
+  "conceitos": [
+   "namao"
+  ],
+  "en": "He fought with his neighbor.",
+  "en_ms": 35,
+  "es": "Luchó con su vecino.",
+  "es_ms": 63,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Tô zerado de bateria.",
+  "via": "Estou sem bateria.",
+  "conceitos": [
+   "zerado"
+  ],
+  "en": "I'm out of battery.",
+  "en_ms": 34,
+  "es": "No tengo batería.",
+  "es_ms": 61,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Partiu praia!",
+  "via": "Vamos para a praia!",
+  "conceitos": [
+   "partiu"
+  ],
+  "en": "Let's go to the beach!",
+  "en_ms": 38,
+  "es": "¡Vamos a la playa!",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Que treta foi essa ontem?",
+  "via": "Que briga foi essa ontem?",
+  "conceitos": [
+   "treta"
+  ],
+  "en": "What fight was that yesterday?",
+  "en_ms": 32,
+  "es": "¿Qué pelea fue esa de ayer?",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Não tô nem aí pro que ele pensa.",
+  "via": "Não me importo com o que ele pensa.",
+  "conceitos": [
+   "nemai"
+  ],
+  "en": "I don't care what he thinks.",
+  "en_ms": 52,
+  "es": "No me importa lo que piense.",
+  "es_ms": 85,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ficou show de bola.",
+  "via": "Ficou ótimo.",
+  "conceitos": [
+   "showbola"
+  ],
+  "en": "It looked great.",
+  "en_ms": 27,
+  "es": "Se veía genial.",
+  "es_ms": 47,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ele deu o perdido na gente.",
+  "via": "Ele fugiu da gente.",
+  "conceitos": [
+   "perdido"
+  ],
+  "en": "He's run away from us.",
+  "en_ms": 32,
+  "es": "Él ha huido de nosotros.",
+  "es_ms": 79,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Tô bolado com essa história.",
+  "via": "Estou chateado com essa história.",
+  "conceitos": [
+   "bolado"
+  ],
+  "en": "I'm upset about that story.",
+  "en_ms": 37,
+  "es": "Estoy molesto por esa historia.",
+  "es_ms": 64,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Ela mandou muito bem na apresentação.",
+  "via": "Ela foi muito bem na apresentação.",
+  "conceitos": [
+   "mandoubem"
+  ],
+  "en": "She did very well in the presentation.",
+  "en_ms": 36,
+  "es": "Lo hizo muy bien en la presentación.",
+  "es_ms": 67,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Foi mal, esqueci de te avisar.",
+  "via": "Desculpe, esqueci de te avisar.",
+  "conceitos": [
+   "foimal"
+  ],
+  "en": "Sorry, I forgot to warn you.",
+  "en_ms": 39,
+  "es": "Lo siento, se me olvidó advertirte.",
+  "es_ms": 79,
+  "flags": []
+ },
+ {
+  "cat": "informal_giria",
+  "pt": "Tá rolando uma festa lá em casa.",
+  "via": "Está rolando uma festa lá em casa.",
+  "conceitos": [],
+  "en": "There's a party at the house.",
+  "en_ms": 48,
+  "es": "Hay una fiesta en la casa.",
+  "es_ms": 81,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele pisou na bola comigo.",
+  "via": "Ele errou comigo.",
+  "conceitos": [
+   "bola"
+  ],
+  "en": "He made a mistake with me.",
+  "en_ms": 35,
+  "es": "Cometió un error conmigo.",
+  "es_ms": 68,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Caiu a ficha quando ela foi embora.",
+  "via": "Eu percebi quando ela foi embora.",
+  "conceitos": [
+   "ficha2"
+  ],
+  "en": "I realized when she left.",
+  "en_ms": 33,
+  "es": "Me di cuenta cuando se fue.",
+  "es_ms": 63,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Vou dar um jeito nisso amanhã.",
+  "via": "Vou resolver amanhã.",
+  "conceitos": [
+   "jeito"
+  ],
+  "en": "I'll work it out tomorrow.",
+  "en_ms": 34,
+  "es": "Lo resolveré mañana.",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela está pagando mico na frente de todo mundo.",
+  "via": "Ela está passando vergonha na frente de todo mundo.",
+  "conceitos": [
+   "mico"
+  ],
+  "en": "She is being ashamed in front of everyone.",
+  "en_ms": 43,
+  "es": "Está avergonzada delante de todos.",
+  "es_ms": 83,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele chutou o balde e largou o emprego.",
+  "via": "Ele desistiu de tudo e largou o emprego.",
+  "conceitos": [
+   "balde"
+  ],
+  "en": "He gave up everything and quit his job.",
+  "en_ms": 42,
+  "es": "Lo dejó todo y dejó su trabajo.",
+  "es_ms": 80,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Isso não vale a pena.",
+  "via": "",
+  "conceitos": [],
+  "en": "That's not worth it.",
+  "en_ms": 37,
+  "es": "Eso no vale la pena.",
+  "es_ms": 68,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Vamos bater um papo depois do almoço.",
+  "via": "Vamos conversar depois do almoço.",
+  "conceitos": [
+   "papo"
+  ],
+  "en": "Let's talk after lunch.",
+  "en_ms": 38,
+  "es": "Hablemos después del almuerzo.",
+  "es_ms": 66,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele falou pelos cotovelos a noite toda.",
+  "via": "Ele falou demais a noite toda.",
+  "conceitos": [
+   "cotovelos"
+  ],
+  "en": "He's talked too much all night.",
+  "en_ms": 43,
+  "es": "Ha hablado demasiado toda la noche.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela me deu um bolo ontem.",
+  "via": "Ela me deixou esperando ontem.",
+  "conceitos": [
+   "bolo2"
+  ],
+  "en": "She left me waiting yesterday.",
+  "en_ms": 32,
+  "es": "Me dejó esperando ayer.",
+  "es_ms": 57,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Não adianta chorar pelo leite derramado.",
+  "via": "",
+  "conceitos": [],
+  "en": "There is no point in crying for spilled milk.",
+  "en_ms": 47,
+  "es": "No tiene sentido llorar por la leche derramada.",
+  "es_ms": 92,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Quem não tem cão caça com gato.",
+  "via": "Quem não tem o ideal se vira com o que tem.",
+  "conceitos": [
+   "cao"
+  ],
+  "en": "Those who do not have the ideal turn to what they have.",
+  "en_ms": 52,
+  "es": "Los que no tienen el giro ideal a lo que tienen.",
+  "es_ms": 102,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele tem a faca e o queijo na mão.",
+  "via": "Ele tem tudo o que precisa para conseguir.",
+  "conceitos": [
+   "faca"
+  ],
+  "en": "He has everything he needs to get.",
+  "en_ms": 39,
+  "es": "Tiene todo lo que necesita para conseguir.",
+  "es_ms": 77,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela enfiou o pé na jaca no aniversário.",
+  "via": "Ela exagerou muito no aniversário.",
+  "conceitos": [
+   "jaca"
+  ],
+  "en": "She overreacted a lot on her birthday.",
+  "en_ms": 47,
+  "es": "Reaccionó mucho en su cumpleaños.",
+  "es_ms": 84,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Isso é a gota d'água.",
+  "via": "",
+  "conceitos": [],
+  "en": "That's the final straw.",
+  "en_ms": 37,
+  "es": "Esa es la gota que colma.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele está com a pulga atrás da orelha.",
+  "via": "Ele está desconfiado.",
+  "conceitos": [
+   "pulga"
+  ],
+  "en": "He's suspicious.",
+  "en_ms": 32,
+  "es": "Él sospecha.",
+  "es_ms": 61,
+  "flags": [
+   "es: tamanho estranho"
+  ]
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Vou ficar de olho em você.",
+  "via": "",
+  "conceitos": [],
+  "en": "I'll keep an eye on you.",
+  "en_ms": 42,
+  "es": "Te vigilaré.",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela é a cara do pai.",
+  "via": "Ela se parece muito com o pai.",
+  "conceitos": [
+   "cara"
+  ],
+  "en": "She looks a lot like her father.",
+  "en_ms": 41,
+  "es": "Se parece mucho a su padre.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Isso custou os olhos da cara.",
+  "via": "Isso custou muito caro.",
+  "conceitos": [
+   "olhosdacara"
+  ],
+  "en": "That cost very much.",
+  "en_ms": 32,
+  "es": "Eso costó mucho.",
+  "es_ms": 57,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele vive no mundo da lua.",
+  "via": "Ele vive distraído.",
+  "conceitos": [
+   "lua"
+  ],
+  "en": "He lives distracted.",
+  "en_ms": 30,
+  "es": "Vive distraído.",
+  "es_ms": 56,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Estou com um nó na garganta.",
+  "via": "",
+  "conceitos": [],
+  "en": "I have a knot in my throat.",
+  "en_ms": 36,
+  "es": "Tengo un nudo en la garganta.",
+  "es_ms": 71,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele acordou com o pé esquerdo.",
+  "via": "Ele acordou de mau humor.",
+  "conceitos": [
+   "peesq"
+  ],
+  "en": "He woke up in a bad mood.",
+  "en_ms": 37,
+  "es": "Se despertó de mal humor.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela pegou no sono no sofá.",
+  "via": "Ela adormeceu no sofá.",
+  "conceitos": [
+   "sono"
+  ],
+  "en": "She fell asleep on the couch.",
+  "en_ms": 35,
+  "es": "Se quedó dormida en el sofá.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Não pode dar o braço a torcer.",
+  "via": "Não pode admitir que errou.",
+  "conceitos": [
+   "braco"
+  ],
+  "en": "You can't admit you were wrong.",
+  "en_ms": 42,
+  "es": "No puedes admitir que estabas equivocado.",
+  "es_ms": 79,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele está nas nuvens desde que se apaixonou.",
+  "via": "Ele está distraído desde que se apaixonou.",
+  "conceitos": [
+   "nuvens"
+  ],
+  "en": "He's been distracted since he fell in love.",
+  "en_ms": 55,
+  "es": "Ha estado distraído desde que se enamoró.",
+  "es_ms": 103,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Fiquei sem graça na reunião.",
+  "via": "Fiquei envergonhado na reunião.",
+  "conceitos": [
+   "graca"
+  ],
+  "en": "I was embarrassed at the meeting.",
+  "en_ms": 37,
+  "es": "Me avergoncé de la reunión.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele fez questão de pagar a conta.",
+  "via": "Ele insistiu em pagar a conta.",
+  "conceitos": [
+   "questao"
+  ],
+  "en": "He insisted on paying the bill.",
+  "en_ms": 38,
+  "es": "Insistió en pagar la cuenta.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Vamos fazer hora até o filme começar.",
+  "via": "Vamos passar o tempo até o filme começar.",
+  "conceitos": [
+   "hora"
+  ],
+  "en": "Let's get the time through until the movie starts.",
+  "en_ms": 54,
+  "es": "Vamos a pasar el tiempo hasta que empiece la película.",
+  "es_ms": 100,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Você me faz muita falta.",
+  "via": "Sinto muita falta de você.",
+  "conceitos": [
+   "mefazfalta"
+  ],
+  "en": "I miss you so much.",
+  "en_ms": 32,
+  "es": "Te extraño mucho.",
+  "es_ms": 55,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele quebrou o galho para mim.",
+  "via": "Ele resolveu o problema para mim.",
+  "conceitos": [
+   "galho"
+  ],
+  "en": "He solved the problem for me.",
+  "en_ms": 35,
+  "es": "Él resolvió el problema para mí.",
+  "es_ms": 82,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela abriu o jogo com a família.",
+  "via": "Ela falou a verdade com a família.",
+  "conceitos": [
+   "jogo"
+  ],
+  "en": "She spoke the truth to her family.",
+  "en_ms": 41,
+  "es": "Ella dijo la verdad a su familia.",
+  "es_ms": 80,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Estou morrendo de fome.",
+  "via": "Estou tendo muita fome.",
+  "conceitos": [
+   "fome"
+  ],
+  "en": "I'm so hungry.",
+  "en_ms": 35,
+  "es": "Tengo tanta hambre.",
+  "es_ms": 55,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Morri de rir com a piada.",
+  "via": "Ri muito com a piada.",
+  "conceitos": [
+   "rir"
+  ],
+  "en": "I laughed a lot with the joke.",
+  "en_ms": 38,
+  "es": "Me reí mucho con la broma.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele está com preguiça de estudar.",
+  "via": "Ele não ter vontade de estudar.",
+  "conceitos": [
+   "preguica"
+  ],
+  "en": "He doesn't want to study.",
+  "en_ms": 38,
+  "es": "No quiere estudiar.",
+  "es_ms": 67,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Tanto faz, você que sabe.",
+  "via": "Não faz diferença, você que sabe.",
+  "conceitos": [
+   "tantofaz"
+  ],
+  "en": "It makes no difference, you who know.",
+  "en_ms": 40,
+  "es": "No importa, tú que lo sabes.",
+  "es_ms": 77,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Deixa pra lá, não foi nada.",
+  "via": "Esquece isso, não foi nada.",
+  "conceitos": [
+   "deixa"
+  ],
+  "en": "Forget it, it was nothing.",
+  "en_ms": 45,
+  "es": "Olvídalo, no fue nada.",
+  "es_ms": 76,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele mexeu os pauzinhos para conseguir a vaga.",
+  "via": "Ele usou a influência para conseguir a vaga.",
+  "conceitos": [
+   "pauzinhos"
+  ],
+  "en": "He used influence to get the spot.",
+  "en_ms": 38,
+  "es": "Él usó la influencia para conseguir el lugar.",
+  "es_ms": 89,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ela puxou assunto comigo no ônibus.",
+  "via": "Ela começou uma conversa comigo no ônibus.",
+  "conceitos": [
+   "assunto"
+  ],
+  "en": "She started a conversation with me on the bus.",
+  "en_ms": 45,
+  "es": "Ella comenzó una conversación conmigo en el autobús.",
+  "es_ms": 76,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Ele encheu o saco de todo mundo.",
+  "via": "Ele incomodou todo mundo.",
+  "conceitos": [
+   "saco"
+  ],
+  "en": "He bothered everyone.",
+  "en_ms": 31,
+  "es": "Él molestó a todos.",
+  "es_ms": 65,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Deu certo, finalmente!",
+  "via": "Funcionou, finalmente!",
+  "conceitos": [
+   "certo"
+  ],
+  "en": "It worked, finally!",
+  "en_ms": 30,
+  "es": "¡Funcionó, por fin!",
+  "es_ms": 65,
+  "flags": []
+ },
+ {
+  "cat": "idiomaticas",
+  "pt": "Tudo deu errado naquele dia.",
+  "via": "Tudo fracassou naquele dia.",
+  "conceitos": [
+   "errado"
+  ],
+  "en": "It all failed that day.",
+  "en_ms": 33,
+  "es": "Todo eso falló ese día.",
+  "es_ms": 72,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Estou com saudade da minha terra.",
+  "via": "Sinto falta da minha terra.",
+  "conceitos": [
+   "saudade"
+  ],
+  "en": "I miss my land.",
+  "en_ms": 40,
+  "es": "Extraño mi tierra.",
+  "es_ms": 76,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ela me fez um cafuné até eu dormir.",
+  "via": "Ela acariciou meu cabelo até eu dormir.",
+  "conceitos": [
+   "cafune-v"
+  ],
+  "en": "She stroked my hair until I slept.",
+  "en_ms": 54,
+  "es": "Me acarició el pelo hasta que dormí.",
+  "es_ms": 93,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Fizemos uma gambiarra para o chuveiro funcionar.",
+  "via": "Fizemos uma conserto improvisado para o chuveiro funcionar.",
+  "conceitos": [
+   "gambiarra"
+  ],
+  "en": "We made a makeshift fix for the shower to work.",
+  "en_ms": 62,
+  "es": "Hicimos una solución improvisada para que la ducha funcionara.",
+  "es_ms": 117,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Esse gatinho é o meu xodó.",
+  "via": "Esse gatinho é o meu preferido.",
+  "conceitos": [
+   "xodo"
+  ],
+  "en": "This kitten is my favorite.",
+  "en_ms": 39,
+  "es": "Este gatito es mi favorito.",
+  "es_ms": 71,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Sempre tem um jeitinho.",
+  "via": "Sempre tem um modo criativo de resolver.",
+  "conceitos": [
+   "jeitinho"
+  ],
+  "en": "There is always a creative way of solving.",
+  "en_ms": 60,
+  "es": "Siempre hay una forma creativa de resolver.",
+  "es_ms": 111,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ele é muito pão-duro.",
+  "via": "Ele é muito avarento.",
+  "conceitos": [
+   "paodur"
+  ],
+  "en": "He's very miserly.",
+  "en_ms": 39,
+  "es": "Es muy avaro.",
+  "es_ms": 68,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ela adora uma fofoca.",
+  "via": "",
+  "conceitos": [],
+  "en": "She loves a gossip.",
+  "en_ms": 40,
+  "es": "Le encantan los chismes.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ele está com dor de cotovelo.",
+  "via": "Ele está com ciúme.",
+  "conceitos": [
+   "dorcot"
+  ],
+  "en": "He's jealous.",
+  "en_ms": 29,
+  "es": "Está celoso.",
+  "es_ms": 51,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Que saudade de você!",
+  "via": "Como sinto falta de você!",
+  "conceitos": [
+   "quesaudade"
+  ],
+  "en": "How I miss you!",
+  "en_ms": 32,
+  "es": "¡Cómo te extraño!",
+  "es_ms": 59,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Morro de saudade da minha infância.",
+  "via": "Sinto muita falta da minha infância.",
+  "conceitos": [
+   "saudade"
+  ],
+  "en": "I miss my childhood.",
+  "en_ms": 32,
+  "es": "Echo de menos mi infancia.",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "A malandragem dele não engana ninguém.",
+  "via": "A esperteza dele não engana ninguém.",
+  "conceitos": [
+   "malandro"
+  ],
+  "en": "His cleverness is not fooling anyone.",
+  "en_ms": 40,
+  "es": "Su inteligencia no engaña a nadie.",
+  "es_ms": 82,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Que saco, choveu de novo.",
+  "via": "Que chato, choveu de novo.",
+  "conceitos": [
+   "quesaco"
+  ],
+  "en": "How boring, it rained again.",
+  "en_ms": 41,
+  "es": "Qué aburrido, llovió de nuevo.",
+  "es_ms": 82,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Vamos fazer uma vaquinha para o presente.",
+  "via": "Vamos fazer uma coleta de dinheiro para o presente.",
+  "conceitos": [
+   "vaquinha"
+  ],
+  "en": "Let's make a collection of money for the present.",
+  "en_ms": 50,
+  "es": "Hagamos una colección de dinero para el presente.",
+  "es_ms": 97,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ele é o maior puxa-saco do chefe.",
+  "via": "Ele é o maior bajulador do chefe.",
+  "conceitos": [
+   "puxasaco"
+  ],
+  "en": "He's the chief's biggest flatterer.",
+  "en_ms": 55,
+  "es": "Es el mayor adulador del jefe.",
+  "es_ms": 98,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Hoje é dia de faxina.",
+  "via": "",
+  "conceitos": [],
+  "en": "Today is cleaning day.",
+  "en_ms": 33,
+  "es": "Hoy es el día de limpieza.",
+  "es_ms": 63,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Que desbunde aquele show!",
+  "via": "Que incrível aquele show!",
+  "conceitos": [
+   "desbunde"
+  ],
+  "en": "How amazing that show!",
+  "en_ms": 29,
+  "es": "¡Qué asombroso ese espectáculo!",
+  "es_ms": 61,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ela tem um jogo de cintura incrível.",
+  "via": "Ela tem uma habilidade incrível para lidar com situações difíceis.",
+  "conceitos": [
+   "cintura"
+  ],
+  "en": "She has an incredible ability to deal with difficult situations.",
+  "en_ms": 50,
+  "es": "Tiene una capacidad increíble para hacer frente a situaciones difíciles.",
+  "es_ms": 100,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ele ficou de cabeça quente.",
+  "via": "Ele ficou muito irritado.",
+  "conceitos": [
+   "cabecaquente"
+  ],
+  "en": "He was very angry.",
+  "en_ms": 32,
+  "es": "Estaba muy enojado.",
+  "es_ms": 52,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Bateu uma bad depois da festa.",
+  "via": "Fiquei triste depois da festa.",
+  "conceitos": [
+   "bad"
+  ],
+  "en": "I was sad after the party.",
+  "en_ms": 35,
+  "es": "Estaba triste después de la fiesta.",
+  "es_ms": 68,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Estou com uma preguiça danada.",
+  "via": "Estou com muita preguiça.",
+  "conceitos": [
+   "danada"
+  ],
+  "en": "I'm too lazy.",
+  "en_ms": 37,
+  "es": "Soy demasiado perezoso.",
+  "es_ms": 64,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ele é muito sangue bom.",
+  "via": "Ele é uma pessoa muito legal.",
+  "conceitos": [
+   "sangue"
+  ],
+  "en": "He's a really nice person.",
+  "en_ms": 41,
+  "es": "Es una persona muy agradable.",
+  "es_ms": 72,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ela deu uma de João sem braço.",
+  "via": "Ela fingiu que não era com ela.",
+  "conceitos": [
+   "joao"
+  ],
+  "en": "She pretended it wasn't her.",
+  "en_ms": 45,
+  "es": "Ella fingió que no era ella.",
+  "es_ms": 84,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Hoje é sexta, sextou!",
+  "via": "Hoje é sexta, finalmente chegou a sexta-feira!",
+  "conceitos": [
+   "sextou"
+  ],
+  "en": "Today is Friday, it's finally Friday!",
+  "en_ms": 42,
+  "es": "Hoy es viernes, ¡por fin es viernes!",
+  "es_ms": 93,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Que vergonha alheia daquele discurso.",
+  "via": "Que vergonha pelos outros daquele discurso.",
+  "conceitos": [
+   "alheia"
+  ],
+  "en": "What a shame for the others in that speech.",
+  "en_ms": 42,
+  "es": "Qué vergüenza para los demás en ese discurso.",
+  "es_ms": 86,
+  "flags": []
+ },
+ {
+  "cat": "intraduziveis",
+  "pt": "Ela é muito cafona.",
+  "via": "Ela é muito de mau gosto.",
+  "conceitos": [
+   "cafona"
+  ],
+  "en": "She's very in bad taste.",
+  "en_ms": 40,
+  "es": "Ella es muy de mal gusto.",
+  "es_ms": 70,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Tito era um irmão muito feliz. Pensava sempre no próximo.",
+  "via": "Tito era um irmão muito feliz. Ele pensava sempre nos outros.",
+  "conceitos": [
+   "proximo"
+  ],
+  "en": "Tito was a very happy brother. He always thought of others.",
+  "en_ms": 64,
+  "es": "Tito era un hermano muy feliz. Siempre pensó en los demás.",
+  "es_ms": 102,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Maria é minha amiga. Trabalha num hospital e mora perto de mim.",
+  "via": "Maria é minha amiga. Ela trabalha num hospital e mora perto de mim.",
+  "conceitos": [],
+  "en": "Mary is my friend. She works in a hospital and lives near me.",
+  "en_ms": 64,
+  "es": "Mary es mi amiga. Trabaja en un hospital y vive cerca de mí.",
+  "es_ms": 122,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "A minha avó era uma cozinheira incrível. Fazia bolo todo domingo.",
+  "via": "A minha avó era uma cozinheira incrível. Ela fazia bolo todo domingo.",
+  "conceitos": [],
+  "en": "My grandma was an amazing cook. She made cake every Sunday.",
+  "en_ms": 61,
+  "es": "Mi abuela era una cocinera increíble. Hizo pastel todos los domingos.",
+  "es_ms": 132,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Meus pais moram no interior. Gostam de plantar.",
+  "via": "Meus pais moram no interior. Eles gostam de plantar.",
+  "conceitos": [],
+  "en": "My parents live in the countryside. They like to plant.",
+  "en_ms": 60,
+  "es": "Mis padres viven en el campo. Les gusta plantar.",
+  "es_ms": 111,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "O próximo ônibus chega às sete.",
+  "via": "",
+  "conceitos": [],
+  "en": "The next bus is seven.",
+  "en_ms": 33,
+  "es": "El próximo autobús es siete.",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ele tomou um banho e saiu.",
+  "via": "",
+  "conceitos": [],
+  "en": "He took a bath and left.",
+  "en_ms": 34,
+  "es": "Se bañó y se fue.",
+  "es_ms": 70,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ela tomou uma decisão difícil.",
+  "via": "",
+  "conceitos": [],
+  "en": "She made a difficult decision.",
+  "en_ms": 35,
+  "es": "Ella tomó una decisión difícil.",
+  "es_ms": 61,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Eu tomo conta da minha irmã.",
+  "via": "",
+  "conceitos": [],
+  "en": "I'll take care of my sister.",
+  "en_ms": 39,
+  "es": "Yo cuidaré de mi hermana.",
+  "es_ms": 71,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ele pegou uma gripe forte.",
+  "via": "",
+  "conceitos": [],
+  "en": "He caught a strong flu.",
+  "en_ms": 30,
+  "es": "Contrajo una fuerte gripe.",
+  "es_ms": 56,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Peguei o metrô para ir ao centro.",
+  "via": "",
+  "conceitos": [],
+  "en": "I took the subway to go downtown.",
+  "en_ms": 40,
+  "es": "Cogí el metro para ir al centro.",
+  "es_ms": 79,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ela pegou o livro na estante.",
+  "via": "",
+  "conceitos": [],
+  "en": "She picked up the book on the shelf.",
+  "en_ms": 43,
+  "es": "Ella recogió el libro en el estante.",
+  "es_ms": 82,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ele deu uma volta no quarteirão.",
+  "via": "Ele passeou no quarteirão.",
+  "conceitos": [
+   "volta"
+  ],
+  "en": "He strolled the block.",
+  "en_ms": 33,
+  "es": "Él paseó por la cuadra.",
+  "es_ms": 71,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Isso dá para resolver hoje?",
+  "via": "Isso é possível resolver hoje?",
+  "conceitos": [
+   "dapara"
+  ],
+  "en": "Is this possible to resolve today?",
+  "en_ms": 39,
+  "es": "¿Es esto posible resolverlo hoy?",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Faz dois anos que eu moro aqui.",
+  "via": "",
+  "conceitos": [],
+  "en": "I've lived here for two years.",
+  "en_ms": 44,
+  "es": "He vivido aquí durante dos años.",
+  "es_ms": 74,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ele faz aniversário amanhã.",
+  "via": "Ele comemora o aniversário amanhã.",
+  "conceitos": [
+   "aniv"
+  ],
+  "en": "He celebrates his birthday tomorrow.",
+  "en_ms": 33,
+  "es": "Mañana celebra su cumpleaños.",
+  "es_ms": 64,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ela ficou feliz com a notícia.",
+  "via": "",
+  "conceitos": [],
+  "en": "She was happy with the news.",
+  "en_ms": 36,
+  "es": "Ella estaba contenta con la noticia.",
+  "es_ms": 73,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Fiquei em casa o fim de semana inteiro.",
+  "via": "",
+  "conceitos": [],
+  "en": "I stayed home all weekend.",
+  "en_ms": 39,
+  "es": "Me quedé en casa todo el fin de semana.",
+  "es_ms": 73,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Esse vestido ficou ótimo em você.",
+  "via": "",
+  "conceitos": [],
+  "en": "That dress looked great on you.",
+  "en_ms": 43,
+  "es": "Ese vestido te quedaba muy bien.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Passei na prova!",
+  "via": "",
+  "conceitos": [],
+  "en": "I passed the test!",
+  "en_ms": 29,
+  "es": "¡Pasé la prueba!",
+  "es_ms": 59,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "O tempo passa rápido.",
+  "via": "",
+  "conceitos": [],
+  "en": "Time passes quickly.",
+  "en_ms": 27,
+  "es": "El tiempo pasa rápido.",
+  "es_ms": 50,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ela passou mal depois do almoço.",
+  "via": "Ela se sentiu mal depois do almoço.",
+  "conceitos": [
+   "passoumal"
+  ],
+  "en": "She felt bad after lunch.",
+  "en_ms": 36,
+  "es": "Se sentía mal después del almuerzo.",
+  "es_ms": 66,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ele levou duas horas para chegar.",
+  "via": "",
+  "conceitos": [],
+  "en": "It took him two hours to get here.",
+  "en_ms": 40,
+  "es": "Le tomó dos horas llegar aquí.",
+  "es_ms": 70,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Deixei a carteira no carro.",
+  "via": "",
+  "conceitos": [],
+  "en": "I left my wallet in the car.",
+  "en_ms": 39,
+  "es": "Dejé mi billetera en el auto.",
+  "es_ms": 71,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Ela deixou de fumar.",
+  "via": "",
+  "conceitos": [],
+  "en": "She quit smoking.",
+  "en_ms": 26,
+  "es": "Dejó de fumar.",
+  "es_ms": 51,
+  "flags": []
+ },
+ {
+  "cat": "ambiguos_contexto",
+  "pt": "Eu acho que vai chover.",
+  "via": "",
+  "conceitos": [],
+  "en": "I think it's going to rain.",
+  "en_ms": 43,
+  "es": "Creo que va a llover.",
+  "es_ms": 74,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Oxente, que coisa é essa?",
+  "via": "Uau! que coisa é essa?",
+  "conceitos": [
+   "vocativo2",
+   "nossa"
+  ],
+  "en": "Wow! what is that thing?",
+  "en_ms": 35,
+  "es": "Vaya. ¿Qué es esa cosa?",
+  "es_ms": 67,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Uai, sô, cê num vem não?",
+  "via": "Você não vem?",
+  "conceitos": [
+   "vocativo2"
+  ],
+  "en": "You're not coming?",
+  "en_ms": 28,
+  "es": "¿No vienes?",
+  "es_ms": 53,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Bah, tchê, que frio!",
+  "via": "Uau! que frio!",
+  "conceitos": [
+   "vocativo2",
+   "nossa"
+  ],
+  "en": "Wow! how cold!",
+  "en_ms": 28,
+  "es": "¡Vaya! ¡Qué frío!",
+  "es_ms": 61,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Esse trem tá muito caro.",
+  "via": "Essa coisa está muito caro.",
+  "conceitos": [
+   "trem"
+  ],
+  "en": "That thing is very expensive.",
+  "en_ms": 31,
+  "es": "Esa cosa es muy cara.",
+  "es_ms": 59,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Visse, eu falei pra tu!",
+  "via": "Viu, eu falei para você!",
+  "conceitos": [
+   "visse"
+  ],
+  "en": "See, I told you!",
+  "en_ms": 35,
+  "es": "¡Ves, te lo dije!",
+  "es_ms": 65,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Égua, que calor!",
+  "via": "Uau! que calor!",
+  "conceitos": [
+   "vocativo2",
+   "nossa"
+  ],
+  "en": "Wow! what a heat!",
+  "en_ms": 31,
+  "es": "¡Vaya, qué calor!",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Arretado demais esse forró.",
+  "via": "Muito incrível esse forró.",
+  "conceitos": [
+   "arretado"
+  ],
+  "en": "Very amazing this forró.",
+  "en_ms": 30,
+  "es": "Muy increíble este forró.",
+  "es_ms": 55,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Ele é um guri muito educado.",
+  "via": "Ele é um menino muito educado.",
+  "conceitos": [
+   "guri"
+  ],
+  "en": "He's a very polite boy.",
+  "en_ms": 36,
+  "es": "Es un chico muy educado.",
+  "es_ms": 64,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Vou comprar um cacetinho na padaria.",
+  "via": "Vou comprar um pão francês na padaria.",
+  "conceitos": [
+   "cacetinho"
+  ],
+  "en": "I'm going to buy a French bread in the bakery.",
+  "en_ms": 48,
+  "es": "Voy a comprar un pan francés en la panadería.",
+  "es_ms": 103,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Tu vai na festa hoje?",
+  "via": "Você vai na festa hoje?",
+  "conceitos": [],
+  "en": "Are you going to the party today?",
+  "en_ms": 38,
+  "es": "¿Vas a la fiesta hoy?",
+  "es_ms": 71,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Mermão, que parada sinistra!",
+  "via": "Que coisa impressionante!",
+  "conceitos": [
+   "vocativo2",
+   "parada"
+  ],
+  "en": "What an amazing thing!",
+  "en_ms": 27,
+  "es": "¡Qué cosa tan increíble!",
+  "es_ms": 52,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Meu rei, que dia lindo.",
+  "via": "Que dia lindo.",
+  "conceitos": [
+   "vocativo2"
+  ],
+  "en": "What a beautiful day.",
+  "en_ms": 25,
+  "es": "Qué día tan hermoso.",
+  "es_ms": 52,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Ô xente, menino, vem cá.",
+  "via": "Uau! menino, vem cá.",
+  "conceitos": [
+   "vocativo2",
+   "nossa"
+  ],
+  "en": "Wow, boy, come here.",
+  "en_ms": 37,
+  "es": "Vaya, chico, ven aquí.",
+  "es_ms": 70,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Ela é muito faceira.",
+  "via": "Ela é muito alegre.",
+  "conceitos": [
+   "faceira"
+  ],
+  "en": "She's very cheerful.",
+  "en_ms": 35,
+  "es": "Ella es muy alegre.",
+  "es_ms": 63,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Pegue o beco e vá embora.",
+  "via": "",
+  "conceitos": [],
+  "en": "Take the alley and leave.",
+  "en_ms": 33,
+  "es": "Coge el callejón y vete.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Tô com uma fome de leão, sô.",
+  "via": "Estou com muita fome.",
+  "conceitos": [
+   "vocativo",
+   "leao"
+  ],
+  "en": "I'm really hungry.",
+  "en_ms": 29,
+  "es": "Tengo mucha hambre.",
+  "es_ms": 55,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Que mi-mi-mi é esse?",
+  "via": "Que reclamação é esse?",
+  "conceitos": [
+   "mimimi"
+  ],
+  "en": "What complaint is that?",
+  "en_ms": 25,
+  "es": "¿Qué queja es esa?",
+  "es_ms": 57,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Essa guria é muito querida.",
+  "via": "Essa menina é muito querida.",
+  "conceitos": [
+   "guri"
+  ],
+  "en": "That girl is very sweet.",
+  "en_ms": 28,
+  "es": "Esa chica es muy dulce.",
+  "es_ms": 58,
+  "flags": []
+ },
+ {
+  "cat": "regional",
+  "pt": "Bora, que o jogo já vai começar!",
+  "via": "Vamos, que o jogo já vai começar!",
+  "conceitos": [
+   "bora"
+  ],
+  "en": "Come on, the game is about to start!",
+  "en_ms": 45,
+  "es": "¡Vamos, el juego está a punto de comenzar!",
+  "es_ms": 88,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "regional",
+  "pt": "Ele tá arriado de cansaço.",
+  "via": "Ele está exausto.",
+  "conceitos": [
+   "arriado"
+  ],
+  "en": "He's exhausted.",
+  "en_ms": 28,
+  "es": "Está agotado.",
+  "es_ms": 46,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "poetico",
+  "pt": "A saudade é o amor que fica.",
+  "via": "A nostalgia é o amor que fica.",
+  "conceitos": [
+   "saudade-n"
+  ],
+  "en": "Nostalgia is the love that remains.",
+  "en_ms": 41,
+  "es": "La nostalgia es el amor que queda.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "O mar guardava os segredos que ninguém ousava contar.",
+  "via": "",
+  "conceitos": [],
+  "en": "The sea kept the secrets that no one dared to tell.",
+  "en_ms": 58,
+  "es": "El mar guardaba los secretos que nadie se atrevía a contar.",
+  "es_ms": 117,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Tudo vale a pena se a alma não é pequena.",
+  "via": "",
+  "conceitos": [],
+  "en": "It is all worth it if the soul is not small.",
+  "en_ms": 53,
+  "es": "Todo vale la pena si el alma no es pequeña.",
+  "es_ms": 101,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Meu coração bate no ritmo da chuva.",
+  "via": "",
+  "conceitos": [],
+  "en": "My heart beats in the rhythm of the rain.",
+  "en_ms": 48,
+  "es": "Mi corazón late a ritmo de la lluvia.",
+  "es_ms": 86,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "As palavras voaram antes que eu pudesse segurá-las.",
+  "via": "",
+  "conceitos": [],
+  "en": "The words flew before I could hold them.",
+  "en_ms": 48,
+  "es": "Las palabras volaron antes de que pudiera sostenerlas.",
+  "es_ms": 93,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Ela tinha olhos de ressaca.",
+  "via": "Ela tinha olhos como as ondas fortes do mar.",
+  "conceitos": [
+   "ressaca"
+  ],
+  "en": "She had eyes like the strong waves of the sea.",
+  "en_ms": 50,
+  "es": "Tenía ojos como las fuertes olas del mar.",
+  "es_ms": 94,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "O silêncio dizia mais do que qualquer discurso.",
+  "via": "",
+  "conceitos": [],
+  "en": "Silence said more than any speech.",
+  "en_ms": 43,
+  "es": "El silencio dice más que cualquier discurso.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "No meio do caminho tinha uma pedra.",
+  "via": "",
+  "conceitos": [],
+  "en": "In the middle of the road there was a stone.",
+  "en_ms": 47,
+  "es": "En medio de la carretera había una piedra.",
+  "es_ms": 90,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "A tarde caía devagar sobre a cidade.",
+  "via": "",
+  "conceitos": [],
+  "en": "The afternoon fell slowly on the city.",
+  "en_ms": 42,
+  "es": "La tarde cayó lentamente sobre la ciudad.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Sou feito de saudades e esperas.",
+  "via": "Sou feito de nostalgias e esperas.",
+  "conceitos": [
+   "saudade-n"
+  ],
+  "en": "I'm made of nostalgia and waiting.",
+  "en_ms": 50,
+  "es": "Estoy hecho de nostalgia y de espera.",
+  "es_ms": 77,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "O tempo não para.",
+  "via": "",
+  "conceitos": [],
+  "en": "Time doesn't stop.",
+  "en_ms": 32,
+  "es": "El tiempo no se detiene.",
+  "es_ms": 67,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Há dias em que o céu parece mais perto.",
+  "via": "",
+  "conceitos": [],
+  "en": "There are days when the sky seems closer.",
+  "en_ms": 46,
+  "es": "Hay días en que el cielo parece más cercano.",
+  "es_ms": 87,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "A esperança é a última que morre.",
+  "via": "",
+  "conceitos": [],
+  "en": "Hope is the last one that dies.",
+  "en_ms": 42,
+  "es": "La esperanza es la última que muere.",
+  "es_ms": 78,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Ele carregava o mundo nas costas.",
+  "via": "",
+  "conceitos": [],
+  "en": "He carried the world on his back.",
+  "en_ms": 37,
+  "es": "Llevaba el mundo en su espalda.",
+  "es_ms": 74,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "A casa ainda tinha o cheiro da minha infância.",
+  "via": "",
+  "conceitos": [],
+  "en": "The house still smelled like my childhood.",
+  "en_ms": 47,
+  "es": "La casa todavía olía como mi infancia.",
+  "es_ms": 88,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Os sonhos dela eram maiores que o medo.",
+  "via": "",
+  "conceitos": [],
+  "en": "Her dreams were bigger than fear.",
+  "en_ms": 36,
+  "es": "Sus sueños eran más grandes que el miedo.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "A lua se escondeu atrás das nuvens.",
+  "via": "",
+  "conceitos": [],
+  "en": "The moon hid behind the clouds.",
+  "en_ms": 44,
+  "es": "La luna se escondió detrás de las nubes.",
+  "es_ms": 88,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Cada despedida leva um pedaço da gente.",
+  "via": "",
+  "conceitos": [],
+  "en": "Every goodbye takes a piece of us.",
+  "en_ms": 43,
+  "es": "Cada adiós nos lleva un pedazo.",
+  "es_ms": 79,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "O amor é fogo que arde sem se ver.",
+  "via": "",
+  "conceitos": [],
+  "en": "Love is fire that burns without seeing.",
+  "en_ms": 47,
+  "es": "El amor es fuego que arde sin ver.",
+  "es_ms": 89,
+  "flags": []
+ },
+ {
+  "cat": "poetico",
+  "pt": "Minha pátria é minha língua.",
+  "via": "",
+  "conceitos": [],
+  "en": "My homeland is my language.",
+  "en_ms": 37,
+  "es": "Mi patria es mi lengua.",
+  "es_ms": 69,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Que maravilha, mais uma segunda-feira!",
+  "via": "",
+  "conceitos": [],
+  "en": "How wonderful, another Monday!",
+  "en_ms": 35,
+  "es": "¡Qué maravilloso, otro lunes!",
+  "es_ms": 62,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Claro, porque eu adoro acordar às cinco.",
+  "via": "",
+  "conceitos": [],
+  "en": "Of course, because I love waking up at five.",
+  "en_ms": 44,
+  "es": "Por supuesto, porque me encanta despertar a las cinco.",
+  "es_ms": 98,
+  "flags": [
+   "es: sobrou português (porque)"
+  ]
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Nossa, que surpresa, ele atrasou de novo.",
+  "via": "Uau! que surpresa, ele atrasou de novo.",
+  "conceitos": [
+   "vocativo2",
+   "nossa"
+  ],
+  "en": "Wow! what a surprise, he delayed again.",
+  "en_ms": 51,
+  "es": "¡Qué sorpresa!, se retrasó de nuevo.",
+  "es_ms": 100,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Ótimo, agora começou a chover.",
+  "via": "",
+  "conceitos": [],
+  "en": "Great, now it's starting to rain.",
+  "en_ms": 50,
+  "es": "Genial, ahora está empezando a llover.",
+  "es_ms": 96,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Ele é tão rápido quanto uma tartaruga.",
+  "via": "",
+  "conceitos": [],
+  "en": "He's as fast as a turtle.",
+  "en_ms": 43,
+  "es": "Es tan rápido como una tortuga.",
+  "es_ms": 72,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Parabéns, você quebrou o recorde de atraso.",
+  "via": "",
+  "conceitos": [],
+  "en": "Congratulations, you broke the delay record.",
+  "en_ms": 39,
+  "es": "Felicitaciones, rompiste el récord de retraso.",
+  "es_ms": 83,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Eu amo trânsito, é o meu passatempo favorito.",
+  "via": "",
+  "conceitos": [],
+  "en": "I love traffic, it's my favorite hobby.",
+  "en_ms": 52,
+  "es": "Me encanta el tráfico, es mi pasatiempo favorito.",
+  "es_ms": 99,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Que inteligente, deixou a chave dentro do carro.",
+  "via": "",
+  "conceitos": [],
+  "en": "How smart, he left the key inside the car.",
+  "en_ms": 51,
+  "es": "Qué inteligente, dejó la llave dentro del auto.",
+  "es_ms": 98,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Essa reunião podia ter sido um e-mail.",
+  "via": "",
+  "conceitos": [],
+  "en": "That meeting could have been an email.",
+  "en_ms": 42,
+  "es": "Esa reunión podría haber sido un correo electrónico.",
+  "es_ms": 77,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Meu salário acaba antes do mês.",
+  "via": "",
+  "conceitos": [],
+  "en": "My salary is over before the month.",
+  "en_ms": 37,
+  "es": "Mi salario se acabó antes del mes.",
+  "es_ms": 72,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Eu faço dieta: só como o que cabe no prato.",
+  "via": "",
+  "conceitos": [],
+  "en": "I diet: just like what fits on the plate.",
+  "en_ms": 56,
+  "es": "Dieta: al igual que lo que cabe en el plato.",
+  "es_ms": 117,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Sou fitness: fit no sofá.",
+  "via": "",
+  "conceitos": [],
+  "en": "I'm fitness: fit on the couch.",
+  "en_ms": 47,
+  "es": "Estoy en forma: cabe en el sofá.",
+  "es_ms": 89,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Ele não é preguiçoso, só está economizando energia.",
+  "via": "",
+  "conceitos": [],
+  "en": "He's not lazy, he's just saving energy.",
+  "en_ms": 67,
+  "es": "No es perezoso, solo está ahorrando energía.",
+  "es_ms": 115,
+  "flags": [
+   "es: sobrou português (está)"
+  ]
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Durmo pouco, mas sonho grande.",
+  "via": "",
+  "conceitos": [],
+  "en": "I sleep little, but I dream big.",
+  "en_ms": 44,
+  "es": "Yo duermo poco, pero sueño en grande.",
+  "es_ms": 84,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Minha academia é ir até a geladeira.",
+  "via": "",
+  "conceitos": [],
+  "en": "My gym is to go to the fridge.",
+  "en_ms": 41,
+  "es": "Mi gimnasio es para ir a la nevera.",
+  "es_ms": 89,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Que dia lindo para ficar em casa.",
+  "via": "",
+  "conceitos": [],
+  "en": "What a beautiful day to stay home.",
+  "en_ms": 41,
+  "es": "Qué hermoso día para quedarse en casa.",
+  "es_ms": 75,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Ele fala tanto que até o papagaio pede silêncio.",
+  "via": "",
+  "conceitos": [],
+  "en": "He speaks so much that even the parrot calls for silence.",
+  "en_ms": 59,
+  "es": "Él habla tanto que incluso el loro llama al silencio.",
+  "es_ms": 112,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Eu não estou atrasado, os outros é que chegaram cedo.",
+  "via": "",
+  "conceitos": [],
+  "en": "I'm not late, the others are the ones who arrived early.",
+  "en_ms": 55,
+  "es": "No llego tarde, los otros son los que llegaron temprano.",
+  "es_ms": 106,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Cozinho tão bem que até o miojo pede socorro.",
+  "via": "Cozinho tão bem que até o macarrão instantâneo pede socorro.",
+  "conceitos": [
+   "miojo"
+  ],
+  "en": "I cook so well that even the instant noodles call for help.",
+  "en_ms": 57,
+  "es": "Cocino tan bien que incluso los fideos instantáneos piden ayuda.",
+  "es_ms": 113,
+  "flags": []
+ },
+ {
+  "cat": "ironia_humor",
+  "pt": "Meu único exercício é correr atrás do prejuízo.",
+  "via": "Meu único exercício é tentar recuperar as perdas.",
+  "conceitos": [
+   "prejuizo"
+  ],
+  "en": "My only exercise is to try to recover the losses.",
+  "en_ms": 53,
+  "es": "Mi único ejercicio es tratar de recuperar las pérdidas.",
+  "es_ms": 97,
+  "flags": []
+ }
+]
