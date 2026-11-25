@@ -687,3 +687,54 @@ a.cta { text-decoration: none; }
 .m-row2:last-child { border-bottom: 0; }
 .m-nm { font-size: 14px; }
 .m-row2 small { font-size: 10.5px; color: var(--muted); text-align: right; }
+
+/* ——— 2.5: o caminho e o ciclo do dia ——— */
+.hero.small { min-height: 120px; margin-bottom: 18px; }
+.hero.small .big { font-size: 104px; bottom: -10px; }
+.hero.small .big.latin { font-size: 112px; }
+.hero.small .big.long { font-size: 80px; }
+.hero.small h1 { font-size: 38px; margin-top: 14px; }
+
+.hoje { background: var(--sheet); border: 2px solid var(--line); box-shadow: var(--shadow); border-radius: var(--radius); padding: 18px 16px 18px; position: relative; }
+.hoje::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--c); border-right: 2px solid var(--line); }
+.hoje > * { margin-left: 8px; }
+.hoje h2 { font: 900 30px/1.05 var(--serif); letter-spacing: -.02em; margin: 10px 0 6px; }
+.hoje p { margin: 0 0 14px; font-size: 16px; line-height: 1.45; }
+.hoje p i { font-family: var(--serif); font-size: 19px; }
+.hoje .h-sub { font: 700 12px var(--mono); color: var(--muted); margin: 8px 0 14px; }
+.hoje .cta { width: calc(100% - 8px); }
+.hoje.done { text-align: center; }
+.hoje .h-seal { width: 74px; height: 74px; margin: 12px auto 0; border: 2.5px solid var(--c); color: var(--c); border-radius: 50%; display: grid; place-items: center; font: 900 38px var(--serif); transform: rotate(-8deg); box-shadow: inset 0 0 0 4px var(--sheet), inset 0 0 0 6px var(--c); }
+:root:not([data-theme="light"]) .hoje .h-seal { color: var(--ink); }
+
+.ciclo { list-style: none; padding: 0; margin: 14px 0 4px 8px; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+.ciclo::before { content: ''; position: absolute; top: 17px; left: 12%; right: 12%; border-top: 2px dashed var(--line); }
+.ciclo li { display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; font: 700 10.5px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.ciclo b { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--line); background: var(--paper); display: grid; place-items: center; font: 400 16px var(--serif); color: var(--ink); }
+.ciclo li.ok b { background: var(--ink); color: var(--paper); font-weight: 900; }
+.ciclo li.on b { background: var(--c); color: var(--c-ink); box-shadow: 2px 2px 0 var(--line); transform: scale(1.12); }
+.ciclo li.on, .ciclo li.ok { color: var(--ink); }
+
+.trilha { list-style: none; padding: 0 0 0 4px; margin: 0; position: relative; }
+.trilha::before { content: ''; position: absolute; left: 18px; top: 18px; bottom: 18px; border-left: 2.5px solid var(--line); }
+.trilha li { display: flex; gap: 14px; align-items: center; padding: 7px 0; position: relative; }
+.trilha .t-dot { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2.5px solid var(--line); background: var(--paper); display: grid; place-items: center; font: 900 14px var(--serif); z-index: 1; }
+.trilha li.ok .t-dot { background: var(--ink); color: var(--paper); }
+.trilha li.cur .t-dot { background: var(--c); color: var(--c-ink); width: 34px; height: 34px; margin-left: -2px; box-shadow: 2px 2px 0 var(--line); }
+.trilha li.fut { opacity: .55; }
+.trilha li.fut .t-dot { border-style: dashed; }
+.trilha li.mini .t-dot { width: 14px; height: 14px; margin: 0 8px; }
+.trilha a, .trilha li > div { flex: 1; display: flex; flex-direction: column; text-decoration: none; color: var(--ink); min-width: 0; }
+.trilha b { font: 800 18px/1.15 var(--serif); }
+.trilha li.cur b { font-size: 21px; }
+.trilha small { color: var(--muted); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.mais { margin-top: 24px; border-top: 2px solid var(--line); padding-top: 4px; }
+.mais summary { cursor: pointer; font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 12px 0; list-style: none; }
+.mais summary::-webkit-details-marker { display: none; }
+.mais summary::after { content: ' +'; }
+.mais[open] summary::after { content: ' −'; }
+.mais-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mais-grid a { border: 1.5px solid var(--line); border-radius: var(--radius); padding: 11px 10px; text-decoration: none; color: var(--ink); background: var(--sheet); font-size: 14.5px; font-weight: 600; }
+
+.passo-tag { display: inline-block; font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; background: var(--c); color: var(--c-ink); border: 1.5px solid var(--line); padding: 5px 9px; margin: 6px 0 8px; box-shadow: 2px 2px 0 var(--line); }

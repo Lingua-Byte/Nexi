@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '2.5', t: 'caminho claro e ciclo do dia: escrever → entender → praticar → escrever sozinho. O resto foi para “Mais”' },
     { v: '2.4', t: 'treinos a partir de você: reescrever, variações, ler, falar, meus erros, mapa e medidor de confiança' },
     { v: '2.3', t: 'o diário libera palavras e conceitos: coleção, palavras vizinhas, missões, nível e Pares' },
     { v: '2.2', t: 'o diário é o centro: escreva em português ou na língua, toque numa palavra e ela acende na outra' },
@@ -117,6 +118,16 @@
     const out = [];
     if (step === 4) return Object.values(LS(L.id).vocab || {}).map(v => ({ id: 'w:' + v.pt, pt: v.pt, t: v.t, r: v.r || '' }));
     if (step === 5) return (LS(L.id).vars || []).map(v => ({ id: 'x:' + v.id, pt: v.pt, t: v.t, r: '' }));
+    if (step === 6) {
+      const st = LS(L.id), dia = cicloHoje(L), fr = new Set(dia.frases || []), hoje = new Date().toDateString();
+      const all = [
+        ...(st.mySentences || []).filter(s => fr.has(s.pt)).map(s => ({ id: 's:' + s.id, pt: s.pt, t: s.t, r: s.r || '' })),
+        ...(st.vars || []).filter(v => fr.has(v.base)).map(v => ({ id: 'x:' + v.id, pt: v.pt, t: v.t, r: '' })),
+        ...Object.values(st.vocab || {}).filter(v => v.src === 'diário' && v.d && new Date(v.d).toDateString() === hoje).map(v => ({ id: 'w:' + v.pt, pt: v.pt, t: v.t, r: v.r || '' })),
+        ...[3, 4, 5].flatMap(s => items(L, s)).filter(it => { const p = st.prog[it.id]; return p && p.due <= Date.now(); }).slice(0, 6)
+      ];
+      return all.filter((x, i) => all.findIndex(y => y.id === x.id) === i);
+    }
     if (step === 1) {
       L.pron.forEach((t, i) => out.push({ id: 'p' + i, pt: PT_PRON[i], t, r: L.pronR ? L.pronR[i] : '' }));
     } else if (step === 2) {
@@ -173,13 +184,14 @@
     2: { t: 'Ser & Estar', k: 'O verbo que liga tudo', d: 'Eu sou, eu estou. Os dois verbos que sustentam a língua.' },
     4: { t: 'Meu vocabulário', k: 'Do seu diário', d: 'As palavras que vieram da sua vida.' },
     5: { t: 'Variações', k: 'Da sua frase', d: 'As suas frases em outras pessoas e tempos.' },
+    6: { t: 'Prática de hoje', k: 'Do seu dia', d: 'As frases que você escreveu hoje.' },
     3: { t: 'Meus verbos', k: 'Do que eu falo', d: 'Escreva qualquer frase do seu dia: o app acha os verbos e transforma em lição.' }
   };
 
   /* ——— rotas ——— */
   function route() {
     const h = location.hash.replace(/^#\/?/, '').split('/');
-    stopPad();
+    stopPad(); emLicao = false; setTimeout(mostrarFesta, 400);
     if (h[0] === 'l' && byId[h[1]]) {
       const L = byId[h[1]]; setLangColors(L);
       if (h[2] === 's') return renderStudy(L, +h[3] || 1);
@@ -191,6 +203,7 @@
       if (h[2] === 'v') return renderVocab(L);
       if (h[2] === 'g') return renderPares(L);
       if (h[2] === 'w') return renderReescrever(L);
+      if (h[2] === 'h') return renderHoje(L);
       if (h[2] === 'x') return renderVariacoes(L);
       if (h[2] === 'r') return renderLer(L);
       if (h[2] === 'f') return renderFalar(L);
@@ -248,42 +261,104 @@
   }
 
   /* ——— LÍNGUA: a escada ——— */
+  /* ——— O CAMINHO E O CICLO DO DIA ———
+     Um app de ensino precisa de um caminho (para onde vou) e de um ciclo (o que faço hoje).
+     Caminho: Pronomes → Ser & estar → Dia 1, Dia 2, Dia 3…
+     Ciclo de cada dia: 1 Escrever → 2 Entender → 3 Praticar → 4 Sozinho. */
+  function cicloHoje(L) {
+    const st = LS(L.id);
+    st.dias = st.dias || [];
+    if (!st.dia || st.dia.date !== hojeK()) { st.dia = { date: hojeK(), step: 0, pt: '', frases: [] }; save(); }
+    return st.dia;
+  }
+  function estacaoRaiz(L) { if (mastery(L, 1) < .6) return 1; if (mastery(L, 2) < .6) return 2; return 0; }
+  function perguntaDoDia(L) {
+    const g = G(L), dom = g.dom || {};
+    const ordem = CAMPOS.slice().sort((x, y) => (dom[x.id] || 0) - (dom[y.id] || 0));
+    const c = ordem[new Date().getDate() % 5] || CAMPOS[0];
+    return { campo: c, q: PERGUNTAS[c.id] };
+  }
+  const PASSOS = [['✍', 'Escrever', 'Uma a três frases sobre o seu dia, em português, do seu jeito.'],
+    ['👁', 'Entender', 'Ver como se diz, palavra por palavra.'],
+    ['▶', 'Praticar', 'Dois minutos com as suas frases de hoje e o que está para revisar.'],
+    ['✎', 'Sozinho', 'Escrever de novo na língua, sem olhar. O diário corrige.']];
+
   function renderLang(L) {
-    const nx = nextStep(L);
+    const st = LS(L.id), dia = cicloHoje(L), raiz = estacaoRaiz(L), g = G(L), seq = sequencia(g);
+    const lname = L.name.toLowerCase();
+    let hoje;
+    if (raiz) {
+      const s = STEPS[raiz], m = Math.round(mastery(L, raiz) * 100);
+      hoje = `<section class="hoje enter">
+        <div class="kicker">Hoje · a raiz, parte ${raiz} de 2</div>
+        <h2>${esc(s.t)}</h2><p>${esc(s.d)} Antes de escrever a sua vida, a base: ${raiz === 1 ? 'quem fala' : 'os verbos que ligam tudo'}.</p>
+        <div class="meter"><i style="width:${m}%"></i></div>
+        <p class="h-sub">${m}% firme — com 60% o caminho continua.</p>
+        <a class="cta" href="#/l/${L.id}/s/${raiz}">${I.flip}${m ? 'Continuar' : 'Começar'}</a></section>`;
+    } else if (dia.step >= 4) {
+      hoje = `<section class="hoje done enter">
+        <div class="kicker">Hoje · dia ${st.dias.length}</div>
+        <div class="h-seal">✓</div><h2>Dia completo</h2>
+        <p>Você escreveu, entendeu, praticou e escreveu sozinho. Amanhã tem mais um dia no caminho.</p>
+        <a class="btn" style="width:100%" href="#/l/${L.id}/d">${I.pen}Escrever mais no diário (livre)</a></section>`;
+    } else {
+      const q = perguntaDoDia(L);
+      hoje = `<section class="hoje enter">
+        <div class="kicker">Hoje · dia ${st.dias.length + 1}</div>
+        <ol class="ciclo">${PASSOS.map((x, i) => `<li class="${i < dia.step ? 'ok' : i === dia.step ? 'on' : ''}"><b>${i < dia.step ? '✓' : x[0]}</b><span>${x[1]}</span></li>`).join('')}</ol>
+        <h2>${dia.step + 1}. ${PASSOS[dia.step][1]}</h2>
+        <p>${dia.step === 0 ? `<i>${esc(q.q)}</i><br>${esc(PASSOS[0][2])}` : esc(PASSOS[dia.step][2])}</p>
+        <a class="cta" href="#/l/${L.id}/h">${dia.step === 0 || dia.step === 3 ? I.pen : I.flip}${['Escrever', 'Ver o que é o quê', 'Praticar agora', 'Escrever sozinho'][dia.step]}</a></section>`;
+    }
+    // o caminho: as estações da raiz e os dias
+    const dias = st.dias.map((d, i) => ({ t: `Dia ${i + 1}`, sub: d.pt, ok: true }));
+    const est = [
+      { t: 'Pronomes', sub: 'eu, você, ele, ela…', ok: mastery(L, 1) >= .6, cur: raiz === 1, href: `#/l/${L.id}/s/1` },
+      { t: 'Ser & estar', sub: 'os verbos que ligam tudo', ok: mastery(L, 2) >= .6, cur: raiz === 2, href: `#/l/${L.id}/s/2` },
+      ...(dias.length > 4 ? [{ t: `+ ${dias.length - 4} dias`, sub: '', ok: true, mini: true }, ...dias.slice(-4)] : dias),
+      { t: `Dia ${st.dias.length + 1}`, sub: raiz ? 'depois da raiz' : dia.step >= 4 ? 'amanhã' : 'hoje', ok: false, cur: !raiz && dia.step < 4, href: raiz || dia.step >= 4 ? '' : `#/l/${L.id}/h` },
+      { t: '…', sub: 'a sua vida continua o caminho', ok: false, futuro: true }
+    ];
     $app.innerHTML = `
-      ${topbar('#/', 'Cadernos')}
-      <section class="hero enter">
+      ${topbar('#/', 'Cadernos', `<span class="score mono">${seq ? '🔥 ' + seq + (seq === 1 ? ' dia' : ' dias') : 'nível ' + nivel(g.xp)}</span>`)}
+      <section class="hero small enter">
         <span class="big ${isLatin(L) ? 'latin' : ''} ${isLatin(L) && L.glyph.length > 2 ? 'long' : ''}" ${L.dir === 'rtl' ? 'dir="rtl"' : ''} aria-hidden="true">${esc(L.glyph)}</span>
         <div class="nat">${esc(L.native)}</div>
         <h1>${esc(L.name)}</h1>
-        <div class="pct"><b>${langPct(L)}%</b> da raiz</div>
       </section>
-      <a class="journal-card main-diary enter" href="#/l/${L.id}/d">
-        <span class="kicker">Comece aqui · todo dia</span>
-        <b>Diário</b>
-        <span>Escreva a sua vida em português ou em ${esc(L.name.toLowerCase())}. O diário mostra o que é o quê — toque numa palavra e ela acende na outra língua.</span>
-        <span class="jc-count mono">${(n => `${n} página${n === 1 ? '' : 's'}`)((LS(L.id).journal || []).length)}</span>
-      </a>
-      ${painelHTML(L)}
-      ${treinosHTML(L)}
-      <div class="section-h" style="margin:26px 0 10px"><h2>A raiz</h2><span class="kicker muted">a base que sustenta tudo</span></div>
-      <div class="stairs">
-        ${[1, 2, 3].map(s => {
-          const m = Math.round(mastery(L, s) * 100), d = dueCount(L, s), n = items(L, s).length;
-          return `<a class="step enter ${s === nx ? 'next' : ''}" href="#/l/${L.id}/s/${s}" style="animation-delay:${s * 60}ms">
-            <span class="n">0${s}</span>
-            <span class="body">
-              <span class="kicker muted">${esc(STEPS[s].k)}</span>
-              <h3>${esc(STEPS[s].t)}${s === nx ? '<span class="flag">agora</span>' : ''}</h3>
-              <p>${esc(STEPS[s].d)}</p>
-              <span class="meter"><i style="width:${m}%"></i></span>
-              <span class="meta"><span>${m}% firme</span><span>${n ? d + ' p/ revisar' : 'escolha verbos'}</span></span>
-            </span>
-          </a>`;
-        }).join('')}
-      </div>
-      <div style="margin-top:22px">${motorCard(L)}</div>`;
+      ${hoje}
+      <div class="section-h" style="margin:26px 0 10px"><h2>O caminho</h2><span class="kicker muted">${st.dias.length} ${st.dias.length === 1 ? 'dia completo' : 'dias completos'}</span></div>
+      <ol class="trilha">${est.map(x => `<li class="${x.ok ? 'ok' : ''} ${x.cur ? 'cur' : ''} ${x.futuro ? 'fut' : ''} ${x.mini ? 'mini' : ''}">
+        <span class="t-dot">${x.ok ? '✓' : x.cur ? '●' : ''}</span>
+        ${x.href ? `<a href="${x.href}">` : '<div>'}<b>${esc(x.t)}</b>${x.sub ? `<small>${esc(String(x.sub).slice(0, 60))}${String(x.sub).length > 60 ? '…' : ''}</small>` : ''}${x.href ? '</a>' : '</div>'}
+      </li>`).join('')}</ol>
+      <details class="mais"><summary>Mais para explorar</summary>
+        <div class="mais-grid">
+          <a href="#/l/${L.id}/d">✍ Diário livre</a><a href="#/l/${L.id}/r">📖 Ler um texto</a>
+          <a href="#/l/${L.id}/f">🎙 Falar</a><a href="#/l/${L.id}/g">◧ Pares</a>
+          <a href="#/l/${L.id}/v">🌱 Meu vocabulário</a><a href="#/l/${L.id}/c">✦ Coleção</a>
+          <a href="#/l/${L.id}/x">⇄ Variações</a><a href="#/l/${L.id}/w">✎ Reescrever</a>
+          <a href="#/l/${L.id}/e">⚠ Meus erros</a><a href="#/l/${L.id}/m">🗺 Mapa</a>
+          <a href="#/l/${L.id}/s/3">🔤 Meus verbos</a><a href="#/l/${L.id}/s/1">🌱 A raiz</a>
+        </div>
+      </details>
+      <div style="margin-top:18px">${motorCard(L)}</div>`;
     bindMotor(L);
+  }
+
+  /* Leva para o passo atual do dia */
+  function renderHoje(L) {
+    const dia = cicloHoje(L), raiz = estacaoRaiz(L), lname = L.name.toLowerCase();
+    if (raiz) { go(`#/l/${L.id}/s/${raiz}`); return; }
+    if (dia.step <= 1) {
+      const q = perguntaDoDia(L);
+      return renderDiary(L, null, { ciclo: 'escrever', text: dia.pt || '', auto: dia.step === 1 && !!dia.pt, placeholder: 'Escreva aqui, em português…',
+        banner: `<div class="rew-banner"><div class="kicker">Passo 1 de 4 · Escrever</div><p>${esc(q.q)}</p><span>Uma a três frases, em português, do seu jeito — gíria e expressão valem. Depois o app mostra como se diz em ${esc(lname)}.</span></div>` });
+    }
+    if (dia.step === 2) return renderLesson(L, 6);
+    if (dia.step === 3) return renderDiary(L, null, { ciclo: 'sozinho', text: '', meant: dia.pt, placeholder: `Escreva em ${lname}, sem olhar…`,
+      banner: `<div class="rew-banner"><div class="kicker">Passo 4 de 4 · Sozinho</div><p>“${esc(dia.pt)}”</p><span>Agora escreva isso em ${esc(lname)}, sem olhar a tradução. Do jeito que conseguir — o diário corrige.</span></div>` });
+    go(`#/l/${L.id}`);
   }
 
   /* ——— folha de estudo ——— */
@@ -808,7 +883,7 @@
       ${topbar(`#/l/${L.id}`, L.name)}
       <div class="enter">
         <div class="kicker muted">Diário · ${esc(L.name)}</div>
-        <h1 class="title-xl">${opts.rewriteOf ? 'Reescrever' : 'Minha vida'} <em>em ${esc(lname)}</em></h1>
+        <h1 class="title-xl">${opts.ciclo ? 'Hoje' : opts.rewriteOf ? 'Reescrever' : 'Minha vida'} <em>em ${esc(lname)}</em></h1>
         ${opts.banner || `<p class="lead">Escreva o seu dia, o que pensa, o que sente — <b>em português</b> ou <b>em ${esc(lname)}</b>. O diário descobre a língua e mostra o que é o quê.</p>`}
         <div class="diary journal">
           <div class="jdate mono">${esc(date)}</div>
@@ -823,7 +898,7 @@
         <div id="jres"></div>
         ${motorCard(L)}
 
-        ${st.journal.length ? `<div class="subh">Páginas anteriores <span class="kicker">${st.journal.length}</span></div>
+        ${st.journal.length && !opts.ciclo ? `<div class="subh">Páginas anteriores <span class="kicker">${st.journal.length}</span></div>
           <div class="pages">${st.journal.map(j => `<button class="page" data-j="${j.id}">
             <span class="mono muted">${new Date(j.d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
             <span class="ptxt">${esc(j.text.slice(0, 70))}${j.text.length > 70 ? '…' : ''}</span>
@@ -854,6 +929,7 @@
 
     /* português → língua estudada */
     const showPt = (c, out) => {
+      if (opts.ciclo === 'escrever') return showCiclo(c, out);
       res.innerHTML = `<div class="lang-badge enter">Escrito em <b>português</b> → ${esc(lname)}</div>
         ${analysisHTML(L, out)}
         <div class="loop">
@@ -865,6 +941,36 @@
       bindSay(L, res); bindInter(res, L, 'pt');
       document.getElementById('psave').onclick = e => { const r = saveAnalysis(L, out); toast(`Na sua lição: ${r.nv} verbo(s), ${r.ns} frase(s)${r.nc ? `, ${r.nc} conceito(s)` : ''}`); e.currentTarget.disabled = true; };
       document.getElementById('try').onclick = () => { saveAnalysis(L, out); renderDiary(L, null, { text: '', meant: c.text, placeholder: `Escreva aqui em ${lname}, do seu jeito…` }); window.scrollTo(0, 0); setTimeout(() => document.getElementById('jtext').focus(), 100); };
+    };
+
+    /* ciclo do dia, passo 2: entender — e já prepara a prática com as frases e as variações delas */
+    const showCiclo = async (c, out) => {
+      const dia = cicloHoje(L);
+      saveAnalysis(L, out);
+      dia.pt = c.text; dia.frases = out.sentences.filter(s => s.t).map(s => s.pt); dia.step = Math.max(dia.step, 1); save();
+      res.innerHTML = `<div class="passo-tag enter">Passo 2 de 4 · Entender</div>
+        ${analysisHTML(L, out)}
+        <div class="loop">
+          <div class="kicker">Próximo passo</div>
+          <p>Praticar essas frases (e as mesmas em outras pessoas e tempos), com certo e errado na hora.</p>
+          <button class="cta" id="cgo" disabled>${I.flip}Preparando a prática…</button>
+        </div>`;
+      bindSay(L, res); bindInter(res, L, 'pt');
+      // variações das frases de hoje (outra pessoa / outro tempo), traduzidas no aparelho
+      try {
+        st.vars = st.vars || []; let n = 0;
+        for (const f of dia.frases.slice(0, 3)) {
+          for (const v of variacoes(falado(f)).slice(0, 2)) {
+            if (st.vars.some(x => x.pt === v.pt)) { const x = st.vars.find(x => x.pt === v.pt); x.base = f; continue; }
+            const t = clean(await mt('pt', L.id, conceitos(falado(v.pt)).rewritten));
+            if (t) st.vars.push({ id: Date.now().toString(36) + 'x' + (n++), pt: v.pt, t, base: f });
+          }
+        }
+        st.vars = st.vars.slice(-150); save();
+      } catch (e) { /* sem variações, a prática segue com as frases */ }
+      const b = document.getElementById('cgo'); if (!b) return;
+      b.disabled = false; b.innerHTML = `${I.flip}Praticar o que escrevi`;
+      b.onclick = () => { dia.step = 2; save(); renderHoje(L); window.scrollTo(0, 0); };
     };
 
     /* língua estudada → o que você disse + correção */
@@ -932,6 +1038,13 @@
               contar(L, 'reescrever'); ganharXP(L, 20);
               celebrar({ icone: '✍', kicker: 'Página reescrita', titulo: `${score}% parecida com o natural`, corpo: orig.tries[1] ? `Da última vez: ${orig.tries[1].score}%. ${score > orig.tries[1].score ? 'Você melhorou!' : 'Continue — a próxima volta em uma semana.'}` : 'Ela volta em uma semana para você ver o quanto melhorou.' }); }
           }
+          if (opts.ciclo === 'sozinho') {
+            const dia = cicloHoje(L), score = ref ? diffWords(c.text, ref).score : sim;
+            if (dia.step < 4) { dia.step = 4; st.dias.push({ date: dia.date, pt: dia.pt, t: c.text, score }); ganharXP(L, 30);
+              celebrar({ icone: '✓', kicker: `Dia ${st.dias.length} completo`, titulo: `${score}% parecido com o natural`, corpo: 'Escreveu, entendeu, praticou e escreveu sozinho. Amanhã o caminho continua.' }); }
+            save();
+            res.insertAdjacentHTML('beforeend', `<a class="cta" href="#/l/${L.id}" style="margin-top:16px">${I.flip}Voltar ao caminho</a>`);
+          }
           const nFr = frases(c.text).length; contar(L, 'alvo', nFr); contar(L, 'frases', nFr); ganharXP(L, 15 * nFr);
         }
       } catch (e) {
@@ -950,6 +1063,7 @@
     $app.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { renderDiary(L, b.dataset.j); window.scrollTo(0, 0); });
     const nb = document.getElementById('jnew'); if (nb) nb.onclick = () => { renderDiary(L); window.scrollTo(0, 0); };
     if (cur && cur.lang && cur.lang !== 'pt' && cur.fix && cur.fix.toks) showTg(cur.fix);
+    if (opts.auto && ta.value.trim()) run();
   }
 
   /* ——— JOGO: o diário libera palavras e conceitos ——— */
@@ -995,8 +1109,9 @@
     festa.push(item);
     if (festa.length === 1) mostrarFesta();
   }
+  let emLicao = false;   // comemorações esperam a lição acabar (não interrompem a prática)
   function mostrarFesta() {
-    const it = festa[0]; if (!it) return;
+    const it = festa[0]; if (!it || emLicao || document.querySelector('.festa')) return;
     const ov = document.createElement('div');
     ov.className = 'festa ' + (it.raro || '');
     ov.innerHTML = `<div class="festa-card"><div class="festa-ico">${it.icone || '★'}</div><div class="kicker">${esc(it.kicker)}</div>
@@ -1009,14 +1124,14 @@
     const g = G(L), antes = nivel(g.xp);
     g.xp += n; g.days[hojeK()] = true; save();
     const depois = nivel(g.xp);
-    if (depois > antes) celebrar({ icone: '⬆', kicker: 'Subiu de nível', titulo: `Nível ${depois}`, corpo: `A sua raiz em ${esc(L.name.toLowerCase())} está mais funda.` });
+    if (depois > antes) toast(`⬆ Nível ${depois} em ${L.name.toLowerCase()}`);
   }
   function contar(L, chave, n = 1) {
     const g = G(L); g.today[chave] = (g.today[chave] || 0) + n; save();
     for (const m of missoesDoDia(L)) {
       if (m.id === chave && !g.today.ok[m.id] && g.today[m.id] >= m.meta) {
         g.today.ok[m.id] = true; save();
-        celebrar({ icone: '✓', kicker: 'Missão do dia cumprida', titulo: m.t, corpo: '+30 XP' });
+        toast(`✓ Missão cumprida: ${m.t} (+30 XP)`);
         ganharXP(L, 30);
       }
     }
@@ -1470,11 +1585,13 @@
 
   function renderLesson(L, step) {
     const st = LS(L.id);
-    const pool = items(L, step);
+    const pool = step === 6 ? [...items(L, 6), ...items(L, 3), ...items(L, 4)] : items(L, step);
     const { pick, extra } = pickSession(L, step);
+    if (!pick.length && step === 6) { cicloHoje(L).step = 3; save(); renderHoje(L); return; }
     if (!pick.length) { go(`#/l/${L.id}/s/${step}`); return; }
     if (extra) toast('Tudo revisado! Rodada extra.');
     const queue = pick.map(it => ({ it, kind: pickKind(L, it, st.prog[it.id]?.b || 0) }));
+    emLicao = true;
     let k = 0, right = 0, wrong = 0, streak = 0, best = 0;
     const pickLen = queue.length;
     const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
@@ -1590,8 +1707,24 @@
     };
 
     const finish = () => {
+      emLicao = false; setTimeout(mostrarFesta, 700);
       const m = Math.round(mastery(L, step) * 100), firsts = pick.length;
       const firstRight = Math.max(0, firsts - queue.slice(firsts).length);
+      if (step === 6) {
+        const dia = cicloHoje(L); if (dia.step < 3) { dia.step = 3; save(); }
+        $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}
+          <div class="finish enter">
+            <div class="kicker muted">Passo 3 de 4 · Praticar</div>
+            <div class="seal"><div><b>${firstRight}/${firsts}</b><span>de primeira</span></div></div>
+            <h1 class="title-xl">${firstRight === firsts ? 'Sem erros!' : 'Praticado.'}</h1>
+            <p class="lead">Falta só um passo: escrever a sua frase de hoje em ${esc(L.name.toLowerCase())}, sozinho, sem olhar.</p>
+            <button class="cta" id="solo">${I.pen}Último passo: escrever sozinho</button>
+            <button class="btn" id="more" style="width:100%;margin-top:10px">Praticar mais uma vez</button>
+          </div>`;
+        document.getElementById('more').onclick = () => renderLesson(L, step);
+        document.getElementById('solo').onclick = () => { renderHoje(L); window.scrollTo(0, 0); };
+        return;
+      }
       $app.innerHTML = `
         ${topbar(`#/l/${L.id}`, L.name)}
         <div class="finish enter">
@@ -1621,6 +1754,11 @@
   function pickSession(L, step) {
     const p = LS(L.id).prog, now = Date.now();
     const all = items(L, step);
+    if (step === 6) {   // prática de hoje: as frases do dia primeiro, na ordem de prioridade
+      const pick = all.slice(0, SESSION);
+      for (let i = pick.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pick[i], pick[j]] = [pick[j], pick[i]]; }
+      return { pick, extra: false };
+    }
     const score = it => p[it.id] ? p[it.id].due : -1;
     let due = all.filter(it => !p[it.id] || p[it.id].due <= now);
     let extra = false;

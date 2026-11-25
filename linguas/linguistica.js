@@ -505,6 +505,38 @@ function serOuIr(f, low, i, forms) {
   if (/^(a|ao|à|aos|às|para|pra|pro|embora|lá|até|no|na|em)$/.test(nx) || (forms.get(nx) && forms.get(nx).slot === 11)) return { lemma: 'ir', slot: f.slot };
   return f;
 }
+/* concordância do adjetivo depois de ser/estar/ficar quando a pessoa muda
+   (“Eu estou cansado” → “Ela está cansada” · “Nós estamos cansados”) */
+const COPULA = new Set(['ser', 'estar', 'ficar', 'parecer', 'continuar', 'andar']);
+const COPULA_NOS = new Set(['estamos', 'estávamos', 'estivemos', 'somos', 'éramos', 'fomos', 'ficamos', 'ficávamos', 'parecemos', 'continuamos', 'andamos']);
+const DET_ANTES = new Set(['o', 'a', 'os', 'as', 'no', 'na', 'nos', 'nas', 'do', 'da', 'dos', 'das', 'um', 'uma', 'meu', 'minha', 'seu', 'sua', 'teu', 'tua', 'nosso', 'nossa', 'este', 'esta', 'esse', 'essa', 'aquele', 'aquela', 'pelo', 'pela', 'ao', 'num', 'numa']);
+const ADJ_PULA = new Set(['muito', 'muita', 'tão', 'bem', 'meio', 'super', 'mas', 'e', 'pouco', 'bastante', 'mais', 'menos', 'um', 'nem', 'ou']);
+const ADJ_PARA = new Set(['em', 'no', 'na', 'nos', 'nas', 'de', 'do', 'da', 'dos', 'das', 'com', 'para', 'pra', 'a', 'o', 'os', 'as', 'porque', 'que', 'quando', 'se', 'hoje', 'agora', 'cedo', 'tarde', 'aqui', 'lá', 'ali', 'ainda', 'sempre', 'já', 'ontem', 'amanhã', 'por', 'sem', 'até', 'como', 'onde', 'assim']);
+function flexAdj(w, gen, plur) {
+  let x = w.toLowerCase();
+  if (/(ão|ões)$/.test(x)) return w;
+  if (gen === 'f') x = x.replace(/o$/, 'a').replace(/os$/, 'as');
+  if (plur && !/s$/.test(x)) x = /[aeiouéêó]$/.test(x) ? x + 's' : /z$|r$/.test(x) ? x + 'es' : /l$/.test(x) ? x.replace(/l$/, 'is') : x;
+  return x;
+}
+function concordaAdj(txt, de, para, forms) {
+  if (de === para) return txt;
+  const plur = para === 'nós' || para === '3p', gen = para === '3s' ? 'f' : null;
+  const toks = txt.match(/[\p{L}]+|[^\p{L}]+/gu) || [];
+  let on = false;
+  for (let i = 0; i < toks.length; i++) {
+    const t = toks[i];
+    if (!/\p{L}/u.test(t)) { if (/[.;!?]/.test(t)) on = false; continue; }
+    const lw = t.toLowerCase(), f = forms.get(lw);
+    if ((f && COPULA.has(f.lemma)) || COPULA_NOS.has(lw)) { on = true; continue; }
+    if (!on) continue;
+    if (ADJ_PULA.has(lw)) continue;
+    if (ADJ_PARA.has(lw) || f) { on = false; continue; }
+    toks[i] = flexAdj(t, gen, plur);
+  }
+  return toks.join('');
+}
+
 function variacoes(frase) {
   const forms = ptForms();
   const toks = frase.match(/[\p{L}]+|[^\p{L}]+/gu) || [];
@@ -524,7 +556,7 @@ function variacoes(frase) {
   let tempo = slotTempo(info.slot), pessoa = sujeito || slotPessoa(info.slot);
   if (info.slot === 7 && !sujeito) pessoa = 'eu';
   // todos os verbos da frase na mesma pessoa e tempo mudam juntos
-  const alvo = toks.map((t, i) => { const f = NAO_VERBO.has(low[i]) ? null : serOuIr(forms.get(low[i]), low, i, forms); return f && f.slot <= 8 && slotTempo(f.slot) === tempo && (slotPessoa(f.slot) === pessoa || (f.slot === 7 && pessoa === 'eu')) || i === vi ? f : null; });
+  const alvo = toks.map((t, i) => { const f = NAO_VERBO.has(low[i]) || (i !== vi && DET_ANTES.has(low[i - 2])) ? null : serOuIr(forms.get(low[i]), low, i, forms); return f && f.slot <= 8 && slotTempo(f.slot) === tempo && (slotPessoa(f.slot) === pessoa || (f.slot === 7 && pessoa === 'eu')) || i === vi ? f : null; });
   // sujeito que é um nome (“Meus pais moram…”): só dá para variar o tempo, não a pessoa
   const antes = toks.slice(0, vi).join('').replace(ADV_INICIO, '').trim();
   const temNome = pi < 0 && /[\p{L}]/u.test(antes);
@@ -542,6 +574,7 @@ function variacoes(frase) {
     else if (temNome) txt = out.join('');
     else if (vi === 0) { txt = out.join(''); txt = pron.charAt(0).toUpperCase() + pron.slice(1) + ' ' + txt.charAt(0).toLowerCase() + txt.slice(1); }
     else { out[vi] = pron + ' ' + out[vi].toLowerCase(); txt = out.join(''); }
+    txt = concordaAdj(txt, pessoa, novaPessoa, forms);
     if (novoTempo === 'pres' && tempo !== 'pres') txt = txt.replace(U(/\bontem\b/g), 'hoje').replace(U(/\bOntem\b/g), 'Hoje');
     return txt.replace(/\s{2,}/g, ' ');
   };

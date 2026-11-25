@@ -32,7 +32,16 @@ Princípios que guiam todas as decisões:
 
 Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da direita para a esquerda). Japonês, coreano e hebraico mostram romanização nos dados prontos.
 
-## O que o app faz hoje (versão 2.4)
+## O que o app faz hoje (versão 2.5)
+
+**Caminho e ciclo do dia (2.5)** — o autor achou a 2.4 “complexa e desinteressante”: um app de ensino precisa de um caminho e um ciclo claros. A página de cada língua agora mostra só:
+- *Hoje*: o passo atual do ciclo — 1 ✍ Escrever (1–3 frases em português, com uma pergunta do dia) → 2 👁 Entender (diário alinhado, tocar nas palavras) → 3 ▶ Praticar (lição “Prática de hoje”, degrau 6: as frases do dia + variações delas em outras pessoas/tempos + palavras escritas hoje + revisões vencidas) → 4 ✎ Sozinho (escrever na língua sem olhar; o diário corrige e o dia fica completo).
+- *O caminho*: Pronomes → Ser & estar (liberados com 60% firme) → Dia 1, Dia 2… (`st.dia`, `st.dias`; rota `#/l/<id>/h`).
+- *Mais para explorar* (fechado): diário livre, ler, falar, pares, vocabulário, coleção, variações, reescrever, erros, mapa, verbos, a raiz.
+- Comemorações não interrompem mais a lição (esperam o fim); nível e missões viram aviso discreto.
+- Variações com concordância do adjetivo (“Ela está cansada”, “Nós estamos cansados”).
+
+Tudo abaixo continua existindo, mas fora da tela principal:
 
 **O diário é o centro** (é a primeira coisa na página de cada língua). A pessoa escreve a própria vida em português **ou** na língua estudada; o diário identifica a língua sozinho.
 - *Português* → mostra como dizer na outra língua, frase por frase, com as duas línguas alinhadas: **tocar numa palavra acende a correspondente na outra** (e fala). Explica os conceitos e os verbos no sentido da frase. “Agora é a sua vez”: a pessoa tenta escrever ela mesma e o diário compara com o que ela quis dizer.
