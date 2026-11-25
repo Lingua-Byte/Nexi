@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '2.2', t: 'o diário é o centro: escreva em português ou na língua, toque numa palavra e ela acende na outra' },
     { v: '2.1', t: 'o contexto passa de uma frase para a outra (sujeito oculto) · “o próximo”' },
     { v: '2.0', t: 'tradutor interno: traduz e corrige dentro do celular, sem chave' },
     { v: '1.7', t: 'tradução por conceito: o sentido decide a palavra (pegar o ônibus)' },
@@ -179,7 +180,7 @@
       if (h[2] === 'p') return renderPractice(L, +h[3] || 1);
       if (h[2] === 'l') return renderLesson(L, +h[3] || 1);
       if (h[2] === 'd') return renderDiary(L);
-      if (h[2] === 't') return renderTranslator(L);
+      if (h[2] === 't') return renderDiary(L);   // o tradutor agora vive no diário
       return renderLang(L);
     }
     setLangColors(null); renderHome();
@@ -242,6 +243,13 @@
         <h1>${esc(L.name)}</h1>
         <div class="pct"><b>${langPct(L)}%</b> da raiz</div>
       </section>
+      <a class="journal-card main-diary enter" href="#/l/${L.id}/d">
+        <span class="kicker">Comece aqui · todo dia</span>
+        <b>Diário</b>
+        <span>Escreva a sua vida em português ou em ${esc(L.name.toLowerCase())}. O diário mostra o que é o quê — toque numa palavra e ela acende na outra língua.</span>
+        <span class="jc-count mono">${(LS(L.id).journal || []).length} páginas</span>
+      </a>
+      <div class="section-h" style="margin:26px 0 10px"><h2>A raiz</h2><span class="kicker muted">a base que sustenta tudo</span></div>
       <div class="stairs">
         ${[1, 2, 3].map(s => {
           const m = Math.round(mastery(L, s) * 100), d = dueCount(L, s), n = items(L, s).length;
@@ -257,17 +265,6 @@
           </a>`;
         }).join('')}
       </div>
-      <a class="journal-card tr-card enter" href="#/l/${L.id}/t">
-        <span class="kicker">Sentido, não palavra</span>
-        <b>Tradutor de conceitos</b>
-        <span>Escreva do seu jeito, em português. O app traduz o sentido, explica o que é intraduzível e transforma em lição.</span>
-      </a>
-      <a class="journal-card enter" href="#/l/${L.id}/d">
-        <span class="kicker">Caderno livre</span>
-        <b>Diário</b>
-        <span>Escreva o que quiser em ${esc(L.name.toLowerCase())}. O diário corrige.</span>
-        <span class="jc-count mono">${(LS(L.id).journal || []).length} páginas</span>
-      </a>
       <div style="margin-top:22px">${motorCard(L)}</div>`;
     bindMotor(L);
   }
@@ -365,6 +362,43 @@
   const motorLib = () => (motorP = motorP || import('./motor.js'));
   const mt = async (from, to, text) => (await motorLib()).translate(from, to, text);
   const clean = t => String(t).trim().replace(/[.。]$/, '');
+  /* tradução com alinhamento palavra a palavra (nomes próprios mantidos) */
+  async function mtAligned(from, to, text) {
+    const al = await (await motorLib()).translateAligned(from, to, text);
+    if (from === 'pt') {
+      const fixed = manterNomes(text, al.text);
+      if (fixed !== al.text) {
+        const A = al.text.split(/\s+/), B = fixed.split(/\s+/);
+        if (A.length === B.length) A.forEach((w, i) => { if (w !== B[i]) al.toks.forEach(tk => { if (tk.t.includes(w)) tk.t = tk.t.replace(w, B[i]); }); });
+        al.text = fixed;
+      }
+    }
+    al.text = clean(al.text);
+    return al;
+  }
+  /* As duas línguas, uma sobre a outra: tocar numa palavra acende a correspondente na outra. */
+  function interHTML(srcWords, toks, srcDir, tgDir, srcLabel, tgLabel) {
+    return `<div class="inter">
+      <div class="il-lab">${esc(srcLabel)}</div>
+      <div class="il-src" ${srcDir}>${srcWords.map((w, i) => `<span class="w" data-g="${i}">${esc(w)}</span>`).join(' ')}</div>
+      <div class="il-lab">${esc(tgLabel)}</div>
+      <div class="il-tg" ${tgDir}>${toks.map(t => `${esc(t.pre)}<span class="w ${t.k.length ? '' : 'solo'}" data-g="${t.k.join(' ')}">${esc(t.t)}</span>`).join('')}</div>
+    </div>`;
+  }
+  function bindInter(root, L, srcLang) {
+    root.querySelectorAll('.inter').forEach(box => {
+      box.querySelectorAll('.w').forEach(w => w.onclick = () => {
+        const keys = (w.dataset.g || '').split(' ').filter(Boolean);
+        box.querySelectorAll('.w.on').forEach(x => x.classList.remove('on'));
+        if (!keys.length) { w.classList.add('on'); }
+        box.querySelectorAll('.il-src .w').forEach(x => { if (keys.includes(x.dataset.g)) x.classList.add('on'); });
+        box.querySelectorAll('.il-tg .w').forEach(x => { if ((x.dataset.g || '').split(' ').some(k => keys.includes(k))) x.classList.add('on'); });
+        // fala o pedaço na língua estudada
+        const target = srcLang === 'pt' ? [...box.querySelectorAll('.il-tg .w.on')].map(x => x.textContent).join(' ') : [...box.querySelectorAll('.il-src .w.on')].map(x => x.textContent).join(' ');
+        if (target) speak(target.replace(/[.,!?;:]+$/, ''), L);
+      });
+    });
+  }
   const roman = (L, t) => (L.id === 'ko' ? romanKo(t) : '');
   const MB = n => Math.max(1, Math.round(n / 1e6));
 
@@ -413,8 +447,9 @@
     for (let si = 0; si < sents.length; si++) {
       const s = sents[si];
       const { found, rewritten } = conceitos(comSujeito[si]);
-      const t = manterNomes(s, clean(await mt('pt', L.id, rewritten)));
-      out.sentences.push({ pt: s, via: rewritten !== s ? rewritten : '', t, r: roman(L, t), conceitos: found.map(c => c.id) });
+      const al = await mtAligned('pt', L.id, rewritten);
+      const t = al.text;
+      out.sentences.push({ pt: s, via: rewritten !== s ? rewritten : '', t, r: roman(L, t), src: al.src, toks: al.toks, conceitos: found.map(c => c.id) });
       for (const c of found) {
         if (out.concepts.some(x => x.id === c.id)) continue;
         const ex = exemplo(c);
@@ -469,10 +504,11 @@
     const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
     return `
       <div class="analysis enter">
+        <p class="il-hint">Toque numa palavra: a correspondente acende na outra língua.</p>
         ${out.sentences.map(s => `<div class="tr-row">
-          <div class="tr-pt">${esc(s.pt)}</div>
-          ${s.via ? `<div class="tr-via">o tradutor entendeu: <i>${esc(s.via)}</i></div>` : ''}
-          <button class="tr-tg" data-say="${esc(s.t)}" ${rtl}>${esc(s.t)}${s.r ? `<small dir="ltr">${esc(s.r)}</small>` : ''}<span class="spk">${I.sound}</span></button>
+          ${s.via ? `<div class="tr-pt">${esc(s.pt)}</div><div class="tr-via">o app entendeu como: <i>${esc(s.via)}</i></div>` : ''}
+          ${s.toks ? interHTML(s.src, s.toks, '', rtl, 'português', L.name.toLowerCase()) : `<div class="tr-pt">${esc(s.pt)}</div>`}
+          <button class="tr-tg" data-say="${esc(s.t)}" ${rtl}>${s.r ? `<small dir="ltr">${esc(s.r)}</small>` : '<small>ouvir a frase</small>'}<span class="spk">${I.sound}</span></button>
         </div>`).join('')}
         ${out.concepts.length ? `<div class="subh">Conceitos <span class="kicker">sentido, não palavra</span></div>
           ${out.concepts.map(c => `<div class="concept"><div class="c-pt">${esc(c.pt)}</div><p>${esc(c.diz)}</p>
@@ -586,7 +622,7 @@
         ${practiceButtons(L, 3, its.length)}
       </div>`;
 
-    bindSay(L); bindPractice(L, 3); bindMotor(L);
+    bindSay(L); bindPractice(L, 3); bindMotor(L); bindInter($app, L, 'pt');
     const ta = document.getElementById('diary'), fd = document.getElementById('found');
     const showFound = txt => {
       const { found, base, extra } = detectVerbs(txt);
@@ -713,6 +749,14 @@
         }
         break;
       }
+      // nenhum verbo conhecido: confere pela gramática (terminação regular da pessoa)
+      if (out.length === before && !verbs.some(v => v.all.has(nw))) {
+        let j = k + 1; const T = TERM[L.id];
+        while (T && toks[j] && T.pula.includes(toks[j].w.toLowerCase().replace(/[’']$/, '')) && j < k + 4) j++;
+        const vw = toks[j]; if (!vw) return;
+        const r = confereTerminacao(L.id, t.w, vw.w);
+        if (r) out.push({ i: t.i, len: vw.i + vw.w.length - t.i, orig: text.slice(t.i, vw.i + vw.w.length), fix: text.slice(t.i, vw.i) + r.fix, why: r.why });
+      }
       }
     }
     return out;
@@ -727,43 +771,48 @@
     return h + esc(text.slice(p));
   }
 
-  function renderDiary(L, openId) {
+  /* ——— O DIÁRIO: a vida da pessoa é o vocabulário ———
+     Escreve em português ou na língua estudada; o diário descobre qual.
+     Português → como dizer na outra língua (frase por frase, conceitos, palavra por palavra).
+     Língua estudada → o que você disse + correção. Depois: “tente você” fecha o ciclo. */
+  function renderDiary(L, openId, opts = {}) {
     const st = LS(L.id);
     st.journal = st.journal || []; st.fixes = st.fixes || [];
     let cur = openId ? st.journal.find(j => j.id === openId) : null;
     const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    const lname = L.name.toLowerCase();
     const date = new Date(cur ? cur.d : Date.now()).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    const meantVal = opts.meant ?? (cur ? cur.meant || '' : '');
     $app.innerHTML = `
       ${topbar(`#/l/${L.id}`, L.name)}
       <div class="enter">
         <div class="kicker muted">Diário · ${esc(L.name)}</div>
-        <h1 class="title-xl">Diário <em>livre</em></h1>
-        <p class="lead">Escreva o que quiser em ${esc(L.name.toLowerCase())}: seu dia, o que sente, o que vai fazer. Erre à vontade — é assim que se aprende.</p>
+        <h1 class="title-xl">Minha vida <em>em ${esc(lname)}</em></h1>
+        <p class="lead">Escreva o seu dia, o que pensa, o que sente — <b>em português</b> ou <b>em ${esc(lname)}</b>. O diário descobre a língua e mostra o que é o quê.</p>
         <div class="diary journal">
           <div class="jdate mono">${esc(date)}</div>
-          <textarea id="jtext" ${rtl} lang="${L.tts}" placeholder="${esc(L.id === 'en' ? 'Today I am tired. I want a coffee…' : 'Escreva aqui…')}" aria-label="Diário em ${esc(L.name)}">${esc(cur ? cur.text : '')}</textarea>
-          <div class="meant"><label class="kicker muted" for="jmeant">O que eu quis dizer (opcional)</label>
-            <input id="jmeant" placeholder="em português — ajuda na correção" value="${esc(cur ? cur.meant || '' : '')}"></div>
+          <textarea id="jtext" lang="${L.tts}" placeholder="${esc(opts.placeholder || `Ex.: Hoje acordei cansado, mas tomei um café e fui trabalhar…`)}" aria-label="Diário">${esc(opts.text ?? (cur ? cur.text : ''))}</textarea>
+          <div class="meant ${meantVal ? '' : 'hide'}" id="meantbox"><label class="kicker muted" for="jmeant">O que eu quis dizer (em português)</label>
+            <input id="jmeant" placeholder="ajuda a comparar o sentido" value="${esc(meantVal)}"></div>
           <div class="dbar">
-            <button class="btn" id="jlocal">${I.ghost}Conferir</button>
-            <button class="btn on" id="jai">${I.pen}Corrigir</button>
+            <button class="linkbtn" id="showmeant" ${meantVal ? 'hidden' : ''}>+ o que eu quis dizer</button>
+            <button class="btn on" id="jgo">${I.flip}Ver o que é o quê</button>
           </div>
         </div>
         <div id="jres"></div>
-
         ${motorCard(L)}
-        <p class="muted" style="font-size:14px;margin:8px 2px 0"><b>Conferir</b>: regras de pronome + verbo, instantâneo${L.roman ? ' (não se aplica ao ' + esc(L.name.toLowerCase()) + ')' : ''}. <b>Corrigir</b>: correção completa feita no celular — regras, o que o app entendeu do seu texto e como o tradutor interno diria o que você quis dizer.</p>
 
         ${st.journal.length ? `<div class="subh">Páginas anteriores <span class="kicker">${st.journal.length}</span></div>
           <div class="pages">${st.journal.map(j => `<button class="page" data-j="${j.id}">
             <span class="mono muted">${new Date(j.d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
-            <span class="ptxt" ${rtl}>${esc(j.text.slice(0, 70))}${j.text.length > 70 ? '…' : ''}</span>
-            <span class="pbadge ${j.fix ? (j.fix.ok ? 'good' : 'fixed') : ''}">${j.fix ? (j.fix.ok ? '✓' : (j.fix.n || 0) + ' pontos') : '—'}</span>
+            <span class="ptxt">${esc(j.text.slice(0, 70))}${j.text.length > 70 ? '…' : ''}</span>
+            <span class="pbadge ${j.lang && j.lang !== 'pt' ? (j.fix && j.fix.ok ? 'good' : 'fixed') : ''}">${j.lang === 'pt' ? 'pt → ' + L.id : j.lang ? (j.fix && j.fix.ok ? '✓' : L.id) : '—'}</span>
           </button>`).join('')}</div>
           <button class="btn" id="jnew" style="margin-top:12px;width:100%">${I.plus}Nova página</button>` : ''}
       </div>`;
 
     const ta = document.getElementById('jtext'), me = document.getElementById('jmeant'), res = document.getElementById('jres');
+    document.getElementById('showmeant').onclick = e => { e.target.hidden = true; document.getElementById('meantbox').classList.remove('hide'); me.focus(); };
     const persist = () => {
       const text = ta.value.trim(); if (!text) return null;
       if (!cur) { cur = { id: Date.now().toString(36), d: Date.now(), text, meant: '' }; st.journal.unshift(cur); st.journal = st.journal.slice(0, 365); }
@@ -782,117 +831,93 @@
       toast(n ? `${n} correç${n > 1 ? 'ões' : 'ão'} no degrau 03 para treinar no papel` : 'Já estavam no caderno.');
     };
 
-    const showFix = fx => {
+    /* português → língua estudada */
+    const showPt = (c, out) => {
+      res.innerHTML = `<div class="lang-badge enter">Escrito em <b>português</b> → ${esc(lname)}</div>
+        ${analysisHTML(L, out)}
+        <div class="loop">
+          <div class="kicker">Agora é a sua vez</div>
+          <p>Feche a tradução e tente escrever você mesmo em ${esc(lname)}. O diário compara com o que você quis dizer.</p>
+          <button class="cta" id="try">${I.pen}Tentar escrever em ${esc(lname)}</button>
+          <button class="btn" id="psave" style="width:100%;margin-top:10px">${I.plus}Guardar na minha lição</button>
+        </div>`;
+      bindSay(L, res); bindInter(res, L, 'pt');
+      document.getElementById('psave').onclick = e => { const r = saveAnalysis(L, out); toast(`Na sua lição: ${r.nv} verbo(s), ${r.ns} frase(s)${r.nc ? `, ${r.nc} conceito(s)` : ''}`); e.currentTarget.disabled = true; };
+      document.getElementById('try').onclick = () => { saveAnalysis(L, out); renderDiary(L, null, { text: '', meant: c.text, placeholder: `Escreva aqui em ${lname}, do seu jeito…` }); window.scrollTo(0, 0); setTimeout(() => document.getElementById('jtext').focus(), 100); };
+    };
+
+    /* língua estudada → o que você disse + correção */
+    const showTg = fx => {
       const diff = fx.ref ? diffWords(fx.text, fx.ref) : null;
-      res.innerHTML = `
+      res.innerHTML = `<div class="lang-badge enter">Escrito em <b>${esc(lname)}</b></div>
         <div class="fixcard enter">
           <div class="kicker">${fx.ok ? 'Parece certo!' : `Correção · ${fx.n} ${fx.n === 1 ? 'ponto' : 'pontos'}`}</div>
           <div class="fixtext ${fx.issues.length ? 'marked' : ''}" ${rtl}>${fx.issues.length ? markLocal(fx.text, fx.issues) : esc(fx.text)}</div>
         </div>
-        <div class="understood"><span class="kicker">O que o app entendeu</span><p>${esc(fx.back)}</p>
-          ${fx.meant ? (fx.sim >= 55 ? '<b class="okc">✓ Seu sentido chegou.</b>' : '<b class="badc">⚠ O sentido pode ter mudado — compare com o que você quis dizer.</b>') : '<span class="muted">Escreva “o que eu quis dizer” para comparar o sentido.</span>'}</div>
+        <p class="il-hint">O que você disse — toque numa palavra para ver o sentido:</p>
+        ${fx.toks ? interHTML(fx.src, fx.toks, rtl, '', lname, 'o que o app entendeu') : ''}
+        <div class="understood">${fx.meant ? (fx.sim >= 55 ? '<b class="okc">✓ Seu sentido chegou.</b>' : '<b class="badc">⚠ O sentido pode ter mudado — compare com o que você quis dizer.</b>') : '<span class="muted">Escreva “o que eu quis dizer” para comparar o sentido.</span>'}</div>
         ${fx.issues.length ? `<div class="errs">${fx.issues.map(e => `<div class="err"><div ${rtl}><s>${esc(e.orig)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div><p>${esc(e.why)}</p></div>`).join('')}</div>` : ''}
         ${fx.ref ? `<div class="refbox"><div class="kicker">Como o tradutor interno diria</div>
             <div class="reftext" ${rtl}>${esc(fx.ref)}</div>
             <button class="iconbtn" id="jsay" aria-label="Ouvir">${I.sound}</button>
             ${diff && diff.score < 100 ? `<div class="kicker" style="margin-top:10px">Diferenças</div><div class="diff" ${rtl}>${diff.parts.map(p => p.k === 'eq' ? esc(p.t) : p.k === 'del' ? `<s>${esc(p.t)}</s>` : `<ins>${esc(p.t)}</ins>`).join(' ')}</div>
             <p class="muted" style="font-size:13.5px;margin:6px 0 0">Riscado: só no seu texto. Verde: o tradutor usaria. Nem toda diferença é erro — às vezes são dois jeitos certos.</p>` : ''}</div>` : ''}
-        ${fx.concepts && fx.concepts.length ? fx.concepts.map(c => `<div class="concept"><div class="c-pt">${esc(c.pt)}</div><p>${esc(c.diz)}</p>${c.t ? `<div class="c-tg"><span ${rtl}>${esc(c.por)} → <b>${esc(c.t)}</b></span></div>` : ''}</div>`).join('') : ''}
+        ${fx.concepts && fx.concepts.length ? fx.concepts.map(c => `<div class="concept"><div class="c-pt">${esc(c.pt)}</div><p>${esc(c.diz)}</p>${c.t ? `<div class="c-tg"><span>${esc(c.por)}</span><b ${rtl}>${esc(c.t)}</b></div>` : ''}</div>`).join('') : ''}
         ${fx.issues.length || (fx.ref && diff && diff.score < 100) ? `<button class="cta" id="jtrain">${I.pen}Treinar as correções no papel</button>` : ''}`;
+      bindInter(res, L, L.id);
       const sy = document.getElementById('jsay'); if (sy) sy.onclick = () => speak(fx.ref, L);
       const tr = document.getElementById('jtrain');
       if (tr) tr.onclick = () => saveFixes([...fx.issues, ...(fx.ref && diff && diff.score < 100 ? [{ orig: fx.text, fix: fx.ref }] : [])]);
     };
 
-    document.getElementById('jlocal').onclick = () => {
+    const run = async () => {
       const c = persist(); if (!c) { ta.focus(); return; }
-      const iss = localCheck(L, c.text);
-      if (iss === null) {
-        res.innerHTML = `<div class="note enter"><span class="kicker">Conferir</span>No ${esc(L.name.toLowerCase())} o verbo não muda com o pronome do mesmo jeito, então a conferência rápida não se aplica. Use <b>Corrigir</b>.</div>`;
-        return;
-      }
-      res.innerHTML = iss.length ? `
-        <div class="fixcard enter"><div class="kicker">Conferência rápida · ${iss.length} ${iss.length === 1 ? 'ponto' : 'pontos'}</div><div class="fixtext marked" ${rtl}>${markLocal(c.text, iss)}</div></div>
-        <div class="errs">${iss.map(e => `<div class="err"><div><s>${esc(e.orig)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div><p>${esc(e.why)}</p></div>`).join('')}</div>
-        <button class="cta" id="jtrain">${I.pen}Treinar no papel</button>
-        <p class="muted" style="font-size:14px;margin-top:10px">A conferência rápida só olha pronome + verbo. Para revisar tudo, toque em <b>Corrigir</b>.</p>`
-        : `<div class="note enter"><span class="kicker">Conferência rápida</span>Pronomes e verbos parecem certos! Para revisar o resto (palavras, ordem, naturalidade), toque em <b>Corrigir</b>.</div>`;
-      const tr = document.getElementById('jtrain'); if (tr) tr.onclick = () => saveFixes(iss);
-    };
-
-    document.getElementById('jai').onclick = async () => {
-      const c = persist(); if (!c) { ta.focus(); return; }
-      if (c.fix && c.fix.back !== undefined && c.fix.text === c.text && (c.fix.meant || '') === (c.meant || '')) { showFix(c.fix); return; }
       if (!(await motorReady(L))) {
-        res.innerHTML = `<div class="note enter"><span class="kicker">Falta o tradutor interno</span>A correção completa roda dentro do celular. Baixe o tradutor de ${esc(L.name.toLowerCase())} uma vez (logo abaixo) — depois funciona sem internet. Enquanto isso, use <b>Conferir</b>.</div>`;
+        res.innerHTML = `<div class="note enter"><span class="kicker">Falta o tradutor interno</span>O diário traduz e corrige dentro do celular. Baixe o tradutor de ${esc(lname)} uma vez (logo abaixo) — depois funciona sem internet.</div>`;
         document.getElementById('motor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
       }
-      const b = document.getElementById('jai'); b.disabled = true; b.innerHTML = 'Corrigindo…';
-      res.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> corrigindo no seu celular</div>';
+      const lang = detectaLingua(c.text, L.id);
+      c.lang = lang;
+      const b = document.getElementById('jgo'); b.disabled = true; b.textContent = lang === 'pt' ? 'Traduzindo…' : 'Corrigindo…';
+      res.innerHTML = `<div class="thinking enter"><span></span><span></span><span></span> ${lang === 'pt' ? 'traduzindo o sentido' : 'lendo o seu ' + esc(lname)}, no seu celular</div>`;
       try {
-        const issues = localCheck(L, c.text) || [];
-        const back = clean(await mt(L.id, 'pt', c.text));
-        let ref = '', sim = 0, concepts = [];
-        if (c.meant) {
-          const meantCtx = sujeitoOculto(frases(c.meant).map(falado)).map(x => conceitos(x).rewritten).join(' ');
-          const { found } = conceitos(falado(c.meant));
-          ref = clean(await mt('pt', L.id, meantCtx));
-          sim = diffWords(falado(c.meant), back).score;
-          for (const k of found) { const ex = exemplo(k); concepts.push({ pt: k.pt, diz: k.diz, por: ex, t: ex ? clean(await mt('pt', L.id, ex)) : '' }); }
+        if (lang === 'pt') {
+          const out = await analisar(L, c.text);
+          note(c.text); save(); showPt(c, out);
+        } else {
+          const issues = localCheck(L, c.text) || [];
+          const al = await mtAligned(L.id, 'pt', c.text);
+          const back = al.text;
+          let ref = '', sim = 0, concepts = [];
+          if (c.meant) {
+            const meantCtx = sujeitoOculto(frases(c.meant).map(falado)).map(x => conceitos(x).rewritten).join(' ');
+            const { found } = conceitos(falado(c.meant));
+            ref = clean(await mt('pt', L.id, meantCtx));
+            sim = diffWords(falado(c.meant), back).score;
+            for (const k of found) { const ex = exemplo(k); concepts.push({ pt: k.pt, diz: k.diz, por: ex, t: ex ? clean(await mt('pt', L.id, ex)) : '' }); }
+          }
+          const d = ref ? diffWords(c.text, ref) : null;
+          const n = issues.length + (d && d.score < 70 ? 1 : 0);
+          const fx = { text: c.text, meant: c.meant, back, src: al.src, toks: al.toks, ref, sim, issues, concepts, n, ok: !issues.length && (!ref || (d && d.score >= 70)) && (!c.meant || sim >= 55) };
+          c.fix = fx; save(); showTg(fx);
         }
-        const d = ref ? diffWords(c.text, ref) : null;
-        const n = issues.length + (d && d.score < 70 ? 1 : 0);
-        const fx = { text: c.text, meant: c.meant, back, ref, sim, issues, concepts, n, ok: !issues.length && (!ref || (d && d.score >= 70)) && (!c.meant || sim >= 55) };
-        c.fix = fx; save(); showFix(fx);
       } catch (e) {
         res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(String(e.message || e))}</div>`;
-      } finally { b.disabled = false; b.innerHTML = `${I.pen}Corrigir`; }
+      } finally { b.disabled = false; b.innerHTML = `${I.flip}Ver o que é o quê`; }
     };
-
+    /* anota os verbos do que a pessoa fala (o ranking “os que eu mais falo”) */
+    const note = txt => {
+      const { found, extra } = detectVerbs(falado(txt));
+      st.diary = st.diary || []; st.counts = st.counts || {};
+      st.diary.unshift({ d: Date.now(), text: txt }); st.diary = st.diary.slice(0, 200);
+      [...found, ...extra].forEach(id => st.counts[id] = (st.counts[id] || 0) + 1);
+    };
+    document.getElementById('jgo').onclick = run;
     bindMotor(L);
     $app.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { renderDiary(L, b.dataset.j); window.scrollTo(0, 0); });
     const nb = document.getElementById('jnew'); if (nb) nb.onclick = () => { renderDiary(L); window.scrollTo(0, 0); };
-    if (cur && cur.fix && cur.fix.back !== undefined) showFix(cur.fix);
-  }
-
-  /* ——— TRADUTOR DE CONCEITOS ——— */
-  function renderTranslator(L, keep = '') {
-    $app.innerHTML = `
-      ${topbar(`#/l/${L.id}`, L.name)}
-      <div class="enter">
-        <div class="kicker muted">Tradutor · ${esc(L.name)}</div>
-        <h1 class="title-xl">Sentido, <em>não palavra</em></h1>
-        <p class="lead">Escreva o que você quer dizer, do seu jeito — gíria, expressão, algo “intraduzível”. O app entende o conceito e diz em ${esc(L.name.toLowerCase())}. Tudo dentro do celular.</p>
-        <div class="diary">
-          <textarea id="trtext" placeholder="Ex.: Tô com saudade de casa. Ontem dei uma volta, bati um papo com um amigo e caiu a ficha." aria-label="Frase em português">${esc(keep)}</textarea>
-          <div class="dbar"><span class="kicker muted">em português</span><button class="btn on" id="trgo">${I.flip}Traduzir</button></div>
-        </div>
-        <div id="trres"></div>
-        ${motorCard(L)}
-      </div>`;
-    bindMotor(L);
-    const ta = document.getElementById('trtext'), res = document.getElementById('trres');
-    document.getElementById('trgo').onclick = async () => {
-      const txt = ta.value.trim(); if (!txt) { ta.focus(); return; }
-      if (!(await motorReady(L))) {
-        res.innerHTML = `<div class="note enter"><span class="kicker">Falta o tradutor interno</span>Baixe o tradutor de ${esc(L.name.toLowerCase())} uma vez (logo abaixo). Depois funciona sem internet.</div>`;
-        document.getElementById('motor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
-      }
-      const b = document.getElementById('trgo'); b.disabled = true; b.textContent = 'Traduzindo…';
-      res.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> traduzindo o sentido, no seu celular</div>';
-      try {
-        const out = await analisar(L, txt);
-        res.innerHTML = analysisHTML(L, out) + `<button class="cta" id="trsave">${I.plus}Guardar na minha lição</button>`;
-        bindSay(L, res);
-        document.getElementById('trsave').onclick = () => {
-          const { nv, ns, nc } = saveAnalysis(L, out);
-          toast(`Na sua lição (degrau 03): ${nv} verbo(s), ${ns} frase(s)${nc ? `, ${nc} conceito(s)` : ''}`);
-          document.getElementById('trsave').disabled = true;
-        };
-      } catch (e) {
-        res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(String(e.message || e))}</div>`;
-      } finally { b.disabled = false; b.innerHTML = `${I.flip}Traduzir`; }
-    };
+    if (cur && cur.lang && cur.lang !== 'pt' && cur.fix && cur.fix.toks) showTg(cur.fix);
   }
 
   /* ——— LIÇÃO INTERATIVA: certo ou errado, conferido na hora ——— */

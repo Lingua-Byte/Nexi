@@ -32,9 +32,14 @@ Princípios que guiam todas as decisões:
 
 Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da direita para a esquerda). Japonês, coreano e hebraico mostram romanização nos dados prontos.
 
-## O que o app faz hoje (versão 2.1)
+## O que o app faz hoje (versão 2.2)
 
-**Escada de 3 degraus por língua**
+**O diário é o centro** (é a primeira coisa na página de cada língua). A pessoa escreve a própria vida em português **ou** na língua estudada; o diário identifica a língua sozinho.
+- *Português* → mostra como dizer na outra língua, frase por frase, com as duas línguas alinhadas: **tocar numa palavra acende a correspondente na outra** (e fala). Explica os conceitos e os verbos no sentido da frase. “Agora é a sua vez”: a pessoa tenta escrever ela mesma e o diário compara com o que ela quis dizer.
+- *Língua estudada* → correção: regras de gramática, o que o app entendeu (alinhado palavra por palavra), comparação com o que a pessoa quis dizer, como o tradutor diria e as diferenças.
+- O vocabulário vem da vida da pessoa, não de falas externas — é o método do autor (aprendeu duas línguas assim e está na terceira).
+
+**A raiz: escada de 3 degraus por língua**
 1. *Pronomes* — tabela com áudio e notas do que muda em cada língua.
 2. *Ser & Estar* — explica as diferenças (inglês/francês/alemão: um verbo só; italiano usa “essere” para estados; hebraico não tem verbo no presente, então treina o passado; japonês です/います; coreano 이에요/있어요).
 3. *Meus verbos* — a pessoa escreve qualquer frase em português; o app acha os verbos (16 com conjugação revisada + ~140 reconhecidos offline, inclusive irregulares) e “Transformar em lição” traduz as frases, monta conceitos verbais (verbo + o sentido na frase, conjugado nas 8 pessoas) e avisa quando a tradução palavra por palavra estaria errada. Verbos de muitos sentidos (tomar, pegar, fazer, dar, ficar…) mostram “o sentido decide”.
@@ -45,9 +50,7 @@ Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da
 - Folhas para imprimir (em branco ou com gabarito).
 - Revisão espaçada (caixas de Leitner) decide quando cada item volta.
 
-**Tradutor de conceitos** — escreve do seu jeito em português (gíria, expressão, algo “intraduzível”), o app mostra como entendeu, traduz o sentido, explica os conceitos e guarda tudo na lição.
-
-**Diário livre** — escreve o que quiser na língua estudada. “Conferir”: regras de pronome + verbo (instantâneo). “Corrigir”: correção completa no aparelho — regras, o que o app entendeu do texto (tradução de volta), comparação com o que a pessoa quis dizer, como o tradutor diria e as diferenças marcadas. As correções viram cartões para treinar à mão.
+As correções do diário e as frases traduzidas viram cartões para treinar (lição e escrita à mão).
 
 **App instalável** (PWA) e **APK Android** (Capacitor), ambos se atualizam sozinhos; funciona offline; progresso fica no aparelho (localStorage).
 
@@ -61,13 +64,17 @@ Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da
   - **contexto entre frases**: o tradutor neural vê uma frase de cada vez, então o app acompanha o sujeito e deixa explícito o sujeito oculto (“Tito era feliz. Pensava…” → “Ele pensava…”, senão viraria “I thought”);
   - nomes próprios não são traduzidos (“Maria” não vira “Mary”);
   - conjugação do português; diferença palavra a palavra; romanização do coreano.
+- **Alinhamento palavra a palavra** (`motor.js`, `translateAligned`): o motor não expõe o alinhamento, então cada palavra de origem vai marcada em HTML e o motor leva as marcas para as palavras correspondentes (inclusive pela ponte do inglês). O texto mostrado vem da tradução normal (melhor qualidade) e é casado com a tradução marcada.
+- **Sem a lista curta de palavras (shortlist)** do Bergamot: com frases curtas ela cortava palavras e o modelo inventava (“T. To to be…”, “Me tome un café”). Desligada, a qualidade subiu muito (sobretudo no espanhol) e a velocidade quase não mudou.
+- **Gramática por terminação** (`linguistica.js`, `TERM`): espanhol, italiano, francês e alemão conferem qualquer verbo regular depois do pronome (“yo toma” → “yo tomo”), com explicação em português.
 - **Ponte com conserto de conceito** (`motor.js`): antes de sair do inglês, troca construções que as outras línguas erram (“have breakfast”, “walked in the park”), com regras medidas por língua; e uma camada de consertos de tropeços repetidos do modelo de espanhol.
 - **Visual**: estética de papel e risografia — fundo creme com textura, tinta preta, uma cor forte por língua, tipografia Fraunces + JetBrains Mono, caderno pautado com margem vermelha, carimbos. Tema “papel noturno”.
 
 ## Limitações conhecidas (honestas)
 
 - O tradutor acerta a maior parte das frases do dia a dia, mas erra em frases longas, muito informais ou ambíguas. Por isso o app sempre mostra “como entendeu”.
-- **Espanhol é o modelo mais fraco**; a ponte pelo inglês às vezes quebra conceitos que português e espanhol compartilham. Línguas próximas do português se beneficiariam de modelos diretos (pt↔es/it/fr), que a Mozilla não tem.
+- A ponte pelo inglês às vezes perde nuances que o português e as línguas próximas compartilham (tu/você, gênero, tempos verbais como “fazia” → “hizo”). Modelos diretos pt↔es/it/fr ajudariam; a Mozilla não tem.
+- O alinhamento palavra a palavra é aproximado: às vezes uma palavra fica sem par ou liga à palavra vizinha.
 - A correção do diário não é um “professor”: é regras + comparação + tradução de volta. A tradução de volta pode esconder erros (“Yo tiene” volta como “Tenho”), por isso as regras e a comparação existem.
 - Romanização gerada só para o coreano; japonês e hebraico têm romanização apenas nos dados prontos.
 - Ainda **não foi testado num celular de verdade**: tradutor no aparelho, APK e atualização automática foram testados em navegador simulado. O download do tradutor é grande para dados móveis.

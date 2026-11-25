@@ -245,7 +245,8 @@ function sujeitoOculto(list) {
 function manterNomes(pt, out) {
   if (!/[A-Za-zÀ-ÿ]/.test(out)) return out;   // escrita não latina: não se aplica
   const ptToks = pt.match(/[\p{L}]+/gu) || [];
-  const names = ptToks.filter((w, i) => /^\p{Lu}/u.test(w) && (i > 0 || !ptForms().has(w.toLowerCase())) && !/^(Eu|Ele|Ela|Nós|Você|Vocês|Eles|Elas|A|O|As|Os|Um|Uma|Meu|Minha|Seu|Sua)$/.test(w));
+  const comum = w => SETS.pt.has(w.toLowerCase()) || ptForms().has(w.toLowerCase()) || /^(depois|então|agora|logo|cedo|tarde|semana|domingo|segunda|sábado|ainda|também)$/i.test(w);
+  const names = ptToks.filter(w => /^\p{Lu}/u.test(w) && !comum(w));
   let res = out;
   for (const n of names) {
     if (res.includes(n)) continue;
@@ -307,4 +308,90 @@ function romanKo(text) {
     if (c < 0 || c > 11171) return ch;
     return I[Math.floor(c / 588)] + V[Math.floor((c % 588) / 28)] + F[c % 28];
   }).join('');
+}
+
+/* ——— Em que língua a pessoa escreveu? ———
+   O diário aceita português ou a língua estudada e descobre sozinho. */
+const PALAVRAS = {
+  pt: 'eu você voce não nao que de um uma com para pra é está esta muito mas meu minha ele ela nós também hoje ontem tô tá e o os as do da dos das no na em se foi era tenho quero vou isso isto aqui gente porque quando mais já ainda sempre nunca coisa amanhã casa trabalho estou fui fiz',
+  en: 'i you the and is are am to of my he she we it in with was were have has not do did this that me they at on for be but so today yesterday very',
+  es: 'yo tú el la los las y es está estoy muy pero mi con para que de un una no hoy ayer tengo quiero voy soy fui hice también porque cuando más ya todavía siempre nunca cosa mañana casa trabajo ella nosotros',
+  fr: 'je tu il elle nous vous le la les et est suis pas très mon ma mes avec pour que de un une aujourd hier ai veux vais fait aussi parce quand plus déjà toujours jamais chose demain maison travail ne',
+  de: 'ich du er sie wir ihr der die das und ist bin nicht sehr mein meine mit für ein eine heute gestern habe will gehe auch weil wenn mehr schon immer nie morgen haus arbeit zu den dem',
+  it: 'io tu lui lei noi voi il lo la gli le e è sono non molto mio mia con per che di un una oggi ieri ho voglio vado anche perché quando più già sempre mai cosa domani casa lavoro'
+};
+const SETS = Object.fromEntries(Object.entries(PALAVRAS).map(([k, v]) => [k, new Set(v.split(' '))]));
+function detectaLingua(text, langId) {
+  const t = String(text);
+  const script = { ja: /[぀-ヿ一-鿿]/, ko: /[가-힯]/, he: /[֐-׿]/ }[langId];
+  if (script) return script.test(t) ? langId : 'pt';
+  const words = t.toLowerCase().match(/[\p{L}]+/gu) || [];
+  if (!words.length) return 'pt';
+  const score = k => words.reduce((n, w) => n + (SETS[k] && SETS[k].has(w) ? 1 : 0), 0);
+  let pt = score('pt'), tg = score(langId);
+  if (/[ãõ]/i.test(t)) pt += 2;
+  if (langId === 'es' && /[ñ¿¡]/.test(t)) tg += 2;
+  if (langId === 'de' && /[ßäöü]/i.test(t)) tg += 2;
+  if (langId === 'fr' && /\b(je|j'|j’|c'est|n'|qu')/i.test(t)) tg += 2;
+  return tg > pt ? langId : 'pt';
+}
+
+/* ——— Gramática: terminações regulares por pessoa ———
+   Confere QUALQUER verbo regular depois do pronome, mesmo os que o app nunca viu
+   (“yo toma” → “yo tomo”). Pessoas: 1s, 2s, 3s, 1p, 2p, 3p. Classes: as famílias de verbos. */
+const TERM = {
+  es: {
+    pron: { yo: '1s', tú: '2s', tu: '2s', él: '3s', ella: '3s', usted: '3s', nosotros: '1p', nosotras: '1p', ellos: '3p', ellas: '3p', ustedes: '3p' },
+    classes: { '-ar': { '1s': 'o', '2s': 'as', '3s': 'a', '1p': 'amos', '3p': 'an' }, '-er/-ir': { '1s': 'o', '2s': 'es', '3s': 'e', '1p': 'emos', '3p': 'en' } },
+    pula: 'me te se lo la le nos os les no ya también siempre nunca'.split(' '),
+    nao: 'nada casa mucho poco ahora aquí allí entonces hoy mañana ayer tampoco muy pero una uno algo cada toda todo misma mismo sola solo sólo nunca siempre tarde pronto'.split(' ')
+  },
+  it: {
+    pron: { io: '1s', tu: '2s', lui: '3s', lei: '3s', noi: '1p', voi: '2p', loro: '3p' },
+    classes: { '-are': { '1s': 'o', '2s': 'i', '3s': 'a', '1p': 'iamo', '2p': 'ate', '3p': 'ano' }, '-ere': { '1s': 'o', '2s': 'i', '3s': 'e', '1p': 'iamo', '2p': 'ete', '3p': 'ono' } },
+    pula: 'mi ti si lo la li le ci vi ne non già anche sempre mai'.split(' '),
+    nao: 'molto poco ancora adesso oggi domani ieri sempre mai tanto tutta tutto qui sola solo cosa casa'.split(' ')
+  },
+  fr: {
+    pron: { je: '1s', tu: '2s', il: '3s', elle: '3s', on: '3s', nous: '1p', vous: '2p', ils: '3p', elles: '3p' },
+    classes: { '-er': { '1s': 'e', '2s': 'es', '3s': 'e', '1p': 'ons', '2p': 'ez', '3p': 'ent' } },
+    pula: "ne n me m te t se s le la les lui y en l".split(' '),
+    nao: 'très bien aussi toujours jamais souvent encore déjà ici demain hier tout toute même seule seul'.split(' ')
+  },
+  de: {
+    pron: { ich: '1s', du: '2s', er: '3s', es: '3s', wir: '1p', ihr: '2p' },
+    classes: { 'regular': { '1s': 'e', '2s': 'st', '3s': 't', '1p': 'en', '2p': 't' } },
+    pula: 'nicht auch immer nie heute gern oft'.split(' '),
+    nao: 'sehr heute morgen gestern immer nie auch noch schon hier dort alle alles gerne'.split(' ')
+  }
+};
+const PESSOA_PT = { '1s': 'eu', '2s': 'tu/você', '3s': 'ele/ela', '1p': 'nós', '2p': 'vocês', '3p': 'eles/elas' };
+/* Para um pronome e a palavra seguinte, devolve a correção da terminação (ou null). */
+function confereTerminacao(langId, pron, word) {
+  const G = TERM[langId]; if (!G) return null;
+  const want = G.pron[pron.toLowerCase()]; if (!want) return null;
+  const w = word.toLowerCase();
+  if (w.length < 4 || G.nao.includes(w) || /[éèíóú]$/.test(w)) return null;   // pretérito (tomé, mangé…) e palavras que não são verbo
+  for (const [cls, P] of Object.entries(G.classes)) {
+    if (w.endsWith(P[want])) return null;            // já está na pessoa certa nesta família
+  }
+  // acha em que pessoa a palavra está, pela terminação mais longa
+  let best = null;
+  for (const [cls, P] of Object.entries(G.classes)) for (const [p, end] of Object.entries(P)) {
+    if (p === want || !w.endsWith(end)) continue;
+    if (!best || end.length > best.end.length) best = { cls, p, end };
+  }
+  if (!best) return null;
+  const P = G.classes[best.cls];
+  // terminações iguais em duas pessoas (fr: e = je/il; es: o só existe em 1s) — sem certeza, não corrige
+  const same = Object.entries(P).filter(([p, e]) => e === best.end).map(([p]) => p);
+  if (same.includes(want)) return null;
+  if (!P[want]) return null;
+  const stem = word.slice(0, word.length - best.end.length);
+  if (stem.length < 2) return null;
+  let fix = stem + P[want];
+  // ortografia: manger → nous mangeons, commencer → nous commençons; pagar → (es) sem mudança no presente
+  if (langId === 'fr' && want === '1p') fix = fix.replace(/gons$/, 'geons').replace(/cons$/, 'çons');
+  if (langId === 'it' && want === '2s') fix = fix.replace(/ii$/, 'i').replace(/ci$/, stem.endsWith('c') ? 'chi' : 'ci').replace(/gi$/, stem.endsWith('g') ? 'ghi' : 'gi');
+  return { fix, why: `Com “${pron}” (${PESSOA_PT[want]}), a terminação é “-${P[want]}”: “${fix}”. “${word}” é a forma de ${PESSOA_PT[best.p]}.` };
 }

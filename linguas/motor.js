@@ -6,6 +6,7 @@ import { BatchTranslator, TranslatorBacking } from './vendor/bergamot/translator
 
 const BASE = new URL('models/', import.meta.url);
 const CACHE = 'raiz-modelos-v1';
+const SEM_LISTA = true;
 let registryP = null;
 
 function registry() {
@@ -106,7 +107,9 @@ class RaizBacking extends TranslatorBacking {
     const f = entry.files, b = {};
     for (const k of FILES) if (f[k]) b[k] = await readGz(f[k].name);
     this.state.set(JSON.stringify({ from, to }), 'available');
-    return { model: b.model, shortlist: b.lex, vocabs: b.vocab ? [b.vocab] : [b.srcvocab, b.trgvocab], config: {} };
+    // Sem a lista curta de palavras (shortlist): com frases curtas ela cortava palavras como
+    // “Tito” e “was” e o modelo inventava (“T. To to be…”). Fica um pouco mais lento, bem mais certo.
+    return { model: b.model, shortlist: SEM_LISTA ? new ArrayBuffer(0) : b.lex, vocabs: b.vocab ? [b.vocab] : [b.srcvocab, b.trgvocab], config: {} };
   }
 }
 
@@ -160,3 +163,95 @@ export async function translate(from, to, text) {
 }
 /* A frase no inglês da ponte (útil para conferir conceitos). */
 export async function bridge(from, text, to = 'es') { return from === 'en' ? text : ponte(await translate(from, 'en', text), to); }
+
+/* ——— Tradução alinhada: que palavra corresponde a qual ———
+   Cada palavra de origem vai marcada (<b data-k="i">). O motor leva as marcas para as palavras
+   correspondentes da tradução (alinhamento interno), inclusive pela ponte do inglês.
+   Resultado: tokens { pre, t, k: [índices das palavras de origem] }. */
+const escH = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const decH = s => String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+function parseTagged(html) {
+  const out = []; let pre = '';
+  const re = /<b data-k="([^"]*)">([\s\S]*?)<\/b>|([^<]+)|<[^>]*>/g; let m;
+  while ((m = re.exec(html))) {
+    if (m[1] !== undefined) {
+      const t = decH(m[2]);
+      if (!t.trim()) { pre += t; continue; }
+      const lead = t.match(/^\s*/)[0];
+      out.push({ pre: pre + lead, t: t.trim(), k: m[1].split(' ').filter(Boolean).map(Number) });
+      pre = t.match(/\s*$/)[0];
+    } else if (m[3] !== undefined) {
+      const t = decH(m[3]);
+      if (/[\p{L}\p{N}]/u.test(t)) { const lead = t.match(/^\s*/)[0]; out.push({ pre: pre + lead, t: t.trim(), k: [] }); pre = t.match(/\s*$/)[0]; }
+      else if (out.length && !/^\s/.test(t)) { out[out.length - 1].t += t.trimEnd(); pre = t.match(/\s*$/)[0]; }
+      else pre += t;
+    }
+  }
+  return out;
+}
+const buildTagged = toks => toks.map(x => `${x.pre}<b data-k="${x.k.join(' ')}">${escH(x.t)}</b>`).join('');
+const joinToks = toks => toks.map(x => x.pre + x.t).join('').trim();
+/* aplica regras de conserto sobre os tokens, juntando as marcas dos trechos trocados */
+function fixTokens(toks, rules) {
+  let T = toks.slice();
+  for (const [re0, f] of rules) {
+    const plain = T.map(x => x.pre + x.t).join('');
+    const spans = []; let pos = 0;
+    T.forEach(x => { const s = pos + x.pre.length; spans.push([s, s + x.t.length]); pos = s + x.t.length; });
+    const re = new RegExp(re0.source, re0.flags.includes('g') ? re0.flags : re0.flags + 'g');
+    const matches = [...plain.matchAll(re)];
+    for (const m of matches.reverse()) {
+      const rep = typeof f === 'function' ? f(...m) : m[0].replace(new RegExp(re0.source, re0.flags.replace('g', '')), f);
+      if (rep === m[0]) continue;
+      const a0 = m.index, a1 = m.index + m[0].length;
+      const idx = spans.map((sp, i) => (sp[1] > a0 && sp[0] < a1 ? i : -1)).filter(i => i >= 0);
+      if (!idx.length) continue;
+      const i0 = idx[0], i1 = idx[idx.length - 1];
+      const segStart = spans[i0][0], segEnd = spans[i1][1];
+      const text = (plain.slice(segStart, a0) + rep + plain.slice(a1, segEnd)).trim();
+      const keys = [...new Set(idx.flatMap(i => T[i].k))].sort((x, y) => x - y);
+      T.splice(i0, i1 - i0 + 1, { pre: T[i0].pre, t: text, k: keys });
+      spans.splice(i0, i1 - i0 + 1, [segStart, segEnd]);   // posições antes de i0 continuam válidas
+    }
+  }
+  return T;
+}
+async function taggedAlign(from, to, words) {
+  const html = words.map((w, i) => `<b data-k="${i}">${escH(w)}</b>`).join(' ');
+  const one = async (f, t, x) => (await engine().translate({ from: f, to: t, text: x, html: true })).target.text;
+  let toks;
+  if (from !== 'en' && to !== 'en') {
+    let en = parseTagged(await one(from, 'en', html));
+    en = fixTokens(en, PONTE.filter(([, , only]) => !only || only.includes(to)));
+    toks = parseTagged(await one('en', to, buildTagged(en)));
+  } else toks = parseTagged(await one(from, to, html));
+  return fixTokens(toks, CONSERTO[to] || []);
+}
+const normW = w => w.toLowerCase().replace(/[.,!?¡¿;:"“”«»()…。、！？]/g, '');
+/* O texto vem da tradução normal (melhor qualidade); o alinhamento vem da tradução marcada.
+   As duas são casadas palavra por palavra; palavras iguais à origem (nomes, números) ligam direto. */
+export async function translateAligned(from, to, text) {
+  const words = String(text).trim().split(/\s+/).filter(Boolean);
+  if (from === to) return { src: words, toks: words.map((w, i) => ({ pre: i ? ' ' : '', t: w, k: [i] })), text };
+  const plain = await translate(from, to, text);
+  const tagged = await taggedAlign(from, to, words);
+  if (to === 'ja' || !/\s/.test(plain.trim())) return { src: words, toks: tagged, text: plain };   // japonês: sem espaços, usa o marcado
+  const hw = tagged.flatMap(t => t.t.split(/\s+/).map(w => ({ w: normW(w), k: t.k })));
+  const pw = plain.trim().split(/\s+/);
+  const P = pw.map(normW), H = hw.map(x => x.w);
+  const dp = Array.from({ length: P.length + 1 }, () => new Array(H.length + 1).fill(0));
+  for (let i = P.length - 1; i >= 0; i--) for (let j = H.length - 1; j >= 0; j--)
+    dp[i][j] = P[i] && P[i] === H[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const keys = new Array(P.length).fill(null);
+  for (let i = 0, j = 0; i < P.length && j < H.length;) {
+    if (P[i] && P[i] === H[j]) { keys[i] = hw[j].k; i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) i++; else j++;
+  }
+  const srcN = words.map(normW);
+  const toks = pw.map((w, i) => {
+    let k = keys[i];
+    if (!k || !k.length) { const s = srcN.indexOf(normW(w)); k = s >= 0 && normW(w).length > 1 ? [s] : []; }
+    return { pre: i ? ' ' : '', t: w, k };
+  });
+  return { src: words, toks, text: plain };
+}
