@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '2.1', t: 'o contexto passa de uma frase para a outra (sujeito oculto) · “o próximo”' },
     { v: '2.0', t: 'tradutor interno: traduz e corrige dentro do celular, sem chave' },
     { v: '1.7', t: 'tradução por conceito: o sentido decide a palavra (pegar o ônibus)' },
     { v: '1.6', t: 'qualquer frase vira lição · escrita à mão mais clara' },
@@ -407,10 +408,12 @@
   async function analisar(L, text) {
     const out = { sentences: [], concepts: [], verbs: [], bank: [] };
     const sents = frases(text);
-    for (const s of sents) {
-      const f = falado(s);
-      const { found, rewritten } = conceitos(f);
-      const t = clean(await mt('pt', L.id, rewritten));
+    // o contexto passa de uma frase para a outra (sujeito oculto: “Tito era… Pensava…” → “Ele pensava”)
+    const comSujeito = sujeitoOculto(sents.map(falado));
+    for (let si = 0; si < sents.length; si++) {
+      const s = sents[si];
+      const { found, rewritten } = conceitos(comSujeito[si]);
+      const t = manterNomes(s, clean(await mt('pt', L.id, rewritten)));
       out.sentences.push({ pt: s, via: rewritten !== s ? rewritten : '', t, r: roman(L, t), conceitos: found.map(c => c.id) });
       for (const c of found) {
         if (out.concepts.some(x => x.id === c.id)) continue;
@@ -831,8 +834,9 @@
         const back = clean(await mt(L.id, 'pt', c.text));
         let ref = '', sim = 0, concepts = [];
         if (c.meant) {
-          const { found, rewritten } = conceitos(falado(c.meant));
-          ref = clean(await mt('pt', L.id, rewritten));
+          const meantCtx = sujeitoOculto(frases(c.meant).map(falado)).map(x => conceitos(x).rewritten).join(' ');
+          const { found } = conceitos(falado(c.meant));
+          ref = clean(await mt('pt', L.id, meantCtx));
           sim = diffWords(falado(c.meant), back).score;
           for (const k of found) { const ex = exemplo(k); concepts.push({ pt: k.pt, diz: k.diz, por: ex, t: ex ? clean(await mt('pt', L.id, ex)) : '' }); }
         }

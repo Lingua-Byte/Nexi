@@ -32,7 +32,7 @@ Princípios que guiam todas as decisões:
 
 Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da direita para a esquerda). Japonês, coreano e hebraico mostram romanização nos dados prontos.
 
-## O que o app faz hoje (versão 2.0)
+## O que o app faz hoje (versão 2.1)
 
 **Escada de 3 degraus por língua**
 1. *Pronomes* — tabela com áudio e notas do que muda em cada língua.
@@ -58,6 +58,8 @@ Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da
 - **Conhecimento linguístico próprio** (`linguistica.js`), em português, vale para as 8 línguas ao mesmo tempo:
   - português falado → forma que o tradutor entende;
   - ~50 conceitos brasileiros (saudade, cafuné, gambiarra, dar um jeito, bater papo, cair a ficha, pegar no sono…) reescritos pelo sentido antes de traduzir, mantendo pessoa e tempo do verbo;
+  - **contexto entre frases**: o tradutor neural vê uma frase de cada vez, então o app acompanha o sujeito e deixa explícito o sujeito oculto (“Tito era feliz. Pensava…” → “Ele pensava…”, senão viraria “I thought”);
+  - nomes próprios não são traduzidos (“Maria” não vira “Mary”);
   - conjugação do português; diferença palavra a palavra; romanização do coreano.
 - **Ponte com conserto de conceito** (`motor.js`): antes de sair do inglês, troca construções que as outras línguas erram (“have breakfast”, “walked in the park”), com regras medidas por língua; e uma camada de consertos de tropeços repetidos do modelo de espanhol.
 - **Visual**: estética de papel e risografia — fundo creme com textura, tinta preta, uma cor forte por língua, tipografia Fraunces + JetBrains Mono, caderno pautado com margem vermelha, carimbos. Tema “papel noturno”.

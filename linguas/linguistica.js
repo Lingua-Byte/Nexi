@@ -85,6 +85,8 @@ const CONCEITOS = [
   { id: 'eai', tipo: 'fixa', pt: 'e aí', re: /^e a[ií]\b[,!?]?/gi, por: 'oi, tudo bem?', diz: 'Cumprimento informal: “oi, como vai?”.' },
   { id: 'beleza', tipo: 'fixa', pt: 'beleza?', re: /\bbeleza\?/gi, por: 'tudo bem?', diz: '“Beleza?” = “tudo bem?”.' },
   { id: 'nossa', tipo: 'fixa', pt: 'nossa!', re: /^nossa[,!]/gi, por: 'uau!', diz: 'Expressão de surpresa.' },
+  { id: 'proximo', tipo: 'fixa', pt: 'o próximo', re: /\b(ao|no|o|do|pelo) próximo(?=\s*(?:[,.;!?…]|$|\se\s|\scomo\s))/gi,
+    por: (m, art) => `${art.toLowerCase()}s outros`, diz: '“O próximo” como em “amar o próximo”: as outras pessoas, o semelhante. Não é “o seguinte”.' },
   { id: 'sabe', tipo: 'fixa', pt: 'sabe? / entende?', re: /,?\s*(sabe|entende)\?$/gi, por: '', diz: 'Muleta de fala, quase não muda o sentido.' }
 ];
 
@@ -176,6 +178,82 @@ function conceitos(text) {
   rewritten = rewritten.replace(U(/\b(com|para|de) n(ele|ela|eles|elas)\b/gi), '$1 $2');
   if (/^\p{Lu}/u.test(text)) rewritten = rewritten.replace(/^\s*(\p{Ll})/u, (m, c) => c.toUpperCase());
   return { found, rewritten: rewritten.replace(/\s{2,}/g, ' ').trim() };
+}
+
+/* ——— Sujeito oculto ———
+   Em português o sujeito some quando a frase anterior já disse quem é:
+   “Tito era feliz. Pensava sempre no próximo.” → quem pensava é o Tito.
+   O tradutor neural vê uma frase de cada vez e chutaria “eu”. Aqui o app acompanha
+   o sujeito e o deixa explícito antes de traduzir. */
+const PRON_SUJ = { eu: '1s', você: '3s', ele: '3sm', ela: '3sf', nós: '1p', 'a gente': '1p', vocês: '3p', eles: '3pm', elas: '3pf' };
+const ADV_INICIO = /^(sempre|nunca|também|ontem|hoje|amanhã|depois|então|já|ainda|só|agora|logo|às vezes|de manhã|à noite|todo dia|todos os dias)\b[,]?\s*/iu;
+function generoDe(sentence, nome) {
+  const s = sentence.toLowerCase();
+  if (/\b(uma|a|esta|essa)\s+\p{L}+a\b/u.test(s.replace(/^\S+\s+\S+/, '')) && /\b(é|era|foi|está|estava)\s+(uma|a)\b/u.test(s)) return 'f';
+  if (/\b(é|era|foi|está|estava)\s+(um|o)\b/u.test(s)) return 'm';
+  if (/^(a|as|uma)\s/i.test(sentence)) return 'f';
+  if (/^(o|os|um)\s/i.test(sentence)) return 'm';
+  if (nome && /a$/i.test(nome) && !/^(luca|joshua|nikita)$/i.test(nome)) return 'f';
+  return 'm';
+}
+function sujeitoOculto(list) {
+  const forms = ptForms();
+  let suj = null;   // { p: '3s'|'3p'|'1s'|'1p', g: 'm'|'f' }
+  return list.map(sent => {
+    const s = sent.trim();
+    const low = s.toLowerCase();
+    const lead = (low.match(ADV_INICIO) || [''])[0];
+    const rest = low.slice(lead.length);
+    const first = (rest.match(/^[\p{L}]+/u) || [''])[0];
+    const two = (rest.match(/^[\p{L}]+\s+[\p{L}]+/u) || [''])[0];
+    // sujeito explícito no começo: pronome
+    const pk = PRON_SUJ[two] ? two : PRON_SUJ[first] ? first : null;
+    if (pk) { const c = PRON_SUJ[pk]; suj = { p: c.slice(0, 2), g: c[2] || (suj && suj.g) || 'm' }; return s; }
+    const info = forms.get(first);
+    if (!info) {
+      // começa com um nome ou com “o/a + nome” seguido de verbo: vira o novo sujeito
+      const toks = (s.replace(ADV_INICIO, '').match(/[\p{L}]+/gu) || []);
+      const det = /^(o|a|os|as|um|uma|meu|minha|meus|minhas|seu|sua|seus|suas|nosso|nossa|esse|essa|este|esta)$/i;
+      let i = 0; const dets = [];
+      while (i < toks.length && det.test(toks[i])) dets.push(toks[i++].toLowerCase());
+      for (let j = i + 1; j <= i + 3 && j < toks.length; j++) {
+        const v = forms.get(toks[j].toLowerCase());
+        if (!v) continue;
+        const plural = [3, 6, 8].includes(v.slot) || dets.some(d => /s$/.test(d));
+        const fem = dets.some(d => /^(a|as|uma|minha|minhas|sua|suas|nossa|essa|esta)$/.test(d));
+        const masc = dets.some(d => /^(o|os|um|meu|meus|seu|seus|nosso|esse|este)$/.test(d));
+        suj = { p: plural ? '3p' : '3s', g: fem ? 'f' : masc ? 'm' : generoDe(s, toks[i]) };
+        break;
+      }
+      return s;
+    }
+    // começa com verbo, sem sujeito: usa o sujeito que vem da frase anterior
+    if (!suj) return s;
+    const sl = info.slot;
+    const terceira = [1, 5, 7].includes(sl), plural3 = [3, 6, 8].includes(sl);
+    let pron = '';
+    if (suj.p === '3s' && terceira) pron = suj.g === 'f' ? 'ela' : 'ele';
+    else if (suj.p === '3p' && plural3) pron = suj.g === 'f' ? 'elas' : 'eles';
+    if (!pron) return s;
+    const body = s.charAt(0).toLowerCase() + s.slice(1);
+    return pron.charAt(0).toUpperCase() + pron.slice(1) + ' ' + body;
+  });
+}
+
+/* Nomes próprios não se traduzem: o tradutor às vezes troca “Maria” por “Mary”.
+   Se um nome do português sumiu e apareceu um nome novo no lugar, devolve o original. */
+function manterNomes(pt, out) {
+  if (!/[A-Za-zÀ-ÿ]/.test(out)) return out;   // escrita não latina: não se aplica
+  const ptToks = pt.match(/[\p{L}]+/gu) || [];
+  const names = ptToks.filter((w, i) => /^\p{Lu}/u.test(w) && (i > 0 || !ptForms().has(w.toLowerCase())) && !/^(Eu|Ele|Ela|Nós|Você|Vocês|Eles|Elas|A|O|As|Os|Um|Uma|Meu|Minha|Seu|Sua)$/.test(w));
+  let res = out;
+  for (const n of names) {
+    if (res.includes(n)) continue;
+    const outToks = res.match(/[\p{L}]+/gu) || [];
+    const cand = outToks.filter((w, i) => /^\p{Lu}/u.test(w) && !ptToks.includes(w) && (i > 0 || ptToks[0] === n) && !/^(I|My|The|A|An|He|She|We|They|You|It|His|Her|Our|Their|El|La|Los|Las|Mi|Le|Les|Il|Elle|Ils|Lo|Gli|Der|Die|Das|Ich|Er|Sie|Wir|Mein|Meine)$/.test(w));
+    if (cand.length === 1) res = res.replace(new RegExp(`(?<![\\p{L}])${cand[0]}(?![\\p{L}])`, 'u'), n);
+  }
+  return res;
 }
 
 /* Divide um texto em frases. */
