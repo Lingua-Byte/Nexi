@@ -3,7 +3,7 @@
    então todo deploy gera um service worker novo e o app instalado se atualiza. */
 const BUILD = '__BUILD__';
 const CACHE = 'raiz-' + BUILD;
-const CORE = ['./', 'index.html', 'style.css', 'data.js', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
+const CORE = ['./', 'index.html', 'style.css', 'data.js', 'linguistica.js', 'motor.js', 'vendor/bergamot/translator.js', 'vendor/bergamot/worker/translator-worker.js', 'vendor/bergamot/worker/bergamot-translator-worker.js', 'vendor/bergamot/worker/bergamot-translator-worker.wasm', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
@@ -24,6 +24,7 @@ self.addEventListener('fetch', e => {
   const same = url.origin === location.origin;
   if (!same && !isFont) return;
   if (url.pathname.endsWith('.apk')) return;   // o APK vai direto da rede
+  if (url.pathname.includes('/models/')) return;   // os modelos do tradutor têm cache próprio (motor.js)
   // Rede primeiro, sem cache HTTP (sempre a versão mais nova); cache só quando estiver offline.
   const net = same ? fetch(url.href, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(e.request);
   e.respondWith(

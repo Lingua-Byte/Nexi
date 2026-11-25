@@ -50,6 +50,15 @@ jobs:
           (cd android && ./gradlew assembleDebug --no-daemon)
           cp android/app/build/outputs/apk/debug/app-debug.apk ../linguas/RAIZ.apk
           echo "{\"versionCode\": $RAIZ_VERSION_CODE, \"versionName\": \"$RAIZ_VERSION_NAME\", \"native\": $NATIVE}" > ../linguas/apk.json
+      # Tradutor interno do RAIZ: modelos da Mozilla (MPL-2.0) que rodam DENTRO do celular.
+      # Ficam no site (mesma origem, funciona offline), não no repositório.
+      - name: Cache dos modelos do tradutor interno
+        uses: actions/cache@v4
+        with:
+          path: linguas/models
+          key: raiz-modelos-v1
+      - name: Baixar modelos do tradutor interno
+        run: python3 tools/fetch_models.py linguas/models
       - name: Tirar arquivos de build do site
         run: rm -rf raiz-android/node_modules raiz-android/android/.gradle raiz-android/android/app/build raiz-android/android/build raiz-android/android/capacitor-cordova-android-plugins
 

@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '2.0', t: 'tradutor interno: traduz e corrige dentro do celular, sem chave' },
     { v: '1.7', t: 'tradução por conceito: o sentido decide a palavra (pegar o ônibus)' },
     { v: '1.6', t: 'qualquer frase vira lição · escrita à mão mais clara' },
     { v: '1.5', t: 'lições interativas com certo e errado' },
@@ -51,6 +52,7 @@
     if (!S.langs[id]) S.langs[id] = { verbs: DEFAULT_VERBS.slice(), custom: [], diary: [], counts: {}, prog: {}, mode: 'pad', ghost: false };
     return S.langs[id];
   }
+  if (S.apiKey) { delete S.apiKey; save(); }   // o app não usa mais chave de IA
   if (S.theme) document.documentElement.dataset.theme = S.theme;
 
   /* ——— utilidades ——— */
@@ -124,6 +126,7 @@
       });
       (st.myVerbs || []).forEach(m => m.t.forEach((t, i) => out.push({ id: `m:${m.id}:${i}`, pt: m.ptf[i], t, r: m.r[i] || '' })));
       (st.mySentences || []).forEach(s => out.push({ id: 's:' + s.id, pt: s.pt, t: s.t, r: s.r || '' }));
+      (st.myConcepts || []).forEach(c => out.push({ id: 'k:' + c.id, pt: `${c.pt} (o conceito)`, t: c.t, r: c.r || '' }));
       st.custom.forEach(c => out.push({ id: 'c:' + c.id, pt: c.pt, t: c.t, r: c.r || '' }));
       (st.fixes || []).forEach(f => out.push({ id: 'f:' + f.id, pt: `corrija: “${f.orig}”`, t: f.fix, r: f.r || '' }));
     }
@@ -175,6 +178,7 @@
       if (h[2] === 'p') return renderPractice(L, +h[3] || 1);
       if (h[2] === 'l') return renderLesson(L, +h[3] || 1);
       if (h[2] === 'd') return renderDiary(L);
+      if (h[2] === 't') return renderTranslator(L);
       return renderLang(L);
     }
     setLangColors(null); renderHome();
@@ -252,12 +256,19 @@
           </a>`;
         }).join('')}
       </div>
+      <a class="journal-card tr-card enter" href="#/l/${L.id}/t">
+        <span class="kicker">Sentido, não palavra</span>
+        <b>Tradutor de conceitos</b>
+        <span>Escreva do seu jeito, em português. O app traduz o sentido, explica o que é intraduzível e transforma em lição.</span>
+      </a>
       <a class="journal-card enter" href="#/l/${L.id}/d">
         <span class="kicker">Caderno livre</span>
         <b>Diário</b>
         <span>Escreva o que quiser em ${esc(L.name.toLowerCase())}. O diário corrige.</span>
         <span class="jc-count mono">${(LS(L.id).journal || []).length} páginas</span>
-      </a>`;
+      </a>
+      <div style="margin-top:22px">${motorCard(L)}</div>`;
+    bindMotor(L);
   }
 
   /* ——— folha de estudo ——— */
@@ -348,75 +359,147 @@
     return { found, base, extra };
   }
 
-  /* Com o Claude: traduz suas frases, conjuga os verbos e devolve tudo pronto para virar lição. */
-  const PATH_SCHEMA = {
-    type: 'object', additionalProperties: false, required: ['sentences', 'concepts'],
-    properties: {
-      sentences: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['pt', 'target', 'romanization'],
-        properties: { pt: { type: 'string' }, target: { type: 'string' }, romanization: { type: 'string' } } } },
-      concepts: { type: 'array', items: { type: 'object', additionalProperties: false,
-        required: ['pt_verb', 'sense', 'core_sense', 'target_expression', 'literal_trap', 'pt_forms', 'forms', 'forms_romanization', 'note'],
-        properties: {
-          pt_verb: { type: 'string', description: 'infinitivo do verbo em português' },
-          sense: { type: 'string', description: 'o sentido do verbo NESTA frase, curto, em português (ex.: “beber (café)”)' },
-          core_sense: { type: 'boolean', description: 'true se é o sentido básico do verbo, como no dicionário' },
-          target_expression: { type: 'string', description: 'a expressão que um nativo usa para esse sentido (ex.: “have a coffee”)' },
-          literal_trap: { type: 'string', description: 'se traduzir palavra por palavra fica errado, explique em português; senão vazio' },
-          pt_forms: { type: 'array', items: { type: 'string' } }, forms: { type: 'array', items: { type: 'string' } },
-          forms_romanization: { type: 'array', items: { type: 'string' } }, note: { type: 'string' } } } }
+  /* ——— TRADUTOR INTERNO (no aparelho, sem API) ——— */
+  let motorP = null;
+  const motorLib = () => (motorP = motorP || import('./motor.js'));
+  const mt = async (from, to, text) => (await motorLib()).translate(from, to, text);
+  const clean = t => String(t).trim().replace(/[.。]$/, '');
+  const roman = (L, t) => (L.id === 'ko' ? romanKo(t) : '');
+  const MB = n => Math.max(1, Math.round(n / 1e6));
+
+  /* Cartão de download do tradutor. Mostra o estado e baixa a língua uma vez. */
+  function motorCard(L) { return `<div class="motor" id="motor"><div class="thinking"><span></span><span></span><span></span> conferindo o tradutor interno</div></div>`; }
+  async function bindMotor(L, onReady) {
+    const box = document.getElementById('motor'); if (!box) return;
+    let st;
+    try { st = await (await motorLib()).status(L.id); } catch (e) { st = { available: false, error: String(e) }; }
+    if (!box.isConnected) return;
+    if (!st.available) {
+      box.innerHTML = `<div class="m-row"><b>Tradutor interno</b><span class="muted">Ainda não disponível neste endereço. Ele vem no app publicado.</span></div>`;
+      return;
     }
-  };
-  const CONV = {
-    en: 'I, you, he, she, we, you, they, they',
-    fr: 'je (j’ antes de vogal), tu, il, elle, nous, vous, ils, elles',
-    es: 'yo, tú, él, ella, nosotros, ustedes, ellos, ellas',
-    de: 'ich, du, er, sie, wir, ihr, sie, sie',
-    it: 'io, tu, lui, lei, noi, voi, loro, loro',
-    ja: '私は, あなたは, 彼は, 彼女は, 私たちは, あなたたちは, 彼らは, 彼女たちは + forma educada (-ます/です), igual para todas as pessoas',
-    ko: '저는, 너는, 그는, 그녀는, 우리는, 너희는, 그들은, 그녀들은 + forma educada -요, igual para todas as pessoas',
-    he: 'אני, אתה / את, הוא, היא, אנחנו, אתם / אתן, הם, הן; no presente mostre masculino / feminino quando mudar (ex.: “אני אוהב / אוהבת”, “אתה אוהב / את אוהבת”)'
-  };
-  function pathPrompt(L, text) {
-    const lang = L.name.toLowerCase();
-    const system = `Você ajuda um brasileiro autodidata a aprender ${lang} a partir das frases que ele realmente fala no dia a dia.
-Princípio: tradução é de CONCEITO, não de palavra. O mesmo verbo português pode virar verbos diferentes conforme o sentido (em inglês: tomar café → have a coffee; tomar banho → take a shower; tomar remédio → take medicine). E verbos diferentes do português podem virar o mesmo verbo (tomar banho, tomar remédio e pegar o ônibus viram todos “take” em inglês).
-O aluno é brasileiro: o português de pt_forms, sense e das explicações é sempre o do Brasil, falado no dia a dia (pegar o ônibus, não tomar o autocarro). Se ele usar uma forma de Portugal ou de outra região, mantenha o sentido e não corrija o jeito dele.
-Receba frases em português. Para cada frase, dê a tradução simples e natural em ${lang}, como um nativo diria${L.roman ? ', e a romanização' : ' (romanização vazia)'}.
-Liste os conceitos verbais das frases (menos ser e estar, que ele estuda à parte). Um conceito = verbo + o sentido que ele tem naquela frase. Se o mesmo verbo aparece com dois sentidos, são dois conceitos. Para cada um:
-- pt_verb: infinitivo em português; sense: o sentido nesta frase, curto (ex.: “beber (café)”, “pegar (condução)”);
-- core_sense: true só se for o sentido básico de dicionário e a tradução direta funcionar;
-- target_expression: o que um nativo usa para esse sentido;
-- literal_trap: se a tradução palavra por palavra ficaria errada ou estranha, explique em uma frase em português (ex.: “Não é ‘take a coffee’: para comida e bebida usa-se ‘have’.”); senão vazio;
-- pt_forms: presente em português com pronome, nesta ordem exata de 8: eu, você, ele, ela, nós, vocês, eles, elas. Quando o complemento define o sentido, inclua um complemento curto (ex.: “eu tomo um café”); se o verbo é neutro (querer, precisar), só pronome + verbo;
-- forms: o mesmo em ${lang}, na mesma ordem de 8, usando: ${CONV[L.id]};
-- forms_romanization: 8 romanizações${L.roman ? '' : ' vazias'};
-- note: armadilha de gramática (irregular, preposição…), curta, senão vazio.
-Corrija silenciosamente erros de digitação do português.`;
-    return { system, user: text };
+    if (st.ready) {
+      box.innerHTML = `<div class="m-row ok"><b>✓ Tradutor interno pronto</b><span class="muted">${esc(L.name)} funciona sem internet, dentro do celular.</span></div>`;
+      onReady && onReady(); return;
+    }
+    const falta = st.total - st.have;
+    box.innerHTML = `<div class="m-row"><b>Tradutor interno de ${esc(L.name.toLowerCase())}</b>
+        <span class="muted">Traduz e corrige dentro do celular, sem internet e sem chave. Baixa uma vez só: ${MB(falta)} MB${st.have ? ` (faltam ${MB(falta)} de ${MB(st.total)})` : ''}.</span></div>
+      <button class="cta" id="mdl">${I.down}Baixar tradutor · ${MB(falta)} MB</button>
+      <div class="mbar hide" id="mbar"><i></i></div>`;
+    document.getElementById('mdl').onclick = async () => {
+      const b = document.getElementById('mdl'), bar = document.getElementById('mbar');
+      b.disabled = true; bar.classList.remove('hide');
+      try {
+        await (await motorLib()).prepare(L.id, (d, t) => { bar.firstElementChild.style.width = Math.round(d / t * 100) + '%'; b.textContent = `Baixando… ${MB(d)} de ${MB(t)} MB`; });
+        toast('Tradutor pronto. Agora funciona sem internet.');
+        bindMotor(L, onReady);
+      } catch (e) {
+        b.disabled = false; b.innerHTML = `${I.down}Tentar de novo`;
+        toast(/download|fetch|network|Failed/i.test(String(e)) ? 'Sem internet para baixar agora.' : 'Não deu: ' + String(e.message || e));
+      }
+    };
   }
-  async function callClaude(system, user, schema) {
-    const { default: Anthropic } = await import(SDK_URL);
-    // A chave é do próprio usuário e fica só neste aparelho.
-    const client = new Anthropic({ apiKey: S.apiKey, dangerouslyAllowBrowser: true });
-    const res = await client.beta.messages.create({
-      model: MODEL,
-      max_tokens: 16000,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: { effort: 'medium', format: { type: 'json_schema', schema } },
-      system,
-      messages: [{ role: 'user', content: user }]
+  async function motorReady(L) { try { return (await (await motorLib()).status(L.id)).ready; } catch (e) { return false; } }
+
+  /* Traduz o SENTIDO: português falado → conceitos reescritos → tradução neural no aparelho.
+     Depois monta os conceitos verbais (verbo + o sentido na frase) com as 8 pessoas. */
+  async function analisar(L, text) {
+    const out = { sentences: [], concepts: [], verbs: [], bank: [] };
+    const sents = frases(text);
+    for (const s of sents) {
+      const f = falado(s);
+      const { found, rewritten } = conceitos(f);
+      const t = clean(await mt('pt', L.id, rewritten));
+      out.sentences.push({ pt: s, via: rewritten !== s ? rewritten : '', t, r: roman(L, t), conceitos: found.map(c => c.id) });
+      for (const c of found) {
+        if (out.concepts.some(x => x.id === c.id)) continue;
+        const ex = exemplo(c);
+        const ct = ex ? clean(await mt('pt', L.id, ex)) : '';
+        out.concepts.push({ id: c.id, pt: c.pt, diz: c.diz, por: ex, t: ct, r: roman(L, ct) });
+      }
+    }
+    // conceitos verbais
+    const plain = falado(text);
+    const { found, extra } = detectVerbs(plain);
+    const lex = ptLex();
+    const conceptVerbs = new Set(CONCEITOS.filter(c => c.tipo === 'verbo' && out.concepts.some(x => x.id === c.id)).map(c => c.verbo));
+    const lemmas = [...extra, ...found];
+    for (const lemma of lemmas) {
+      if (lemma === 'ser' || lemma === 'estar' || conceptVerbs.has(lemma)) continue;
+      let form = '', where = '';
+      for (const s of frases(plain).map(x => conceitos(x).rewritten)) {
+        const w = (s.toLowerCase().match(/[\p{L}]+/gu) || []).find(x => lex.get(x) === lemma || (verbById[lemma] && verbById[lemma].detect.split(' ').includes(x)));
+        if (w) { form = w; where = s; break; }
+      }
+      if (!form) continue;   // o verbo sumiu na reescrita de um conceito (ex.: "dei uma volta")
+      const comp = PT_SENSES[lemma] ? complemento(where, form) : '';
+      if (verbById[lemma] && !comp) { out.bank.push(lemma); continue; }   // sentido básico: conjugação revisada do banco
+      const ptf = PT_PRON.map((p, i) => `${p} ${conjPhrase(lemma, i)}${comp ? ' ' + comp : ''}`);
+      const t = [];
+      for (const x of ptf) t.push(clean(await mt('pt', L.id, x)));
+      let trap = '';
+      if (comp) {
+        // o verbo "de dicionário" na língua (tomar → take / tomar / prendre…)
+        const dict = clean(await mt('pt', L.id, lemma)).toLowerCase().replace(/^to /, '').split(/\s+/)[0] || '';
+        const stem = L.roman ? dict.slice(0, 2) : dict.slice(0, Math.max(3, dict.length - 2));
+        if (stem && /^[\p{L}]+$/u.test(dict) && !t[0].toLowerCase().includes(stem))
+          trap = `Aqui “${lemma}” não vira “${dict}”: com “${comp}”, o sentido muda a palavra — “${t[0]}”.`;
+      }
+      out.verbs.push({ pt: lemma, sense: comp, ptf, t, r: t.map(x => roman(L, x)), trap, tInf: t[0] });
+    }
+    return out;
+  }
+
+  /* O tradutor neural erra palavras soltas; numa frase curta ele acerta o conceito. */
+  function exemplo(c) {
+    if (c.id === 'saudade' || c.id === 'saudade-n') return 'Eu sinto falta de você.';
+    const por = typeof c.por === 'string' ? c.por : '';
+    if (!por) return '';
+    if (c.tipo === 'verbo') return `Eu quero ${por}.`;
+    if (c.tipo === 'nome') return `Eu gosto de ${por}.`;
+    return por.charAt(0).toUpperCase() + por.slice(1) + (/[?!.]$/.test(por) ? '' : '.');
+  }
+
+  /* Mostra o resultado: frases traduzidas, conceitos explicados e conceitos verbais. */
+  function analysisHTML(L, out) {
+    const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    return `
+      <div class="analysis enter">
+        ${out.sentences.map(s => `<div class="tr-row">
+          <div class="tr-pt">${esc(s.pt)}</div>
+          ${s.via ? `<div class="tr-via">o tradutor entendeu: <i>${esc(s.via)}</i></div>` : ''}
+          <button class="tr-tg" data-say="${esc(s.t)}" ${rtl}>${esc(s.t)}${s.r ? `<small dir="ltr">${esc(s.r)}</small>` : ''}<span class="spk">${I.sound}</span></button>
+        </div>`).join('')}
+        ${out.concepts.length ? `<div class="subh">Conceitos <span class="kicker">sentido, não palavra</span></div>
+          ${out.concepts.map(c => `<div class="concept"><div class="c-pt">${esc(c.pt)}</div><p>${esc(c.diz)}</p>
+            ${c.t ? `<div class="c-tg"><span class="kicker">exemplo em ${esc(L.name.toLowerCase())}</span><span>${esc(c.por)}</span><b ${rtl}>${esc(c.t)}</b>${c.r ? `<small>${esc(c.r)}</small>` : ''}</div>` : ''}</div>`).join('')}` : ''}
+        ${out.verbs.length ? `<div class="subh">Verbos no seu sentido</div>
+          <div class="senses">${out.verbs.map(v => `<div class="sense-row"><b>${esc(v.pt)}</b><div><span class="sense"><small>${esc(v.sense || 'sentido básico')}</small><span ${rtl}>${esc(v.t[0])}</span></span>${v.trap ? `<p class="trap-line">⚠ ${esc(v.trap)}</p>` : ''}</div></div>`).join('')}</div>` : ''}
+        <p class="muted mt-note">Traduzido dentro do celular pelo tradutor interno. Ele acerta a maior parte, mas pode errar em frases longas, muito informais ou ambíguas — por isso o app mostra como entendeu.</p>
+      </div>`;
+  }
+
+  /* Guarda o resultado no caderno: verbos (banco e conceitos), frases e conceitos viram lição. */
+  function saveAnalysis(L, out) {
+    const st = LS(L.id);
+    st.myVerbs = st.myVerbs || []; st.mySentences = st.mySentences || []; st.myConcepts = st.myConcepts || [];
+    let nv = 0, ns = 0, nc = 0;
+    out.bank.forEach(id => { if (!st.verbs.includes(id)) { st.verbs.push(id); nv++; } });
+    out.verbs.forEach((v, i) => {
+      if (st.myVerbs.some(m => m.pt === v.pt && (m.sense || '') === v.sense)) return;
+      st.myVerbs.push({ id: Date.now().toString(36) + 'v' + i, pt: v.pt, sense: v.sense, tInf: v.tInf, trap: v.trap, ptf: v.ptf, t: v.t, r: v.r, note: '' }); nv++;
     });
-    if (res.stop_reason === 'refusal') throw new Error('O Claude não pôde responder a este texto.');
-    if (res.stop_reason === 'max_tokens') throw new Error('O texto ficou longo demais. Tente dividir em partes.');
-    const block = res.content.find(b => b.type === 'text');
-    if (!block) throw new Error('Resposta vazia.');
-    return JSON.parse(block.text);
-  }
-  const claudeErr = e => /401|authentication/i.test(String(e)) ? 'Chave inválida. Confira em Diário → Correção completa.' : /fetch|network|Failed to/i.test(String(e)) ? 'Sem internet agora.' : String(e.message || e);
-  function verbAskLink(L, lemma) {
-    const q = `Como se diz o verbo “${lemma}” em ${L.name.toLowerCase()}? Conjugue no presente com pronome, nesta ordem: eu, você, ele, ela, nós, vocês, eles, elas (use ${CONV[L.id]}).${L.roman ? ' Inclua a romanização.' : ''} Responda curto.`;
-    return 'https://claude.ai/new?q=' + encodeURIComponent(q);
+    out.sentences.forEach((s, i) => {
+      if (!s.t || st.mySentences.some(x => x.pt === s.pt)) return;
+      st.mySentences.unshift({ id: Date.now().toString(36) + 's' + i, pt: s.pt, t: s.t, r: s.r }); ns++;
+    });
+    out.concepts.forEach((c, i) => {
+      if (!c.t || st.myConcepts.some(x => x.cid === c.id)) return;
+      st.myConcepts.push({ id: Date.now().toString(36) + 'c' + i, cid: c.id, pt: c.pt, diz: c.diz, t: c.t, r: c.r }); nc++;
+    });
+    st.mySentences = st.mySentences.slice(0, 150); save();
+    return { nv, ns, nc };
   }
 
   function senseMap(L, st) {
@@ -436,7 +519,7 @@ Corrija silenciosamente erros de digitação do português.`;
       Toque em <b>Transformar em lição</b> para aprender o sentido da <i>sua</i> frase — tradução é de conceito, não de palavra.</div>`;
   }
 
-  function renderVerbs(L, keepText = '') {
+  function renderVerbs(L, keepText = '', lastOut = null) {
     const st = LS(L.id);
     st.myVerbs = st.myVerbs || []; st.mySentences = st.mySentences || [];
     const ranked = Object.entries(st.counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
@@ -458,7 +541,8 @@ Corrija silenciosamente erros de digitação do português.`;
             <button class="btn on" id="path">${I.flip}Transformar em lição</button>
           </div>
         </div>
-        <div id="found"></div>
+        <div id="found">${lastOut ? analysisHTML(L, lastOut) : ''}</div>
+        ${motorCard(L)}
 
         ${st.mySentences.length ? `<div class="subh">Minhas frases <span class="kicker">viram exercício</span></div>
           <div class="pages">${st.mySentences.map(s => `<div class="page mysent"><button class="ms-say" data-say="${esc(s.t)}"><span class="mono muted">${esc(s.pt)}</span><span class="ptxt" ${rtl}>${esc(s.t)}</span>${s.r ? `<small class="mono muted">${esc(s.r)}</small>` : ''}</button><button class="linkbtn" data-delsent="${esc(s.id)}">apagar</button></div>`).join('')}</div>` : ''}
@@ -488,19 +572,18 @@ Corrija silenciosamente erros de digitação do português.`;
             ${VERBS.map(v => `<button class="chip ${st.verbs.includes(v.id) ? 'on' : ''}" data-v="${v.id}"><span class="dot"></span>${esc(v.pt)}${st.counts[v.id] ? `<small>${st.counts[v.id]}×</small>` : ''}</button>`).join('')}
           </div></details>
 
-        <div class="subh">Um verbo meu <span class="kicker">sem Claude, do seu dicionário</span></div>
+        <div class="subh">Um verbo meu <span class="kicker">do seu dicionário</span></div>
         <form class="form" id="custom" autocomplete="off">
           <label for="cpt">Em português</label><input id="cpt" placeholder="ex.: eu acordo" required>
           <label for="ctg">Em ${esc(L.name.toLowerCase())}</label><input id="ctg" ${rtl} placeholder="${esc(L.id === 'en' ? 'ex.: I wake up' : 'como você aprendeu')}" required>
           ${L.roman ? '<label for="cr">Pronúncia (opcional)</label><input id="cr" placeholder="romanização">' : ''}
-          <a class="linkbtn" id="askverb" href="#" target="_blank" rel="noopener" hidden>Não sabe? Pergunte ao Claude como se diz ↗</a>
           <button class="btn" type="submit">${I.plus}Guardar no caderno</button>
         </form>
         <div style="height:18px"></div>
         ${practiceButtons(L, 3, its.length)}
       </div>`;
 
-    bindSay(L); bindPractice(L, 3);
+    bindSay(L); bindPractice(L, 3); bindMotor(L);
     const ta = document.getElementById('diary'), fd = document.getElementById('found');
     const showFound = txt => {
       const { found, base, extra } = detectVerbs(txt);
@@ -510,13 +593,12 @@ Corrija silenciosamente erros de digitação do português.`;
           ${extra.map(l => { const have = st.myVerbs.some(m => m.pt === l); const poly = !!PT_SENSES[l]; return `<button class="chip new ${poly ? 'poly' : ''} ${have ? 'on' : ''}" data-x="${esc(l)}"><span class="dot"></span>${esc(l)}${poly ? '<small>sentido?</small>' : have ? '' : '<small>novo</small>'}</button>`; }).join('')}
         </div>
         ${polyNote(found, extra)}
-        <p class="muted found-hint">${!found.length && !extra.length ? 'Nenhum verbo reconhecido ainda — continue escrevendo, ou toque em “Transformar em lição” para o Claude achar.' :
-          `${extra.length ? 'Os marcados <b>novo</b> ainda não têm conjugação: toque em “Transformar em lição” (Claude) ou num deles para guardar do seu jeito. ' : ''}${base ? 'Ser/estar já é o degrau 02.' : ''}`}</p>`;
+        <p class="muted found-hint">${!found.length && !extra.length ? 'Nenhum verbo reconhecido ainda — continue escrevendo, ou toque em “Transformar em lição”.' :
+          `${extra.length ? 'Os marcados <b>novo</b> ganham conjugação ao tocar em “Transformar em lição”. ' : ''}${base ? 'Ser/estar já é o degrau 02.' : ''}`}</p>`;
       bindChips(fd);
       fd.querySelectorAll('[data-x]').forEach(b => b.onclick = () => {
         if (b.classList.contains('on')) return;
         const f = document.getElementById('cpt'); f.value = b.dataset.x; document.getElementById('ctg').focus();
-        const ask = document.getElementById('askverb'); ask.href = verbAskLink(L, b.dataset.x); ask.hidden = false;
         document.getElementById('custom').scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     };
@@ -539,40 +621,21 @@ Corrija silenciosamente erros de digitação do português.`;
     };
     document.getElementById('path').onclick = async () => {
       const txt = ta.value.trim(); if (!txt) { ta.focus(); return; }
-      if (!S.apiKey) {
-        fd.innerHTML = `<div class="note enter"><span class="kicker">Transformar em lição</span>Para o app traduzir e conjugar qualquer verbo, ligue a correção completa com sua chave do Claude (em <b>Diário → Correção completa</b>). Sem chave, toque em <b>Anotar</b>: os verbos do banco já entram no caderno, e os novos você guarda do seu jeito em “Um verbo meu”.</div>
-          <a class="cta alt" href="#/l/${L.id}/d">${I.pen}Ir para o Diário e ligar</a>`;
-        return;
+      if (!(await motorReady(L))) {
+        fd.innerHTML = `<div class="note enter"><span class="kicker">Falta o tradutor interno</span>Para transformar qualquer frase em lição, baixe o tradutor de ${esc(L.name.toLowerCase())} uma vez (logo abaixo). Depois funciona sem internet e sem chave.</div>`;
+        document.getElementById('motor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
       }
-      const b = document.getElementById('path'); b.disabled = true; b.textContent = 'Preparando…';
-      fd.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> traduzindo e conjugando</div>';
+      const b = document.getElementById('path'); b.disabled = true; b.textContent = 'Traduzindo…';
+      fd.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> traduzindo o sentido, no seu celular</div>';
       try {
-        const { system, user } = pathPrompt(L, txt);
-        const out = await callClaude(system, user, PATH_SCHEMA);
+        const out = await analisar(L, txt);
         note(txt, true);
-        let nv = 0, ns = 0, nb = 0;
-        (out.concepts || []).forEach(v => {
-          const inf = String(v.pt_verb || '').toLowerCase().trim();
-          if (!inf || inf === 'ser' || inf === 'estar') return;
-          // sentido básico de um verbo do banco: usa a conjugação revisada do banco
-          if (verbById[inf] && v.core_sense && !v.literal_trap) { if (!st.verbs.includes(inf)) { st.verbs.push(inf); nb++; } return; }
-          if (!Array.isArray(v.forms) || v.forms.length !== 8 || !Array.isArray(v.pt_forms) || v.pt_forms.length !== 8) return;
-          const sense = String(v.sense || '').trim();
-          if (st.myVerbs.some(m => m.pt === inf && (m.sense || '') === sense)) return;
-          const r = Array.isArray(v.forms_romanization) && v.forms_romanization.length === 8 ? v.forms_romanization : Array(8).fill('');
-          st.myVerbs.push({ id: Date.now().toString(36) + nv, pt: inf, sense, tInf: v.target_expression, trap: v.literal_trap || '', ptf: v.pt_forms, t: v.forms, r, note: v.note || '' }); nv++;
-        });
-        (out.sentences || []).forEach(s => {
-          if (!s.pt || !s.target || st.mySentences.some(x => x.pt === s.pt)) return;
-          st.mySentences.unshift({ id: Date.now().toString(36) + 's' + ns, pt: s.pt, t: s.target, r: s.romanization || '' }); ns++;
-        });
-        st.mySentences = st.mySentences.slice(0, 120); save();
-        toast(`Pronto: ${nv + nb} conceito(s) e ${ns} frase(s) na sua lição`);
-        renderVerbs(L);
-        const c = document.querySelector('.lesson-hint'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const { nv, ns, nc } = saveAnalysis(L, out);
+        toast(`Na sua lição: ${nv} verbo(s), ${ns} frase(s)${nc ? `, ${nc} conceito(s)` : ''}`);
+        renderVerbs(L, '', out);
       } catch (e) {
         b.disabled = false; b.innerHTML = `${I.flip}Transformar em lição`;
-        fd.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(claudeErr(e))}</div>`;
+        fd.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(String(e.message || e))}</div>`;
       }
     };
     function bindChips(root) {
@@ -597,8 +660,6 @@ Corrija silenciosamente erros de digitação do português.`;
   }
 
   /* ——— DIÁRIO: escrever livre e receber correção ——— */
-  const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.4.0/+esm';
-  const MODEL = 'claude-opus-5-5';
 
   /* Verificação local (offline): pronome + verbo conjugado na pessoa errada. */
   const lexCache = {};
@@ -654,38 +715,6 @@ Corrija silenciosamente erros de digitação do português.`;
     return out;
   }
 
-  const FIX_SCHEMA = {
-    type: 'object', additionalProperties: false,
-    required: ['all_good', 'corrected', 'romanization', 'errors', 'natural', 'tip', 'verbs'],
-    properties: {
-      all_good: { type: 'boolean', description: 'true se o texto não tem nenhum erro' },
-      corrected: { type: 'string', description: 'o texto do aluno corrigido, mudando o mínimo possível' },
-      romanization: { type: 'string', description: 'pronúncia romanizada do texto corrigido (vazio para línguas de alfabeto latino)' },
-      errors: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['original', 'fix', 'why'],
-        properties: { original: { type: 'string', description: 'trecho exato como o aluno escreveu' }, fix: { type: 'string', description: 'o trecho corrigido' }, why: { type: 'string', description: 'explicação curta em português do Brasil' } } } },
-      natural: { type: 'string', description: 'como um nativo diria (vazio se igual ao corrigido)' },
-      tip: { type: 'string', description: 'uma dica curta e encorajadora em português, ligada ao método' },
-      verbs: { type: 'array', items: { type: 'string' }, description: 'infinitivos em português dos verbos que o aluno usou' }
-    }
-  };
-  function fixPrompt(L, text, meant) {
-    const system = `Você é um professor de ${L.name.toLowerCase()} paciente e caloroso. Corrige o diário de um aluno brasileiro, autodidata e iniciante, que aprende assim: primeiro os pronomes pessoais, depois ser e estar, depois os verbos que ele mais usa no dia a dia.
-Corrija gramática, conjugação, concordância, ortografia e palavras erradas, mudando o mínimo possível — o texto é dele. Não corrija estilo se estiver certo.
-Cada erro vira um item: o trecho exato que ele escreveu, a correção e o porquê em uma frase simples em português do Brasil, sem jargão. Se ele misturou palavras em português, traduza e conte como erro. Tradução é de conceito, não de palavra: se ele traduziu palavra por palavra e um nativo diria de outro jeito (ex.: “I take a coffee” em vez de “I have a coffee”), conte como erro e explique o conceito.
-Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próximo passo concreto (ex.: “revise o verbo ter com ‘nós’”).`;
-    const user = `Língua: ${L.name} (${L.native}).\n${meant ? `O que eu quis dizer, em português: ${meant}\n` : ''}Meu diário:\n${text}`;
-    return { system, user };
-  }
-  async function askClaude(L, text, meant) {
-    const { system, user } = fixPrompt(L, text, meant);
-    return callClaude(system, user, FIX_SCHEMA);
-  }
-  function claudeLink(L, text, meant) {
-    const { system, user } = fixPrompt(L, text, meant);
-    const q = `${system}\n\nResponda em português: texto corrigido, lista de erros (trecho → correção → porquê), versão natural e uma dica.\n\n${user}`;
-    return 'https://claude.ai/new?q=' + encodeURIComponent(q);
-  }
-
   function markLocal(text, issues) {
     let h = '', p = 0;
     issues.slice().sort((a, b) => a.i - b.i).forEach(x => {
@@ -719,23 +748,14 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
         </div>
         <div id="jres"></div>
 
-        <details class="keybox" id="keybox" ${S.apiKey ? '' : ''}>
-          <summary><span class="kicker">Correção completa</span> <span class="muted">${S.apiKey ? '· ligada neste aparelho' : '· como funciona'}</span></summary>
-          <p><b>Conferir</b> é instantâneo e funciona sem internet: aponta pronome + verbo na pessoa errada${L.roman ? ' (no ' + esc(L.name.toLowerCase()) + ', use a correção completa)' : ''}.</p>
-          <p><b>Corrigir</b> usa o Claude para revisar tudo — gramática, palavras, naturalidade — e explica cada erro em português. Para isso, cole sua chave da API da Anthropic (console.anthropic.com). Ela fica salva só neste aparelho e o uso é cobrado na sua conta.</p>
-          <div class="form">
-            <label for="apikey">Chave da API</label>
-            <input id="apikey" type="password" autocomplete="off" placeholder="sk-ant-…" value="${esc(S.apiKey || '')}">
-            <div class="actions-2" style="margin:0"><button class="btn" id="keysave">Salvar</button><button class="btn" id="keydel">Apagar</button></div>
-          </div>
-          <p class="muted" style="font-size:14px">Sem chave? Use <b>“Corrigir no app do Claude”</b>: abre o Claude já com o seu texto e o pedido de correção.</p>
-        </details>
+        ${motorCard(L)}
+        <p class="muted" style="font-size:14px;margin:8px 2px 0"><b>Conferir</b>: regras de pronome + verbo, instantâneo${L.roman ? ' (não se aplica ao ' + esc(L.name.toLowerCase()) + ')' : ''}. <b>Corrigir</b>: correção completa feita no celular — regras, o que o app entendeu do seu texto e como o tradutor interno diria o que você quis dizer.</p>
 
         ${st.journal.length ? `<div class="subh">Páginas anteriores <span class="kicker">${st.journal.length}</span></div>
           <div class="pages">${st.journal.map(j => `<button class="page" data-j="${j.id}">
             <span class="mono muted">${new Date(j.d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
             <span class="ptxt" ${rtl}>${esc(j.text.slice(0, 70))}${j.text.length > 70 ? '…' : ''}</span>
-            <span class="pbadge ${j.fix ? (j.fix.all_good ? 'good' : 'fixed') : ''}">${j.fix ? (j.fix.all_good ? '✓' : j.fix.errors.length + ' erros') : '—'}</span>
+            <span class="pbadge ${j.fix ? (j.fix.ok ? 'good' : 'fixed') : ''}">${j.fix ? (j.fix.ok ? '✓' : (j.fix.n || 0) + ' pontos') : '—'}</span>
           </button>`).join('')}</div>
           <button class="btn" id="jnew" style="margin-top:12px;width:100%">${I.plus}Nova página</button>` : ''}
       </div>`;
@@ -759,27 +779,26 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
       toast(n ? `${n} correç${n > 1 ? 'ões' : 'ão'} no degrau 03 para treinar no papel` : 'Já estavam no caderno.');
     };
 
-    const showAI = fx => {
-      const bankAdds = (fx.verbs || []).map(p => VERBS.find(v => v.pt === String(p).toLowerCase().trim())).filter(v => v && !st.verbs.includes(v.id));
+    const showFix = fx => {
+      const diff = fx.ref ? diffWords(fx.text, fx.ref) : null;
       res.innerHTML = `
         <div class="fixcard enter">
-          <div class="kicker">${fx.all_good ? 'Tudo certo!' : `Correção · ${fx.errors.length} ${fx.errors.length === 1 ? 'ponto' : 'pontos'}`}</div>
-          <div class="fixtext" ${rtl}>${esc(fx.corrected)}</div>
-          ${fx.romanization ? `<small class="mono">${esc(fx.romanization)}</small>` : ''}
-          <button class="iconbtn" id="jsay" aria-label="Ouvir">${I.sound}</button>
+          <div class="kicker">${fx.ok ? 'Parece certo!' : `Correção · ${fx.n} ${fx.n === 1 ? 'ponto' : 'pontos'}`}</div>
+          <div class="fixtext ${fx.issues.length ? 'marked' : ''}" ${rtl}>${fx.issues.length ? markLocal(fx.text, fx.issues) : esc(fx.text)}</div>
         </div>
-        ${fx.errors.length ? `<div class="errs">${fx.errors.map(e => `<div class="err">
-          <div ${rtl}><s>${esc(e.original)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div>
-          <p>${esc(e.why)}</p></div>`).join('')}</div>` : ''}
-        ${fx.natural && fx.natural !== fx.corrected ? `<div class="ex" style="margin:14px 0"><div class="pt">Como um nativo diria</div><div class="tg" ${rtl}>${esc(fx.natural)}</div></div>` : ''}
-        ${fx.tip ? `<div class="note"><span class="kicker">Próximo passo</span>${esc(fx.tip)}</div>` : ''}
-        ${bankAdds.length ? `<div class="subh" style="margin-top:4px">Verbos que você usou <span class="kicker">add ao caderno</span></div>
-          <div class="chips" style="margin-bottom:14px">${bankAdds.map(v => `<button class="chip" data-addv="${v.id}"><span class="dot"></span>${esc(v.pt)}</button>`).join('')}</div>` : ''}
-        ${fx.errors.length ? `<button class="cta" id="jtrain">${I.pen}Treinar as correções no papel</button>` : ''}`;
-      document.getElementById('jsay').onclick = () => speak(fx.corrected, L);
-      res.querySelectorAll('[data-addv]').forEach(b => b.onclick = () => { st.verbs.push(b.dataset.addv); save(); b.classList.add('on'); b.disabled = true; toast('Verbo no caderno.'); });
+        <div class="understood"><span class="kicker">O que o app entendeu</span><p>${esc(fx.back)}</p>
+          ${fx.meant ? (fx.sim >= 55 ? '<b class="okc">✓ Seu sentido chegou.</b>' : '<b class="badc">⚠ O sentido pode ter mudado — compare com o que você quis dizer.</b>') : '<span class="muted">Escreva “o que eu quis dizer” para comparar o sentido.</span>'}</div>
+        ${fx.issues.length ? `<div class="errs">${fx.issues.map(e => `<div class="err"><div ${rtl}><s>${esc(e.orig)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div><p>${esc(e.why)}</p></div>`).join('')}</div>` : ''}
+        ${fx.ref ? `<div class="refbox"><div class="kicker">Como o tradutor interno diria</div>
+            <div class="reftext" ${rtl}>${esc(fx.ref)}</div>
+            <button class="iconbtn" id="jsay" aria-label="Ouvir">${I.sound}</button>
+            ${diff && diff.score < 100 ? `<div class="kicker" style="margin-top:10px">Diferenças</div><div class="diff" ${rtl}>${diff.parts.map(p => p.k === 'eq' ? esc(p.t) : p.k === 'del' ? `<s>${esc(p.t)}</s>` : `<ins>${esc(p.t)}</ins>`).join(' ')}</div>
+            <p class="muted" style="font-size:13.5px;margin:6px 0 0">Riscado: só no seu texto. Verde: o tradutor usaria. Nem toda diferença é erro — às vezes são dois jeitos certos.</p>` : ''}</div>` : ''}
+        ${fx.concepts && fx.concepts.length ? fx.concepts.map(c => `<div class="concept"><div class="c-pt">${esc(c.pt)}</div><p>${esc(c.diz)}</p>${c.t ? `<div class="c-tg"><span ${rtl}>${esc(c.por)} → <b>${esc(c.t)}</b></span></div>` : ''}</div>`).join('') : ''}
+        ${fx.issues.length || (fx.ref && diff && diff.score < 100) ? `<button class="cta" id="jtrain">${I.pen}Treinar as correções no papel</button>` : ''}`;
+      const sy = document.getElementById('jsay'); if (sy) sy.onclick = () => speak(fx.ref, L);
       const tr = document.getElementById('jtrain');
-      if (tr) tr.onclick = () => saveFixes(fx.errors.map(e => ({ orig: e.original, fix: e.fix })));
+      if (tr) tr.onclick = () => saveFixes([...fx.issues, ...(fx.ref && diff && diff.score < 100 ? [{ orig: fx.text, fix: fx.ref }] : [])]);
     };
 
     document.getElementById('jlocal').onclick = () => {
@@ -800,29 +819,76 @@ Se estiver tudo certo, diga isso com alegria. A dica final deve apontar o próxi
 
     document.getElementById('jai').onclick = async () => {
       const c = persist(); if (!c) { ta.focus(); return; }
-      if (!S.apiKey) {
-        res.innerHTML = `<div class="note enter"><span class="kicker">Corrigir</span>Para a correção completa aqui dentro, salve sua chave abaixo. Ou abra no app do Claude, sem chave:</div>
-          <a class="cta alt" href="${claudeLink(L, c.text, c.meant)}" target="_blank" rel="noopener">${I.pen}Corrigir no app do Claude</a>`;
-        document.getElementById('keybox').open = true; return;
+      if (c.fix && c.fix.back !== undefined && c.fix.text === c.text && (c.fix.meant || '') === (c.meant || '')) { showFix(c.fix); return; }
+      if (!(await motorReady(L))) {
+        res.innerHTML = `<div class="note enter"><span class="kicker">Falta o tradutor interno</span>A correção completa roda dentro do celular. Baixe o tradutor de ${esc(L.name.toLowerCase())} uma vez (logo abaixo) — depois funciona sem internet. Enquanto isso, use <b>Conferir</b>.</div>`;
+        document.getElementById('motor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
       }
-      if (c.fix) { showAI(c.fix); return; }
       const b = document.getElementById('jai'); b.disabled = true; b.innerHTML = 'Corrigindo…';
-      res.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> o professor está lendo</div>';
+      res.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> corrigindo no seu celular</div>';
       try {
-        const fx = await askClaude(L, c.text, c.meant);
-        c.fix = fx; save(); showAI(fx);
+        const issues = localCheck(L, c.text) || [];
+        const back = clean(await mt(L.id, 'pt', c.text));
+        let ref = '', sim = 0, concepts = [];
+        if (c.meant) {
+          const { found, rewritten } = conceitos(falado(c.meant));
+          ref = clean(await mt('pt', L.id, rewritten));
+          sim = diffWords(falado(c.meant), back).score;
+          for (const k of found) { const ex = exemplo(k); concepts.push({ pt: k.pt, diz: k.diz, por: ex, t: ex ? clean(await mt('pt', L.id, ex)) : '' }); }
+        }
+        const d = ref ? diffWords(c.text, ref) : null;
+        const n = issues.length + (d && d.score < 70 ? 1 : 0);
+        const fx = { text: c.text, meant: c.meant, back, ref, sim, issues, concepts, n, ok: !issues.length && (!ref || (d && d.score >= 70)) && (!c.meant || sim >= 55) };
+        c.fix = fx; save(); showFix(fx);
       } catch (e) {
-        const msg = /401|authentication/i.test(String(e)) ? 'Chave inválida. Confira em “Correção completa”.' : /fetch|network|Failed to/i.test(String(e)) ? 'Sem internet. A “Conferir” funciona offline.' : String(e.message || e);
-        res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(msg)}</div>
-          <a class="cta alt" href="${claudeLink(L, c.text, c.meant)}" target="_blank" rel="noopener">${I.pen}Corrigir no app do Claude</a>`;
+        res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(String(e.message || e))}</div>`;
       } finally { b.disabled = false; b.innerHTML = `${I.pen}Corrigir`; }
     };
 
-    document.getElementById('keysave').onclick = () => { S.apiKey = document.getElementById('apikey').value.trim() || null; save(); toast(S.apiKey ? 'Chave salva neste aparelho.' : 'Sem chave.'); };
-    document.getElementById('keydel').onclick = () => { S.apiKey = null; document.getElementById('apikey').value = ''; save(); toast('Chave apagada.'); };
+    bindMotor(L);
     $app.querySelectorAll('[data-j]').forEach(b => b.onclick = () => { renderDiary(L, b.dataset.j); window.scrollTo(0, 0); });
     const nb = document.getElementById('jnew'); if (nb) nb.onclick = () => { renderDiary(L); window.scrollTo(0, 0); };
-    if (cur && cur.fix) showAI(cur.fix);
+    if (cur && cur.fix && cur.fix.back !== undefined) showFix(cur.fix);
+  }
+
+  /* ——— TRADUTOR DE CONCEITOS ——— */
+  function renderTranslator(L, keep = '') {
+    $app.innerHTML = `
+      ${topbar(`#/l/${L.id}`, L.name)}
+      <div class="enter">
+        <div class="kicker muted">Tradutor · ${esc(L.name)}</div>
+        <h1 class="title-xl">Sentido, <em>não palavra</em></h1>
+        <p class="lead">Escreva o que você quer dizer, do seu jeito — gíria, expressão, algo “intraduzível”. O app entende o conceito e diz em ${esc(L.name.toLowerCase())}. Tudo dentro do celular.</p>
+        <div class="diary">
+          <textarea id="trtext" placeholder="Ex.: Tô com saudade de casa. Ontem dei uma volta, bati um papo com um amigo e caiu a ficha." aria-label="Frase em português">${esc(keep)}</textarea>
+          <div class="dbar"><span class="kicker muted">em português</span><button class="btn on" id="trgo">${I.flip}Traduzir</button></div>
+        </div>
+        <div id="trres"></div>
+        ${motorCard(L)}
+      </div>`;
+    bindMotor(L);
+    const ta = document.getElementById('trtext'), res = document.getElementById('trres');
+    document.getElementById('trgo').onclick = async () => {
+      const txt = ta.value.trim(); if (!txt) { ta.focus(); return; }
+      if (!(await motorReady(L))) {
+        res.innerHTML = `<div class="note enter"><span class="kicker">Falta o tradutor interno</span>Baixe o tradutor de ${esc(L.name.toLowerCase())} uma vez (logo abaixo). Depois funciona sem internet.</div>`;
+        document.getElementById('motor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
+      }
+      const b = document.getElementById('trgo'); b.disabled = true; b.textContent = 'Traduzindo…';
+      res.innerHTML = '<div class="thinking enter"><span></span><span></span><span></span> traduzindo o sentido, no seu celular</div>';
+      try {
+        const out = await analisar(L, txt);
+        res.innerHTML = analysisHTML(L, out) + `<button class="cta" id="trsave">${I.plus}Guardar na minha lição</button>`;
+        bindSay(L, res);
+        document.getElementById('trsave').onclick = () => {
+          const { nv, ns, nc } = saveAnalysis(L, out);
+          toast(`Na sua lição (degrau 03): ${nv} verbo(s), ${ns} frase(s)${nc ? `, ${nc} conceito(s)` : ''}`);
+          document.getElementById('trsave').disabled = true;
+        };
+      } catch (e) {
+        res.innerHTML = `<div class="note enter"><span class="kicker">Não deu</span>${esc(String(e.message || e))}</div>`;
+      } finally { b.disabled = false; b.innerHTML = `${I.flip}Traduzir`; }
+    };
   }
 
   /* ——— LIÇÃO INTERATIVA: certo ou errado, conferido na hora ——— */

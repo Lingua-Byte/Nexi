@@ -507,3 +507,43 @@ a.cta { text-decoration: none; }
 .sense small { font: 700 10px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .sense span { font: 700 16px/1.15 var(--script); }
 .row .tg.long { font-size: 17px; line-height: 1.15; }
+
+/* ——— Tradutor interno ——— */
+.motor { border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); padding: 12px; margin: 14px 0; box-shadow: 3px 3px 0 var(--line); }
+.motor .thinking { padding: 2px; }
+.m-row { display: grid; gap: 3px; margin-bottom: 10px; }
+.m-row:last-child { margin-bottom: 0; }
+.m-row b { font: 800 18px/1.15 var(--serif); }
+.m-row span { font-size: 14px; line-height: 1.35; }
+.m-row.ok b { color: var(--ok); }
+.mbar { height: 10px; border: 1.5px solid var(--line); border-radius: 99px; overflow: hidden; margin-top: 10px; }
+.mbar i { display: block; height: 100%; width: 0; background: var(--c); transition: width .2s; }
+.motor .cta svg { width: 20px; height: 20px; }
+.tr-card::before { content: '⇄'; }
+.analysis { margin: 4px 0 14px; }
+.tr-row { border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); margin-bottom: 10px; overflow: hidden; }
+.tr-pt { padding: 9px 12px 4px; font: 400 13px var(--mono); color: var(--muted); }
+.tr-via { padding: 0 12px 6px; font-size: 13px; color: var(--muted); }
+.tr-tg { position: relative; display: block; width: 100%; text-align: left; border: 0; border-top: 1px dashed var(--rule); background: var(--paper); padding: 10px 50px 11px 12px; font: 700 21px/1.25 var(--script); color: var(--ink); }
+.tr-tg[dir="rtl"] { text-align: right; padding: 10px 12px 11px 50px; }
+.tr-tg small { display: block; font: 400 12px var(--mono); color: var(--muted); margin-top: 2px; }
+.tr-tg .spk { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; }
+.tr-tg[dir="rtl"] .spk { right: auto; left: 10px; }
+.tr-tg .spk svg { width: 14px; height: 14px; }
+.concept { border: 2px solid var(--line); border-left: 8px solid var(--c); border-radius: var(--radius); background: var(--sheet); padding: 10px 12px; margin-bottom: 10px; }
+.c-pt { font: 900 20px/1.1 var(--serif); }
+.concept p { margin: 4px 0 6px; font-size: 14.5px; line-height: 1.35; }
+.c-tg { display: grid; gap: 2px; font-size: 15px; }
+.c-tg b { font-family: var(--script); }
+.c-tg small { font: 400 12px var(--mono); color: var(--muted); }
+.trap-line { flex-basis: 100%; margin: 4px 0 0; font-size: 13.5px; color: var(--bad); }
+.mt-note { font-size: 13px; margin: 10px 2px; }
+.understood { border: 2px dashed var(--line); border-radius: var(--radius); padding: 10px 12px; margin: 0 0 14px; }
+.understood p { margin: 4px 0 6px; font: italic 500 17px/1.35 var(--serif); }
+.understood b { font-size: 14px; }
+.refbox { position: relative; border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); padding: 12px 56px 12px 12px; margin-bottom: 14px; }
+.refbox .iconbtn { position: absolute; right: 10px; top: 10px; }
+.reftext { font: 700 21px/1.3 var(--script); margin-top: 4px; }
+.diff { font: 600 18px/1.6 var(--script); margin-top: 4px; }
+.diff s { color: var(--bad); text-decoration-thickness: 2px; }
+.diff ins { color: var(--ok); text-decoration: none; background: var(--ok-bg); border-radius: 3px; padding: 0 3px; }
