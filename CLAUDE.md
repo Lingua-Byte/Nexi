@@ -32,7 +32,7 @@ Princípios que guiam todas as decisões:
 
 Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da direita para a esquerda). Japonês, coreano e hebraico mostram romanização nos dados prontos.
 
-## O que o app faz hoje (versão 2.3)
+## O que o app faz hoje (versão 2.4)
 
 **O diário é o centro** (é a primeira coisa na página de cada língua). A pessoa escreve a própria vida em português **ou** na língua estudada; o diário identifica a língua sozinho.
 - *Português* → mostra como dizer na outra língua, frase por frase, com as duas línguas alinhadas: **tocar numa palavra acende a correspondente na outra** (e fala). Explica os conceitos e os verbos no sentido da frase. “Agora é a sua vez”: a pessoa tenta escrever ela mesma e o diário compara com o que ela quis dizer.
@@ -45,6 +45,15 @@ Inglês, francês, espanhol, alemão, italiano, japonês, coreano e hebraico (da
 - *Coleção de conceitos*: os conceitos da base viram um álbum com raridade (comum, raro, lendário); os que faltam ficam escondidos com dica do tipo de fala.
 - *Missões do dia* (3 por dia), XP, nível, sequência de dias e carimbos de comemoração.
 - *Pares*: jogo de memória com o próprio vocabulário. A lição interativa também treina o vocabulário (“degrau 4”).
+
+**Treinos a partir de você** — respostas aos pontos fracos do método (análise completa em `docs/METODO.md`):
+- *Reescrever*: páginas escritas em português voltam depois de 2 dias; a pessoa reescreve na língua, sem olhar, e vê se melhorou.
+- *Variações*: as frases da própria pessoa mudam de pessoa e de tempo (eu → ela → nós → eles; presente ↔ passado), traduzidas e treinadas — gramática a partir do próprio texto (`variacoes` em `linguistica.js`).
+- *Ler*: qualquer texto que interessa à pessoa (letra, notícia, receita) vira leitura alinhada palavra por palavra; tocar guarda no vocabulário. A entrada vem do interesse dela.
+- *Falar*: ouvir a frase devagar e normal, repetir, gravar a própria voz e comparar (no aparelho; o APK tem permissão de microfone).
+- *Meus erros*: tipos de erro que se repetem no diário e os itens que mais escapam nas lições.
+- *Mapa*: o que a pessoa já consegue dizer por área da vida, com desafios para as áreas vazias.
+- *Medidor de confiança*: cada tradução é traduzida de volta; se não bate, o app avisa “tradução incerta” para a pessoa não decorar erro.
 
 **A raiz: escada de 3 degraus por língua**
 1. *Pronomes* — tabela com áudio e notas do que muda em cada língua.

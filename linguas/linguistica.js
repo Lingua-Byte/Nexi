@@ -477,3 +477,83 @@ function confereTerminacao(langId, pron, word) {
   if (langId === 'it' && want === '2s') fix = fix.replace(/ii$/, 'i').replace(/ci$/, stem.endsWith('c') ? 'chi' : 'ci').replace(/gi$/, stem.endsWith('g') ? 'ghi' : 'gi');
   return { fix, why: `Com “${pron}” (${PESSOA_PT[want]}), a terminação é “-${P[want]}”: “${fix}”. “${word}” é a forma de ${PESSOA_PT[best.p]}.` };
 }
+
+/* ——— Variações: a frase da pessoa muda de pessoa e de tempo ———
+   “Eu acordei cedo e fui correr” → “Ela acordou cedo e foi correr” / “Nós acordamos…” / “Eu acordo cedo…”.
+   Saber uma língua é conseguir variar o que se diz, não decorar a frase. */
+const VAR_PESSOAS = { eu: 'eu', ele: '3s', ela: '3s', você: '3s', 'a gente': '3s', nós: 'nós', eles: '3p', elas: '3p', vocês: '3p' };
+/* lugar da conjugação para (pessoa, tempo); null = sem forma segura */
+function lugar(pessoa, tempo, lemma) {
+  const T = { pres: { eu: 0, '3s': 1, nós: 2, '3p': 3 }, pret: { eu: 4, '3s': 5, '3p': 6, nós: null }, imp: { eu: 7, '3s': 7, '3p': 8, nós: null } };
+  return T[tempo][pessoa];
+}
+const NOS_PRET = { ser: 'fomos', ir: 'fomos', ter: 'tivemos', fazer: 'fizemos', estar: 'estivemos', poder: 'pudemos', querer: 'quisemos', dizer: 'dissemos', dar: 'demos', ver: 'vimos', vir: 'viemos', saber: 'soubemos', trazer: 'trouxemos', pôr: 'pusemos', caber: 'coubemos' };
+const NOS_IMP = { ser: 'éramos', ir: 'íamos', ter: 'tínhamos', vir: 'vínhamos', pôr: 'púnhamos' };
+function formaNos(lemma, tempo) {
+  // pretérito de “nós” = presente nos verbos regulares (acordamos, comemos, partimos)
+  if (tempo === 'pret') return NOS_PRET[lemma] || ptConj(lemma, 2);
+  if (tempo === 'imp') { if (NOS_IMP[lemma]) return NOS_IMP[lemma]; const e = lemma.slice(-2), r = lemma.slice(0, -2); return r + (e === 'ar' ? 'ávamos' : 'íamos'); }
+  return null;
+}
+/* palavras que parecem verbo mas quase sempre são outra coisa nesta posição */
+const NAO_VERBO = new Set(['para', 'pela', 'pelo', 'sobre', 'entre', 'como', 'casa', 'cedo', 'logo', 'mesmo', 'meio', 'certo', 'junto']);
+/* “fui/foi/foram” é ir quando vem seguido de lugar ou de infinitivo; senão é ser */
+function serOuIr(f, low, i, forms) {
+  if (!f || f.lemma !== 'ser' || !/^(fui|foi|foram|fomos)$/.test(low[i])) return f;
+  let j = i + 1; while (j < low.length && !/[\p{L}]/u.test(low[j])) j++;
+  const nx = low[j] || '';
+  if (/^(a|ao|à|aos|às|para|pra|pro|embora|lá|até|no|na|em)$/.test(nx) || (forms.get(nx) && forms.get(nx).slot === 11)) return { lemma: 'ir', slot: f.slot };
+  return f;
+}
+function variacoes(frase) {
+  const forms = ptForms();
+  const toks = frase.match(/[\p{L}]+|[^\p{L}]+/gu) || [];
+  const low = toks.map(t => t.toLowerCase());
+  // acha o primeiro verbo conjugado (não infinitivo nem gerúndio)
+  let vi = -1, info = null;
+  for (let i = 0; i < toks.length; i++) {
+    const f = NAO_VERBO.has(low[i]) ? null : serOuIr(forms.get(low[i]), low, i, forms);
+    if (f && f.slot <= 8) { vi = i; info = f; break; }
+  }
+  if (!info) return [];
+  const slotTempo = s => (s <= 3 ? 'pres' : s <= 6 ? 'pret' : 'imp');
+  const slotPessoa = s => ({ 0: 'eu', 1: '3s', 2: 'nós', 3: '3p', 4: 'eu', 5: '3s', 6: '3p', 7: '3s', 8: '3p' })[s];
+  // sujeito: pronome logo antes do verbo (ou oculto)
+  let pi = -1, sujeito = null;
+  for (let j = vi - 1; j >= 0 && j >= vi - 4; j--) { if (VAR_PESSOAS[low[j]]) { pi = j; sujeito = VAR_PESSOAS[low[j]]; break; } }
+  let tempo = slotTempo(info.slot), pessoa = sujeito || slotPessoa(info.slot);
+  if (info.slot === 7 && !sujeito) pessoa = 'eu';
+  // todos os verbos da frase na mesma pessoa e tempo mudam juntos
+  const alvo = toks.map((t, i) => { const f = NAO_VERBO.has(low[i]) ? null : serOuIr(forms.get(low[i]), low, i, forms); return f && f.slot <= 8 && slotTempo(f.slot) === tempo && (slotPessoa(f.slot) === pessoa || (f.slot === 7 && pessoa === 'eu')) || i === vi ? f : null; });
+  // sujeito que é um nome (“Meus pais moram…”): só dá para variar o tempo, não a pessoa
+  const antes = toks.slice(0, vi).join('').replace(ADV_INICIO, '').trim();
+  const temNome = pi < 0 && /[\p{L}]/u.test(antes);
+  const monta = (novaPessoa, novoTempo, pron) => {
+    const out = toks.slice();
+    for (let i = 0; i < toks.length; i++) {
+      const f = alvo[i]; if (!f) continue;
+      const s = novaPessoa === 'nós' ? null : lugar(novaPessoa, novoTempo, f.lemma);
+      const nova = novaPessoa === 'nós' && (novoTempo === 'pres' ? ptConj(f.lemma, 2) : formaNos(f.lemma, novoTempo)) || (s !== null && s !== undefined ? ptConj(f.lemma, s) : null);
+      if (!nova) return null;
+      out[i] = /^\p{Lu}/u.test(toks[i]) ? nova.charAt(0).toUpperCase() + nova.slice(1) : nova;
+    }
+    let txt;
+    if (pi >= 0) { out[pi] = /^\p{Lu}/u.test(toks[pi]) ? pron.charAt(0).toUpperCase() + pron.slice(1) : pron; txt = out.join(''); }
+    else if (temNome) txt = out.join('');
+    else if (vi === 0) { txt = out.join(''); txt = pron.charAt(0).toUpperCase() + pron.slice(1) + ' ' + txt.charAt(0).toLowerCase() + txt.slice(1); }
+    else { out[vi] = pron + ' ' + out[vi].toLowerCase(); txt = out.join(''); }
+    if (novoTempo === 'pres' && tempo !== 'pres') txt = txt.replace(U(/\bontem\b/g), 'hoje').replace(U(/\bOntem\b/g), 'Hoje');
+    return txt.replace(/\s{2,}/g, ' ');
+  };
+  const nomeTempo = { pres: 'presente', pret: 'passado', imp: 'passado contínuo' };
+  const res = [];
+  const add = (p, t, pron, label) => { const v = monta(p, t, pron); if (v && v !== frase && !res.some(r => r.pt === v)) res.push({ pt: v, label }); };
+  if (!temNome) {
+    if (pessoa !== '3s') add('3s', tempo, 'ela', `outra pessoa: ela · ${nomeTempo[tempo]}`);
+    if (pessoa !== 'nós') add('nós', tempo, 'nós', `nós · ${nomeTempo[tempo]}`);
+    if (pessoa !== '3p') add('3p', tempo, 'eles', `eles · ${nomeTempo[tempo]}`);
+  }
+  const outroTempo = tempo === 'pres' ? 'pret' : 'pres';
+  add(pessoa === 'nós' ? 'nós' : pessoa, outroTempo, ({ eu: 'eu', '3s': 'ela', nós: 'nós', '3p': 'eles' })[pessoa], `${({ eu: 'eu', '3s': 'ela', nós: 'nós', '3p': 'eles' })[pessoa]} · ${nomeTempo[outroTempo]}`);
+  return res.slice(0, 4);
+}

@@ -10,6 +10,7 @@
   const DEFAULT_VERBS = ['ter', 'querer', 'ir', 'fazer', 'poder', 'gostar'];
   /* Novidades — a mais nova primeiro. Aparecem num aviso quando o app se atualiza. */
   const NEWS = [
+    { v: '2.4', t: 'treinos a partir de você: reescrever, variações, ler, falar, meus erros, mapa e medidor de confiança' },
     { v: '2.3', t: 'o diário libera palavras e conceitos: coleção, palavras vizinhas, missões, nível e Pares' },
     { v: '2.2', t: 'o diário é o centro: escreva em português ou na língua, toque numa palavra e ela acende na outra' },
     { v: '2.1', t: 'o contexto passa de uma frase para a outra (sujeito oculto) · “o próximo”' },
@@ -75,11 +76,11 @@
   let voices = [];
   function loadVoices() { try { voices = speechSynthesis.getVoices(); } catch (e) { voices = []; } }
   if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-  function speak(text, L) {
+  function speak(text, L, rate = .85) {
     if (!('speechSynthesis' in window)) { toast('Seu navegador não tem voz.'); return; }
     const clean = String(text).replace(/〜|~/g, '').replace(/\s*\/\s*/g, ', ');
     const u = new SpeechSynthesisUtterance(clean);
-    u.lang = L.tts; u.rate = .85;
+    u.lang = L.tts; u.rate = rate;
     const pre = L.tts.slice(0, 2);
     const v = voices.find(v => v.lang === L.tts) || voices.find(v => v.lang && v.lang.toLowerCase().startsWith(pre));
     if (v) u.voice = v; else if (voices.length) toast('Sem voz de ' + L.name + ' neste aparelho — instale nas configurações.');
@@ -115,6 +116,7 @@
   function items(L, step) {
     const out = [];
     if (step === 4) return Object.values(LS(L.id).vocab || {}).map(v => ({ id: 'w:' + v.pt, pt: v.pt, t: v.t, r: v.r || '' }));
+    if (step === 5) return (LS(L.id).vars || []).map(v => ({ id: 'x:' + v.id, pt: v.pt, t: v.t, r: '' }));
     if (step === 1) {
       L.pron.forEach((t, i) => out.push({ id: 'p' + i, pt: PT_PRON[i], t, r: L.pronR ? L.pronR[i] : '' }));
     } else if (step === 2) {
@@ -170,6 +172,7 @@
     1: { t: 'Pronomes', k: 'Eu · você · ele · ela…', d: 'Quem fala, com quem, sobre quem. Toda frase começa aqui.' },
     2: { t: 'Ser & Estar', k: 'O verbo que liga tudo', d: 'Eu sou, eu estou. Os dois verbos que sustentam a língua.' },
     4: { t: 'Meu vocabulário', k: 'Do seu diário', d: 'As palavras que vieram da sua vida.' },
+    5: { t: 'Variações', k: 'Da sua frase', d: 'As suas frases em outras pessoas e tempos.' },
     3: { t: 'Meus verbos', k: 'Do que eu falo', d: 'Escreva qualquer frase do seu dia: o app acha os verbos e transforma em lição.' }
   };
 
@@ -187,6 +190,12 @@
       if (h[2] === 'c') return renderColecao(L);
       if (h[2] === 'v') return renderVocab(L);
       if (h[2] === 'g') return renderPares(L);
+      if (h[2] === 'w') return renderReescrever(L);
+      if (h[2] === 'x') return renderVariacoes(L);
+      if (h[2] === 'r') return renderLer(L);
+      if (h[2] === 'f') return renderFalar(L);
+      if (h[2] === 'e') return renderErros(L);
+      if (h[2] === 'm') return renderMapa(L);
       return renderLang(L);
     }
     setLangColors(null); renderHome();
@@ -256,6 +265,7 @@
         <span class="jc-count mono">${(n => `${n} página${n === 1 ? '' : 's'}`)((LS(L.id).journal || []).length)}</span>
       </a>
       ${painelHTML(L)}
+      ${treinosHTML(L)}
       <div class="section-h" style="margin:26px 0 10px"><h2>A raiz</h2><span class="kicker muted">a base que sustenta tudo</span></div>
       <div class="stairs">
         ${[1, 2, 3].map(s => {
@@ -456,7 +466,10 @@
       const { found, rewritten } = conceitos(comSujeito[si]);
       const al = await mtAligned('pt', L.id, rewritten);
       const t = al.text;
-      out.sentences.push({ pt: s, via: rewritten !== s ? rewritten : '', t, r: roman(L, t), src: al.src, toks: al.toks, conceitos: found.map(c => c.id) });
+      // confiança: traduz de volta e compara com o que foi dito (protege de aprender erro do tradutor)
+      const back = clean(await mt(L.id, 'pt', t));
+      const conf = diffWords(rewritten.replace(/[.!?…]+$/, ''), back).score;
+      out.sentences.push({ pt: s, via: rewritten !== s ? rewritten : '', t, r: roman(L, t), src: al.src, toks: al.toks, conceitos: found.map(c => c.id), back, conf });
       for (const c of found) {
         if (out.concepts.some(x => x.id === c.id)) continue;
         const ex = exemplo(c);
@@ -515,6 +528,7 @@
         ${out.sentences.map(s => `<div class="tr-row">
           ${s.via ? `<div class="tr-pt">${esc(s.pt)}</div><div class="tr-via">o app entendeu como: <i>${esc(s.via)}</i></div>` : ''}
           ${s.toks ? interHTML(s.src, s.toks, '', rtl, 'português', L.name.toLowerCase()) : `<div class="tr-pt">${esc(s.pt)}</div>`}
+          ${s.conf !== undefined ? (s.conf < 45 ? `<div class="conf low">⚠ Tradução incerta — traduzindo de volta, o app entendeu: <i>${esc(s.back)}</i>. Confira antes de decorar; tente dizer de outro jeito.</div>` : `<div class="conf ok">✓ confiável · de volta: <i>${esc(s.back)}</i></div>`) : ''}
           <button class="tr-tg" data-say="${esc(s.t)}" ${rtl}>${s.r ? `<small dir="ltr">${esc(s.r)}</small>` : '<small>ouvir a frase</small>'}<span class="spk">${I.sound}</span></button>
         </div>`).join('')}
         ${out.concepts.length ? `<div class="subh">Conceitos <span class="kicker">sentido, não palavra</span></div>
@@ -794,8 +808,8 @@
       ${topbar(`#/l/${L.id}`, L.name)}
       <div class="enter">
         <div class="kicker muted">Diário · ${esc(L.name)}</div>
-        <h1 class="title-xl">Minha vida <em>em ${esc(lname)}</em></h1>
-        <p class="lead">Escreva o seu dia, o que pensa, o que sente — <b>em português</b> ou <b>em ${esc(lname)}</b>. O diário descobre a língua e mostra o que é o quê.</p>
+        <h1 class="title-xl">${opts.rewriteOf ? 'Reescrever' : 'Minha vida'} <em>em ${esc(lname)}</em></h1>
+        ${opts.banner || `<p class="lead">Escreva o seu dia, o que pensa, o que sente — <b>em português</b> ou <b>em ${esc(lname)}</b>. O diário descobre a língua e mostra o que é o quê.</p>`}
         <div class="diary journal">
           <div class="jdate mono">${esc(date)}</div>
           <textarea id="jtext" lang="${L.tts}" placeholder="${esc(opts.placeholder || `Ex.: Hoje acordei cansado, mas tomei um café e fui trabalhar…`)}" aria-label="Diário">${esc(opts.text ?? (cur ? cur.text : ''))}</textarea>
@@ -891,7 +905,8 @@
       try {
         if (lang === 'pt') {
           const out = await analisar(L, c.text);
-          note(c.text); save(); showPt(c, out);
+          c.tr = out.sentences.map(s => s.t).join(' ');
+          note(c.text); save(); showPt(c, out); marcarDominios(L, c.text);
           colher(L, c.text, out).catch(() => {});
         } else {
           const issues = localCheck(L, c.text) || [];
@@ -909,6 +924,14 @@
           const n = issues.length + (d && d.score < 70 ? 1 : 0);
           const fx = { text: c.text, meant: c.meant, back, src: al.src, toks: al.toks, ref, sim, issues, concepts, n, ok: !issues.length && (!ref || (d && d.score >= 70)) && (!c.meant || sim >= 55) };
           c.fix = fx; save(); showTg(fx);
+          registrarErros(L, issues, d && d.score < 70 ? `“${c.text}” → “${ref}”` : '');
+          marcarDominios(L, c.meant || c.text);
+          if (opts.rewriteOf) {
+            const orig = st.journal.find(j => j.id === opts.rewriteOf);
+            if (orig) { orig.rew = Date.now(); orig.tries = orig.tries || []; const score = ref ? diffWords(c.text, ref).score : sim; orig.tries.unshift({ d: Date.now(), text: c.text, score }); save();
+              contar(L, 'reescrever'); ganharXP(L, 20);
+              celebrar({ icone: '✍', kicker: 'Página reescrita', titulo: `${score}% parecida com o natural`, corpo: orig.tries[1] ? `Da última vez: ${orig.tries[1].score}%. ${score > orig.tries[1].score ? 'Você melhorou!' : 'Continue — a próxima volta em uma semana.'}` : 'Ela volta em uma semana para você ver o quanto melhorou.' }); }
+          }
           const nFr = frases(c.text).length; contar(L, 'alvo', nFr); contar(L, 'frases', nFr); ganharXP(L, 15 * nFr);
         }
       } catch (e) {
@@ -954,7 +977,11 @@
     { id: 'palavras', t: 'Ganhe 5 palavras novas', meta: 5 },
     { id: 'conceitos', t: 'Descubra 1 conceito', meta: 1 },
     { id: 'pares', t: 'Vença uma partida de Pares', meta: 1 },
-    { id: 'alvo', t: `Escreva 1 frase em ${L.name.toLowerCase()}`, meta: 1 }
+    { id: 'alvo', t: `Escreva 1 frase em ${L.name.toLowerCase()}`, meta: 1 },
+    { id: 'reescrever', t: 'Reescreva uma página antiga', meta: 1 },
+    { id: 'ler', t: `Leia um texto em ${L.name.toLowerCase()}`, meta: 1 },
+    { id: 'falar', t: 'Grave 3 frases em voz alta', meta: 3 },
+    { id: 'variar', t: 'Acerte 5 variações', meta: 5 }
   ];
   function missoesDoDia(L) {
     const k = hojeK() + L.id; let h = 0; for (const c of k) h = (h * 31 + c.charCodeAt(0)) >>> 0;
@@ -1163,10 +1190,242 @@
     });
   }
 
+  /* ——— TREINOS A PARTIR DE VOCÊ (respostas aos pontos fracos do método — ver docs/METODO.md) ——— */
+  const PERGUNTAS = {
+    cozinha: 'O que você comeu hoje? Quem cozinha na sua casa?', casa: 'Como é a sua casa? Qual o seu canto preferido?',
+    familia: 'Fale de alguém da sua família.', trabalho: 'O que você faz no trabalho? Como foi a semana?',
+    estudo: 'O que você está estudando ou quer aprender?', transporte: 'Como você chega aos lugares? Conte o caminho.',
+    clima: 'Como está o tempo aí? Qual estação você prefere?', saude: 'Como você está se sentindo? Ficou doente esse ano?',
+    emocoes: 'Como você está se sentindo hoje, de verdade?', lazer: 'O que você faz para se divertir?',
+    compras: 'O que você comprou essa semana?', natureza: 'Qual lugar na natureza você ama?',
+    corpo: 'Você pratica algum exercício? Algo dói?', roupas: 'O que você está vestindo hoje?',
+    horas: 'Como é a sua rotina, da manhã à noite?', cidade: 'Como é a sua cidade ou o seu bairro?',
+    conversa: 'Com quem você conversou hoje? Sobre o quê?', esporte: 'Você pratica ou assiste algum esporte?',
+    bichos: 'Você tem ou já teve um bicho?', viagem: 'Qual viagem você nunca esqueceu?'
+  };
+  const DIA = 864e5;
+  /* páginas antigas prontas para reescrever: escritas em português há 2+ dias, não reescritas na última semana */
+  function paraReescrever(L) {
+    const st = LS(L.id), now = Date.now();
+    return (st.journal || []).filter(j => j.lang === 'pt' && now - j.d > 2 * DIA && (!j.rew || now - j.rew > 7 * DIA)).sort((a, b) => a.d - b.d);
+  }
+  /* erros: guarda o tipo de cada correção para mostrar o que a pessoa erra sempre */
+  function tipoErro(e) {
+    if (/terminação/.test(e.why)) return 'Terminação do verbo na pessoa certa';
+    if (/j’/.test(e.why)) return 'Elisão do francês (je → j’)';
+    if (/maiúsculo/.test(e.why)) return '“I” sempre maiúsculo';
+    if (/o verbo .* fica/.test(e.why)) return 'Verbo combinando com o pronome';
+    return 'Outros';
+  }
+  function registrarErros(L, issues, frase) {
+    const st = LS(L.id); st.errs = st.errs || {};
+    issues.forEach(e => { const k = tipoErro(e); const r = st.errs[k] = st.errs[k] || { n: 0, ex: [] }; r.n++; r.ex.unshift({ orig: e.orig, fix: e.fix, why: e.why }); r.ex = r.ex.slice(0, 4); });
+    if (frase) { const r = st.errs['Frase diferente do jeito natural'] = st.errs['Frase diferente do jeito natural'] || { n: 0, ex: [] }; r.n++; r.ex.unshift(frase); r.ex = r.ex.slice(0, 4); }
+    save();
+  }
+  /* domínio da vida de cada frase do diário (para o mapa do que a pessoa consegue dizer) */
+  function marcarDominios(L, text) {
+    const g = G(L); g.dom = g.dom || {};
+    const words = new Set(falado(text).toLowerCase().match(/[\p{L}]+/gu) || []);
+    CAMPOS.forEach(c => { if (c.gatilho.split(' ').concat(c.palavras).some(w => words.has(w))) g.dom[c.id] = (g.dom[c.id] || 0) + 1; });
+    save();
+  }
+
+  function treinosHTML(L) {
+    const n = paraReescrever(L).length;
+    return `<div class="treinos">
+      <div class="kicker muted">Treinos a partir de você</div>
+      <div class="t-grid">
+        <a class="t-btn ${n ? 'hot' : ''}" href="#/l/${L.id}/w"><b>✍</b><span>Reescrever</span><small>${n ? `${n} página${n > 1 ? 's' : ''} pronta${n > 1 ? 's' : ''}` : 'páginas antigas voltam'}</small></a>
+        <a class="t-btn" href="#/l/${L.id}/x"><b>⇄</b><span>Variações</span><small>sua frase em outras pessoas e tempos</small></a>
+        <a class="t-btn" href="#/l/${L.id}/r"><b>📖</b><span>Ler</span><small>um texto que você ama</small></a>
+        <a class="t-btn" href="#/l/${L.id}/f"><b>🎙</b><span>Falar</span><small>ouvir, repetir, gravar</small></a>
+        <a class="t-btn" href="#/l/${L.id}/e"><b>⚠</b><span>Meus erros</span><small>o que você erra sempre</small></a>
+        <a class="t-btn" href="#/l/${L.id}/m"><b>🗺</b><span>Mapa</span><small>o que você já consegue dizer</small></a>
+      </div></div>`;
+  }
+
+  /* ✍ Reescrever: a página antiga volta; a pessoa escreve de novo sem olhar e compara */
+  function renderReescrever(L) {
+    const lista = paraReescrever(L);
+    if (!lista.length) {
+      $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="enter"><div class="kicker muted">Reescrever · ${esc(L.name)}</div><h1 class="title-xl">Nada para <em>reescrever</em></h1>
+        <p class="lead">Páginas que você escreve em português no diário voltam aqui depois de dois dias. Aí você as reescreve em ${esc(L.name.toLowerCase())}, sem olhar, e vê o quanto já consegue.</p>
+        <a class="cta" href="#/l/${L.id}/d">${I.pen}Escrever no diário</a></div>`;
+      return;
+    }
+    const e = lista[0], dias = Math.round((Date.now() - e.d) / DIA);
+    renderDiary(L, null, { text: '', meant: e.text, rewriteOf: e.id, placeholder: `Reescreva em ${L.name.toLowerCase()}, sem olhar a tradução…`,
+      banner: `<div class="rew-banner"><div class="kicker">Reescrever · há ${dias} dia${dias === 1 ? '' : 's'}</div><p>“${esc(e.text)}”</p><span>Escreva isso em ${esc(L.name.toLowerCase())}, sem olhar. O diário compara com o que você quis dizer${e.tries && e.tries.length ? ` e com a sua tentativa anterior (${e.tries[0].score}% parecida)` : ''}.</span></div>` });
+  }
+
+  /* ⇄ Variações: as frases da própria pessoa em outras pessoas e tempos */
+  async function renderVariacoes(L) {
+    const st = LS(L.id), rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    st.vars = st.vars || [];
+    const fontes = [...(st.journal || []).filter(j => j.lang === 'pt').flatMap(j => frases(j.text)), ...(st.mySentences || []).map(s => s.pt)];
+    const vistas = new Set(); const bases = [];
+    for (const f of fontes) { const k = f.trim(); if (vistas.has(k)) continue; vistas.add(k); const vs = variacoes(falado(k)); if (vs.length) bases.push({ pt: k, vs }); if (bases.length >= 4) break; }
+    $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="enter">
+      <div class="kicker muted">Variações · ${esc(L.name)}</div>
+      <h1 class="title-xl">A sua frase, <em>de outro jeito</em></h1>
+      <p class="lead">Decorar a frase não é saber a língua. Saber é conseguir variar: outra pessoa, outro tempo. As variações saem das <b>suas</b> frases.</p>
+      <div id="vres">${bases.length ? '<div class="thinking"><span></span><span></span><span></span> montando as variações no seu celular</div>' : `<div class="note"><span class="kicker">Ainda sem frases</span>Escreva no diário em português; as suas frases viram variações aqui.</div><a class="cta" href="#/l/${L.id}/d">${I.pen}Ir para o diário</a>`}</div>
+      ${motorCard(L)}</div>`;
+    bindMotor(L);
+    if (!bases.length) return;
+    if (!(await motorReady(L))) { document.getElementById('vres').innerHTML = `<div class="note"><span class="kicker">Falta o tradutor interno</span>Baixe o tradutor de ${esc(L.name.toLowerCase())} (logo abaixo).</div>`; return; }
+    const tr = async pt => clean(await mt('pt', L.id, conceitos(falado(pt)).rewritten));
+    let html = '', n = 0;
+    for (const b of bases) {
+      const bt = await tr(b.pt);
+      const vs = [];
+      for (const v of b.vs) { const t = await tr(v.pt); vs.push({ ...v, t }); if (!st.vars.some(x => x.pt === v.pt)) { st.vars.push({ id: Date.now().toString(36) + 'x' + (n++), pt: v.pt, t, base: b.pt }); } }
+      html += `<div class="varcard"><div class="vbase"><span class="kicker">a sua frase</span><b>${esc(b.pt)}</b><button class="vt" data-say="${esc(bt)}" ${rtl}>${esc(bt)}</button></div>
+        ${vs.map(v => `<div class="vrow"><span class="kicker">${esc(v.label)}</span><span class="vpt2">${esc(v.pt)}</span><button class="vt" data-say="${esc(v.t)}" ${rtl}>${esc(v.t)}</button></div>`).join('')}</div>`;
+    }
+    st.vars = st.vars.slice(-150); save();
+    document.getElementById('vres').innerHTML = html + `<button class="cta" id="vgo">${I.flip}Treinar as variações</button>`;
+    bindSay(L);
+    document.getElementById('vgo').onclick = () => go(`#/l/${L.id}/l/5`);
+  }
+
+  /* 📖 Ler: a entrada vem do interesse da pessoa — qualquer texto na língua vira leitura interativa */
+  function renderLer(L) {
+    const st = LS(L.id), rtl = L.dir === 'rtl' ? 'dir="rtl"' : '', lname = L.name.toLowerCase();
+    st.leituras = st.leituras || [];
+    $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="enter">
+      <div class="kicker muted">Ler · ${esc(L.name)}</div>
+      <h1 class="title-xl">Ler o que <em>você ama</em></h1>
+      <p class="lead">Cole qualquer texto em ${esc(lname)} que te interessa — letra de música, notícia, receita, um post. Toque nas palavras para ver o sentido e guardar no seu vocabulário.</p>
+      <div class="diary"><textarea id="ltext" lang="${L.tts}" ${rtl} placeholder="Cole aqui um texto em ${esc(lname)}…" aria-label="Texto para ler"></textarea>
+        <div class="dbar"><span class="kicker muted">até ~2000 letras</span><button class="btn on" id="lgo">${I.flip}Ler</button></div></div>
+      <div class="savebar hide" id="savebar"></div>
+      <div id="lres"></div>
+      ${st.leituras.length ? `<div class="subh">Leituras anteriores</div><div class="pages">${st.leituras.map((x, i) => `<button class="page" data-li="${i}"><span class="mono muted">${new Date(x.d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span><span class="ptxt" ${rtl}>${esc(x.text.slice(0, 60))}…</span><span></span></button>`).join('')}</div>` : ''}
+      ${motorCard(L)}</div>`;
+    bindMotor(L);
+    const ta = document.getElementById('ltext'), res = document.getElementById('lres'), bar = document.getElementById('savebar');
+    $app.querySelectorAll('[data-li]').forEach(b => b.onclick = () => { ta.value = st.leituras[+b.dataset.li].text; document.getElementById('lgo').click(); });
+    document.getElementById('lgo').onclick = async () => {
+      const txt = ta.value.trim().slice(0, 2200); if (!txt) { ta.focus(); return; }
+      if (!(await motorReady(L))) { res.innerHTML = `<div class="note"><span class="kicker">Falta o tradutor interno</span>Baixe o tradutor de ${esc(lname)} (logo abaixo).</div>`; return; }
+      const sents = txt.split(/(?<=[.!?…。！？])\s*|\n+/).map(s => s.trim()).filter(Boolean).slice(0, 25);
+      res.innerHTML = '<div class="thinking"><span></span><span></span><span></span> preparando a leitura</div>';
+      let html = '<p class="il-hint">Toque numa palavra: ela acende, fala e você pode guardar.</p>';
+      for (const s of sents) { const al = await mtAligned(L.id, 'pt', s); html += `<div class="tr-row">${interHTML(al.src, al.toks, rtl, '', lname, 'sentido')}</div>`; }
+      res.innerHTML = html;
+      bindInter(res, L, L.id);
+      res.querySelectorAll('.il-src .w').forEach(w => w.addEventListener('click', () => {
+        const box = w.closest('.inter');
+        const alvo = [...box.querySelectorAll('.il-src .w.on')].map(x => x.textContent).join(' ').replace(/[.,!?;:¿¡«»"“”()]+/g, '').trim();
+        const sentido = [...box.querySelectorAll('.il-tg .w.on')].map(x => x.textContent).join(' ').replace(/[.,!?;:¿¡«»"“”()]+/g, '').trim();
+        if (!alvo) return;
+        bar.classList.remove('hide');
+        bar.innerHTML = `<span ${rtl}><b>${esc(alvo)}</b> = ${esc(sentido || '?')}</span><button class="btn on" id="lsave">${I.plus}Guardar</button>`;
+        document.getElementById('lsave').onclick = () => {
+          const key = (sentido || alvo).toLowerCase();
+          if (!st.vocab[key]) { st.vocab[key] = { pt: key, t: alvo, r: roman(L, alvo), src: 'leitura', d: Date.now() }; save(); contar(L, 'palavras'); ganharXP(L, 3); toast(`“${alvo}” no seu vocabulário`); }
+          else toast('Já está no vocabulário.');
+          bar.classList.add('hide');
+        };
+      }));
+      if (!st.leituras.some(x => x.text === txt)) { st.leituras.unshift({ d: Date.now(), text: txt }); st.leituras = st.leituras.slice(0, 20); save(); }
+      contar(L, 'ler'); ganharXP(L, 3 * sents.length);
+    };
+  }
+
+  /* 🎙 Falar: ouvir a própria frase na voz da língua, repetir, gravar e comparar — tudo no aparelho */
+  function renderFalar(L) {
+    const st = LS(L.id), rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    const pool = [...(st.mySentences || []), ...(st.vars || [])].filter(x => x.t).slice(-40);
+    const lista = shuffle(pool).slice(0, 5);
+    let k = 0, rec = null, chunks = [], url = null;
+    const show = () => {
+      if (url) { URL.revokeObjectURL(url); url = null; }
+      if (k >= lista.length) {
+        $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="finish enter"><div class="kicker muted">Falar</div><div class="seal"><div><b>${lista.length}</b><span>frases faladas</span></div></div>
+          <h1 class="title-xl">A boca também aprende.</h1><p class="lead">Repita em voz alta todo dia: o ouvido e a pronúncia crescem junto com o vocabulário.</p>
+          <button class="cta" id="fmore">${I.flip}Mais frases</button></div>`;
+        document.getElementById('fmore').onclick = () => renderFalar(L); return;
+      }
+      const it = lista[k];
+      $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name, `<span class="score mono">${k + 1}/${lista.length}</span>`)}<div class="enter">
+        <div class="kicker muted">Falar · ${esc(L.name)}</div>
+        <div class="fala"><div class="f-pt">${esc(it.pt)}</div><div class="f-tg" ${rtl}>${esc(it.t)}</div></div>
+        <div class="f-steps">
+          <button class="btn" id="f1">${I.sound}1 · Ouvir devagar</button>
+          <button class="btn" id="f2">${I.sound}Ouvir normal</button>
+          <button class="btn on" id="f3">🎙 2 · Gravar a minha voz</button>
+          <button class="btn hide" id="f4">▶ 3 · Ouvir a minha</button>
+        </div>
+        <p class="muted" style="font-size:14px">Ouça, repita junto em voz alta, depois grave e compare com a voz da língua. A gravação fica só no seu celular.</p>
+        <button class="cta" id="fnext">Próxima frase</button></div>`;
+      document.getElementById('f1').onclick = () => speak(it.t, L, .6);
+      document.getElementById('f2').onclick = () => speak(it.t, L, .9);
+      const b3 = document.getElementById('f3'), b4 = document.getElementById('f4');
+      b3.onclick = async () => {
+        if (rec && rec.state === 'recording') { rec.stop(); return; }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          rec = new MediaRecorder(stream); chunks = [];
+          rec.ondataavailable = e => chunks.push(e.data);
+          rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); url = URL.createObjectURL(new Blob(chunks, { type: rec.mimeType })); b3.innerHTML = '🎙 Gravar de novo'; b4.classList.remove('hide'); contar(L, 'falar'); ganharXP(L, 4); };
+          rec.start(); b3.innerHTML = '■ Parar a gravação'; setTimeout(() => { if (rec.state === 'recording') rec.stop(); }, 8000);
+        } catch (e) { toast('Sem acesso ao microfone. Repita em voz alta junto com a voz.'); contar(L, 'falar'); }
+      };
+      b4.onclick = () => { if (url) new Audio(url).play(); };
+      document.getElementById('fnext').onclick = () => { k++; show(); };
+      speak(it.t, L, .8);
+    };
+    if (!lista.length) {
+      $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="enter"><div class="kicker muted">Falar</div><h1 class="title-xl">Primeiro, <em>escreva</em></h1>
+        <p class="lead">As frases para falar vêm do seu diário. Escreva em português e guarde na lição; elas aparecem aqui.</p><a class="cta" href="#/l/${L.id}/d">${I.pen}Ir para o diário</a></div>`;
+      return;
+    }
+    show();
+  }
+
+  /* ⚠ Meus erros: os tipos de erro que se repetem e os itens que mais escapam */
+  function renderErros(L) {
+    const st = LS(L.id), errs = Object.entries(st.errs || {}).sort((a, b) => b[1].n - a[1].n);
+    const todos = {}; [1, 2, 3, 4, 5].forEach(s => items(L, s).forEach(it => { todos[it.id] = it; }));
+    const piores = Object.entries(st.prog || {}).filter(([id, p]) => p.miss && todos[id]).sort((a, b) => b[1].miss - a[1].miss).slice(0, 10);
+    const rtl = L.dir === 'rtl' ? 'dir="rtl"' : '';
+    $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="enter">
+      <div class="kicker muted">Meus erros · ${esc(L.name)}</div>
+      <h1 class="title-xl">O que eu <em>erro sempre</em></h1>
+      <p class="lead">Errar é o caminho. Mas erro que se repete vira vício — então o app mostra os seus padrões, para você atacar um de cada vez.</p>
+      ${errs.length ? `<div class="subh">No diário</div>${errs.map(([k, r]) => `<div class="errtype"><div class="et-h"><b>${esc(k)}</b><span class="mono">${r.n}×</span></div>
+        ${r.ex.map(e => typeof e === 'string' ? `<p class="muted">${esc(e)}</p>` : `<div class="err"><div ${rtl}><s>${esc(e.orig)}</s> <span class="arrow">→</span> <b>${esc(e.fix)}</b></div><p>${esc(e.why)}</p></div>`).join('')}</div>`).join('')}` : '<p class="muted">Nenhum erro do diário registrado ainda. Escreva na língua e toque em “Ver o que é o quê”.</p>'}
+      ${piores.length ? `<div class="subh">Nas lições: os que mais escapam</div><div class="vocs">${piores.map(([id, p]) => `<button class="voc" data-say="${esc(todos[id].t)}"><span class="v-ic">${p.miss}×</span><span class="v-pt">${esc(todos[id].pt)}</span><span class="v-tg" ${rtl}>${esc(todos[id].t)}</span></button>`).join('')}</div>
+        <p class="muted" style="font-size:14px">Esses itens voltam mais vezes nas lições até ficarem firmes.</p>` : ''}
+    </div>`;
+    bindSay(L);
+  }
+
+  /* 🗺 Mapa: o que a pessoa já consegue dizer, por área da vida — e desafios para as áreas vazias */
+  function renderMapa(L) {
+    const g = G(L), st = LS(L.id), dom = g.dom || {};
+    const vocabPorCampo = {}; Object.values(st.vocab || {}).forEach(v => { const c = v.campo || (CAMPOS.find(c => c.gatilho.split(' ').includes(v.pt) || c.palavras.includes(v.pt)) || {}).id; if (c) vocabPorCampo[c] = (vocabPorCampo[c] || 0) + 1; });
+    const linhas = CAMPOS.map(c => ({ c, frases: dom[c.id] || 0, palavras: vocabPorCampo[c.id] || 0 })).map(x => ({ ...x, pts: x.frases * 3 + x.palavras }));
+    const max = Math.max(10, ...linhas.map(x => x.pts));
+    const vazias = linhas.filter(x => x.pts < 3).slice(0, 3);
+    $app.innerHTML = `${topbar(`#/l/${L.id}`, L.name)}<div class="enter">
+      <div class="kicker muted">Mapa · ${esc(L.name)}</div>
+      <h1 class="title-xl">O que eu já <em>consigo dizer</em></h1>
+      <p class="lead">Cada área da vida cresce quando você escreve sobre ela e aprende as palavras vizinhas. As áreas vazias são o seu próximo desafio.</p>
+      ${vazias.length ? `<div class="subh">Desafios para hoje</div>${vazias.map(x => `<button class="desafio" data-c="${x.c.id}"><span>${x.c.icone}</span><div><b>${esc(x.c.nome)}</b><small>${esc(PERGUNTAS[x.c.id])}</small></div></button>`).join('')}` : ''}
+      <div class="subh">Todas as áreas</div>
+      <div class="mapa">${linhas.sort((a, b) => b.pts - a.pts).map(x => `<div class="m-row2"><span class="m-ic">${x.c.icone}</span><span class="m-nm">${esc(x.c.nome)}</span><span class="meter"><i style="width:${Math.round(x.pts / max * 100)}%"></i></span><small class="mono">${x.frases}f · ${x.palavras}p</small></div>`).join('')}</div>
+    </div>`;
+    $app.querySelectorAll('[data-c]').forEach(b => b.onclick = () => renderDiary(L, null, { text: '', placeholder: PERGUNTAS[b.dataset.c] + ' (em português ou em ' + L.name.toLowerCase() + ')', banner: `<div class="rew-banner"><div class="kicker">Desafio · ${esc(CAMPOS.find(c => c.id === b.dataset.c).nome)}</div><p>${esc(PERGUNTAS[b.dataset.c])}</p></div>` }));
+  }
+
   /* ——— LIÇÃO INTERATIVA: certo ou errado, conferido na hora ——— */
   function applyGrade(st, it, g) {
     const p = st.prog[it.id] || { b: 0, due: 0 };
-    if (g === 3) p.b = Math.min(p.b + 1, 6); else if (g === 1) p.b = 1; else p.b = Math.max(p.b, 1);
+    if (g === 3) p.b = Math.min(p.b + 1, 6); else if (g === 1) { p.b = 1; p.miss = (p.miss || 0) + 1; } else p.b = Math.max(p.b, 1);
     p.due = Date.now() + BOX_DAYS[p.b] * DAY - (BOX_DAYS[p.b] ? 36e5 : 0);
     st.prog[it.id] = p; save();
   }
@@ -1311,7 +1570,7 @@
       const q = queue[k]; q.done = true;
       applyGrade(st, it, g);
       const ok = g === 3, close = g === 2;
-      if (ok) { right++; streak++; best = Math.max(best, streak); contar(L, 'acertos'); ganharXP(L, 3); } else { streak = 0; if (!close) { wrong++; if (queue.filter(x => x.it.id === it.id).length < 3 && queue.length < pickLen * 2) queue.push({ it, kind: 'choice' }); } else right++; }
+      if (ok) { right++; streak++; best = Math.max(best, streak); contar(L, 'acertos'); ganharXP(L, 3); if (step === 5) contar(L, 'variar'); } else { streak = 0; if (!close) { wrong++; if (queue.filter(x => x.it.id === it.id).length < 3 && queue.length < pickLen * 2) queue.push({ it, kind: 'choice' }); } else right++; }
       beep(ok || close);
       const lesson = $app.querySelector('.lesson'); lesson.classList.add(ok ? 'is-right' : close ? 'is-close' : 'is-wrong');
       const praise = ['Certo!', 'Isso!', 'Perfeito!', 'Muito bem!', 'Exato!'][Math.floor(Math.random() * 5)];

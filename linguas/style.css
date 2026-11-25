@@ -639,3 +639,51 @@ a.cta { text-decoration: none; }
 .faltam { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .faltam span { border: 1.5px solid var(--line); border-radius: 99px; padding: 4px 10px; font-size: 13px; background: var(--sheet); }
 .faltam b { font-family: var(--mono); }
+.conf { font-size: 13px; padding: 6px 12px; border-top: 1px dashed var(--rule); }
+.conf.ok { color: var(--muted); }
+.conf.ok::first-letter { color: var(--ok); }
+.conf.low { background: var(--close-bg); color: var(--ink); }
+
+/* ——— Treinos a partir de você ——— */
+.treinos { margin: 18px 0 4px; }
+.treinos > .kicker { margin-bottom: 8px; }
+.t-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.t-btn { display: grid; grid-template-columns: 30px 1fr; column-gap: 8px; align-items: center; padding: 10px; border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); text-decoration: none; color: var(--ink); box-shadow: 3px 3px 0 var(--line); }
+.t-btn:active { transform: translate(3px, 3px); box-shadow: none; }
+.t-btn b { grid-row: span 2; font-size: 22px; text-align: center; }
+.t-btn span { font: 800 16px/1.1 var(--serif); }
+.t-btn small { font-size: 11.5px; color: var(--muted); line-height: 1.2; }
+.t-btn.hot { background: var(--c); color: var(--c-ink); }
+.t-btn.hot small { color: var(--c-ink); opacity: .85; }
+.rew-banner { border: 2px solid var(--line); border-left: 8px solid var(--c); border-radius: var(--radius); background: var(--sheet); padding: 10px 12px; margin: 0 0 14px; }
+.rew-banner p { font: italic 600 19px/1.35 var(--serif); margin: 4px 0 6px; }
+.rew-banner span { font-size: 13.5px; color: var(--muted); }
+.varcard { border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); margin-bottom: 12px; overflow: hidden; }
+.vbase { padding: 10px 12px; background: var(--paper); border-bottom: 2px solid var(--line); }
+.vbase b { display: block; font: 700 17px/1.25 var(--serif); margin: 2px 0 4px; }
+.vrow { padding: 8px 12px; border-bottom: 1px solid var(--rule); }
+.vrow:last-child { border-bottom: 0; }
+.vrow .kicker, .vbase .kicker { color: var(--muted); font-size: 10px; }
+.vpt2 { display: block; font-size: 15px; margin: 2px 0; }
+.vt { display: block; text-align: left; border: 0; background: none; padding: 0; font: 700 19px/1.25 var(--script); color: var(--ink); }
+.vt[dir="rtl"] { text-align: right; width: 100%; }
+.savebar { position: sticky; top: 8px; z-index: 40; display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 2px solid var(--line); border-radius: var(--radius); background: var(--c); color: var(--c-ink); padding: 8px 10px; box-shadow: var(--shadow); margin-bottom: 10px; font-size: 16px; }
+.savebar .btn { background: var(--sheet); color: var(--ink); flex: none; }
+.fala { border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); box-shadow: var(--shadow); padding: 16px 14px; margin: 10px 0 14px; }
+.f-pt { font: 400 14px var(--mono); color: var(--muted); margin-bottom: 8px; }
+.f-tg { font: 800 28px/1.25 var(--script); }
+.f-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.f-steps .btn { text-transform: none; font-size: 12px; letter-spacing: 0; }
+.errtype { border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); margin-bottom: 10px; }
+.et-h { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+.et-h b { font: 800 16px var(--serif); }
+.errtype > p { padding: 6px 12px; margin: 0; font-size: 14px; }
+.desafio { display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: center; width: 100%; text-align: left; border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); padding: 10px 12px; margin-bottom: 8px; box-shadow: 3px 3px 0 var(--c); color: var(--ink); }
+.desafio span { font-size: 26px; text-align: center; }
+.desafio b { display: block; font: 800 17px var(--serif); }
+.desafio small { font-size: 14px; color: var(--muted); }
+.mapa { border: 2px solid var(--line); border-radius: var(--radius); background: var(--sheet); padding: 6px 12px; }
+.m-row2 { display: grid; grid-template-columns: 26px 110px 1fr 64px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--rule); }
+.m-row2:last-child { border-bottom: 0; }
+.m-nm { font-size: 14px; }
+.m-row2 small { font-size: 10.5px; color: var(--muted); text-align: right; }
